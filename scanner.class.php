@@ -1,9 +1,13 @@
 <?php
-require_once(dirname(__FILE__) . '/luminous-r657/src/core/utils.php');
+// require_once(dirname(__FILE__) . '/luminous-r657/src/core/utils.php');
 
 require_once(dirname(__FILE__) .  '/luminous-r657/src/core/strsearch.class.php');
 
-require_once(dirname(__FILE__) .  '/luminous-r657/src/luminous_grammar_callbacks.php');
+// require_once(dirname(__FILE__) .  '/luminous-r657/src/luminous_grammar_callbacks.php');
+
+
+require_once('utils.class.php');
+require_once('filters.class.php');
 
 
 /**
@@ -340,6 +344,15 @@ class LuminousTokenPresets {
 }
 
 
+
+
+
+
+
+
+
+
+
 class LuminousScanner extends Scanner {
   protected $ident_map = array();
   protected $tokens = array();
@@ -348,15 +361,47 @@ class LuminousScanner extends Scanner {
   protected $state_ = array();
   protected $stop_at = array();
   
+  protected $filters = array();
+  
   protected $rule_tag_map = array();
   
   function __construct($src=null) {
     parent::__construct($src);
+    
+    $this->add_filter('comment-note', 'COMMENT', array('LuminousFilters', 'comment_note'));
+    $this->add_filter('comment-note', 'STRING', array('LuminousFilters', 'string'));
+    
   }
   
   
   protected $case_sensitive = true;
   
+  
+  /*
+   * args are;  ([name], token, filter)
+   * 
+   * poor man's method overloading.
+   * 
+   * TODO: allow unbinding of the filter if a name is passed.
+   */
+  public function add_filter($arg1, $arg2, $arg3=null) {
+    $filter = null;
+    $name = null;
+    $token = null;
+    if ($arg3 === null) {
+      $filter = $arg2; 
+      $token = $arg1;
+    } else {
+      $filter = $arg3;
+      $token = $arg2;
+      $name = $arg1;
+    }
+    if (!isset($this->filters[$token])) $this->filters[$token] = array();
+    $this->filters[$token][] = array($name, $filter);
+  }
+  
+  
+  // this isn't used
   function add_range_check($pattern, $callback) {
     $this->stop_at[] = array($pattern, $callback);
   }
@@ -395,14 +440,36 @@ class LuminousScanner extends Scanner {
   
   function record($string, $type) {    
     if (isset($this->rule_tag_map[$type])) $type = $this->rule_tag_map[$type];
-    $this->tokens[] = array($type, $string);
+    $this->tokens[] = array($type, $string, false);
   }
+  
+  
+  // TODO safety check: this should only be called once. Probably.
+  // TODO this would be faster (probably) if we could once-generate a compose 
+  // function instead of the inner loop
+  function process_filters() {    
+    if (empty($this->filters))
+      return;
+    foreach($this->tokens as $k=>$t) {
+      $tok = $t[0];
+      if (isset($this->filters[$tok])) {
+        foreach($this->filters[$tok] as $f) {
+          $this->tokens[$k] = call_user_func($f[1], $t);
+        }
+      }
+    }
+  }
+  
+  
   
   function tagged() {
     $out = '';
+    
+    $this->process_filters();
+    
     foreach($this->tokens as $t) {
-      list($type, $string) = $t;
-      $string = self::escape_string($string);
+      $t = LuminousUtils::escape_token($t);
+      list($type, $string, ) = $t;
       if ($type !== null) {
         $open = '<' . $type . '>';
         $close = '</' . $type . '>';

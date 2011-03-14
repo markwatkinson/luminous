@@ -67,8 +67,6 @@ class JSScanner extends LuminousEmbeddedWebScript {
     $this->add_pattern('COMMENT', '% /\*(?!\*!) .*? \*/ %sx');
     $this->add_pattern('COMMENT_SL', '%//(?!/!).*%');
     $this->add_pattern('SLASH', '%/%');
-    
-    
   }
   
   function init() {
