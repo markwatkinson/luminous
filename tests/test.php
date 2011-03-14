@@ -19,7 +19,9 @@ $tests = array(
   'zen' => 'testdata/zenophilia.css',
   'html' => 'testdata/test.html',
   'php' => __FILE__,
+  'php1' => 'testdata/luminous.class.php',
   'phpcss' => 'testdata/phpcss.php',
+  
   'xml' => 'testdata/xml.xml',
 );
 
