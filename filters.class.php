@@ -18,8 +18,9 @@ class LuminousFilters {
     \\\\
     (?:
       (?:u[a-f0-9]{4,8}) # unicode
-      |[a-fA-F\d]{1,3}   #hex or octal
-      |.                 #whatever
+      |\d{1,3}           # octal
+      |x[a-fA-F0-9]{2}   # hex
+      |.                 # whatever
     )
     /xi', '<ESC>$0</ESC>', $token[1]);
     return $token;
