@@ -14,7 +14,7 @@ $luminous_php_keywords = array(
   '__CLASS__', '__DIR__', '__FILE__', '__LINE__', '__FUNCTION__', '__METHOD__',
   '__NAMESPACE__',
   
-  'true', 'false', 'null'
+  'true', 'false', 'null', 'return'
   );
   
 
@@ -4572,7 +4572,6 @@ $luminous_php_functions = array(
 'restore_error_handler',
 'restore_exception_handler',
 'restore_include_path',
-'return',
 'rewind',
 'rewinddir',
 'rmdir',
