@@ -6,20 +6,45 @@ require_once(dirname(__FILE__) .  '/luminous-r657/src/core/strsearch.class.php')
 require_once(dirname(__FILE__) .  '/luminous-r657/src/luminous_grammar_callbacks.php');
 
 
-
+/**
+ * The Scanner class is a base class which handles traversing a string while
+ * searching for various different tokens.
+ * It is loosely based on Ruby's StringScanner.
+ */
 class Scanner {
+  /// Input string
   private $src;
-  private $index;
+  
+  /// length of input string (cached for performance)
   private $src_len;
+  
+  /// Current index
+  private $index;
+  
+  /** History of matches. This is an array (queue), which should have at most 
+   * two elements. Each element consists of an array: 
+   *  0 => String index,
+   *  1 => match index,
+   *  2 => match data (groups as hash)
+   * 
+   * Numerical indices are used for performance.
+   */
   private $match_history = array();
+  
+  /// LuminousStringSearch instance (caches preg_* results)
   private $ss;
   
+  /// Preset patterns, used by next_match()
   private $patterns = array();
 
+  
   function __construct($src=null) {
     $this->string($src);
   }
-  
+    
+  /**
+   * \return the rest of the string which has not yet been consumed
+   */
   function rest() {
     static $pos = -1;
     static $rest = null;
@@ -30,6 +55,9 @@ class Scanner {
     return $rest;
   }
   
+  /**   
+   * Optionally sets and returns the current string position (index)
+   */
   function pos($new_pos=null) {
     if ($new_pos !== null) {
       $new_pos = max(min($new_pos, $this->src_len), 0);
@@ -38,16 +66,25 @@ class Scanner {
     return $this->index;
   }
   
+  /**
+   * Returns true if Scanner has reached the end of the string, else false
+   */
   function eos() {
     return $this->index >= $this->src_len;
   }
   
+  /**
+   * Resets Scanner: sets pos to 0 and clears the match history
+   */
   function reset() {
     $this->pos(0);
     $this->match_history = array();    
     $this->ss = new LuminousStringSearch($this->src);
   }
   
+  /**
+   * Optionally sets and returns the current string being scanned
+   */
   function string($s=null) {
     if ($s !== null) {
       $this->src = $s;
@@ -57,40 +94,80 @@ class Scanner {
     return $this->src;
   }
   
+  /**
+   * Moves the scan pointer to the end of the string, terminating the 
+   * current scan.
+   */
   function terminate() {
     $this->reset();
     $this->pos($this->src_len);
   }
   
+  /**
+   * Returns the given number of characters from the string from the 
+   * current scan pointer onwards, and does not consume them.
+   * 
+   * Note neither get nor peek logs its matches into the match history.
+
+   */
   function peek($n=1) {
     if ($n === 0 || $this->eos()) return '';
     elseif ($n === 1) return $this->src[$this->index];    
     else return substr($this->src, $this->index, $n);
   }
   
+  /**
+   * Returns the given number of characters from the string from the 
+   * current scan pointer onwards, and consumes them.
+   * 
+   * Note neither get nor peek logs its matches into the match history.
+   */  
   function get($n=1) {
     $p = $this->peek($n);
     $this->index += strlen($p);
     return $p;
   }
   
+  /**
+   * Returns the most recent matched string, or throws an exception if 
+   * no matches have been recorded.
+   */
   function match() {
     if (empty($this->match_history))
       throw new Exception('match history empty');
     return $this->match_history[ count($this->match_history) -1][2][0];
   }
   
+  /**
+   * Returns the most recent match groups as an associative array of 
+   * group => string. This is in the same format as returned by preg_match. 
+   * 
+   * Throws Exception if no matches have been recorded.
+   */  
   function match_groups() {
      if (empty($this->match_history))
       throw new Exception('match history empty');
     return $this->match_history[ count($this->match_history) -1][2];
   }  
   
+  /**
+   * Returns the given group from the most recent match (as string).
+   * The group may be either an integer or a string in the case of named 
+   * subpatterns
+   * 
+   * Throws Exception if no matches have been recorded.
+   */   
   function match_group($g=0) {
      if (empty($this->match_history))
       throw new Exception('match history empty');
     return $this->match_history[ count($this->match_history) -1][2][$g];
   }
+  
+  /**
+   * Returns the position (offset) of the most recent match
+   * 
+   * Throws Exception if no matches have been recorded.
+   */     
   function match_pos() {
     if (empty($this->match_history))
       throw new Exception('match history empty');
@@ -107,8 +184,11 @@ class Scanner {
   }
   
   /**
-   * Unscans the most recent match. Calls to get(), and peek() are not logged
-   * and are therefore not unscannable.
+   * Unscans the most recent match. The match is removed from the history, and
+   * the scan pointer is moved to where it was before the match.
+   * 
+   * Calls to get(), and peek() are not logged and are therefore not 
+   * unscannable.
    */
   function unscan() {
     if (empty($this->match_history))
@@ -143,25 +223,63 @@ class Scanner {
       return ($matches === null)? $matches : $matches[0]; 
   }
   
+  /**
+   * Looks for the given pattern at the current index and consumes and logs it
+   * if it is found.
+   * Returns null if not found, else the full match.
+   */
   function scan($pattern) {
     return $this->__check($pattern);
   }
+  /**
+   * Looks for the given pattern at the current index and logs it
+   * if it is found, but does not consume it. This is a look-ahead.
+   * Returns null if not found, else the full match.
+   */  
   function check($pattern) {
     return $this->__check($pattern, true, false, false, true);
   }
   
+  /**
+   * Looks for the given pattern at the current index and consumes it if it 
+   * is found, but does not log it (skips over it).
+   * Returns the number of charaters consumed.
+   */    
   function skip($pattern) {
+    $p = $this->index;
     $this->__check($pattern, true, true, true, false);
+    return $this->index - $p;
   }
   
-  function scan_to($pattern) {
-    return $this->__check($pattern, false, true, true, true);
-  }
-  
+#  /**
+#   * Looks for the given pattern anywhere in the string after the current scan
+#   * pointer, and consumes it and logs it.
+#   * Returns null if the match fails, else the text of the match.
+#   * 
+#   * TODO this should probably log everything, not just the match.
+#   */
+#  function scan_to($pattern) {
+#    return $this->__check($pattern, false, true, true, true);
+#  }
+
+
+  /**
+   * Adds a predefined pattern which is visible to next_match.
+   */  
   function add_pattern($name, $pattern) {
     $this->patterns[] = array($name, $pattern, -1, null);
   }
   
+  /**
+   * Iterates over the predefiend patterns array (add_pattern) and consumes/logs
+   * the nearest match, skipping unrecognised segments of string.
+   * returns an array: 
+   *    0 => pattern name  (as given to add_pattern)
+   *    1 => match index (although the scan pointer will have progressed to the 
+   *            end of the match if the pattern is consumed)
+   * 
+   * if $consume_and_log is false, the pattern is not consumed or logged. 
+   */
   function next_match($consume_and_log=true) {
     $target = $this->pos();
     $dontcare_ref = false;
