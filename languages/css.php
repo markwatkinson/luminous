@@ -80,6 +80,7 @@ class CSSScanner extends LuminousEmbeddedWebScript {
         $tok = 'SELECTOR';
       elseif($c === '.' && !$in_block && $this->scan('/\.[\w+\-]+/'))
         $tok = 'SELECTOR';
+      // TODO attr selectors should handle embedded strings, I think.
       elseif(!$in_block && $c === '[' 
         && $this->scan('/\[ (?: [^\\]\\\\]+ | \\\\.)* \]/sx'))
         $tok = 'ATTR_SELECTOR';
