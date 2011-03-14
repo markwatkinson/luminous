@@ -368,9 +368,10 @@ class LuminousScanner extends Scanner {
   function __construct($src=null) {
     parent::__construct($src);
     
-    $this->add_filter('comment-note', 'COMMENT', array('LuminousFilters', 'comment_note'));
-    $this->add_filter('comment-note', 'STRING', array('LuminousFilters', 'string'));
-    $this->add_filter('comment-note', 'REGEX', array('LuminousFilters', 'pcre'));
+    $this->add_filter('comment-note', 'COMMENT', array('LuminousFilters', 'comment_note'));    
+    $this->add_filter('comment-to-doc', 'COMMENT', array('LuminousFilters', 'generic_doc_comment'));
+    $this->add_filter('string-escape', 'STRING', array('LuminousFilters', 'string'));
+    $this->add_filter('pcre', 'REGEX', array('LuminousFilters', 'pcre'));
     
     
   }
