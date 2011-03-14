@@ -5,7 +5,108 @@
 // Poor man's namespace.
 class LuminousFilters {
   
-  static function comment_note($token) {    
+  
+  private static function doxygen_arg_length($command) {
+    switch(strtolower($command)) {
+      case "addtogroup":
+      case "category":
+      case "class":
+      case "def":
+      case "defgroup":
+      case "dir":
+      case "enum":
+      case "example":
+      case "extends":
+      case "file":
+      case "headerfile":
+      case "implements":
+      case "ingroup":
+      case "interface":
+      case "namespace":
+      case "memberof":
+      case "package":
+      case "page":
+      case "relates":
+      case "relatesalso":
+      case "weakgroup":    
+      case "cond":
+      case "elseif":
+      case "exception":
+      case "if":
+      case "ifnot":
+      case "par":
+      case "param":
+      case "tparam":
+      case "retval":
+      case "throw":
+      case "throws":
+      case "xrefitem":
+      case 'see':
+      case 'since':
+        return 1;
+      default: return 0;
+    }
+  }
+  
+  
+  static function doxygenize_cb($matches) {
+    $lead = $matches[1];
+    $tag_char = $matches[2];
+    $tag = $matches[3];
+    
+    $line = "";
+    if (isset($matches[4]))
+      $line = $matches[4];
+    
+    $len = -1;
+    // JSDoc-like  
+    $l_ = ltrim($line);
+    if (isset($l_[0]) && $l_[0] === '{') {
+      $line = preg_replace('/({[^}]*})/', "<DOCPROPERTY>$1</DOCPROPERTY>", $line);
+      return "$lead<DOCTAG>$tag_char$tag</DOCTAG>$line";
+    }    
+    else      
+      $len = self::doxygen_arg_length($tag);
+    
+    if($len === 0)
+      return "$lead<DOCTAG>$tag_char$tag</DOCTAG>$line";    
+    else {
+      $l = explode(' ', $line);
+      $start = "$lead<DOCTAG>$tag_char$tag</DOCTAG><DOCPROPERTY>";
+      
+      $j = 0;
+      $c = count($l);
+      for($i=0; $j<$len && $i<$c; $i++)
+      {      
+        $s = $l[$i];
+        $start .= $s . ' ';
+        unset($l[$i]);
+        if (trim($s) != '')
+          $j++;
+      }
+      $start .= "</DOCPROPERTY>";
+      $start .= implode(' ', $l);    
+      return $start;
+    }
+  }
+  
+  static function doxygenize($token) {
+    $token = LuminousUtils::escape_token($token);    
+    $token[1] = preg_replace_callback("/(^(?>[\/\*#\s]*))([\@\\\])([^\s]*)([ \t]+.*?)?$/m",
+        array('LuminousFilters', 'doxygenize_cb'),   $token[1]);    
+    return $token;
+    
+  }
+  
+  static function generic_doc_comment($token) {
+    if (preg_match('/^.(.)\\1(?!\\1)/', $token[1])) {
+      $token[0] = 'DOCCOMMENT';
+      $token = self::doxygenize($token);
+    }
+    return $token;    
+    
+  }
+  static function comment_note($token) {
       $token = LuminousUtils::escape_token($token);
       $token[1] = preg_replace('/\\b(?:NOTE|XXX|FIXME|TODO|HACK|BUG):?/',
         '<COMMENT_NOTE>$0</COMMENT_NOTE>', $token[1]);
