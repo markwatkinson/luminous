@@ -442,7 +442,8 @@ class LuminousScanner extends Scanner {
 
 /*
  * Web languages get their own special class because they have to deal with
- * server-script code embedded inside them.
+ * server-script code embedded inside them and the potential for languages
+ * nested under them (PHP has HTML, HTML has CSS and JavaScript)
  * 
  * The relationship is strictly hierarchical, not recursive descent
  * Meeting a '<?' in CSS bubbles up to HTML and then up to PHP (or whatever)
@@ -454,18 +455,36 @@ class LuminousScanner extends Scanner {
  */
 abstract class LuminousEmbeddedWebScript extends LuminousScanner {
   
+  /// Embedded in HTML? i.e. does it need to observe tag terminators
   public $embedded_html = false;
+  
+  /// Embedded in a server side language? I.e. does it need break at
+  /// server language tags
   public $embedded_server = false;
   
   // don't think these are actually observed at the moment
   public $server_tags = '<?';
   public $script_tags;
   
+  /** 
+   * Signifies whether the program exited due to interruption by 
+   * a parent language (i.e. a server-side langauge), or whether it reached 
+   * a legitimate break.
+   */
   public $clean_exit = true;
   
-  public $child_scanners = array();
   
-  protected $exit_data;  
+  protected $child_scanners = array();
+  
+  protected $exit_state;
+  
+  
+  /** If we reach a dirty exit, when we resume we need to figure out how to 
+   * continue consuming the rule that was interrupted. So essentially, this 
+   * will be a regex which matches the rule without start delimiters.
+   *  
+   * This is a map of rule => pattern
+   */
   protected $dirty_exit_recovery = array();
   
   public function add_child_scanner($name, $scanner) {
@@ -482,6 +501,9 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
     return parent::string($str);
   }
   
+  /**
+   * Sets the exit data to signify it was a dirty exit
+   */
   function dirty_exit($state) {
     $this->exit_state = $state;
     $this->clean_exit = false;
@@ -496,18 +518,29 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
   
   
   
-  // resumes from a dirty exit, i.e. an interruption by server side script 
-  // tags
+  /**
+   * Attempts to resume from a dirty exit 
+   * Consumes the remaining segment of string for the rule that was exited on
+   * and returns the rule name. The match will be in $this->match(). 
+   * Returns null if no recovery is known.
+   */
   function resume() {
     assert (!$this->clean_exit) or die();
     $this->clean_exit = true;
-    if (!isset($this->dirty_exit_recovery[$this->exit_state]))
-      return;
+    if (!isset($this->dirty_exit_recovery[$this->exit_state])) {
+      assert(0) or die("No such state exit data: {$this->exit_state}");
+      return null;
+    }
     $pattern = $this->dirty_exit_recovery[$this->exit_state];
     assert($this->scan($pattern) !== null);
     return $this->exit_state;
   }
   
+  
+  /**
+   * Breaks current scanning due to server-side language interruption, 
+   * which it is expected will be recovered from
+   */  
   function server_break($state, $match=null, $offset=null) {
     if (!$this->embedded_server) {
       return false;
@@ -523,6 +556,9 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
     else return false;
   }
   
+  /**
+   * Breaks current scanning due to a terminator tag, i.e. a real exit.
+   */
   function script_break($state, $match=null, $offset=null) {
     if (!$this->embedded_html) return false;
     if ($match === null) $match = $this->match();
