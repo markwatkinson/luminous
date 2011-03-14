@@ -23,8 +23,9 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
     $this->dirty_exit_recoveries = array(      
       'DSTRING' => '/(?: [^\\\\">]+ | \\\\[^>])*("|$|(?=>))/',
       'SSTRING' => "/(?: [^\\\\'>]+ | \\\\[^>])*('|$|(?=>))/",
-      'COMMENT1' => '/.*?-->/s',
-      'COMMENT2' => '/.*?>/s'
+      'COMMENT1' => '/.*?(?:-->|$)/s',
+      'COMMENT2' => '/.*?(?:>|$)/s',
+      'CDATA' => '/.*?(?:\\]{2}>|$)/s'
     );
     
     $this->rule_tag_map = array(
@@ -32,6 +33,7 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
       'SSTRING' => 'STRING',
       'COMMENT1' => 'COMMENT',
       'COMMENT2' => 'COMMENT',
+      'CDATA' => 'COMMENT',
     );
       
     parent::__construct($src);
@@ -112,6 +114,8 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
             continue;
           }
           // urgh
+          elseif($this->scan('/<!\\[CDATA\\[.*?(?:\\]\\]>|$)/is')) 
+            $tok = 'CDATA';
           elseif($this->scan('/<!--.*?-->/s')) $tok = 'COMMENT1';
           elseif($this->scan('/<!.*?>/s')) $tok = 'COMMENT2';
           else assert(0);

@@ -2,6 +2,19 @@
 <!-- That's not a script tag -->
 <note>
     <to>Tove</to>
+    <![CDATA[
+function matchwo(a,b)
+{
+if (a < b && a < 0) then
+  {
+  return 1;
+  }
+else
+  {
+  return 0;
+  }
+}
+]]>
     <from>Jani</from>
     <heading>Reminder</heading>
     <body>Don't forget me this weekend!</body>
