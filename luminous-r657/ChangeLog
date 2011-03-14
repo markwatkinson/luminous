@@ -1,0 +1,322 @@
+Version 0.5.7 (04/02/11)
+	New Stuff:
+		* JSON language highlighting
+		* example.php moved into examples/ directory, and a bunch of 
+			examples for different use cases -- theme switching, 
+			inline highlighting with AJAX, displaying fullpage, etc
+
+	Fixes:
+		* MATLAB language was somehow totally broken in 0.5.6. This is now fixed
+			and back up to its pre 0.5.6 quality. Test cases added to make sure this 
+			doesn't happen again.
+		* Fix bug where legal state transitions were sometimes ignored, leading
+			to the case where nested tokens were not highlighted depending on 
+			how they were defined, e.g. various things in Ruby heredoc, and LOLCODE
+			escape sequences.
+		* Fix POSSIBLE XSS vulnerability. Exactly whether or not you were 
+			exposing this depends on exactly how you were handling themes.
+		* HTML strict output with links can optionally disable their 
+			target=_blank attribute, this is actually non-standard and would break
+			your validation on strict doctypes, see $LUMINOUS_STRICT_STANDARDS
+			variable.
+		* Fix some bugs with superfluous newlines in the non-line numbered HTML 
+			formatter.
+
+
+Version 0.5.6 (18/01/11)
+	New Stuff:
+		* Safe mode! Safe mode will prevent Luminous from recognising data types
+			which are nested more than 10 levels deep inside other types. This is
+			theoretically possible, but highly unlikely in legitimate source code.
+			Preventing this prevents an attacker from crafting sources to make
+			Luminous consume a lot of resources. So this is a security feature.
+			If you need to disable this (and you don't) you'll have to hard code it.
+		* Addition of a large testing suite. You shouldn't see this if you get
+			a prepackaged version. But it makes Luminous better.
+
+	Fixes:
+		* The get_themes() function will no longer display both minified and
+			non-minified CSS.
+		* Fixed a bug where errors could occur due to incorrect regex escaping
+		 	of dynamically created regexes
+		* Hyperlinker won't link quotes, and will always work with www\d and https
+			links (these were sometimes lost due to an overzealous optimisation)
+		* Unconstrained output is now truly unconstrained, you won't have to 
+			scroll to the bottom of the page to see the h-scrollbar anymore.	
+		* Luminous now tends not to highlight empty segments of string. This 
+			slightly reduces memory usage and output size.
+		* Rules involving recursive regular expressions have been rewritten to 
+			make use of Luminous's stateful model because it seems easy to make
+			recursive PCRE regexes crash PCRE. This wouldn't have brought down your
+			server directly as Apache spawns worker threads (and only the thread
+			would segfault), but it still seems like a security issue.
+		* Case insensitive languages' performance is greatly increased. The
+			runtime for evaluating a CI string should scale linearly with the 
+			length of the string, now, like case sensitive languages (it was 
+			possibly exponential before due to an oversight).
+
+	A lot of language improvements, including:
+		* Ruby is a lot more resiliant. Ruby is a langauge in which it's easy to
+			fool a syntax highlighter. It's now a little harder to fool Luminous.
+		* C/C++ preprocessor statements may be indented. Also, comments inside
+		  preprocessor statements should always be detected.
+		* SQL recognises some MySQL extensions including # comments and \' string
+			escaping in single quoted strings
+		* PHP recognises classnames after 'extends'
+		* BNF won't split HTML entities anymore
+		* Bash heredoc is better
+		* Erlang buggy regex fixed
+		* Perl regex detection is a little better.
+		* '\\' is now a recognised escape sequence inside strings, and so are 
+			\xyz octal sequences
+		* Python comment vs string is now harder to fool
+		* JavaScript recognises 'jQuery' as a function.
+		* Other minor stuff.
+
+Version 0.5.5 (29/12/10)
+	Fixes:
+		* Fix broken line-by-line tagging in some circumstances
+		* Fix accidental introduction of leading spaces on some lines due to 
+			broken Javascript
+		* Dummy states in language definitions no longer consume the source string.
+		* Fix bug in BNF definition causing a possible non-terminating state 
+		* Ruby now detects regexes if they occur after 'gsub' (without  brackets).
+	  * Python can (usually?) tell the difference between a triple quoted string
+			and comment.
+		* Line numbering works again on the print stylesheet
+		* Obsolete colour tweaks removed from the print stylesheet
+		* A few minor JavaScript bugs fixed
+
+	 New Stuff:
+	 	* Some languages (python, php, perl, javascript, ruby) now highlight 
+			class/function definition names but so far only in their definition 
+		* Minified CSS and JavaScript. This is used automatically by the
+			luminous_get_html_head function. Currently themes are not compressed
+			to allow the user to tweak them easily.
+
+
+Version 0.5.4 (19/12/10)
+	Fixes:
+		* CSS font declaration is re-ordered such that a local copy should be 
+			used by the browser if 1) it's available, and 2) the browser is 
+			sensible
+		* .htaccess file added (in client/font/) to fix MIME type in transfer of fonts
+		* Fix occasional bug causing skewed line numbering
+		* Fix occasionally wrong detection of escape sequences in SQL style single
+			quoted strings
+
+	New Stuff:
+		* LaTeX output formatter, with basic access to CSS themes
+		* New theme - soft.css 
+
+	Backwards incompatability:
+		* css class 'td.line_numbers' changed to '.line_number_bar'
+		* $_LUMINOUS_ROOT variable replaced with luminous_root() function (for
+			security)
+
+	
+Version 0.5.1 (12/12/10)
+	Fixes:
+		* Important fix on the stateful parser thinking, e.g., a quote is both the
+			start and end of the same string
+		* stateful parser will not play nicely with previously matched strings 
+			(i.e. PHP inside CSS won't inherit the CSS's style)
+		* HTML validation fixed again
+		* JavaScript 'binding' process now works on a per-widget basis, so the
+			process can be invoked at the user's will (this is useful if they are
+			using AJAX to repopulate different parts of the page, and need to 
+			get a new widget to bind itself)
+		* JavaScript font resize is now agnostic to the CSS units used.
+		* light stylesheet less ugly on the object/property colouring
+		* minor improvements to JavaScript, Python and Ruby rules
+
+Version 0.5.0 (07/12/10)
+	Improvements:
+		* Luminous now has a stateful mode which gives it A LOT more power in 
+			parsing various languages. BNF, CSS and C/C++ are now using the stateful
+			mode. The latter mostly for testing, but the former two have much higher
+			quality language recognition as a result. This is a Very Big Thing.
+		* CSS output has a few minor fixes
+		* JavaScript luminous_init() now has a 'force' argument so you can force
+			everything to rebind in the event that you're using AJAX or something to
+			change the Luminous objects on the page.
+		* HTML Linker now works again (I seem to break/fix it every alternate 
+			release)
+		* Highlighting level is no longer lost on nested languages
+
+	New Stuff:
+	  * 'paradise' theme
+		* Erlang language
+		* LOLCODE language (yes, really)
+		* Scala language
+		* Support for contextual diff format (under standard diff -- note unified
+			diff has also been merged into standard diff)
+		* luminous_get_html_head() function in the EasyAPI, this probably handles
+			your <head> tag output for you (see docs)
+
+
+
+Version 0.4.0 (23/11/10)
+	Improvements:
+		* much neater file-tree. huzzah. There is a dummy luminous.php in root 
+			which you	can include which gives you everything you need, for 
+			simplicity. example.php is also included in root.
+		* Grammars are now stored in separate files, which makes things a lot
+			neater. Adding new grammars requires that you tell Luminous what file it
+			exists in, or have it already included yourself. A dependency system for
+			derivative grammars (e.g make inherits from bash, c++ inherits from c) 
+			is included also.
+		* PHP short tags (<? ?>) replaced with <?php ?>, for better compatability.
+
+		Visual tweaks:
+			* line-height is expanded a little, which tends to look a lot better
+			* every 5th line number is bold
+			* workaround a chrome bug to do with scrolling
+			* Improve expand/collapse behaviour with respect to scrolling
+
+	New stuff:
+		* Zenophilia theme (heavily based on zenburn)
+		* 'Generic' grammar -- might provide some highlighting for unrecognised
+			languages. Might not, too.
+		* Go grammar
+		* Groovy Grammar
+		* Vim-script grammar
+
+	Core fixes:
+		* better handling of large inputs; PCRE doesn't like long strings and
+	 		non-greedy operators (as it triggers the dreaded backtrack limit), so
+	 		Luminous internally now uses simple string methods where reasonably
+			possible.
+		* Fix horrible bug where a match containing other matches could in 
+		  occasional circumstances cause all sorts of chaos
+		* various minor fixes
+	
+
+	Language/Grammar fixes:
+		* perl recognises pod/cut
+		* ruby does backticks
+		* A number of bugs related to regex literal recognition
+		* much better numeric literal recognition in C, C#, Java, Python
+		* Better doxygen-esque comment parsing
+		* various optimisations in grammar callback functions
+		* Various minor additions to some languages
+
+
+
+version 0.3.1 (10/11/2010)
+  New Features:
+		* Luminous comes with the Bitstream Vera Mono font (similar if not
+		identical to DejaVu Sans mono), which is used as the default in CSS3
+		compliant browsers and IE; this is because some platforms (i.e. Windows)
+		have a fairly poor selection of attractive monospace fonts installed by
+		default
+
+  Fixes:
+		* URI linker should choke on fewer inputs (if any)
+		* Much stronger language coverage of: ActionScript, C++, C#, MATLAB, Pascal and	Ruby
+		* Various minor additions to other languages
+
+version 0.30 (20/10/2010)
+	New Features:
+	* EasyAPI additions - 
+		$LUMINOUS_WAS_CACHED -- logs whether the last request was cached or
+		generated
+		$LUMINOUS_LINK_URIS -- sets whether or not to link URLs
+		$LUMINOUS_WIDGET_HEIGHT -- optionally constraint output widget to a
+		maximum height (the rest will be scrolled)
+		$LUMINOUS_VERSION -- self explanatory
+		$LUMINOUS_PERFORMANCE_LOG -- a log of performance related data (see docs)
+		$LUMINOUS_ESCAPE_INPUT -- Allows you to use HTML-escaped input and
+		Luminous won't re-escape it.	
+	* New Grammars - 
+		BNF and EBNF ((Extended)? Backus Naur Form)
+	* URLs may be converted to hyperlinks
+	* Optional JavaScript additions (requires jQuery, included), containing
+	things like - collapse/expand widget, print, font size++/-- search, etc
+	* HTML widget may now be self-constrained to a particular height, doesn't
+	need to be wrapped
+	* Basic working Wordpress plugin
+	* OO/Namespace syntax highlighting 	
+	* Alternate line colouring
+	* Clickable lines (clicking line number adds highlight with JavaScript
+	enabled)
+	* Various minor presentational tweaks
+
+	Fixes:		
+		* Much stronger caching behaviour in the EasyAPI -- cache hits depend on 		settings, version, grammar, etc, not just the input string.
+		* Neater HTML markup and CSS
+
+		Grammars:
+		* Various PHP additions and fixes
+		* Ruby heredoc slightly more robust
+		* Python grammar recognises most global functions
+		* Grammar callbacks now allowed to be OO class methods
+		* Better PCRE recognition
+		* Various minor fixes
+
+	Misc:
+		* LuminousGrammar::SetRuleset method added to allow grammars to alter their
+		rulesets based on the source
+
+
+version 0.25 (09/09/2010)
+  New Features:
+  * 'Verbosity' control -- classification system for saying what language
+  elements Luminous should match (see docs), this gives configurable balance
+  between prettiness and performance
+  * Slightly noticable performance increase in formatting code (although
+  this is lost if you run Luminous with all new features enabled)
+  * EasyAPI new functions -- luminous_file() and info function
+  luminous_supported_languages()
+  * EasyAPI new setting variables - 
+          $LUMINOUS_WRAP_WIDTH -- word wrapping at col (int)
+          $LUMINOUS_LINE_NUMBERS -- Line numbering (bool)
+          $LUMINOUS_HIGHLIGHTING_LEVEL -- Configurable highlighting level
+  * Heredoc-like syntax support for grammars
+  * Support for new languages - 
+          Generic ChangeLog and Whitespace
+  * Comment highlighting of TODO, FIXME, etc
+  * PCRE style syntax regular expression highlighting
+  * 'Dark' CSS stylesheet theme
+
+
+  Fixes:
+    Grammars:
+    * Heredoc support implemented by Bash, Perl, PHP and Ruby
+    * PCRE highlighting implemeneted by all languages whch have a regex literal type, and in PHP
+    * String interpolation and variable recognition improvements in Bash,
+    Perl, Ruby, PHP...
+    * PHP grammar's end tag (?>) is now optional
+    * C# and Java grammars recognise a number of common data struct classes as data types
+    * Plain grammar recognises the generic config line format "option=value"
+    * Numerous small corrections and improvements to many languages
+
+    Other:
+    * Word wrapping now fully reliable with breakpoints favouring whitespace
+    * Tab/space now visible to Luminous core, conversion handled by HTML formatter.
+    * Fix line number drifting by specifying a list of 'safe' fonts
+    * Fix line number float drop on Opera/IE6 by changing to a two-cell table
+    (line nos one cell, code the other)
+    * Fix (sort of) the css LANG_* class so that it works better for nested
+    languages, although it's still not advisable to rely on it for nested
+    languages
+    * Fix (workaround) Chrome and IE8 whitespacing bugs
+    * Better recovery from unavoidable PCRE errors, like the dreaded
+    backtracking limit (such errors will not erase the whole output)
+    * lots and lots of testing on a whole bunch of OSS projects, and plenty of minor fixes as a result.
+
+
+  Misc:
+  * Formatting code moved away from core into its own class hierarchy, which
+  makes it easier to add more formatters in future
+  * CSS factored into a common structure stylesheet (layout) and an additional
+  'theming' (colouring) stylesheet.
+  * Rule LUMINOUS_DYNAMIC_DELIMS can be used to match variable length
+  alphanumeric delimiters (i.e. those used in heredoc)
+
+
+
+version 0.20 (21/08/2010):
+
+  * Initial public release
+

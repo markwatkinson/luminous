@@ -1,0 +1,64 @@
+Luminous version r657
+
+Installation
+==============
+
+Just extract this archive to your webserver. Keep the file-tree structure 
+intact.
+
+Point your browser at luminous/example.php to check that everything is working.
+If it's not showing anything highlighted then chances are you've got some funky 
+symlinking going on and Luminous couldn't figure out the necessary path to the 
+CSS includes. Look at PHP source code of example.php , specifically the call
+to luminous_get_html_head() to try hard coding the relative path from your
+document root.
+
+IMPORTANT: If you got the SVN version, you should have a directory called 
+tests/. It is really important that this shouldn't be publicly visible on 
+a webserver because the tests are:
+  * Of no help whatsoever to a production machine
+  * Fairly intensive and if your server is configured such that they could be
+    executed via the HTTP interface then someone could use it to DoS attack
+    you without much effort on their part
+So don't upload it! (although a .htaccess is present, in case you do, but 
+don't!)
+
+Usage
+============
+
+Quick usage: include luminous.php and `echo luminous($language, $code)', where 
+language is a valid language code, a table of these can be found by pointing 
+your browser at luminous/supported.php.
+
+For more detailed usage instructions either browse the source of example.php, 
+or see the doxygen documentation (preferably the latter as it is much more 
+detailed). 
+
+If you wish to use caching, remember to create the directory 'cache', which
+must be readable and writable by the server. This usually entails giving it 777
+permissions. The directory should be created one level up from Luminous's 
+source files, which if you have not changed any structure, is most likely the 
+same directory as this README file. You can use the example.php to check if 
+caching is working.
+
+
+Bugs, problems etc
+==================
+
+Please report bugs to http://code.google.com/p/luminous/issues/list
+
+
+Credit
+================
+
+Luminous is free software (GPL)
+
+Homepages: 
+  Project: http://asgaard.co.uk/p/luminous
+  Development: http://code.google.com/p/luminous
+
+And is distributed with:
+* jQuery (GPL/MIT license) 
+* Icons from the MIB Ossigeno Icon pack (LGPL)
+  http://kde-look.org/content/show.php/MIB+Ossigeno+Icons+V3?content=128221
+* and the Bitstream Vera Monospace fonts, http://www.gnome.org/fonts/
