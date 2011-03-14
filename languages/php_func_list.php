@@ -371,7 +371,6 @@ $luminous_php_functions = array(
 'classkit_method_remove',
 'classkit_method_rename',
 'clearstatcache',
-'clone',
 'closedir',
 'closelog',
 'collator',
