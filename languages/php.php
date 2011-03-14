@@ -5,8 +5,10 @@ class PHPScanner extends  LuminousEmbeddedWebScript {
   
   
   function __construct($src=null) {
-    
-    $this->add_child_scanner('html', new HTMLScanner($src));
+    $h = new HTMLScanner($src);
+    $h->embedded_server = true;
+    $h->init();    
+    $this->add_child_scanner('html', $h);
     
     parent::__construct($src);    
     
@@ -23,6 +25,7 @@ class PHPScanner extends  LuminousEmbeddedWebScript {
     $this->add_pattern('STRING', LuminousTokenPresets::$SINGLE_STR);
   }
   
+  function init() {}
   
   function scan_child() {
     $s = $this->child_scanners['html'];

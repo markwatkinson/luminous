@@ -7,13 +7,33 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
   private $child_state = null;
   
   function __construct($src=null) {
-    $this->add_child_scanner('js', new JSScanner($src));
-    $this->add_child_scanner('css', new CSSScanner($src));
+    $js = new JSScanner($src);
+    $js->embedded_server = $this->embedded_server;
+    $js->embedded_html = true;
+    $js->init();
     
-    $this->add_pattern('', '/&/');
-    $this->add_pattern('TERM', '/<\?/');    
-    $this->add_pattern('', '/</');
-    $this->state_ = 'global';
+    $css = new CSSScanner($src);
+    $css->embedded_server = $this->embedded_server;
+    $css->embedded_html = true;
+    $css->init();
+    
+    $this->add_child_scanner('js', $js);
+    $this->add_child_scanner('css', $css);
+
+    $this->dirty_exit_recoveries = array(      
+      'DSTRING' => '/(?: [^\\\\">]+ | \\\\[^>])*("|$|(?=>))/',
+      'SSTRING' => "/(?: [^\\\\'>]+ | \\\\[^>])*('|$|(?=>))/",
+      'COMMENT1' => '/.*?-->/s',
+      'COMMENT2' => '/.*?>/s'
+    );
+    
+    $this->rule_tag_map = array(
+      'DSTRING' => 'STRING',
+      'SSTRING' => 'STRING',
+      'COMMENT1' => 'COMMENT',
+      'COMMENT2' => 'COMMENT',
+    );
+      
     parent::__construct($src);
   }
   
@@ -26,11 +46,20 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
     $this->tag($substr, null, true);
     $this->pos($scanner->pos());
     if (!$scanner->clean_exit) {
-      echo "$lang exited badly at " . $this->pos() . "\n";
       $this->child_state = array($lang, $this->pos());
     } else {
       $this->child_state = null;
     }
+  }
+  
+  
+  function init() {
+    $this->add_pattern('', '/&/');
+    if ($this->embedded_server) {
+      $this->add_pattern('TERM', '/<\?/');
+    }
+    $this->add_pattern('', '/</');
+    $this->state_ = 'global';
   }
   
   function main() {
@@ -41,6 +70,12 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
     $this->out = '';
     while (!$this->eos()) {
       
+      if (!$this->clean_exit) {
+        $tok = $this->resume();
+        $this->tag($this->match(), $tok);
+        continue;
+      }
+      
       if ($this->child_state !== null && $this->child_state[1] < $this->pos()) {
         $this->scan_child($this->child_state[0]);
         continue;
@@ -49,8 +84,8 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
       $in_tag = $this->state_ === 'tag';
       if (!$in_tag) {
         $next = $this->next_match(false);
-        if($next) {         
-          $skip = $next[1] - $this->pos();          
+        if($next) {
+          $skip = $next[1] - $this->pos();
           $this->tag($this->get($skip), null);
           if ($next[0] === 'TERM') {
             $this->clean_exit = false;
@@ -68,20 +103,18 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
       ) $tok = 'ESC';
       elseif(!$in_tag && $c === '<') {
         if ($this->peek(2) === '<!') {
-          if($this->scan('/(<!\s*)(DOCTYPE)(\s+)([^>]*)(\s*>)/i')) {
+          if($this->scan('/(<)(!DOCTYPE)/i')) {
             // special case: doctype
             $matches = $this->match_groups();
             $this->tag($matches[1], null);
             $this->tag($matches[2], 'KEYWORD');
-            $this->tag($matches[3], 'KEYWORD');            
-            $this->tag($matches[4], 'VALUE');
-            $this->tag($matches[5], null);
+            $this->state_ = 'tag';
             continue;
           }
-          elseif($this->scan('/<!--.*?-->/s')) {}
-          elseif($this->scan('/<!.*?>/s')) {}
+          // urgh
+          elseif($this->scan('/<!--.*?-->/s')) $tok = 'COMMENT1';
+          elseif($this->scan('/<!.*?>/s')) $tok = 'COMMENT2';
           else assert(0);
-          $tok = 'COMMENT';
         } else {
           // check for <script>          
           $this->state_ = 'tag';
@@ -100,9 +133,14 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
         $tagname = '';
       }
       elseif($in_tag && 
-        ($c === '"' && $this->scan("/' (?: [^'\\\\>]+ | \\\\.)* (?:'|$|(?=>))/xs")
-        || $c === '"' && $this->scan('/" (?: [^"\\\\>]+ | \\\\.)* (?:"|$|(?=>))/xs'))) {
-        $tok = 'STRING';
+        $c === "'" && $this->scan("/' (?: [^'\\\\>]+ | \\\\.)* (?:'|$|(?=>))/xs")) {          
+        $tok = 'SSTRING';
+        $expecting = '';
+      }
+      
+      elseif($in_tag && 
+        $c === '"' && $this->scan('/" (?: [^"\\\\>]+ | \\\\.)* (?:"|$|(?=>))/xs')) {
+        $tok = 'DSTRING';
         $expecting = '';
       }
       elseif($in_tag && $this->scan('/[^\s=<>]+/')) {
@@ -122,8 +160,10 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
       elseif($in_tag && $c === '=') {
         $expecting = 'value';
         $get = true;
-      }      
+      }
       else $get = true;
+      if (!$get && $this->server_break($tok)) break;
+
       $this->tag($get? $this->get(): $this->match(), $tok);
       assert ($index < $this->pos()) or die("Failed to consume for $tok");
     }

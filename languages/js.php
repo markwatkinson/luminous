@@ -3,9 +3,6 @@
 
 class JSScanner extends LuminousEmbeddedWebScript {
   
-  public $embedded_html = true;
-  public $embedded_server = true;
-  
   // TODO clean up redunancy here and in constructor
   public $server_tags = '<?';
   public $script_tags = '</script>';
@@ -66,6 +63,10 @@ class JSScanner extends LuminousEmbeddedWebScript {
     $this->add_pattern('COMMENT_SL', '%//(?!/!).*%');
     $this->add_pattern('SLASH', '%/%');
     
+    
+  }
+  
+  function init() {
     $stop_patterns = array();
     if ($this->embedded_server) $stop_patterns[] = "(?P<SERVER><\\?)";
     if ($this->embedded_html) $stop_patterns[] = "(?P<SCRIPT_TERM></script>)";
@@ -73,7 +74,6 @@ class JSScanner extends LuminousEmbeddedWebScript {
       $this->stop_pattern = '%' . join('|', $stop_patterns) . '%i';
       $this->add_pattern('STOP', $this->stop_pattern);
     }
-    
   }
   
   function main() {

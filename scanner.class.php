@@ -446,11 +446,18 @@ class LuminousScanner extends Scanner {
  * 
  * The relationship is strictly hierarchical, not recursive descent
  * Meeting a '<?' in CSS bubbles up to HTML and then up to PHP (or whatever)
+ * 
+ * The scanners should be persistent, so only one JavaScript scanner exists
+ * even if there are 20 javascript tags. This is so they can keep persistent 
+ * state, which might be necessary if they are interrupted by server-side. In
+ * this case, they are said to have a 'dirty exit'.
  */
 abstract class LuminousEmbeddedWebScript extends LuminousScanner {
   
-  public $embedded_html = true;
-  public $embedded_server = true;
+  public $embedded_html = false;
+  public $embedded_server = false;
+  
+  // don't think these are actually observed at the moment
   public $server_tags = '<?';
   public $script_tags;
   
@@ -479,6 +486,15 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
     $this->exit_state = $state;
     $this->clean_exit = false;
   }
+  
+  
+  /**
+   * Initialises the scanner ready to scan. This should involve setting up 
+   * rules observing the $embedded* class members
+   */
+  abstract function init();
+  
+  
   
   // resumes from a dirty exit, i.e. an interruption by server side script 
   // tags

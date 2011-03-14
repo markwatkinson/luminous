@@ -1,0 +1,8 @@
+<?xml echo strstr preg_match $woo version="1.0"?>
+<!-- That's not a script tag -->
+<note>
+    <to>Tove</to>
+    <from>Jani</from>
+    <heading>Reminder</heading>
+    <body>Don't forget me this weekend!</body>
+</note>

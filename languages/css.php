@@ -24,7 +24,10 @@ class CSSScanner extends LuminousEmbeddedWebScript {
       'ATTR_SELECTOR' => '/(?: [^\\]\\\\]+ | \\\\.)* \]/xs'
     );
     $this->state_ [] = 'global';
-    
+  }
+  
+  
+  function init() {
   }
     
   
@@ -106,11 +109,11 @@ class CSSScanner extends LuminousEmbeddedWebScript {
         $expecting = 'key';
         $get = true;
       }
-      elseif($this->scan('%<\s*/\s*style%i')) {
+      elseif($this->embedded_html && $this->scan('%<\s*/\s*style%i')) {
         $this->unscan();
         break;
       }
-      elseif($this->scan('/<\?/')) {
+      elseif($this->embedded_server && $this->scan('/<\?/')) {
         $this->unscan();
         break;
       }      

@@ -19,13 +19,15 @@ $tests = array(
   'zen' => 'testdata/zenophilia.css',
   'html' => 'testdata/test.html',
   'php' => __FILE__,
-  'phpcss' => 'testdata/phpcss.php'
+  'phpcss' => 'testdata/phpcss.php',
+  'xml' => 'testdata/xml.xml',
 );
 
 $scanners = array(
   'js' => 'JSScanner',
   'css' => 'CSSScanner',
   'html' => 'HTMLScanner',
+  'xml' => 'HTMLScanner',
   'php' => 'PHPScanner'
 );
 
