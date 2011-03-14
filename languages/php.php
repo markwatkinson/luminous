@@ -1,8 +1,10 @@
 <?php
 
+require_once( dirname(__FILE__) . '/php_func_list.php');
 
 class PHPScanner extends  LuminousEmbeddedWebScript {
   
+  protected $case_sensitive = false;
   
   function __construct($src=null) {
     $h = new HTMLScanner($src);
@@ -10,19 +12,25 @@ class PHPScanner extends  LuminousEmbeddedWebScript {
     $h->init();    
     $this->add_child_scanner('html', $h);
     
-    parent::__construct($src);    
+    parent::__construct($src);
     
     $this->add_pattern('START', '/<\?(php|=)?/'); 
     $this->add_pattern('TERM', '/\?>/'); 
-    $this->add_pattern('COMMENT', '% (?://|\#) .*? (?: (?=\?>) | $) %sx');
+    // Why does hash need escaping?
+    $this->add_pattern('COMMENT', '% (?://|\#) .* (?=\\?>|$)  %xm');
+    $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_ML); 
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);    
     $this->add_pattern('OPERATOR', '@[!%^&*\-=+~:<>?/]+@');
-    $this->add_pattern('VARIABLE', '/\\$\w+(->\w+)*/');
+    $this->add_pattern('VARIABLE', '/\\$\\$?[a-zA-Z_]\w*/');
     $this->add_pattern('IDENT', '/[a-zA-Z_]\w*/');
-    $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_ML);    
     $this->add_pattern('STRING', LuminousTokenPresets::$DOUBLE_STR);
     $this->add_pattern('STRING', LuminousTokenPresets::$SINGLE_STR);
+    
+    $this->add_identifier_mapping('FUNCTION', $GLOBALS['luminous_php_functions']);
+    $this->add_identifier_mapping('KEYWORD', $GLOBALS['luminous_php_keywords']);
+    
+    
   }
   
   function init() {}

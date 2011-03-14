@@ -335,8 +335,8 @@ class LuminousTokenPresets {
   static $SINGLE_STR = "/' (?: [^'\\\\]+ | \\\\.)* (?:'|$)/xs";
   static $NUM_HEX = '/0x[a-fA-F0-9]+/';
   static $NUM_REAL = '/(?>\.?\d+|\d+\.?)(?:e[+-]?\d+)?/i';
-  static $C_COMMENT_SL = '% // .* %sx';
-  static $C_COMMENT_ML = '% /\* .*? (\*/|$) %sx';
+  static $C_COMMENT_SL = '% // .* %x';
+  static $C_COMMENT_ML = '% / \* .*? (?: \*/ | $) %sx';
 }
 
 
@@ -355,7 +355,7 @@ class LuminousScanner extends Scanner {
   }
   
   
-  
+  protected $case_sensitive = true;
   
   function add_range_check($pattern, $callback) {
     $this->stop_at[] = array($pattern, $callback);
@@ -384,6 +384,7 @@ class LuminousScanner extends Scanner {
   }
   
   function map_identifier($ident) {
+    if (!$this->case_sensitive) $ident = strtolower($ident);
     foreach($this->ident_map as $n=>$hits) {
       if (isset($hits[$ident])) return $n;
     }
@@ -393,6 +394,7 @@ class LuminousScanner extends Scanner {
   function add_identifier_mapping($name, $matches) {
     $array = array();
     foreach($matches as $m) {
+      if (!$this->case_sensitive) $m = strtolower($m);
       $array[$m] = true;
     }
     $this->ident_map[$name] = $array;
