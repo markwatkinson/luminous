@@ -42,9 +42,9 @@ $src = file_get_contents($tests[$test]);
 $scanner = new $scanners[$lang]($src);
 
 $t = microtime(true);
-$tagstr = $scanner->main($src);
+$scanner->main($src);
+$tagstr = $scanner->tagged();
 $t1 = microtime(true);
-
 $fmted = $formatter->format($tagstr);
 ?>
 <!DOCTYPE html>

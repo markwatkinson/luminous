@@ -45,7 +45,7 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
     $scanner = $this->child_scanners[$lang];   
     $scanner->pos($this->pos());
     $substr = $scanner->main();
-    $this->tag($substr, null, true);
+    $this->tokens = array_merge($this->tokens, $scanner->token_array());
     $this->pos($scanner->pos());
     if (!$scanner->clean_exit) {
       $this->child_state = array($lang, $this->pos());
@@ -69,12 +69,13 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
     $tagname = '';
     
     $expecting = '';
-    $this->out = '';
+    $this->start();
+    
     while (!$this->eos()) {
       
       if (!$this->clean_exit) {
         $tok = $this->resume();
-        $this->tag($this->match(), $tok);
+        $this->record($this->match(), $tok);
         continue;
       }
       
@@ -88,7 +89,7 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
         $next = $this->next_match(false);
         if($next) {
           $skip = $next[1] - $this->pos();
-          $this->tag($this->get($skip), null);
+          $this->record($this->get($skip), null);
           if ($next[0] === 'TERM') {
             break;
           }
@@ -107,8 +108,8 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
           if($this->scan('/(<)(!DOCTYPE)/i')) {
             // special case: doctype
             $matches = $this->match_groups();
-            $this->tag($matches[1], null);
-            $this->tag($matches[2], 'KEYWORD');
+            $this->record($matches[1], null);
+            $this->record($matches[2], 'KEYWORD');
             $this->state_ = 'tag';
             continue;
           }
@@ -129,7 +130,7 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
         $get = true; 
         $this->state_ = 'global';
         if ($tagname === 'script' || $tagname === 'style') {
-          $this->tag($this->get(), null);          
+          $this->record($this->get(), null);          
           $this->scan_child( ($tagname === 'script')? 'js' : 'css');
           continue;          
         }
@@ -167,10 +168,9 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
       else $get = true;
       if (!$get && $this->server_break($tok)) break;
 
-      $this->tag($get? $this->get(): $this->match(), $tok);
+      $this->record($get? $this->get(): $this->match(), $tok);
       assert ($index < $this->pos()) or die("Failed to consume for $tok");
     }
-    return $this->out;
   }
   
 }

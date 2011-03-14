@@ -7,8 +7,13 @@ class JSScanner extends LuminousEmbeddedWebScript {
   public $server_tags = '<?';
   public $script_tags = '</script>';
     
+  // logs a persistent token stream so that we can lookbehind to figure out
+  // operators vs regexes.
+  private $tokens_ = array(); 
   
   function __construct($src=null) {
+    
+    
     
     $this->rule_tag_map = array(
       'COMMENT_SL' => 'COMMENT',
@@ -77,7 +82,7 @@ class JSScanner extends LuminousEmbeddedWebScript {
   }
   
   function main() {
-    $this->out = '';
+    $this->start();
     
     while (!$this->eos()) {
       $index = $this->pos();
@@ -91,10 +96,10 @@ class JSScanner extends LuminousEmbeddedWebScript {
       elseif (($rule = $this->next_match()) !== null) {
         $tok = $rule[0];
         if ($rule[1] > $index) {
-          $this->tag(substr($this->string(), $index, $rule[1] - $index), null);
+          $this->record(substr($this->string(), $index, $rule[1] - $index), null);
         }
       } else {
-        $this->tag(substr($this->string(), $index), null);
+        $this->record(substr($this->string(), $index), null);
         $this->clean_exit = true;
         break;
       }
@@ -109,7 +114,7 @@ class JSScanner extends LuminousEmbeddedWebScript {
 
         foreach($s as $i=>$segment) {
           if ($segment === '') {
-            $this->tag('.', null);
+            $this->record('.', null);
             continue;
           }
           $t = $this->map_identifier($segment);            
@@ -118,20 +123,20 @@ class JSScanner extends LuminousEmbeddedWebScript {
           } else {
             if ($t === 'IDENT') $t = 'OBJ';
           }
-          $this->tag($segment, ($t==='IDENT')? null : $t);
+          $this->record($segment, ($t==='IDENT')? null : $t);
           if ($i !== $limit) 
-            $this->tag('.', null);
+            $this->record('.', null);
         }
-        $this->tokens [] = 'IDENT';
+        $this->tokens_ [] = 'IDENT';
         continue;
       }
       elseif ($tok === 'SLASH') {
         $this->pos($this->pos()-1);
         assert ($this->peek() === '/');
-        $i = count($this->tokens);
+        $i = count($this->tokens_);
         $tok = 'REGEX'; 
         while ($i) {
-          $t = $this->tokens[--$i];
+          $t = $this->tokens_[--$i];
           if ($t === 'COMMENT') continue;
           elseif ($t === 'OPENER' || $t === 'OPERATOR') {
             break;
@@ -165,14 +170,13 @@ class JSScanner extends LuminousEmbeddedWebScript {
         break;
       
       assert($this->pos() > $index) or die("$tok didn't consume anything");
-      $this->tokens[] = $tok;
+      $this->tokens_[] = $tok;
       
       $tag = $tok;
       if ($tok === 'OPENER')
         $tag = null;
-      $this->tag($m, $tag, $escaped);
+      $this->record($m, $tag, $escaped);
 
     }
-    return $this->out;
   }
 }

@@ -38,13 +38,14 @@ class PHPScanner extends  LuminousEmbeddedWebScript {
   function scan_child() {
     $s = $this->child_scanners['html'];
     $s->pos($this->pos());
-    $out = $s->main();
-    $this->tag($out, null, true);
+    $s->main();
+    $this->tokens = array_merge($this->tokens, $s->token_array());
     $this->pos($s->pos());
   }
   
   function main() {
     $inphp = false;
+    $this->start();
     while (!$this->eos()) {
       $tok = null;      
       if (!$inphp) {
@@ -59,10 +60,10 @@ class PHPScanner extends  LuminousEmbeddedWebScript {
       if (($match = $this->next_match()) !== null) {
         $tok = $match[0];
         if ($match[1] > $index) {
-          $this->tag(substr($this->string(), $index, $match[1] - $index), null);
+          $this->record(substr($this->string(), $index, $match[1] - $index), null);
         }
       } else {
-        $this->tag(substr($this->string(), $index), null);
+        $this->record(substr($this->string(), $index), null);
         break;
       }
       
@@ -81,8 +82,7 @@ class PHPScanner extends  LuminousEmbeddedWebScript {
         if ($tok === 'IDENT') $tok = null;
       }
       assert($this->pos() > $index) or die("$tok didn't consume anything");
-      $this->tag($this->match(), $tok);
+      $this->record($this->match(), $tok);
     }
-    return $this->out;
   }
 }

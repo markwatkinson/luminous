@@ -45,7 +45,7 @@ class CSSScanner extends LuminousEmbeddedWebScript {
       if (!$this->clean_exit) {
         
         $tok = $this->resume();
-        $this->tag($this->match(), $tok);
+        $this->record($this->match(), $tok);
         continue;
         
       }
@@ -123,7 +123,7 @@ class CSSScanner extends LuminousEmbeddedWebScript {
       
      if ($this->server_break($tok)) break;
       
-      $this->tag($get? $this->get() : $this->match(), $tok);
+      $this->record($get? $this->get() : $this->match(), $tok);
       assert($this->pos() > $pos || $this->eos()) or die();
       
     }

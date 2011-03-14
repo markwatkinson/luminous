@@ -370,17 +370,51 @@ class LuminousScanner extends Scanner {
     return htmlspecialchars($string, ENT_NOQUOTES);
   }
   
-  function tag($string, $type, $escaped=false) {
-    if ($string === null) return;
-    if (!$escaped)
+  function fire($event, $data) {
+    return $data;
+  }
+  
+//   function tag($string, $type, $escaped=false) {
+//     assert(0);
+//     if ($string === null) return;
+//     if (isset($this->rule_tag_map[$type])) $type = $this->rule_tag_map[$type];
+//     if (!$escaped)
+//       $string = self::escape_string($string);
+//     
+//     if ($type !== null) {
+//       $open = '<' . $type . '>';
+//       $close = '</' . $type . '>';
+//       $this->out .= $open . str_replace("\n", $close . "\n" . $open, $string) . $close;
+//     }
+//     else $this->out .= $string;
+//   }
+  
+  function start() {
+    $this->tokens = array();
+  }
+  
+  function record($string, $type) {    
+    if (isset($this->rule_tag_map[$type])) $type = $this->rule_tag_map[$type];
+    $this->tokens[] = array($type, $string);
+  }
+  
+  function tagged() {
+    $out = '';
+    foreach($this->tokens as $t) {
+      list($type, $string) = $t;
       $string = self::escape_string($string);
-    if ($type !== null) {
-      if (isset($this->rule_tag_map[$type])) $type = $this->rule_tag_map[$type];
-      $open = '<' . $type . '>';
-      $close = '</' . $type . '>';
-      $this->out .= $open . str_replace("\n", $close . "\n" . $open, $string) . $close;
+      if ($type !== null) {
+        $open = '<' . $type . '>';
+        $close = '</' . $type . '>';
+        $out .= $open . str_replace("\n", $close . "\n" . $open, $string) . $close;
+      }
+      else $out .= $string;
     }
-    else $this->out .= $string;
+    return $out;
+  }
+  
+  function token_array() {
+    return $this->tokens;
   }
   
   function map_identifier($ident) {
@@ -402,7 +436,7 @@ class LuminousScanner extends Scanner {
   
   function skip_whitespace() {
     if (ctype_space($this->peek())) {
-      $this->tag($this->scan('/\s+/'), null);
+      $this->record($this->scan('/\s+/'), null);
     }    
   }
   
@@ -557,7 +591,7 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
     }
     if ($match === null) $match = $this->match();
     if (($pos = stripos($match, $this->server_tags)) !== false) {
-      $this->tag(substr($match, 0, $pos), $state);
+      $this->record(substr($match, 0, $pos), $state);
       if ($offset === null) $offset = $this->match_pos();
       $this->pos($offset + $pos);
       $this->dirty_exit($state);
@@ -573,7 +607,7 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
     if (!$this->embedded_html) return false;
     if ($match === null) $match = $this->match();
     if (($pos = stripos($this->match(), $this->script_tags)) !== false) {
-      $this->tag(substr($match, 0, $pos), $state);
+      $this->record(substr($match, 0, $pos), $state);
       if ($offset === null) $offset = $this->match_pos();
       $this->pos($offset + $pos);
       $this->clean_exit = true;
