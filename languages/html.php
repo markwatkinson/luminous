@@ -90,7 +90,6 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
           $skip = $next[1] - $this->pos();
           $this->tag($this->get($skip), null);
           if ($next[0] === 'TERM') {
-            $this->clean_exit = false;
             break;
           }
         }

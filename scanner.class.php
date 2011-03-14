@@ -440,7 +440,7 @@ class LuminousScanner extends Scanner {
 
 
 
-/*
+/**
  * Web languages get their own special class because they have to deal with
  * server-script code embedded inside them and the potential for languages
  * nested under them (PHP has HTML, HTML has CSS and JavaScript)
@@ -451,7 +451,8 @@ class LuminousScanner extends Scanner {
  * The scanners should be persistent, so only one JavaScript scanner exists
  * even if there are 20 javascript tags. This is so they can keep persistent 
  * state, which might be necessary if they are interrupted by server-side. In
- * this case, they are said to have a 'dirty exit'.
+ * the case that they are interrupted in the middle of a rule which has to be 
+ * resumed when the scanner is next called, it is said to be a 'dirty exit'.
  */
 abstract class LuminousEmbeddedWebScript extends LuminousScanner {
   
@@ -467,7 +468,7 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
   public $script_tags;
   
   /** 
-   * Signifies whether the program exited due to interruption by 
+   * Signifies whether the program exited due to inconvenient interruption by 
    * a parent language (i.e. a server-side langauge), or whether it reached 
    * a legitimate break.
    */
@@ -505,6 +506,13 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
    * Sets the exit data to signify it was a dirty exit
    */
   function dirty_exit($state) {
+    // if we don't know how to recover from it, there's no point tagging 
+    // this as a dirty exit.
+    // XXX is this okay?
+    if (!isset($this->dirty_exit_recovery[$this->exit_state])) {
+      $this->clean_exit = true;
+      return;
+    }
     $this->exit_state = $state;
     $this->clean_exit = false;
   }
@@ -528,7 +536,7 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
     assert (!$this->clean_exit) or die();
     $this->clean_exit = true;
     if (!isset($this->dirty_exit_recovery[$this->exit_state])) {
-      assert(0) or die("No such state exit data: {$this->exit_state}");
+      assert(0) or die("No such state exit data: {$this}");
       return null;
     }
     $pattern = $this->dirty_exit_recovery[$this->exit_state];
