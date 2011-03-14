@@ -25,6 +25,41 @@ class LuminousFilters {
     return $token;
   }
   
+  static function pcre($token) {
+    $token = self::string($token);
+    $str = &$token[1];
+    $flags = array();
+    if (preg_match("/[[:alpha:]]+$/", $str, $matches)){
+      $m = $matches[0];
+      $flags = str_split($m);
+      $str = preg_replace("/(?<![[:alnum:]\s])[[:alpha:]]+$/", 
+        "<KEYWORD>$0</KEYWORD>", $str);
+    }
+    $str = preg_replace("/((?<!\\\)[\*\+\.|])|((?<![\(\\\])\?)/",
+                          "<REGEX_OPERATOR>$0</REGEX_OPERATOR>", $str);  
+    $str = preg_replace("/(?<=\()\?(?:(?:[a-zA-Z:!|=])|(?:(?:&lt;)[=!]))/", 
+      "<REGEX_SUBPATTERN>$0</REGEX_SUBPATTERN>",  $str);
+    $str = preg_replace("/(?<!\\\)[\(\)]/", 
+      "<REGEX_SUBPATTERN_MARKER>$0</REGEX_SUBPATTERN_MARKER>", $str);
+    $str = preg_replace("/(?<!\\\)[\[\]]/", 
+      "<REGEX_CLASS_MARKER>$0</REGEX_CLASS_MARKER>",  $str);    
+    $str = preg_replace("/(?<!\\\)
+      \{
+        (
+          ((?>\d+)(,(?>\d+)?)?)
+          |
+          (,(?>\d+))
+        )
+      \}/x", "<REGEX_REPEAT_MARKER>$0</REGEX_REPEAT_MARKER>",  $str);
+      
+    // extended regex: # signifies a comment
+    if (in_array('x', $flags))
+      $str = preg_replace('/(?<!\\\)#.*$/m', '<COMMENT>$0</COMMENT>',
+        $str); 
+    return $token;
+  }
+  
+  
   static function doc_comment($token) {
     
   }
