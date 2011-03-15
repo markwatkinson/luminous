@@ -380,6 +380,8 @@ class LuminousScanner extends Scanner {
   
   protected $rule_tag_map = array();
   
+  protected $user_defs;
+  
   function __construct($src=null) {
     parent::__construct($src);
     
@@ -388,12 +390,22 @@ class LuminousScanner extends Scanner {
     $this->add_filter('comment-to-doc', 'COMMENT', array('LuminousFilters', 'generic_doc_comment'));
     $this->add_filter('string-escape', 'STRING', array('LuminousFilters', 'string'));
     $this->add_filter('pcre', 'REGEX', array('LuminousFilters', 'pcre'));
+    $this->add_filter('defs', 'IDENT', array($this, 'user_def_filter'));
   }
   
   
   
   
   protected $case_sensitive = true;
+  
+  
+  protected function user_def_filter($token) {
+    if ($token[0] === 'IDENT' && isset($this->user_defs[$token[1]])) {
+      $token[0] = $this->user_defs[$token[1]];
+    }
+    return $token;
+  }
+  
   
   
   function init() {}
@@ -434,10 +446,8 @@ class LuminousScanner extends Scanner {
   }
   
   
-  // this isn't used
-  function add_range_check($pattern, $callback) {
-    $this->stop_at[] = array($pattern, $callback);
-  }
+  
+
   
   function state() {
     if (!isset($this->state_[0])) return null;

@@ -26,11 +26,8 @@ class PHPScanner extends  LuminousEmbeddedWebScript {
     $this->add_pattern('IDENT', '/[a-zA-Z_]\w*/');
     $this->add_pattern('STRING', LuminousTokenPresets::$DOUBLE_STR);
     $this->add_pattern('STRING', LuminousTokenPresets::$SINGLE_STR);
-    
     $this->add_identifier_mapping('FUNCTION', $GLOBALS['luminous_php_functions']);
     $this->add_identifier_mapping('KEYWORD', $GLOBALS['luminous_php_keywords']);
-    
-    
   }
   
   function init() {}
@@ -42,10 +39,12 @@ class PHPScanner extends  LuminousEmbeddedWebScript {
     $this->tokens = array_merge($this->tokens, $s->token_array());
     $this->pos($s->pos());
   }
+
   
   function main() {
     $inphp = false;
     $this->start();
+    $expecting = false;
     while (!$this->eos()) {
       $tok = null;      
       if (!$inphp) {
@@ -78,11 +77,31 @@ class PHPScanner extends  LuminousEmbeddedWebScript {
       
       
       if ($tok === 'IDENT') {
-        $tok = $this->map_identifier($this->match());
-        if ($tok === 'IDENT') $tok = null;
+        $m = $this->match();
+        $tok = $this->map_identifier($m);
+        if ($expecting) {
+          if($tok === 'IDENT') {
+            if ($expecting === 'class') {              
+               $this->user_defs[$m] = 'TYPE';
+              $tok = 'USER_FUNCTION';
+            }
+            elseif($expecting === 'function') {
+              $this->user_defs[$m] = 'FUNCTION';
+              $tok = 'USER_FUNCTION';
+            }
+            else assert(0);
+          }
+        }
+        $expecting = false;
+            
+        if ($tok === 'KEYWORD') {
+          if ($m === 'class') $expecting = 'class';
+          elseif($m === 'function') $expecting = 'function';
+        }
       }
       assert($this->pos() > $index) or die("$tok didn't consume anything");
       $this->record($this->match(), $tok);
     }
   }
 }
+

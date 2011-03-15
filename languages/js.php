@@ -89,7 +89,7 @@ class JSScanner extends LuminousEmbeddedWebScript {
     $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_ML);
     $this->add_pattern('COMMENT_SL', LuminousTokenPresets::$C_COMMENT_SL);
     // special case
-    $this->add_pattern('SLASH', '%/%');    
+    $this->add_pattern('SLASH', '%/%');
     
     $stop_patterns = array();
     if ($this->embedded_server) $stop_patterns[] = "(?P<SERVER><\\?)";
