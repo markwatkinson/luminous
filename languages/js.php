@@ -13,19 +13,14 @@ class JSScanner extends LuminousEmbeddedWebScript {
   
   function __construct($src=null) {
     
-    
-    
     $this->rule_tag_map = array(
       'COMMENT_SL' => 'COMMENT',
-      'DOCCOMMENT_SL' => 'DOCCOMMENT',
       'SSTRING' => 'STRING',
       'DSTRING' => 'STRING'
     );
     $this->dirty_exit_recovery = array(
       'COMMENT_SL' => '/.*/',
-      'DOCCOMMENT_SL' => '/.*/',
       'COMMENT' => '%.*\*/%s',
-      'DOCCOMMENT' => '%.*\*/%s',
       'SSTRING' => "/(?:[^\\\\']+|\\\\.)*'/",
       'DSTRING' => '/(?:[^\\\\"]+|\\\\.)*"/'
     );
@@ -52,24 +47,50 @@ class JSScanner extends LuminousEmbeddedWebScript {
       
       'document',
       'undefined', 'window'));
-
-    $this->add_pattern('IDENT', '/(\\.?)(?>[a-zA-Z_$]+[_$\w]*)(?>\\.[a-zA-Z_$]+[_$\w]*)*/'); 
-    // NOTE: slash is a special case, and </ may be a script close
-    $this->add_pattern('OPERATOR', '@[=!+*%\-&^|~:?\.>]+|<(?![/?])@');
-    // we care about openers for figuring out where regular expressions are
-    $this->add_pattern('OPENER', '/[\[\{\(]+/');
-    $this->add_pattern('NUMERIC', '/0x[a-f0-9]+/');
-    $this->add_pattern('NUMERIC', '/(?>\.?\d+|\d+\.?)(?:e[+-]?\d+)?/i');
-    $this->add_pattern('SSTRING', "/' (?: [^'\\\\]+ | \\\\.)* (?:'|$)/xs");
-    $this->add_pattern('DSTRING', '/" (?: [^"\\\\]+ | \\\\.)* (?:"|$)/xs');
-    $this->add_pattern('DOCCOMMENT', '% /\*[*!] .*? \*/ %sx');
-    $this->add_pattern('DOCCOMMENT_SL', '%//[/!].*%');
-    $this->add_pattern('COMMENT', '% /\*(?!\*!) .*? \*/ %sx');
-    $this->add_pattern('COMMENT_SL', '%//(?!/!).*%');
-    $this->add_pattern('SLASH', '%/%');
+  }
+  
+  static function is_regex($tokens) {
+    $i = count($tokens);    
+    while ($i) {
+      $t = $tokens[--$i];
+      if ($t === 'COMMENT' || $t === 'COMMENT_SL') continue;
+      elseif ($t === 'OPENER' || $t === 'OPERATOR') {
+        return true;
+      }
+      return false;
+    }
+    return true;
   }
   
   function init() {
+    
+    $op_pattern = '[=!+*%\-&^|~:?\.>';
+    if (!($this->embedded_server || $this->embedded_html)) 
+      $op_pattern .= '<]+';
+    else {
+      // build an alternation with a < followed by a lookahead
+      $op_pattern .= ']|<(?![';
+      if ($this->embedded_server) $op_pattern .= '?';
+      if ($this->embedded_html) $op_pattern .= '/';
+      $op_pattern .= '])'; // closes lookahead
+      $op_pattern = "(?:$op_pattern)+";
+    }
+    $op_pattern = "@$op_pattern@";
+    
+    $this->add_pattern('IDENT', '/(\\.?)(?>[a-zA-Z_$]+[_$\w]*)(?>\\.[a-zA-Z_$]+[_$\w]*)*/'); 
+    // NOTE: slash is a special case, and </ may be a script close
+    $this->add_pattern('OPERATOR', $op_pattern);
+    // we care about openers for figuring out where regular expressions are
+    $this->add_pattern('OPENER', '/[\[\{\(]+/');
+    $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
+    $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
+    $this->add_pattern('SSTRING', LuminousTokenPresets::$SINGLE_STR);
+    $this->add_pattern('DSTRING', LuminousTokenPresets::$DOUBLE_STR);    
+    $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_ML);
+    $this->add_pattern('COMMENT_SL', LuminousTokenPresets::$C_COMMENT_SL);
+    // special case
+    $this->add_pattern('SLASH', '%/%');    
+    
     $stop_patterns = array();
     if ($this->embedded_server) $stop_patterns[] = "(?P<SERVER><\\?)";
     if ($this->embedded_html) $stop_patterns[] = "(?P<SCRIPT_TERM></script>)";
@@ -129,32 +150,17 @@ class JSScanner extends LuminousEmbeddedWebScript {
         continue;
       }
       elseif ($tok === 'SLASH') {
-        $this->pos($this->pos()-1);
-        assert ($this->peek() === '/');
-        $i = count($this->tokens_);
-        $tok = 'REGEX'; 
-        while ($i) {
-          $t = $this->tokens_[--$i];
-          if ($t === 'COMMENT') continue;
-          elseif ($t === 'OPENER' || $t === 'OPERATOR') {
-            break;
-          } else {
-            $tok = 'OPERATOR';
-            $m = $this->get();
-          }
-          break;
-        }
-        // do this outside the while loop so we're sure it executes 
-        // (in the case of 0 length token array)
-        if ($tok === 'REGEX') {
+        if (self::is_regex($this->tokens_)) {
+          $this->unscan();
+          assert ($this->peek() === '/');          
+          $tok = 'REGEX';
           $m = $this->scan('% / (?: [^/\\\\]+ | \\\\.)* (?:/[ioxgm]*|$)%sx');
           assert ($m !== null) or die();
+        } else {
+          $tok = 'OP';
         }
       }
       elseif ($tok === 'STOP') {
-        if ($this->match() === '<?') {
-          dirty_exit(null);
-        }
         $this->unscan();
         break;
       }
@@ -162,7 +168,7 @@ class JSScanner extends LuminousEmbeddedWebScript {
       
       if ($this->server_break($tok)) break;
       
-      if (($tok === 'COMMENT_SL' || $tok === 'DOCCOMMENT_SL')
+      if (($tok === 'COMMENT_SL')
         && $this->script_break($tok)
       ) 
         break;
