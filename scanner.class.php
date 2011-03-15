@@ -376,12 +376,14 @@ class LuminousScanner extends Scanner {
   protected $stop_at = array();
   
   protected $filters = array();
+  protected $stream_filters = array();
   
   protected $rule_tag_map = array();
   
   function __construct($src=null) {
     parent::__construct($src);
     
+    $this->add_filter('ident', 'IDENT', create_function('$tok', '$tok[0] = null; return $tok;'));
     $this->add_filter('comment-note', 'COMMENT', array('LuminousFilters', 'comment_note'));    
     $this->add_filter('comment-to-doc', 'COMMENT', array('LuminousFilters', 'generic_doc_comment'));
     $this->add_filter('string-escape', 'STRING', array('LuminousFilters', 'string'));
@@ -417,6 +419,18 @@ class LuminousScanner extends Scanner {
     }
     if (!isset($this->filters[$token])) $this->filters[$token] = array();
     $this->filters[$token][] = array($name, $filter);
+  }
+  
+  public function add_stream_filter($arg1, $arg2=null) {
+    $filter = null;
+    $name = null;
+    if ($arg2 === null) {
+      $filter = $arg1; 
+    } else {
+      $filter = $arg2;
+      $name = $arg1;
+    }
+    $this->stream_filters[] = array($name, $filter);
   }
   
   
@@ -466,7 +480,11 @@ class LuminousScanner extends Scanner {
   // TODO safety check: this should only be called once. Probably.
   // TODO this would be faster (probably) if we could once-generate a compose 
   // function instead of the inner loop
-  function process_filters() {    
+  function process_filters() {
+    
+    foreach($this->stream_filters as $f) {
+      $this->tokens = call_user_func($f[1], $this->tokens);
+    }
     if (empty($this->filters))
       return;
     foreach($this->tokens as $k=>$t) {
@@ -492,6 +510,8 @@ class LuminousScanner extends Scanner {
       if ($type !== null) {
         $open = '<' . $type . '>';
         $close = '</' . $type . '>';
+        // should this be a stream filter which splits tokens?
+        // probably not.
         $out .= $open . str_replace("\n", $close . "\n" . $open, $string) . $close;
       }
       else $out .= $string;
