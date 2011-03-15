@@ -119,3 +119,24 @@ test_regex(LuminousTokenPresets::$NUM_REAL, '.234E5678', '.234E5678');
 
 
 
+
+
+
+////////////////////////////////////////////////////////////////////////////
+// Comments
+test_regex(LuminousTokenPresets::$C_COMMENT_SL, 'xyz', false);
+test_regex(LuminousTokenPresets::$C_COMMENT_SL, 'x//h', '//h');
+test_regex(LuminousTokenPresets::$C_COMMENT_SL, 'x// line
+nextline', '// line');
+
+
+test_regex(LuminousTokenPresets::$C_COMMENT_ML, 'xyz', false);
+test_regex(LuminousTokenPresets::$C_COMMENT_ML, 'x//h', false);
+test_regex(LuminousTokenPresets::$C_COMMENT_ML, '/* comment */', '/* comment */');
+test_regex(LuminousTokenPresets::$C_COMMENT_ML, '/* comment ', '/* comment ');
+test_regex(LuminousTokenPresets::$C_COMMENT_ML, '/* line
+nextline
+*/', '/* line
+nextline
+*/');
+
