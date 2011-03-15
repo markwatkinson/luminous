@@ -298,11 +298,7 @@ class Scanner {
     $nearest_match_data = null;
 
     foreach($this->patterns as $k=>$p_data) {
-      $p_data = $this->patterns[$k];
-      $name = $p_data[0];
-      $pattern = $p_data[1];
-      $index = $p_data[2];
-      $match_data = $p_data[3];
+      list($name, $pattern, $index, $match_data) = $p_data;
       
       if ($index !== false && $index < $target) {
         $index = $this->ss->PregSearch($pattern, $target, $dontcare_ref, $match_data);
