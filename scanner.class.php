@@ -88,9 +88,13 @@ class Scanner {
   
   /**
    * Optionally sets and returns the current string being scanned
+   * If a string is passed, it is set as the current string. Its line endings
+   * will be converted to Unix form (\\n, LF)
    */
   function string($s=null) {
     if ($s !== null) {
+      $s = str_replace("\r\n", "\n", $s);
+      $s = str_replace("\r", "\n", $s);
       $this->src = $s;
       $this->src_len = strlen($s);
       $this->reset();
