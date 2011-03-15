@@ -342,7 +342,10 @@ abstract class LuminousTokenPresets {
   static $DOUBLE_STR = '/" (?: [^"\\\\]+ | \\\\.)* (?:"|$)/xs';
   static $SINGLE_STR = "/' (?: [^'\\\\]+ | \\\\.)* (?:'|$)/xs";
   static $NUM_HEX = '/0x[a-fA-F0-9]+/';
-  static $NUM_REAL = '/(?>\.?\d+|\d+\.?)(?:e[+-]?\d+)?/i';
+  static $NUM_REAL = '/
+    (?: \d+ (?: \.\d+ )? | \.?\d+)     # int, fraction or significand 
+    (?:e[+-]?\d+)?                     # exponent
+    /ix';
   static $C_COMMENT_SL = '% // .* %x';
   static $C_COMMENT_ML = '% / \* .*? (?: \*/ | $) %sx';  
 }
