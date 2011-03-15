@@ -179,6 +179,7 @@ class LuminousFilters {
    */
   static function pcre($token) {
     $token = self::string($token);
+    $token = LuminousUtils::escape_token($token);
     $str = &$token[1];
     $flags = array();
     if (preg_match("/[[:alpha:]]+$/", $str, $matches)){
