@@ -56,7 +56,8 @@ $fmted = $formatter->format($tagstr);
 <body>
 <?
 $total = $t1 - $t;
-echo $total . '<br>' . (strlen($src)/$total/1024) . 'KiB/s';
+echo $total . '<br>' . (strlen($src)/$total/1024) . 'KiB/s<br>';
+echo "memory: " . memory_get_peak_usage()/1024/1024 . 'MiB<br>';
 echo $fmted;
 ?>
 </body>
