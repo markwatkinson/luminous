@@ -1,11 +1,33 @@
 <?php
 
-
+/*
+ * Quick note on filters:
+ * 
+ * Filters are things which are supposed to manipulate individual matched tokens
+ * They take in a token and are epxected to either manipulate the text or the
+ * token type. 
+ * 
+ * If they wish to insert embedded tokens, currently the way to do this is to
+ * actually not inject anything into the token stream (which is flat), but to
+ * tag the nested tokens with XML tags (this is the end result anyway). In this
+ * case they will need to call LuminousUtils::escape_token($token); to escape 
+ * the text. If $token[2] is true, that means the text is already escaped. It's
+ * safe to call escape_token again, but it may affect your search logic (
+ * angle brackets and ampersands are escaped to HTML entitiy codes, i.e. 
+ * &lt;, &gt; and &amp;).
+ * 
+ * All filters take in a token and return the new token.
+ * 
+ * TODO: filters which can manipulate the whole token stream.
+ */
 
 // Poor man's namespace.
 class LuminousFilters {
   
-  
+  /**
+   * returns the expected number of arguments to a doxygen command
+   * This is either 0 or 1 at the moment
+   */
   private static function doxygen_arg_length($command) {
     switch(strtolower($command)) {
       case "addtogroup":
@@ -48,7 +70,10 @@ class LuminousFilters {
     }
   }
   
-  
+  /**
+   * Highlights Doxygen-esque doc-comment syntax.
+   * This is a callback to doxygenize.
+   */
   static function doxygenize_cb($matches) {
     $lead = $matches[1];
     $tag_char = $matches[2];
@@ -90,6 +115,10 @@ class LuminousFilters {
     }
   }
   
+  /**
+   * Highlights Doxygen-esque doc-comment syntax.
+   * see also doxygenize_cb
+   */
   static function doxygenize($token) {
     $token = LuminousUtils::escape_token($token);    
     $token[1] = preg_replace_callback("/(^(?>[\/\*#\s]*))([\@\\\])([^\s]*)([ \t]+.*?)?$/m",
@@ -97,15 +126,28 @@ class LuminousFilters {
     return $token;
     
   }
-  
+  /**
+   * Tries to turn a comment into a doc-comment, if applicable
+   */
   static function generic_doc_comment($token) {
-    if (preg_match('/^.(.)\\1(?!\\1)/', $token[1])) {
+    // checks if a comment is in the form:
+    // xyyz where x may = y but y != z.
+    // This matches, say, /** comment  but does not match /********/
+    //  same with /// comment but not ///////////////
+    $s = $token[1];
+    if (isset($s[3])
+      && $s[2] === $s[1]
+      && $s[3] !== $s[2])
+    {
       $token[0] = 'DOCCOMMENT';
       $token = self::doxygenize($token);
     }
     return $token;    
-    
   }
+  
+  /**
+   * Highlights keywords in comments, i.e. NOTE, XXX, FIXME, TODO, HACK, BUG
+   */
   static function comment_note($token) {
       $token = LuminousUtils::escape_token($token);
       $token[1] = preg_replace('/\\b(?:NOTE|XXX|FIXME|TODO|HACK|BUG):?/',
@@ -113,8 +155,13 @@ class LuminousFilters {
       return $token;
   }
   
+  /**
+   * Highlights escape sequences in strings.
+   */
   static function string($token) {
-    $token = LuminousUtils::escape_token($token);
+    if (strpos($token[1], '\\') === false) return $token;
+    
+    $token = LuminousUtils::escape_token($token);    
     $token[1] = preg_replace('/
     \\\\
     (?:
@@ -127,6 +174,9 @@ class LuminousFilters {
     return $token;
   }
   
+  /**
+   * Tries to highlight PCRE syntax
+   */
   static function pcre($token) {
     $token = self::string($token);
     $str = &$token[1];
@@ -161,10 +211,6 @@ class LuminousFilters {
     return $token;
   }
   
-  
-  static function doc_comment($token) {
-    
-  }
 }
   
   
