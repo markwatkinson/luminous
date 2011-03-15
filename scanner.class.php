@@ -334,13 +334,13 @@ class Scanner {
 
 
 
-class LuminousTokenPresets {
+abstract class LuminousTokenPresets {
   static $DOUBLE_STR = '/" (?: [^"\\\\]+ | \\\\.)* (?:"|$)/xs';
   static $SINGLE_STR = "/' (?: [^'\\\\]+ | \\\\.)* (?:'|$)/xs";
   static $NUM_HEX = '/0x[a-fA-F0-9]+/';
   static $NUM_REAL = '/(?>\.?\d+|\d+\.?)(?:e[+-]?\d+)?/i';
   static $C_COMMENT_SL = '% // .* %x';
-  static $C_COMMENT_ML = '% / \* .*? (?: \*/ | $) %sx';
+  static $C_COMMENT_ML = '% / \* .*? (?: \*/ | $) %sx';  
 }
 
 
@@ -351,7 +351,14 @@ class LuminousTokenPresets {
 
 
 
-
+/**
+ * A note on tokens: Tokens are stored as an array with the following indices:
+ *      0:   Token name   (e.g. 'COMMENT'
+ *      1:   Token string (e.g. '// foo')
+ *      2:   escaped?      Because it's often more convenient to embed nested
+ *              tokens by tagging token string, we need to escape it. This 
+ *              index stores whether or nto it has been escaped.
+ */
 
 class LuminousScanner extends Scanner {
   protected $ident_map = array();
@@ -372,13 +379,15 @@ class LuminousScanner extends Scanner {
     $this->add_filter('comment-to-doc', 'COMMENT', array('LuminousFilters', 'generic_doc_comment'));
     $this->add_filter('string-escape', 'STRING', array('LuminousFilters', 'string'));
     $this->add_filter('pcre', 'REGEX', array('LuminousFilters', 'pcre'));
-    
-    
   }
+  
+  
   
   
   protected $case_sensitive = true;
   
+  
+  function init() {}
   
   /*
    * args are;  ([name], token, filter)
@@ -628,7 +637,7 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
    * Initialises the scanner ready to scan. This should involve setting up 
    * rules observing the $embedded* class members
    */
-  abstract function init();
+//   abstract function init();
   
   
   

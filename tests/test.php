@@ -40,7 +40,7 @@ $lang = $_GET['lang'];
 $test = isset($_GET['test'])? $_GET['test'] : $_GET['lang'];
 $src = file_get_contents($tests[$test]);
 $scanner = new $scanners[$lang]($src);
-
+$scanner->init();
 $t = microtime(true);
 $scanner->main($src);
 $tagstr = $scanner->tagged();
