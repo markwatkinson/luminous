@@ -78,26 +78,20 @@ class PHPScanner extends  LuminousEmbeddedWebScript {
       
       if ($tok === 'IDENT') {
         $m = $this->match();
-        $tok = $this->map_identifier($m);
-        if ($expecting) {
-          if($tok === 'IDENT') {
-            if ($expecting === 'class') {              
-               $this->user_defs[$m] = 'TYPE';
-              $tok = 'USER_FUNCTION';
-            }
-            elseif($expecting === 'function') {
-              $this->user_defs[$m] = 'FUNCTION';
-              $tok = 'USER_FUNCTION';
-            }
-            else assert(0);
+        if ($m === 'class') $expecting = 'class';
+        elseif ($m === 'function') $expecting = 'function';
+        else {
+          if ($expecting === 'class') {                      
+            $this->user_defs[$m] = 'TYPE';
+            $tok = 'USER_FUNCTION';
           }
+          elseif($expecting === 'function') {
+            $this->user_defs[$m] = 'FUNCTION';
+            $tok = 'USER_FUNCTION';
+          }
+          $expecting = false;
         }
-        $expecting = false;
-            
-        if ($tok === 'KEYWORD') {
-          if ($m === 'class') $expecting = 'class';
-          elseif($m === 'function') $expecting = 'function';
-        }
+        
       }
       assert($this->pos() > $index) or die("$tok didn't consume anything");
       $this->record($this->match(), $tok);
