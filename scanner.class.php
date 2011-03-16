@@ -414,10 +414,12 @@ class LuminousScanner extends Scanner {
       if ($tokens[$i][0] !== 'IDENT') continue;
       if ($i > 0) {
         $s = $tokens[$i-1][1];
-        if ($s === '.' || $s === '->' || $s === '::')
+        if ($s === '.' || $s === '->' || $s === '::') {
           $tokens[$i][0] = 'OO';
+          continue;
+        }
       }
-      elseif ($i < $c-1) {
+      if ($i < $c-1) {
         $s = $tokens[$i+1][1];
         if ($s === '.' || $s === '->' || $s === '::')
           $tokens[$i][0] = 'OBJ';
