@@ -33,7 +33,7 @@ class Scanner {
    * 
    * Numerical indices are used for performance.
    */
-  private $match_history = array();
+  private $match_history = array(null, null);
   
   /// LuminousStringSearch instance (caches preg_* results)
   private $ss;
@@ -141,9 +141,11 @@ class Scanner {
    * no matches have been recorded.
    */
   function match() {
-    if (empty($this->match_history))
-      throw new Exception('match history empty');
-    return $this->match_history[ count($this->match_history) -1][2][0];
+    $index = false;
+    if (isset($this->match_history[0])) {
+      return $this->match_history[0][2][0];
+    }
+    throw new Exception('match history empty');
   }
   
   /**
@@ -153,9 +155,9 @@ class Scanner {
    * Throws Exception if no matches have been recorded.
    */  
   function match_groups() {
-     if (empty($this->match_history))
-      throw new Exception('match history empty');
-    return $this->match_history[ count($this->match_history) -1][2];
+    if (isset($this->match_history[0])) 
+      return $this->match_history[0][2];    
+    throw new Exception('match history empty');  
   }  
   
   /**
@@ -166,9 +168,9 @@ class Scanner {
    * Throws Exception if no matches have been recorded.
    */   
   function match_group($g=0) {
-     if (empty($this->match_history))
-      throw new Exception('match history empty');
-    return $this->match_history[ count($this->match_history) -1][2][$g];
+    if (isset($this->match_history[0])) 
+      return $this->match_history[0][2][$g];    
+    throw new Exception('match history empty');
   }
   
   /**
@@ -177,18 +179,19 @@ class Scanner {
    * Throws Exception if no matches have been recorded.
    */     
   function match_pos() {
-    if (empty($this->match_history))
-      throw new Exception('match history empty');
-    return $this->match_history[ count($this->match_history) -1][1];
+    if (isset($this->match_history[0])) 
+      return $this->match_history[0][1];
+    
+    throw new Exception('match history empty');
   }  
   
   private function __log_match($index, $match_pos, $match_data) {
-    if (isset($this->match_history[1])) array_shift($this->match_history);
-    $this->match_history[] = array(
-      $index,
-      $match_pos,
-      $match_data
-    );
+    if (isset($this->match_history[0])) {
+      $this->match_history[1] = $this->match_history[0];
+    }
+    $this->match_history[0][0] = $index;
+    $this->match_history[0][1] = $match_pos;
+    $this->match_history[0][2] = $match_data;   
   }
   
   /**
@@ -199,10 +202,16 @@ class Scanner {
    * unscannable.
    */
   function unscan() {
-    if (empty($this->match_history))
+    if (isset($this->match_history[0])) {
+      $this->index = $this->match_history[0][0];      
+      $this->match_history[0] = $this->match_history[1];      
+      $this->match_history[1] = null;
+    }
+    else
       throw new Exception('match history empty');
-    $data = array_pop($this->match_history);
-    $this->index = $data[0];
+    
+//     $data = array_pop($this->match_history);
+//     $this->index = $data[0];
   }
   
   private function __consume($pos, $consume_match, $match_data) {
@@ -493,22 +502,26 @@ class LuminousScanner extends Scanner {
   // TODO safety check: this should only be called once. Probably.
   // TODO this would be faster (probably) if we could once-generate a compose 
   // function instead of the inner loop
+  
+  // edit: due to php's stupid object model, I don't think it's actually 
+  // possible to create a function composition in this context.
   function process_filters() {
     
     foreach($this->stream_filters as $f) {
       $this->tokens = call_user_func($f[1], $this->tokens);
     }
     if (empty($this->filters))
-      return;
+      return;   
+        
     foreach($this->tokens as $k=>$t) {
       $tok = $t[0];
       if (isset($this->filters[$tok])) {
-        foreach($this->filters[$tok] as $f) {
-          $t = call_user_func($f[1], $t);
-        }
+        foreach($this->filters[$tok] as $filter) {          
+          $t = call_user_func($filter[1], $t);
+        }        
+        $this->tokens[$k] = $t;
       }
-      $this->tokens[$k] = $t;
-    }
+    } 
   }
   
   
