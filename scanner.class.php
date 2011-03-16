@@ -380,13 +380,15 @@ class LuminousScanner extends Scanner {
   
   function __construct($src=null) {
     parent::__construct($src);
+
+    $this->add_filter('map-ident', 'IDENT', array($this, 
+      'map_identifier_filter'));
     
-    $this->add_filter('ident', 'IDENT', create_function('$tok', '$tok[0] = null; return $tok;'));
     $this->add_filter('comment-note', 'COMMENT', array('LuminousFilters', 'comment_note'));    
     $this->add_filter('comment-to-doc', 'COMMENT', array('LuminousFilters', 'generic_doc_comment'));
     $this->add_filter('string-escape', 'STRING', array('LuminousFilters', 'string'));
     $this->add_filter('pcre', 'REGEX', array('LuminousFilters', 'pcre'));
-    $this->add_filter('defs', 'IDENT', array($this, 'user_def_filter'));
+    $this->add_filter('user-defs', 'IDENT', array($this, 'user_def_filter'));
   }
   
   
@@ -396,7 +398,7 @@ class LuminousScanner extends Scanner {
   
   
   protected function user_def_filter($token) {
-    if ($token[0] === 'IDENT' && isset($this->user_defs[$token[1]])) {
+    if (isset($this->user_defs[$token[1]])) {
       $token[0] = $this->user_defs[$token[1]];
     }
     return $token;
@@ -428,7 +430,15 @@ class LuminousScanner extends Scanner {
     if (!isset($this->filters[$token])) $this->filters[$token] = array();
     $this->filters[$token][] = array($name, $filter);
   }
-  
+
+  public function remove_filter($name) {
+    foreach($this->filters as $token=>$filters) {
+      foreach($filters as $k=>$f) {
+        if ($f[0] === $name) unset($this->filters[$token][$k]);
+      }
+    }
+  }
+
   public function add_stream_filter($arg1, $arg2=null) {
     $filter = null;
     $name = null;
@@ -441,37 +451,10 @@ class LuminousScanner extends Scanner {
     $this->stream_filters[] = array($name, $filter);
   }
   
-  
-  
-
-  
   function state() {
     if (!isset($this->state_[0])) return null;
     return $this->state_[count($this->state_)-1];
   }
-  
-  static function escape_string($string) {
-    return htmlspecialchars($string, ENT_NOQUOTES);
-  }
-  
-  function fire($event, $data) {
-    return $data;
-  }
-  
-//   function tag($string, $type, $escaped=false) {
-//     assert(0);
-//     if ($string === null) return;
-//     if (isset($this->rule_tag_map[$type])) $type = $this->rule_tag_map[$type];
-//     if (!$escaped)
-//       $string = self::escape_string($string);
-//     
-//     if ($type !== null) {
-//       $open = '<' . $type . '>';
-//       $close = '</' . $type . '>';
-//       $this->out .= $open . str_replace("\n", $close . "\n" . $open, $string) . $close;
-//     }
-//     else $this->out .= $string;
-//   }
   
   function start() {
     $this->tokens = array();
@@ -497,9 +480,10 @@ class LuminousScanner extends Scanner {
       $tok = $t[0];
       if (isset($this->filters[$tok])) {
         foreach($this->filters[$tok] as $f) {
-          $this->tokens[$k] = call_user_func($f[1], $t);
+          $t = call_user_func($f[1], $t);
         }
       }
+      $this->tokens[$k] = $t;
     }
   }
   
@@ -518,7 +502,8 @@ class LuminousScanner extends Scanner {
         $close = '</' . $type . '>';
         // should this be a stream filter which splits tokens?
         // probably not.
-        $out .= $open . str_replace("\n", $close . "\n" . $open, $string) . $close;
+        $out .= $open . str_replace("\n", $close . "\n" . $open, $string) .
+          $close;
       }
       else $out .= $string;
     }
@@ -528,13 +513,18 @@ class LuminousScanner extends Scanner {
   function token_array() {
     return $this->tokens;
   }
-  
-  function map_identifier($ident) {
+
+
+  function map_identifier($ident, $default='IDENT') {
     if (!$this->case_sensitive) $ident = strtolower($ident);
     foreach($this->ident_map as $n=>$hits) {
       if (isset($hits[$ident])) return $n;
     }
-    return 'IDENT';
+    return $default;
+  }
+  function map_identifier_filter($token) {
+    $token[0] = $this->map_identifier($token[1], null);
+    return $token;
   }
   
   function add_identifier_mapping($name, $matches) {
@@ -551,38 +541,7 @@ class LuminousScanner extends Scanner {
       $this->record($this->scan('/\s+/'), null);
     }    
   }
-  
-  
-// TODO
-//   static function explode_array($sepchars, $str) {
-//     $out = array();
-//   }
-  
-  // TODO multiple sep chars
-//   function handle_idents($oo_sep_char=false) {
-//     $m_ = $this->match();
-//     $s = explode($oo_sep_char, $m_);
-//     $limit = count($s)-1;
-//     foreach($s as $i=>$segment) {
-//       if ($segment === '') {
-//         $this->tag('.', null);
-//         continue;
-//       }
-//           $t = $this->map_identifier($segment);            
-//           if ($i === $limit) {
-//             if ($t === 'IDENT' && $i) $t = 'OO';
-//           } else {
-//             if ($t === 'IDENT') $t = 'OBJ';
-//           }
-//           $this->tag($segment, ($t==='IDENT')? null : $t);
-//           if ($i !== $limit) 
-//             $this->tag('.', null);
-//         }
-//         $this->tokens [] = 'IDENT';
-//         continue;    
-//   }
 }
-
 
 
 
