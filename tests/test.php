@@ -5,6 +5,7 @@ require_once('../languages/js.php');
 require_once('../languages/css.php');
 require_once('../languages/html.php');
 require_once('../languages/php.php');
+require_once('../languages/python.php');
 
 
 require_once '../luminous-r657/src/formatters/luminous_formatter.class.php';
@@ -23,6 +24,8 @@ $tests = array(
   'phpcss' => 'testdata/phpcss.php',
   
   'xml' => 'testdata/xml.xml',
+  
+  'python' => 'testdata/scanner.py'
 );
 
 $scanners = array(
@@ -30,7 +33,8 @@ $scanners = array(
   'css' => 'CSSScanner',
   'html' => 'HTMLScanner',
   'xml' => 'HTMLScanner',
-  'php' => 'PHPScanner'
+  'php' => 'PHPScanner',
+  'python' => 'PythonScanner'
 );
 
 $formatter = new LuminousFormatterHTML();
