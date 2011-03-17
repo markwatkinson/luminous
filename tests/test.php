@@ -1,11 +1,15 @@
 <?php
 
+assert_options(ASSERT_BAIL, 1);
+
 require_once('../scanner.class.php');
 require_once('../languages/js.php');
 require_once('../languages/css.php');
 require_once('../languages/html.php');
 require_once('../languages/php.php');
 require_once('../languages/python.php');
+require_once('../languages/diff.php');
+
 
 
 require_once '../luminous-r657/src/formatters/luminous_formatter.class.php';
@@ -13,6 +17,9 @@ require_once '../luminous-r657/src/formatters/htmlformatter.class.php';
 
 $tests = array(
   'js' => 'testdata/jquery-1.4.4.js',
+  'js1' => 'testdata/pythonic.js',
+  'js2' => 'testdata/mootools-core-1.3.1-full-compat.js',
+  
   'jsdense' => 'testdata/jquery-1.4.4.min.js',
   'jshtml' => 'testdata/jshtml.html',
   'phpjshtml' => 'testdata/jshtml.php',  
@@ -25,7 +32,9 @@ $tests = array(
   
   'xml' => 'testdata/xml.xml',
   
-  'python' => 'testdata/scanner.py'
+  'python' => 'testdata/scanner.py',
+  
+  'diff' => 'testdata/hg.diff'
 );
 
 $scanners = array(
@@ -34,7 +43,8 @@ $scanners = array(
   'html' => 'HTMLScanner',
   'xml' => 'HTMLScanner',
   'php' => 'PHPScanner',
-  'python' => 'PythonScanner'
+  'python' => 'PythonScanner',
+  'diff' => 'DiffScanner',
 );
 
 $formatter = new LuminousFormatterHTML();
@@ -54,8 +64,8 @@ $fmted = $formatter->format($tagstr);
 <!DOCTYPE html>
 <html>
 <head>
-<link rel=stylesheet href=/luminous-exp/luminous-r657/style/luminous.css>
-<link rel=stylesheet href=/luminous-exp/luminous-r657/style/luminous_light.css>
+<link rel=stylesheet href=/luminous-exp/style/luminous.css>
+<link rel=stylesheet href=/luminous-exp/style/luminous_light.css>
 </head>
 <body>
 <?
