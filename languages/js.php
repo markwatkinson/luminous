@@ -20,9 +20,9 @@ class JSScanner extends LuminousEmbeddedWebScript {
     );
     $this->dirty_exit_recovery = array(
       'COMMENT_SL' => '/.*/',
-      'COMMENT' => '%.*\*/%s',
-      'SSTRING' => "/(?:[^\\\\']+|\\\\.)*'/",
-      'DSTRING' => '/(?:[^\\\\"]+|\\\\.)*"/'
+      'COMMENT' => '%.*(\*/|$)%s',
+      'SSTRING' => "/(?:[^\\\\']+|\\\\.)*('|$)/",
+      'DSTRING' => '/(?:[^\\\\"]+|\\\\.)*("|$)/'
     );
     
     parent::__construct($src);
@@ -50,9 +50,9 @@ class JSScanner extends LuminousEmbeddedWebScript {
   }
   
   static function is_regex($tokens) {
-    $i = count($tokens);    
-    while ($i) {
-      $t = $tokens[--$i];
+    $i = count($tokens);
+    while ($i--) {
+      $t = $tokens[$i];
       if ($t === 'COMMENT' || $t === 'COMMENT_SL') continue;
       elseif ($t === 'OPENER' || $t === 'OPERATOR') {
         return true;
@@ -64,7 +64,7 @@ class JSScanner extends LuminousEmbeddedWebScript {
   
   function init() {
     
-    $op_pattern = '[=!+*%\-&^|~:?\.>';
+    $op_pattern = '[=!+*%\-&^|~:?\;,.>';
     if (!($this->embedded_server || $this->embedded_html)) 
       $op_pattern .= '<]+';
     else {
@@ -77,7 +77,7 @@ class JSScanner extends LuminousEmbeddedWebScript {
     }
     $op_pattern = "@$op_pattern@";
     
-    $this->add_pattern('IDENT', '/(\\.?)(?>[a-zA-Z_$]+[_$\w]*)(?>\\.[a-zA-Z_$]+[_$\w]*)*/'); 
+    $this->add_pattern('IDENT', '/[a-zA-Z_$]+[_$\w]*/'); 
     // NOTE: slash is a special case, and </ may be a script close
     $this->add_pattern('OPERATOR', $op_pattern);
     // we care about openers for figuring out where regular expressions are
@@ -98,6 +98,7 @@ class JSScanner extends LuminousEmbeddedWebScript {
       $this->stop_pattern = '%' . join('|', $stop_patterns) . '%i';
       $this->add_pattern('STOP', $this->stop_pattern);
     }
+    
   }
   
   function main() {
@@ -123,41 +124,15 @@ class JSScanner extends LuminousEmbeddedWebScript {
         break;
       }
       
-      if ($tok === 'IDENT') {
-        // figure out what the identifier is and if it involves OO syntax
-        // this is a fair bit faster than matching all identifiers 
-        // individually.
-        $m_ = $this->match();
-        $s = explode('.', $m_);
-        $limit = count($s)-1;
-
-        foreach($s as $i=>$segment) {
-          if ($segment === '') {
-            $this->record('.', null);
-            continue;
-          }
-          $t = $this->map_identifier($segment);            
-          if ($i === $limit) {
-            if ($t === 'IDENT' && $i) $t = 'OO';
-          } else {
-            if ($t === 'IDENT') $t = 'OBJ';
-          }
-          $this->record($segment, ($t==='IDENT')? null : $t);
-          if ($i !== $limit) 
-            $this->record('.', null);
-        }
-        $this->tokens_ [] = 'IDENT';
-        continue;
-      }
-      elseif ($tok === 'SLASH') {
-        if (self::is_regex($this->tokens_)) {
-          $this->unscan();
-          assert ($this->peek() === '/');          
-          $tok = 'REGEX';
-          $m = $this->scan('% / (?: [^/\\\\]+ | \\\\.)* (?:/[ioxgm]*|$)%sx');
-          assert ($m !== null) or die();
+     if ($tok === 'SLASH') {
+      if (self::is_regex($this->tokens_)) {
+        $this->unscan();
+        assert ($this->peek() === '/');
+        $tok = 'REGEX';
+        $m = $this->scan('% / (?: [^/\\\\]+ | \\\\.)* (?:/[ioxgm]*|$)%sx');
+        assert ($m !== null) or die();
         } else {
-          $tok = 'OP';
+          $tok = 'OPERATOR';
         }
       }
       elseif ($tok === 'STOP') {
@@ -166,7 +141,7 @@ class JSScanner extends LuminousEmbeddedWebScript {
       }
       if ($m === null) $m = $this->match();
       
-      if ($this->server_break($tok)) break;
+      if ($this->server_break($tok)) { break; }
       
       if (($tok === 'COMMENT_SL')
         && $this->script_break($tok)

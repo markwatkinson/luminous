@@ -7,18 +7,7 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
   private $child_state = null;
   
   function __construct($src=null) {
-    $js = new JSScanner($src);
-    $js->embedded_server = $this->embedded_server;
-    $js->embedded_html = true;
-    $js->init();
-    
-    $css = new CSSScanner($src);
-    $css->embedded_server = $this->embedded_server;
-    $css->embedded_html = true;
-    $css->init();
-    
-    $this->add_child_scanner('js', $js);
-    $this->add_child_scanner('css', $css);
+   
 
     $this->dirty_exit_recoveries = array(      
       'DSTRING' => '/(?: [^\\\\">]+ | \\\\[^>])*("|$|(?=>))/',
@@ -38,6 +27,7 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
       
     parent::__construct($src);
   }
+
   
   
   function scan_child($lang) {
@@ -45,7 +35,7 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
     $scanner = $this->child_scanners[$lang];   
     $scanner->pos($this->pos());
     $substr = $scanner->main();
-    $this->tokens = array_merge($this->tokens, $scanner->token_array());
+    $this->tokens[] = array(null, $scanner->tagged(), true);
     $this->pos($scanner->pos());
     if (!$scanner->clean_exit) {
       $this->child_state = array($lang, $this->pos());
@@ -62,6 +52,19 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
     }
     $this->add_pattern('', '/</');
     $this->state_ = 'global';
+    
+    $js = new JSScanner($this->string());
+    $js->embedded_server = $this->embedded_server;
+    $js->embedded_html = true;
+    $js->init();
+    
+    $css = new CSSScanner($this->string());
+    $css->embedded_server = $this->embedded_server;
+    $css->embedded_html = true;
+    $css->init();
+    
+    $this->add_child_scanner('js', $js);
+    $this->add_child_scanner('css', $css);
   }
   
   function main() {

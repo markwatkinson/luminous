@@ -36,7 +36,7 @@ class PHPScanner extends  LuminousEmbeddedWebScript {
     $s = $this->child_scanners['html'];
     $s->pos($this->pos());
     $s->main();
-    $this->tokens = array_merge($this->tokens, $s->token_array());
+    $this->tokens[] = array(null, $s->tagged(), true);
     $this->pos($s->pos());
   }
 
