@@ -40,7 +40,6 @@ class DiffScanner extends LuminousScanner {
         // context
         $this->patterns['range'] = "/([\-\*]{3})[ \t]+\d+,\d+[ \t]+\\1.*/";
         $this->patterns['codeblock'] = "/(^([!+ ]).*(\n)?)+/m";
-        
       }
       else {
         // unified
@@ -48,7 +47,6 @@ class DiffScanner extends LuminousScanner {
         $this->patterns['codeblock'] = "/(^([+\- ]).*(\n)?)+/m";
       }
     }
-
 
     return parent::string($string);
 
@@ -74,9 +72,11 @@ class DiffScanner extends LuminousScanner {
       elseif($this->scan("/-{3}[ \t]*$/m")) $tok = null;
       
       elseif($this->scan('/(?:\**|=*|\w.*)$/m')) $tok = 'KEYWORD';
+      // this is a header line which may contain a file path. If it does,
+      // update the child scanner according to its extension.
       elseif($this->scan("@[+\-\*]{3}(\s+(?<path>.*)\t)?.*@")) {
         $m = $this->match_groups();
-        // unified uses +++
+        // unified uses +++, context uses *
         if ($m[0][0] === '+' || $m[0][0] === '*')
           $tok = 'DIFF_HEADER_NEW';
         else $tok = 'DIFF_HEADER_OLD';
@@ -91,27 +91,34 @@ class DiffScanner extends LuminousScanner {
         // this is actual source code.
         // we're going to format this here.
         // we're going to extract the block, and try to re-assemble it as 
-        // verbatim code, then highlight it, then figure out which lines are
-        // which. Eek.
-        
+        // verbatim code, then highlight it via a child scanner, then split up
+        // the lines, re-apply the necessary prefixes (e.g. + or -) to them,
+        // and store them as being a DIFF_ token.
+        // we have to do it like this, rather than line by line, otherwise
+        // multiline tokens aren't going to work properly. There's stilla  risk
+        // that the diff will be fragmented such the child scanner gets it
+        // wrong but that can't be helped.
+
+        // TODO restructure this so the complicated bits aren't done if there's
+        // no child scanner to pass it down to 
+
         $block = $this->match();
         if (!strlen($block)) {
-//           echo $this->rest();
-//           echo $block;
           assert(0);
         }
-        
+
         $lines = explode("\n", $block);
         $verbatim = array();
         $verbatim_ = '';
         $types = array();
         $prefixes = array();
         foreach($lines as $l) {
-          if (!strlen($l) || $l[0] === ' ') $types[]= 'DIFF_UNCHANGED';
-          elseif ($l[0] === '+' || $l[0] === '>') $types[] = 'DIFF_NEW';
+          if (!strlen($l) || $l[0] === ' ')
+            $types[]= 'DIFF_UNCHANGED';
+          elseif ($l[0] === '+' || $l[0] === '>')
+            $types[] = 'DIFF_NEW';
           elseif ($l[0] === '!' || $l[0] === '<' || $l[0] === '-')
             $types[] = 'DIFF_OLD';
-          
           else assert(0);
           $prefixes[] = (isset($l[0]))? $l[0] : '';
           $verbatim_[] = substr($l, 1);
@@ -130,7 +137,7 @@ class DiffScanner extends LuminousScanner {
           $tagged = $verbatim;
         }
         $exp = explode("\n", $tagged);
-        
+        assert(count($exp) === count($prefixes));
         foreach($exp as $i=>$v) {
           $t = $types[$i];
           $text = $prefixes[$i] . $v;
@@ -141,7 +148,6 @@ class DiffScanner extends LuminousScanner {
           if ($i < count($exp)-1) $this->record("\n", null);
         }
         if ($this->eol()) $this->record($this->get(), null);
-        
         continue;
       }
       else $this->scan('/.*/');
