@@ -9,6 +9,8 @@
  * As such, we handle formatting and tagging inside the scanner.
  */
 class DiffScanner extends LuminousScanner {
+
+  public $patterns = array();
   
   /* TODO: plug this into the language code selector in the old EasyAPI
    * when we port it across 
@@ -26,14 +28,35 @@ class DiffScanner extends LuminousScanner {
     return null;
   }
   
-  // TODO figure out context/unified format here and create appropriate
-  // regex patterns.
-  function string($src=null) {
-    return parent::string($src);
+
+  function string($string=null) {
+    if ($string !== null) {
+      if (preg_match('/^[><\d]/m', $string)) {
+        // normal rules
+        $this->patterns['range'] = '/\d+.*/';
+        $this->patterns['codeblock'] = "/(^([<> ]).*(\n)?)+/m";
+      }
+      elseif (preg_match('/^\*{3}/m', $string)) {
+        // context
+        $this->patterns['range'] = "/([\-\*]{3})[ \t]+\d+,\d+[ \t]+\\1.*/";
+        $this->patterns['codeblock'] = "/(^([!+ ]).*(\n)?)+/m";
+        
+      }
+      else {
+        // unified
+        $this->patterns['range'] = "/@@.*/";
+        $this->patterns['codeblock'] = "/(^([+\- ]).*(\n)?)+/m";
+      }
+    }
+
+
+    return parent::string($string);
+
   }
   
   function main() {
-    
+    // we're aiming to handle context, unified and normal diff all at once here
+    // because it doesn't really seem that hard.
     $child = null;
     $last_index = -1;
     while (!$this->eos()) {
@@ -45,10 +68,16 @@ class DiffScanner extends LuminousScanner {
       
       $tok = null;
       if ($this->scan('/diff\s.*$/m'))  $tok = 'KEYWORD';
-      elseif($this->scan("@[+\-]{3}(\s+(?<path>.*)\t)?.*@")) {
+      // normal, context and unified ranges
+      elseif($this->scan($this->patterns['range']))
+        $tok = 'DIFF_RANGE';
+      elseif($this->scan("/-{3}[ \t]*$/m")) $tok = null;
+      
+      elseif($this->scan('/(?:\**|=*|\w.*)$/m')) $tok = 'KEYWORD';
+      elseif($this->scan("@[+\-\*]{3}(\s+(?<path>.*)\t)?.*@")) {
         $m = $this->match_groups();
         // unified uses +++
-        if ($m[0][0] === '+')
+        if ($m[0][0] === '+' || $m[0][0] === '*')
           $tok = 'DIFF_HEADER_NEW';
         else $tok = 'DIFF_HEADER_OLD';
         
@@ -57,17 +86,15 @@ class DiffScanner extends LuminousScanner {
           $child = self::get_child_scanner($filename);  
         }
       }
-      elseif($this->scan('/@@.*/')) $tok = 'DIFF_RANGE';
-      elseif($this->scan('/\\\\.*/')) $tok = null;     
-      elseif($this->check('/^$/m')) $tok = null;
-      else {
+      elseif($this->scan('/\\\\.*/')) $tok = null;
+      elseif($this->scan($this->patterns['codeblock'])) {
         // this is actual source code.
         // we're going to format this here.
         // we're going to extract the block, and try to re-assemble it as 
         // verbatim code, then highlight it, then figure out which lines are
         // which. Eek.
         
-        $block = $this->scan("/(^([\-+ ]).*(\n)?)+/m");
+        $block = $this->match();
         if (!strlen($block)) {
 //           echo $this->rest();
 //           echo $block;
@@ -78,11 +105,15 @@ class DiffScanner extends LuminousScanner {
         $verbatim = array();
         $verbatim_ = '';
         $types = array();
+        $prefixes = array();
         foreach($lines as $l) {
           if (!strlen($l) || $l[0] === ' ') $types[]= 'DIFF_UNCHANGED';
-          elseif ($l[0] === '+') $types[] = 'DIFF_NEW';
-          elseif ($l[0] === '-') $types[] = 'DIFF_OLD';
+          elseif ($l[0] === '+' || $l[0] === '>') $types[] = 'DIFF_NEW';
+          elseif ($l[0] === '!' || $l[0] === '<' || $l[0] === '-')
+            $types[] = 'DIFF_OLD';
+          
           else assert(0);
+          $prefixes[] = (isset($l[0]))? $l[0] : '';
           $verbatim_[] = substr($l, 1);
         }
         $verbatim = implode("\n", $verbatim_);
@@ -98,13 +129,11 @@ class DiffScanner extends LuminousScanner {
         } else { 
           $tagged = $verbatim;
         }
-        $prefix = array('DIFF_UNCHANGED' => ' ', 'DIFF_NEW' => '+',
-          'DIFF_OLD' => '-');
         $exp = explode("\n", $tagged);
         
         foreach($exp as $i=>$v) {
           $t = $types[$i];
-          $text = $prefix[$t] . $v;
+          $text = $prefixes[$i] . $v;
           $this->record(
             $text,
             $t, 
@@ -115,6 +144,9 @@ class DiffScanner extends LuminousScanner {
         
         continue;
       }
+      else $this->scan('/.*/');
+
+      
       assert($this->pos() > $index);
       assert($this->match() !== null);
       $this->record($this->match(), $tok);

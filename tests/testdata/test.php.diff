@@ -1,0 +1,14 @@
+diff --git a/tests/test.php b/tests/test.php
+index ca20a7b..69b6230 100644
+--- a/tests/test.php
++++ b/tests/test.php
+@@ -13,6 +13,9 @@ require_once '../luminous-r657/src/formatters/htmlformatter.class.php';
+ 
+ $tests = array(
+   'js' => 'testdata/jquery-1.4.4.js',
++  'js1' => 'testdata/pythonic.js',
++  'js2' => 'testdata/mootools-core-1.3.1-full-compat.js',
++  
+   'jsdense' => 'testdata/jquery-1.4.4.min.js',
+   'jshtml' => 'testdata/jshtml.html',
+   'phpjshtml' => 'testdata/jshtml.php',  

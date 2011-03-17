@@ -34,7 +34,10 @@ $tests = array(
   
   'python' => 'testdata/scanner.py',
   
-  'diff' => 'testdata/hg.diff'
+  'diff' => 'testdata/hg.diff',
+  'cdiff' => 'testdata/context.diff',
+  'ndiff' => 'testdata/normal.diff',
+  
 );
 
 $scanners = array(
