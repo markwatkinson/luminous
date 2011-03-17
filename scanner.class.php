@@ -199,9 +199,13 @@ class Scanner {
    */
   function unscan() {
     if (isset($this->match_history[0])) {
-      $this->index = $this->match_history[0][0];      
-      $this->match_history[0] = $this->match_history[1];      
-      $this->match_history[1] = null;
+      $this->index = $this->match_history[0][0];
+      if (isset($this->match_history[1])) {
+        $this->match_history[0] = $this->match_history[1];
+        $this->match_history[1] = null;
+      } else 
+        $this->match_history[0] = null;
+       
     }
     else
       throw new Exception('match history empty');
@@ -519,7 +523,7 @@ class LuminousScanner extends Scanner {
           $t = call_user_func($filter[1], $t);
         }        
       }
-    } 
+    }
   }
   
   
@@ -655,7 +659,7 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
     // if we don't know how to recover from it, there's no point tagging 
     // this as a dirty exit.
     // XXX is this okay?
-    if (!isset($this->dirty_exit_recovery[$this->exit_state])) {
+    if (!isset($this->dirty_exit_recovery[$state])) {
       $this->clean_exit = true;
       return;
     }
