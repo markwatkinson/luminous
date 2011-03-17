@@ -515,7 +515,7 @@ class LuminousScanner extends Scanner {
       return;
     
     // XXX: taking the reference here is WAY faster than reinserting it, we're
-    // talking 80% of the runtime here
+    // talking 20% reduction in runtime here
     //  but I don't know how it gets passed through call_user_func?
     foreach($this->tokens as $k=>&$t) {
       $tok = $t[0];
