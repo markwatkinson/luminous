@@ -595,6 +595,10 @@ class LuminousScanner extends Scanner {
  * state, which might be necessary if they are interrupted by server-side. In
  * the case that they are interrupted in the middle of a rule which has to be 
  * resumed when the scanner is next called, it is said to be a 'dirty exit'.
+ * 
+ * The init method of the class should be used to set relevant rules based
+ * on whether or not the embedded flags are set; and therefore the embedded
+ * flags should be set before init is called.
  */
 abstract class LuminousEmbeddedWebScript extends LuminousScanner {
   
@@ -658,15 +662,6 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
     $this->exit_state = $state;
     $this->clean_exit = false;
   }
-  
-  
-  /**
-   * Initialises the scanner ready to scan. This should involve setting up 
-   * rules observing the $embedded* class members
-   */
-//   abstract function init();
-  
-  
   
   /**
    * Attempts to resume from a dirty exit 
