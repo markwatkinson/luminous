@@ -66,6 +66,15 @@ class Scanner {
     return $this->index;
   }
   
+  
+  function bol() {
+    return $this->index === 0 || $this->src[$this->index-1] === "\n";
+  }
+  
+  function eol() {
+    return ($this->eos() || $this->src[$this->index] === "\n");
+  }
+  
   /**
    * Returns true if Scanner has reached the end of the string, else false
    */
@@ -78,7 +87,7 @@ class Scanner {
    */
   function reset() {
     $this->pos(0);
-    $this->match_history = array();    
+    $this->match_history = array(null, null);    
     $this->ss = new LuminousStringSearch($this->src);
   }
   
@@ -179,7 +188,7 @@ class Scanner {
       return $this->match_history[0][1];
     
     throw new Exception('match history empty');
-  }  
+  }
   
   private function __log_match($index, $match_pos, $match_data) {
     if (isset($this->match_history[0])) {
@@ -493,9 +502,9 @@ class LuminousScanner extends Scanner {
     $this->tokens = array();
   }
   
-  function record($string, $type) {    
+  function record($string, $type, $pre_escaped=false) {    
     if (isset($this->rule_tag_map[$type])) $type = $this->rule_tag_map[$type];
-    $this->tokens[] = array($type, $string, false);
+    $this->tokens[] = array($type, $string, $pre_escaped);
   }
   
   
