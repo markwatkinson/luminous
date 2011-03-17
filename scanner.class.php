@@ -237,7 +237,7 @@ class Scanner {
       if ($matches !== null && $consume) {
         $this->__consume($pos, $consume_match, $matches);
       }      
-      return ($matches === null)? $matches : $matches[0]; 
+      return ($matches === null)? null : $matches[0]; 
   }
   
   /**
@@ -298,7 +298,7 @@ class Scanner {
    * if $consume_and_log is false, the pattern is not consumed or logged. 
    */
   function next_match($consume_and_log=true) {
-    $target = $this->pos();
+    $target = $this->index;
     $dontcare_ref = false;
     
     $nearest_index = -1;
@@ -333,12 +333,12 @@ class Scanner {
       $nearest = $this->patterns[$nearest_key];
       if ($consume_and_log) {
         $this->__log_match($nearest_index, $nearest_index, $nearest_match_data);
-        $this->__consume($nearest_index, true, $nearest_match_data);        
+        $this->__consume($nearest_index, true, $nearest_match_data);
       }
       return array($nearest_name, $nearest_index);
     }
     else return null;
-  }  
+  }
 }
 
 
@@ -419,6 +419,7 @@ class LuminousScanner extends Scanner {
     $last;
     $next;
     $c = count($tokens);
+    
     for($i=0; $i<$c; $i++) {
       if ($tokens[$i][0] !== 'IDENT') continue;
       if ($i > 0) {
@@ -511,15 +512,17 @@ class LuminousScanner extends Scanner {
       $this->tokens = call_user_func($f[1], $this->tokens);
     }
     if (empty($this->filters))
-      return;   
-        
-    foreach($this->tokens as $k=>$t) {
+      return;
+    
+    // XXX: taking the reference here is WAY faster than reinserting it, we're
+    // talking 80% of the runtime here
+    //  but I don't know how it gets passed through call_user_func?
+    foreach($this->tokens as $k=>&$t) {
       $tok = $t[0];
       if (isset($this->filters[$tok])) {
         foreach($this->filters[$tok] as $filter) {          
           $t = call_user_func($filter[1], $t);
         }        
-        $this->tokens[$k] = $t;
       }
     } 
   }
