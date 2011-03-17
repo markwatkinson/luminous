@@ -1,10 +1,6 @@
 <?php
-// require_once(dirname(__FILE__) . '/luminous-r657/src/core/utils.php');
 
-require_once(dirname(__FILE__) .  '/luminous-r657/src/core/strsearch.class.php');
-
-// require_once(dirname(__FILE__) .  '/luminous-r657/src/luminous_grammar_callbacks.php');
-
+require_once(dirname(__FILE__) .  '/strsearch.class.php');
 
 require_once('utils.class.php');
 require_once('filters.class.php');
@@ -224,7 +220,7 @@ class Scanner {
       $matches = null;
       $index = $this->index;
       $pos = null;
-      if (($pos = $this->ss->PregSearch($pattern, $this->index, $x, $matches)) !== false) {
+      if (($pos = $this->ss->match($pattern, $this->index, $matches)) !== false) {
         if ($instant && $pos !== $index) {
           $matches = null;
         }        
@@ -299,7 +295,6 @@ class Scanner {
    */
   function next_match($consume_and_log=true) {
     $target = $this->index;
-    $dontcare_ref = false;
     
     $nearest_index = -1;
     $nearest_key = -1;
@@ -310,7 +305,7 @@ class Scanner {
       list($name, $pattern, $index, $match_data) = $p_data;
       
       if ($index !== false && $index < $target) {
-        $index = $this->ss->PregSearch($pattern, $target, $dontcare_ref, $match_data);
+        $index = $this->ss->match($pattern, $target, $match_data);
         $this->patterns[$k][2] = $index;
         $this->patterns[$k][3] = $match_data;
       }
