@@ -68,12 +68,7 @@
 .luminous .docstr {color:red !important;}
 .luminous .docproperty{color:#0095FF !important; font-weight:bold !important;}
 
-.luminous .diff_header_new{color:green !important;}
-.luminous .diff_header_old{color:red !important;}
-.luminous .diff_range{color:blue !important;}
-.luminous .diff_old{background-color:#FF8080 !important;}
-.luminous .diff_new{background-color:#BFFFBF !important;}
-.luminous .diff_unchanged{background-color:#e0e0e0 !important;}
+
 
 .luminous .lang_latex{color:blue !important;}
 .luminous .latex_function{color:red !important; font-weight:normal !important;}
@@ -95,6 +90,33 @@
 /* Specific to the whitespace language */
 .luminous .whitespace_space{background-color:#FF5151 !important;}
 .luminous .whitespace_tab{background-color:#A1B6FF !important;}
+
+
+
+
+.luminous .diff_header_new{color:green !important;}
+.luminous .diff_header_old{color:red !important;}
+.luminous .diff_range{color:blue !important;}
+.luminous .diff_old{background-color:#FFBFBF !important; 
+  background-color: rgba(255, 191, 191, 0.5) !important;
+}
+.luminous .diff_new{background-color:#BFFFBF !important;
+  background-color: rgba(191, 255, 191, 0.5) !important;
+}
+.luminous .diff_unchanged{
+  color: #888888 !important;
+
+}
+
+.luminous .diff_unchanged * {
+  background-color: transparent !important;
+  color: #888888 !important;
+}
+
+
+
+
+
 
 
 .luminous .line_number_bar

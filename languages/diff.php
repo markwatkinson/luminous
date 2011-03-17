@@ -89,11 +89,11 @@ class DiffScanner extends LuminousScanner {
         $escaped = false;
         $tagged;
         if ($child !== null) {
-          $c = new $child;          
+          $c = new $child;
           $c->init();
           $c->string($verbatim);
           $c->main();
-          $tagged = $c->tagged();          
+          $tagged = $c->tagged();
           $escaped = true;
         } else { 
           $tagged = $verbatim;
@@ -104,8 +104,9 @@ class DiffScanner extends LuminousScanner {
         
         foreach($exp as $i=>$v) {
           $t = $types[$i];
+          $text = $prefix[$t] . $v;
           $this->record(
-            $prefix[$t] . $v,
+            $text,
             $t, 
             $escaped);
           if ($i < count($exp)-1) $this->record("\n", null);
