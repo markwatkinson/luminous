@@ -28,6 +28,23 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
     $this->add_pattern('STRING', LuminousTokenPresets::$SINGLE_STR);
     $this->add_identifier_mapping('FUNCTION', $GLOBALS['luminous_php_functions']);
     $this->add_identifier_mapping('KEYWORD', $GLOBALS['luminous_php_keywords']);
+
+    $this->add_filter('STRING', array($this, 'str_filter'));
+  }
+
+  static function str_filter($token) {
+
+    if ($token[1][0] !== '"') return $token;
+    elseif(strpos($token[1], '$') === false) return $token;
+    
+    $token = LuminousUtils::escape_token($token);
+    $token[1] = preg_replace('/
+      \{\$[^}]+\}
+      |
+      \$\$?[a-zA-Z_]\w*
+      /x', '<VARIABLE>$0</VARIABLE>',
+    $token[1]);
+    return $token;
   }
   
   function init() {}
