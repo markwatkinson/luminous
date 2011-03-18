@@ -3,7 +3,7 @@
 require_once('../src/luminous.php');
 
 Luminous::set('max-height', 300);
-Luminous::set('theme', 'zenophilia');
+//Luminous::set('theme', 'zenophilia');
 ?>
 <!DOCTYPE html>
 <html>
