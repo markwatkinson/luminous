@@ -170,7 +170,7 @@ class LuminousScanners
    * \param language_name the name under which the gramar was originally indexed
    * \param default if true: if the scanner doesn't exist, return the default
    *    scanner. If false, return false
-   * \return The scanner, the default scanner, or false.
+   * \return The scanner, the default scanner, or null.
    */
   function GetScanner($language_name, $default=true)
   {
@@ -180,7 +180,7 @@ class LuminousScanners
     
     if ($g !== false)
       return new $g['scanner'];
-    return false;
+    return null;
   }
   /**
    * Returns a list of known aliases for scanners.
