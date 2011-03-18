@@ -42,7 +42,8 @@ class LuminousCache
   
   private $id;
 
-  public $purge_older_than = 10;
+  public $purge_older_than = 60*60; /**< purges files which haven't been
+    accessed (atime) for the given number of seconds  */
 
   public $purge_interval = -1; /**< Interval between cache purges (i.e. deletion of
   everything) or -1 to disable */
@@ -170,7 +171,7 @@ class LuminousCache
 
 
   public function purge() {
-    if (!$this->use_cache) return;
+    if (!$this->use_cache || $this->purge_older_than <= 0) return;
     $purge_file = $this->cache_dir . '/.purgedata';
     $last = 0;
     $fh = fopen($purge_file, 'w+');
