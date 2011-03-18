@@ -24,6 +24,7 @@ class DiffScanner extends LuminousScanner {
     $ext = substr($filename, $spos+1);
     switch(strtolower($ext)) {
       case 'js': return 'JSScanner';
+      case 'php': return 'PHPScanner';
     }
     return null;
   }
