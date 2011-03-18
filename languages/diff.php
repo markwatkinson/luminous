@@ -18,15 +18,18 @@ class LuminousDiffScanner extends LuminousScanner {
    * later.
    */
   static function get_child_scanner($filename) {
-//     echo $filename;
+    // $luminous_ is a singleton from the main calling API. It may or may not
+    // exist here, but if it does, we're going to use it.
+    global $luminous_;
+    if (!isset($luminous_)) return null;
+
     $spos = strrpos($filename, '.');
     if ($spos === false) {return null;}
     $ext = substr($filename, $spos+1);
-    switch(strtolower($ext)) {
-      case 'js': return 'LuminousJSScanner';
-      case 'php': return 'LuminousPHPScanner';
-    }
-    return null;
+    $s = $luminous_->scanners->GetScanner(strtolower($ext));
+    // we actually only want the classname, not an instance.
+    if ($s === null) return null;
+    else return get_class($s);
   }
   
 
