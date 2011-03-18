@@ -42,7 +42,7 @@ class LuminousCache
   
   private $id;
 
-  public $purge_older_than = 60*60; /**< purges files which haven't been
+  public $purge_older_than = 3600; /**< purges files which haven't been
     accessed (atime) for the given number of seconds  */
 
   public $purge_interval = -1; /**< Interval between cache purges (i.e. deletion of
