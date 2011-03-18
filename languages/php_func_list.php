@@ -1,5 +1,7 @@
 <?php
-
+global $luminous_php_functions;
+global $luminous_php_keywords;
+global $luminous_php_types;
 
 $luminous_php_types = array('false', 'true', 'null');
 

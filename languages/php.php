@@ -2,12 +2,12 @@
 
 require_once( dirname(__FILE__) . '/php_func_list.php');
 
-class PHPScanner extends  LuminousEmbeddedWebScript {
+class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
   
   protected $case_sensitive = false;
   
   function __construct($src=null) {
-    $h = new HTMLScanner($src);
+    $h = new LuminousHTMLScanner($src);
     $h->embedded_server = true;
     $h->init();    
     $this->add_child_scanner('html', $h);

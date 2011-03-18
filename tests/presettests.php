@@ -1,5 +1,5 @@
 <?php 
-require_once (dirname(__FILE__) . '/../scanner.class.php');
+require_once (dirname(__FILE__) . '/../src/core/scanner.class.php');
 
 
 /**

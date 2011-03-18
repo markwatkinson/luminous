@@ -1,5 +1,5 @@
 <?php
-require_once ('../scanner.class.php');
+require_once ('../src/core/scanner.class.php');
 assert_options(ASSERT_BAIL, 1);
 
 

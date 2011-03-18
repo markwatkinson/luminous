@@ -1,6 +1,6 @@
 <?php
 
-class PythonScanner extends LuminousScanner {
+class LuminousPythonScanner extends LuminousScanner {
   
   
   
@@ -140,7 +140,7 @@ class PythonScanner extends LuminousScanner {
       elseif ($tok === 'STRING') {
         $i = count($this->tokens);
         $tok = 'COMMENT';
-        while (--$i) {
+        while ($i--) {
           $t = $this->tokens[$i][0];
           $s = $this->tokens[$i][1];
           if ($t === null) continue;

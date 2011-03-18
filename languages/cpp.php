@@ -2,7 +2,8 @@
 
 require_once(dirname(__FILE__) . '/c_func_list.php');
 // TODO: trigraph... does anyone use these?
-class CppScanner extends LuminousScanner {
+
+class LuminousCppScanner extends LuminousScanner {
 
   function __construct($src=null) {
     parent::__construct($src);
@@ -47,7 +48,7 @@ class CppScanner extends LuminousScanner {
       | // .*
       | /\* .*? \*/
     @x",
-      array('CppScanner', 'preprocessor_filter_cb'),
+      array('LuminousCppScanner', 'preprocessor_filter_cb'),
       $token[1]);
     return $token;
   }

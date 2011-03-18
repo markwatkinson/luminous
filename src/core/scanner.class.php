@@ -450,7 +450,20 @@ class LuminousScanner extends Scanner {
     }
     return $tokens;
   }
-  
+
+  /**
+   * Alias for:
+   *   $s->string($src)
+   *   $s->init();
+   *   $s->main();
+   *   return $s->tagged();
+   */
+  function highlight($src) {
+    $this->string($src);
+    $this->init();
+    $this->main();
+    return $this->tagged();
+  }
   
   
   function init() {}

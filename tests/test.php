@@ -2,7 +2,7 @@
 
 assert_options(ASSERT_BAIL, 1);
 
-require_once('../scanner.class.php');
+require_once('../src/core/scanner.class.php');
 require_once('../languages/js.php');
 require_once('../languages/css.php');
 require_once('../languages/html.php');
@@ -13,8 +13,8 @@ require_once('../languages/cpp.php');
 
 
 
-require_once '../luminous-r657/src/formatters/luminous_formatter.class.php';
-require_once '../luminous-r657/src/formatters/htmlformatter.class.php';
+require_once '../src/formatters/formatter.class.php';
+require_once '../src/formatters/htmlformatter.class.php';
 
 $tests = array(
   'js' => 'testdata/jquery-1.4.4.js',
@@ -44,15 +44,15 @@ $tests = array(
 );
 
 $scanners = array(
-  'js' => 'JSScanner',
-  'css' => 'CSSScanner',
-  'html' => 'HTMLScanner',
-  'xml' => 'HTMLScanner',
-  'php' => 'PHPScanner',
-  'python' => 'PythonScanner',
-  'diff' => 'DiffScanner',
-  'c' => 'CppScanner',
-  'cpp' => 'CppScanner',
+  'js' => 'LuminousJSScanner',
+  'css' => 'LuminousCSSScanner',
+  'html' => 'LuminousHTMLScanner',
+  'xml' => 'LuminousHTMLScanner',
+  'php' => 'LuminousPHPScanner',
+  'python' => 'LuminousPythonScanner',
+  'diff' => 'LuminousDiffScanner',
+  'c' => 'LuminousCppScanner',
+  'cpp' => 'LuminousCppScanner',
 );
 
 $formatter = new LuminousFormatterHTML();

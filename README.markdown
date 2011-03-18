@@ -88,21 +88,24 @@ And straight PHP is slooooooow.
   * More complex langauges which previously used a transition table may be 
     faster, but we don't really care
     
-    
+   
 Roadmap
 -------
 
-  * Implement several varied language lexers to check the idea isn't a 
+  1. Implement several varied language lexers to check the idea isn't a 
     non-starter (JavaScript, HTML, CSS, PHP, which should all work correctly
-    with each other)
-  * Finalise the basic scanner (base class) API, figure out best abstractions
-  * Build unit tests on the base classes
-  * Figure out basic plugin/extension API for the scanners.
-  * Begin integrating into Luminous's existing infrastructure (this will also
+    with each other)  [done but needs better testing - blocked on 5,6]
+  1.1 Implement diff scanner which should be able to work in tandem with 
+    the scanner for the language in the diff.
+  2. Finalise the basic scanner (base class) API, figure out best abstractions
+    [done I think]
+  3. Build unit tests on the base classes [partly done, needs better coverage]
+  4. Figure out basic plugin/extension API for the scanners. [done - filters]
+  5. Begin integrating into Luminous's existing infrastructure (this will also
     involve porting the 'easyAPI' to the new scanner and language system,
     and scarily, porting the CSS theme parser to the new system, which means
     the new system must be pluginable enough for it to be possible to use it for
-    general parsing)
-  * Check existing regression test cases and adapt as needed
-  * Implement remaining languages (eek)
+    general parsing) 
+  6. Check existing regression test cases and adapt as needed
+  7. Implement remaining languages (eek)
   

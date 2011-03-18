@@ -1,7 +1,7 @@
 <?php
 
 
-class JSScanner extends LuminousEmbeddedWebScript {
+class LuminousJSScanner extends LuminousEmbeddedWebScript {
   
   // TODO clean up redunancy here and in constructor
   public $server_tags = '<?';

@@ -8,7 +8,7 @@
  * 
  * As such, we handle formatting and tagging inside the scanner.
  */
-class DiffScanner extends LuminousScanner {
+class LuminousDiffScanner extends LuminousScanner {
 
   public $patterns = array();
   
@@ -23,8 +23,8 @@ class DiffScanner extends LuminousScanner {
     if ($spos === false) {return null;}
     $ext = substr($filename, $spos+1);
     switch(strtolower($ext)) {
-      case 'js': return 'JSScanner';
-      case 'php': return 'PHPScanner';
+      case 'js': return 'LuminousJSScanner';
+      case 'php': return 'LuminousPHPScanner';
     }
     return null;
   }

@@ -6,6 +6,11 @@
  * Some Qt things here as well.
  */
 
+
+global $luminous_c_funcs;
+global $luminous_c_types;
+global $luminous_c_keywords;
+
 $luminous_c_keywords = array(
   'asm', 'auto', 'break', 'case', 'catch', 'class', 'continue', 'const',
   'const_cast', 'connect', 'default', 'delete', 'do', 'dynamic_cast',

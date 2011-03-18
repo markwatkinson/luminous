@@ -1,8 +1,6 @@
 <?php
 
-
-
-class HTMLScanner extends LuminousEmbeddedWebScript {
+class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
   
   private $child_state = null;
   
@@ -53,12 +51,12 @@ class HTMLScanner extends LuminousEmbeddedWebScript {
     $this->add_pattern('', '/</');
     $this->state_ = 'global';
     
-    $js = new JSScanner($this->string());
+    $js = new LuminousJSScanner($this->string());
     $js->embedded_server = $this->embedded_server;
     $js->embedded_html = true;
     $js->init();
     
-    $css = new CSSScanner($this->string());
+    $css = new LuminousCSSScanner($this->string());
     $css->embedded_server = $this->embedded_server;
     $css->embedded_html = true;
     $css->init();

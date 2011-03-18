@@ -1,6 +1,6 @@
 <?php
 
-class CSSScanner extends LuminousEmbeddedWebScript {
+class LuminousCSSScanner extends LuminousEmbeddedWebScript {
   
   
   
