@@ -50,7 +50,7 @@ class LuminousFilters {
       case "page":
       case "relates":
       case "relatesalso":
-      case "weakgroup":    
+      case "weakgroup":
       case "cond":
       case "elseif":
       case "exception":
@@ -136,7 +136,7 @@ class LuminousFilters {
     //  same with /// comment but not ///////////////
     $s = $token[1];
     if (isset($s[3])
-      && $s[2] === $s[1]
+      && ($s[2] === $s[1] || $s[2] === '!')
       && $s[3] !== $s[2])
     {
       $token[0] = 'DOCCOMMENT';
