@@ -228,6 +228,7 @@ class Scanner {
     if ($consume_match) $this->index += strlen($match_data[0]);
   }
   
+  
   private function __check($pattern, $instant=true, $consume=true, 
     $consume_match=true, $log=true) {
       $matches = null;
@@ -275,6 +276,10 @@ class Scanner {
     $p = $this->index;
     $this->__check($pattern, true, true, true, false);
     return $this->index - $p;
+  }
+
+  function index($pattern) {
+    return $this->ss->match($pattern, $this->index, $dontcare_ref);
   }
   
 #  /**
@@ -545,14 +550,8 @@ class LuminousScanner extends Scanner {
     foreach($this->tokens as $t) {
       $t = LuminousUtils::escape_token($t);
       list($type, $string, ) = $t;
-      if ($type !== null) {
-        $open = '<' . $type . '>';
-        $close = '</' . $type . '>';
-        // should this be a stream filter which splits tokens?
-        // probably not.
-        $out .= $open . str_replace("\n", $close . "\n" . $open, $string) .
-          $close;
-      }
+      if ($type !== null) 
+        $out .= LuminousUtils::tag_block($type, $string);
       else $out .= $string;
     }
     return $out;
