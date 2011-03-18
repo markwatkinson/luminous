@@ -9,6 +9,7 @@ require_once('../languages/html.php');
 require_once('../languages/php.php');
 require_once('../languages/python.php');
 require_once('../languages/diff.php');
+require_once('../languages/cpp.php');
 
 
 
@@ -37,7 +38,9 @@ $tests = array(
   'diff' => 'testdata/hg.diff',
   'cdiff' => 'testdata/context.diff',
   'ndiff' => 'testdata/normal.diff',
-  
+  'phpdiff' => 'testdata/test.php.diff',
+  'cpp' => 'testdata/keyframe.cpp',
+  'c' => 'testdata/stic.c'
 );
 
 $scanners = array(
@@ -48,6 +51,8 @@ $scanners = array(
   'php' => 'PHPScanner',
   'python' => 'PythonScanner',
   'diff' => 'DiffScanner',
+  'c' => 'CppScanner',
+  'cpp' => 'CppScanner',
 );
 
 $formatter = new LuminousFormatterHTML();
