@@ -47,6 +47,9 @@ class _Luminous {
     $this->scanners->AddScanner('css',
       'LuminousCSSScanner', 'CSS', "$language_dir/css.php");
       
+    $this->scanners->AddScanner(array('diff', 'patch'),
+      'LuminousDiffScanner', 'Diff', "$language_dir/diff.php");
+      
     $this->scanners->AddScanner(array('html', 'htm', 'xml'),
       'LuminousHTMLScanner', 'HTML/XML', "$language_dir/html.php",
       array('js', 'css'));
