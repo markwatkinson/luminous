@@ -168,7 +168,7 @@ abstract class Luminous {
   }
 
   static function get_themes() {
-    $themes_uri = self::luminous_root() . "/style/";
+    $themes_uri = self::root() . "/style/";
     $themes = array();
     foreach(glob($themes_uri . "/*.css") as $css) {
       $fn = trim(preg_replace("%.*/%", '', $css));
@@ -200,7 +200,7 @@ abstract class Luminous {
   
 
   static function setting($option) {
-    global $luminous_;    
+    global $luminous_;
     if (!array_key_exists($option, $luminous_->settings))
       throw new Exception("Luminous: No such option: $option");
     return $luminous_->settings[$option];
@@ -213,12 +213,70 @@ abstract class Luminous {
     else $luminous_->settings[$option] = $value;
   }
 
-  
-
-
   static function get_scanners() {
     global $luminous_;
     return $luminous_->scanners->ListScanners();
+  }
+
+
+
+/**
+  *
+  * Returns a string representing everything that needs to be printed in
+  * the \<head\> section of a website.
+  *
+  * \param $javascript (boolean) whether or not to use JavaScript
+  * \param $jquery (boolean) whether or not to include jQuery: jQuery is
+  *    required for javascript to work, but you may include it yourself (if you
+  *    need a different version). If so, it must be included before this
+  *    function's output is echoed.
+  * \param relative_root Optionally, you may specify the path to luminous/
+  *    relative to the document root (remember to include the leading slash).
+  *    If you don't specify this, Luminous attempts to work it out. See
+  *    warning.
+  *
+  *
+  * \warning due to shortcomings in PHP, it's not really possible to figure
+  * out the include path if there are symbolic links involved. In this case,
+  * you \b must specify relative_root.
+  * http://bugs.php.net/46260  (note the workaround there dated December 2010
+  *     is inadequate: it only applies to the executing file, not included
+  *     files)
+  *
+  * \since 0.5.0
+  *
+  * \todo does this path manipulation work on Windows? if not, is there a php
+  *   solution?
+  */
+  static function head_html($js=true, $jquery=false, $relative_root=null) {
+    global $luminous_;
+    $theme = $luminous_->settings['theme'];
+    if (!preg_match('/\.css$/i', $theme)) $theme .= '.css';
+    if (!self::theme_exists($theme)) $theme = 'luminous_light.css';
+    
+    if ($relative_root === null) {
+      $relative_root = str_replace($_SERVER['DOCUMENT_ROOT'], '/',
+        dirname(__FILE__));
+      $relative_root = str_replace('\\', '/', $relative_root); // bah windows
+      $relative_root = rtrim($relative_root, '/');
+      // go up one level.
+      $relative_root = preg_replace('%/[^/]*$%', '', $relative_root);
+    }
+    $relative_root = preg_replace('%(?:^(?!/))|(?://+)|(?:(?<!/)$)%', '/',
+      $relative_root);
+    $out = '';
+    $out .= "<link rel='stylesheet' type='text/css'
+      href='$relative_root/style/luminous.css'>\n";
+    $out .= "<link rel='stylesheet' type='text/css'
+      href='$relative_root/style/$theme'>\n";
+    if ($js){
+      if($jquery)
+        $out .= "<script type='text/javascript'
+          src='$relative_root/client/jquery-1.4.2.min.js'></script>\n";
+      $out .= "<script type='text/javascript'
+        src='$relative_root/client/luminous.js'></script>\n";
+    }
+    return $out;
   }
 }
 

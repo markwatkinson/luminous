@@ -3,12 +3,13 @@
 require_once('../src/luminous.php');
 
 Luminous::set('max-height', 300);
+Luminous::set('theme', 'zenophilia');
 ?>
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel='stylesheet' href='../style/luminous.css'>
-    <link rel='stylesheet' href='../style/luminous_light.css'>
+  <?php echo Luminous::head_html(false, false, '/luminous-exp/'); ?>
+
   </head>
 <body>
   <?php
