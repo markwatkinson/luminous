@@ -173,10 +173,12 @@ class LuminousCache
     if (!$this->use_cache) return;
     $purge_file = $this->cache_dir . '/.purgedata';
     $last = 0;
-    $fh = fopen($purge_file, 'r+');
+    $fh = fopen($purge_file, 'w+');
     $time = time();
     if (flock($fh, LOCK_EX)) {
-      $last = (int)fread($fh, filesize($purge_file));
+      if (filesize($purge_file))        
+        $last = (int)fread($fh, filesize($purge_file));
+      else $last = 0;
       rewind($fh);
       ftruncate($fh, 0);
       rewind($fh);
