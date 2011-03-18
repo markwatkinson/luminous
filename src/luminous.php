@@ -99,6 +99,7 @@ class _Luminous {
   private function cache_id($scanner, $source) {
     $settings = $this->settings;
     ksort($settings);
+    echo serialize($scanner);
     $id = md5($source);
     $id = md5($id . serialize($scanner));
     $id = md5($id . serialize($settings));
@@ -109,6 +110,11 @@ class _Luminous {
 
   function highlight($scanner, $source, $use_cache=true) {
     
+    if (!($scanner instanceof LuminousScanner)) {
+      $code = $scanner;
+      $scanner = $this->scanners->GetScanner($code);
+      if ($scanner === null) throw new Exception("No known scanner for '$code'");
+    }
     $cache_obj = null;
     $out = null;
     if ($use_cache) {
@@ -119,12 +125,6 @@ class _Luminous {
       $out = $cache_obj->read();
     }
     if ($out === null) {
-      if (!($scanner instanceof LuminousScanner)) {
-        $code = $scanner;
-        $scanner = $this->scanners->GetScanner($code);
-        if ($scanner === false) throw new Exception("No known scanner for '$code'");
-      }
-      
       $out_raw = $scanner->highlight($source);
       $formatter = $this->get_formatter();
       $this->set_formatter_options($formatter);
