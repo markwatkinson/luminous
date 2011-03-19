@@ -2,17 +2,21 @@
 
 The formatter tests currently consist of:
 
-latexformatter.php:  Leftover from old testing code, hasn't been ported yet
+latexformatter.php:  Tests the LaTeX output format. 
 
-raw.php  
-  This is technically a test of Luminous's parser. The parser creates data in 
-  an XML-like format. It's very easy to convert this to 'proper' XML (it just
-  involves adding the <?xml version='1.0' encoding='UTF-8'?> tag at the top, 
-  and wrapping the rest in a root tag.). raw.php will generate some XML and 
-  check it is well formed by loading it into an error intolerant XML parser.
-  
+raw.php
+
+  Luminous scanners are meant to generate data which looks a lot like XML.
+  This converts it into proper XML (just involves adding root tag, a header and
+  encoding) and loads it into an error intolerant XML parser to determine
+  whether it is well formed or not.
   Returns 0 if successful, 1 on failure. A Log is written to 
   $LUMINOUS/tests/log/formatter_raw
+
+  TODO now that Luminous is using individual scanners, there should be at
+  least 1 test per language (use the regression database)
+  
+
 
 html.php [DOCTYPES...]
   Tests the HTML formatter. This generates some HTML from a pre-parsed and 
