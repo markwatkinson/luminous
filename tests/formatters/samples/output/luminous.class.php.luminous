@@ -1,0 +1,1727 @@
+<KEYWORD>&lt;?php</KEYWORD>
+
+<COMMENT>/*</COMMENT>
+<COMMENT>  Copyright 2010 Mark Watkinson</COMMENT>
+<COMMENT></COMMENT>
+<COMMENT>  This file is part of Luminous.</COMMENT>
+<COMMENT></COMMENT>
+<COMMENT>  Luminous is free software: you can redistribute it and/or</COMMENT>
+<COMMENT>  modify</COMMENT>
+<COMMENT>  it under the terms of the GNU General Public License as published by</COMMENT>
+<COMMENT>  the Free Software Foundation, either version 3 of the License, or</COMMENT>
+<COMMENT>  (at your option) any later version.</COMMENT>
+<COMMENT></COMMENT>
+<COMMENT>  Luminous is distributed in the hope that it will be useful,</COMMENT>
+<COMMENT>  but WITHOUT ANY WARRANTY; without even the implied warranty of</COMMENT>
+<COMMENT>  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</COMMENT>
+<COMMENT>  GNU General Public License for more details.</COMMENT>
+<COMMENT></COMMENT>
+<COMMENT>  You should have received a copy of the GNU General Public License</COMMENT>
+<COMMENT>  along with Luminous.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</COMMENT>
+<COMMENT></COMMENT>
+<COMMENT>*/</COMMENT>
+
+
+
+<FUNCTION>require_once</FUNCTION>(<STRING>'strsearch.class.php'</STRING>);
+<FUNCTION>require_once</FUNCTION>(<STRING>'utils.php'</STRING>);
+<FUNCTION>require_once</FUNCTION>(<STRING>'grammar.class.php'</STRING>);
+<FUNCTION>require_once</FUNCTION>(<STRING>'rule.class.php'</STRING>);
+
+
+<DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>\file</DOCTAG><DOCPROPERTY> luminous.class.php </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT> *  </DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>\brief</DOCTAG><DOCSTR> The central luminous class and a few utility functions.</DOCSTR></DOCCOMMENT>
+<DOCCOMMENT> * </DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>\defgroup</DOCTAG><DOCPROPERTY> LuminousUtils </DOCPROPERTY>LuminousUtils</DOCCOMMENT>
+<DOCCOMMENT> * A set of ulities used by the Luminous class.</DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>\internal</DOCTAG></DOCCOMMENT>
+<DOCCOMMENT> */</DOCCOMMENT> 
+
+
+
+
+
+<DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>\class</DOCTAG><DOCPROPERTY> Luminous </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT> * </DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>\brief</DOCTAG><DOCSTR> Luminous is an automaton which handles source code highlighting.</DOCSTR></DOCCOMMENT>
+<DOCCOMMENT></DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>\see</DOCTAG><DOCSTR> Luminous::ParseDelimiters </DOCSTR></DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>\see</DOCTAG><DOCSTR> Luminous::ParseRegex</DOCSTR></DOCCOMMENT>
+<DOCCOMMENT> * </DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>\todo</DOCTAG><DOCSTR> Some of these methods are missing documentation.</DOCSTR></DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>\todo</DOCTAG><DOCSTR> probably should merge the non-stateful code into the stateful code.</DOCSTR></DOCCOMMENT>
+<DOCCOMMENT> *       I don't think there's any specific advantage to keeping the old code.</DOCCOMMENT>
+<DOCCOMMENT> * </DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>\warning</DOCTAG><DOCSTR> don't re-use luminous objects. </DOCSTR></DOCCOMMENT>
+<DOCCOMMENT> * </DOCCOMMENT>
+<DOCCOMMENT> */</DOCCOMMENT>
+
+<KEYWORD>class</KEYWORD> <USER_FUNCTION>Luminous</USER_FUNCTION>
+{
+  <DOCCOMMENT>/** Config options */</DOCCOMMENT>
+  
+  <DOCCOMMENT>/// See: \ref verbosity</DOCCOMMENT>
+  <KEYWORD>public</KEYWORD> <VARIABLE>$verbosity</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>4</NUMERIC>;
+  
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * Sets whether or not the input is already HTML entity escaped</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCSTR> 0.30</DOCSTR></DOCCOMMENT>
+<DOCCOMMENT>   */</DOCCOMMENT> 
+  <KEYWORD>public</KEYWORD> <VARIABLE>$pre_escaped</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;
+  
+  
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * Sets whether or not to tag the input. This may be disabled in the case </DOCCOMMENT>
+<DOCCOMMENT>   * that callback functions are used to transform matched elements.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCSTR> 0.5.0</DOCSTR></DOCCOMMENT>
+<DOCCOMMENT>   */</DOCCOMMENT>
+  
+  <KEYWORD>public</KEYWORD> <VARIABLE>$tag_input</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+  
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * Sets whether or not to treat lines as being separate entities regarding</DOCCOMMENT>
+<DOCCOMMENT>   * tagging. i.e. in some situations it is desirable to close all open tags</DOCCOMMENT>
+<DOCCOMMENT>   * at the end of a line and open them again at the start of the next line</DOCCOMMENT>
+<DOCCOMMENT>   * (for example if the output will be used inside HTML where each line </DOCCOMMENT>
+<DOCCOMMENT>   * appears in a different element.).</DOCCOMMENT>
+<DOCCOMMENT>   * Other times, this is not important.</DOCCOMMENT>
+<DOCCOMMENT>   * </DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCSTR> 0.5.0</DOCSTR></DOCCOMMENT>
+<DOCCOMMENT>   */</DOCCOMMENT>
+  <KEYWORD>public</KEYWORD> <VARIABLE>$separate_lines</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+
+  
+ 
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * Not yet supported</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\todo</DOCTAG><DOCSTR> this.</DOCSTR></DOCCOMMENT>
+<DOCCOMMENT>   */</DOCCOMMENT>  
+  <KEYWORD>public</KEYWORD> <VARIABLE>$lang_specific_classnames</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;
+  
+  <KEYWORD>public</KEYWORD> <VARIABLE>$language</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>null</TYPE>;
+  
+  
+  
+  
+  
+  
+  <KEYWORD>private</KEYWORD> <VARIABLE>$input_src</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING>; <DOCCOMMENT>/**&lt; Input - a source string */</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$output</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING>; <DOCCOMMENT>/**&lt; Output - a tagged source string */</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$grammar</VARIABLE>; <DOCCOMMENT>/**&lt; Grammar - langauge rules */</DOCCOMMENT>
+
+  <DOCCOMMENT>/** State related data */</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$index</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>; <DOCCOMMENT>/**&lt; The input string pointer */</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$open_tag</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>null</TYPE>; <DOCCOMMENT>/**&lt; The currently open delimiter */</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$open_index</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>null</TYPE>; <DOCCOMMENT>/**&lt; Index of the currently open delimiter */</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$open_delim_len</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>null</TYPE>; <DOCCOMMENT>/**&lt; Length of the currently open delimiter */</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$close_delim</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>null</TYPE>; <DOCCOMMENT>/**&lt; The corresponding closing delimiter which is being  </DOCCOMMENT>
+<DOCCOMMENT>      searched for */</DOCCOMMENT>
+
+  <DOCCOMMENT>/** Extractions/aliasing data */</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$html_extractions</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>(); <DOCCOMMENT>/**&lt; Alias to representation lookup */</DOCCOMMENT>
+  
+
+  <KEYWORD>private</KEYWORD> <VARIABLE>$num_extractions</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>; <DOCCOMMENT>/// Number of extractions (aliases) performed </DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$extractions_offset</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>;  <DOCCOMMENT>/**&lt; Alias ID to start at (so as not to </DOCCOMMENT>
+<DOCCOMMENT>    collide with existing alises from other parsers */</DOCCOMMENT>
+  
+
+  <KEYWORD>private</KEYWORD> <VARIABLE>$callback_data</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>null</TYPE>; <DOCCOMMENT>/**&lt; Somewhere to put data to be accessible </DOCCOMMENT>
+<DOCCOMMENT>    from a callback function whose arg list does not allow passing it */</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$callback_data2</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>null</TYPE>; <DOCCOMMENT>///sometimes one just isn't enough.</DOCCOMMENT>
+   
+  <DOCCOMMENT>/// Luminous sticks a newline at the end of the string is none exists, </DOCCOMMENT>
+  <DOCCOMMENT>/// we record here whether we need to remove it again afterwards.</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$append_newline</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;
+
+  <DOCCOMMENT>/** Optimisations */</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$starts</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>(); <DOCCOMMENT>/// indices of possible start tags.</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$ends</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>(); <DOCCOMMENT>/// indices of possible end tags</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$ends_length</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>(); <DOCCOMMENT>/// lengths of end tags (references $ends)</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$ends_excludes</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>(); <DOCCOMMENT>/// Which end tags should be excluded</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$num_ends</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>; <DOCCOMMENT>/// count($this-&gt;ends)</DOCCOMMENT>
+  
+  <KEYWORD>private</KEYWORD> <VARIABLE>$last_str_index_gne</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>; 
+  <KEYWORD>private</KEYWORD> <VARIABLE>$last_arr_index_gne</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>;
+
+  <KEYWORD>private</KEYWORD> <VARIABLE>$last_str_index_gns</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>;
+  <KEYWORD>private</KEYWORD> <VARIABLE>$last_arr_index_gns</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>;
+
+  <DOCCOMMENT>/// true if there are no ignore tags to worry about</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$parse_all</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;
+  
+  <DOCCOMMENT>/// count($this-&gt;grammar-&gt;escape_chars)</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$num_escape_chars</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>;
+  
+  <DOCCOMMENT>/// Tries to avoid unnecessary calls to is_escaped</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$escape_cache</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>();
+  
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * delimiter rules from the grammar are copied here so the array can be </DOCCOMMENT>
+<DOCCOMMENT>   * changed, as a non-hit of a rule anywhere in the string means it's best to </DOCCOMMENT>
+<DOCCOMMENT>   * remove it so we won't iterate over it again</DOCCOMMENT>
+<DOCCOMMENT>   */</DOCCOMMENT> 
+  <KEYWORD>private</KEYWORD> <VARIABLE>$local_rules</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>();
+  <KEYWORD>private</KEYWORD> <VARIABLE>$local_simple_types</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>();
+  
+  
+  
+  
+  <KEYWORD>private</KEYWORD> <VARIABLE>$strsearch_opening_delimiters</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>null</TYPE>; <COMMENT>// LuminousStringSearch object.</COMMENT>
+  <KEYWORD>private</KEYWORD> <VARIABLE>$strsearch_closing_delimiters</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>null</TYPE>;
+  
+  
+  
+  
+  
+  <COMMENT>// State related code.</COMMENT>
+  
+  <KEYWORD>private</KEYWORD> <VARIABLE>$stateful</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;  
+  <KEYWORD>private</KEYWORD> <VARIABLE>$stack</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>();
+  <KEYWORD>private</KEYWORD> <VARIABLE>$state_tokens</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>();
+  
+  <KEYWORD>private</KEYWORD> <VARIABLE>$state_tokens_compiled</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>();
+  <KEYWORD>private</KEYWORD> <VARIABLE>$state_output_buffer</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING>;
+  <KEYWORD>private</KEYWORD> <VARIABLE>$state_tokens_cached</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>();
+  
+  <KEYWORD>private</KEYWORD> <VARIABLE>$state_mapping_cache</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>();
+  
+  
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>SetupStates</USER_FUNCTION>()
+  {
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stateful</OO> <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+    
+    <KEYWORD>foreach</KEYWORD>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>local_rules</OO> <KEYWORD>as</KEYWORD> <VARIABLE>$l</VARIABLE>)
+    {
+      <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><FUNCTION>isset</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens_compiled</OO><OPERATOR>[</OPERATOR><VARIABLE>$l</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>name</OO><OPERATOR>]</OPERATOR>))
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens_compiled</OO><OPERATOR>[</OPERATOR><VARIABLE>$l</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>name</OO><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>();
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens_compiled</OO><OPERATOR>[</OPERATOR><VARIABLE>$l</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>name</OO><OPERATOR>]</OPERATOR><OPERATOR>[</OPERATOR><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <VARIABLE>$l</VARIABLE>;
+    }
+  }
+  
+  
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>GetState</USER_FUNCTION>()
+  {
+    <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><FUNCTION>isset</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR>))
+      <KEYWORD>return</KEYWORD> <TYPE>null</TYPE>;
+    
+    <KEYWORD>return</KEYWORD> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO><OPERATOR>[</OPERATOR>count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO>)<OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR>;
+    
+  }
+  
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>GetStateName</USER_FUNCTION>()
+  {
+    <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><FUNCTION>isset</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR>))
+      <KEYWORD>return</KEYWORD> <STRING>'GLOBAL'</STRING>;
+    
+    <KEYWORD>return</KEYWORD> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO><OPERATOR>[</OPERATOR>count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO>)<OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR><OPERATOR>[</OPERATOR><STRING>'state'</STRING><OPERATOR>]</OPERATOR>;
+  }
+  
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>LoadTokensForState</USER_FUNCTION>(<VARIABLE>$state</VARIABLE>)
+  {
+    
+    
+    <KEYWORD>if</KEYWORD> (<FUNCTION>isset</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens_cached</OO><OPERATOR>[</OPERATOR><VARIABLE>$state</VARIABLE><OPERATOR>]</OPERATOR>))
+    {
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens_cached</OO><OPERATOR>[</OPERATOR><VARIABLE>$state</VARIABLE><OPERATOR>]</OPERATOR>;
+      <KEYWORD>return</KEYWORD>;
+    }    
+    <VARIABLE>$t</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>GetTransitions</OO>(<VARIABLE>$state</VARIABLE>);
+    
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$t</VARIABLE> <OPERATOR>===</OPERATOR> <TYPE>null</TYPE>)
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens</OO> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>();
+    <KEYWORD>elseif</KEYWORD>(<VARIABLE>$t</VARIABLE> <OPERATOR>===</OPERATOR> <STRING>'*'</STRING> <OPERATOR>||</OPERATOR> <VARIABLE>$t</VARIABLE> <OPERATOR>===</OPERATOR> <STRING>'!'</STRING>)
+    {
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>local_rules</OO>;
+        
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$t</VARIABLE> <OPERATOR>===</OPERATOR> <STRING>'!'</STRING>)
+      {
+        <KEYWORD>foreach</KEYWORD>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens</OO> <KEYWORD>as</KEYWORD> <VARIABLE>$i</VARIABLE><OPERATOR>=</OPERATOR><OPERATOR>&gt;</OPERATOR><VARIABLE>$t</VARIABLE>)
+        {
+          <KEYWORD>if</KEYWORD> (<VARIABLE>$t</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>name</OO> <OPERATOR>===</OPERATOR> <VARIABLE>$state</VARIABLE>)
+            <FUNCTION>unset</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens</OO><OPERATOR>[</OPERATOR><VARIABLE>$i</VARIABLE><OPERATOR>]</OPERATOR>);
+        }
+      }        
+    }
+    <KEYWORD>elseif</KEYWORD> (<FUNCTION>is_array</FUNCTION>(<VARIABLE>$t</VARIABLE>)) 
+    {      
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens</OO> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>();
+      
+      <KEYWORD>foreach</KEYWORD>(<VARIABLE>$t</VARIABLE> <KEYWORD>as</KEYWORD> <VARIABLE>$state_name</VARIABLE>)
+      {
+        <KEYWORD>if</KEYWORD> (<FUNCTION>isset</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens_compiled</OO><OPERATOR>[</OPERATOR><VARIABLE>$state_name</VARIABLE><OPERATOR>]</OPERATOR>))                  
+          <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens</OO> <OPERATOR>=</OPERATOR> <FUNCTION>array_merge</FUNCTION>(
+            <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens</OO>,
+            <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens_compiled</OO><OPERATOR>[</OPERATOR><VARIABLE>$state_name</VARIABLE><OPERATOR>]</OPERATOR>
+        );
+      }
+    }
+    <KEYWORD>else</KEYWORD>
+      die(<STRING>'State transitions error'</STRING>);
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens_cached</OO><OPERATOR>[</OPERATOR><VARIABLE>$state</VARIABLE><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens</OO>;
+    
+  }  
+  
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * </DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG><DOCSTR> Gets the end index of a state.</DOCSTR></DOCCOMMENT>
+<DOCCOMMENT>   *    returns the currently suspected ending index of a state. The end</DOCCOMMENT>
+<DOCCOMMENT>   *    may not be correct as there may be more rules to consider. If the end</DOCCOMMENT>
+<DOCCOMMENT>   *    is given as an index x and then the next state begins at index y, </DOCCOMMENT>
+<DOCCOMMENT>   *    x is the true end if x \&lt; y. If x \&gt;= y then y represents a nested state,</DOCCOMMENT>
+<DOCCOMMENT>   *    and x will have to be recalculated after state y is closed.</DOCCOMMENT>
+<DOCCOMMENT>   * </DOCCOMMENT>
+<DOCCOMMENT>   * </DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\return</DOCTAG><DOCSTR> the index </DOCSTR></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> state </DOCPROPERTY>the state array (as stored on the stack)</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> real_end </DOCPROPERTY>if a state ends with the sequence 'xyz' and the sequence</DOCCOMMENT>
+<DOCCOMMENT>   *    abcxyz is encountered, it may sometimes be preferable to determine</DOCCOMMENT>
+<DOCCOMMENT>   *    the index of 'c', or in other situations, the index of 'z'. </DOCCOMMENT>
+<DOCCOMMENT>   *    real_end=true includes the delimiter xyz, real_end=false does not.</DOCCOMMENT>
+<DOCCOMMENT>   */</DOCCOMMENT>
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>GetStateEnd</USER_FUNCTION>(<VARIABLE>$state</VARIABLE>, <VARIABLE>$real_end</VARIABLE><OPERATOR>=</OPERATOR><TYPE>true</TYPE>)
+  {
+    <VARIABLE>$state_rule</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$state</VARIABLE><OPERATOR>[</OPERATOR><STRING>'rule'</STRING><OPERATOR>]</OPERATOR>;
+    <VARIABLE>$regex</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$state_rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_REGEX</CONSTANT>;
+    <COMMENT>/* we don't want to find a finish on the same index as start because</COMMENT>
+<COMMENT>     * otherwise a string like "hello" may be detected as </COMMENT>
+<COMMENT>     * &lt;str&gt;"&lt;/str&gt;hello&lt;str&gt;"&lt;/str&gt;</COMMENT>
+<COMMENT>     */</COMMENT>
+    <VARIABLE>$finish</VARIABLE> <OPERATOR>=</OPERATOR>  max(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO><OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>, <VARIABLE>$state</VARIABLE><OPERATOR>[</OPERATOR><STRING>'start'</STRING><OPERATOR>]</OPERATOR>);
+    <VARIABLE>$match</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$state_rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>delim_2</OO>;
+    
+    <VARIABLE>$escaped</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+    <KEYWORD>while</KEYWORD>(<VARIABLE>$escaped</VARIABLE>)
+    {      
+        
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$regex</VARIABLE>)
+        <VARIABLE>$finish</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>strsearch_closing_delimiters</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>PregSearch</OO>(
+          <VARIABLE>$state_rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>delim_2</OO>, 
+          <VARIABLE>$finish</VARIABLE><OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC>,
+          <VARIABLE>$match</VARIABLE>);
+      <KEYWORD>else</KEYWORD>
+        <VARIABLE>$finish</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>strsearch_closing_delimiters</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>StrSearch</OO>(
+          <VARIABLE>$state_rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>delim_2</OO>, 
+          <VARIABLE>$finish</VARIABLE><OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC>
+          );
+          
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$finish</VARIABLE> <OPERATOR>===</OPERATOR> <TYPE>false</TYPE>)
+        <KEYWORD>break</KEYWORD>;
+      
+      <VARIABLE>$escaped</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>CharIsEscaped</OO>(<VARIABLE>$finish</VARIABLE>);
+    }
+    
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$state_rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_STOP_AT_END</CONSTANT>)
+    {
+      <VARIABLE>$end</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>Get_Next_End</OO>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>);
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$end</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>null</TYPE> <OPERATOR>&amp;&amp;</OPERATOR> (<VARIABLE>$finish</VARIABLE><OPERATOR>===</OPERATOR><TYPE>false</TYPE> <OPERATOR>||</OPERATOR> <VARIABLE>$end</VARIABLE> <OPERATOR>&lt;</OPERATOR> <VARIABLE>$finish</VARIABLE>))
+        <KEYWORD>return</KEYWORD> <VARIABLE>$end</VARIABLE>;
+    }    
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$finish</VARIABLE> <OPERATOR>===</OPERATOR> <TYPE>false</TYPE>)
+      <KEYWORD>return</KEYWORD> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>);
+    
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$real_end</VARIABLE>)
+      <VARIABLE>$finish</VARIABLE> <OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$match</VARIABLE>);
+    
+    <KEYWORD>return</KEYWORD> <VARIABLE>$finish</VARIABLE>;
+  }
+  
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>PushState</USER_FUNCTION>(<VARIABLE>$state</VARIABLE>, <VARIABLE>$rule</VARIABLE>, <VARIABLE>$start</VARIABLE>, <VARIABLE>$s_delim</VARIABLE>)
+  {    
+<COMMENT>//     echo "Pushing state: $state&lt;br&gt;";</COMMENT>
+    <VARIABLE>$finish</VARIABLE> <OPERATOR>=</OPERATOR> (<VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_COMPLETE</CONSTANT>)? <VARIABLE>$start</VARIABLE><OPERATOR>+</OPERATOR><FUNCTION>strlen</FUNCTION>(<VARIABLE>$s_delim</VARIABLE>) : <TYPE>null</TYPE>;
+    
+    <VARIABLE>$s</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>, <VARIABLE>$start</VARIABLE><OPERATOR>-</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>);
+    
+    <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR>count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO>))
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> .<OPERATOR>=</OPERATOR> <VARIABLE>$s</VARIABLE>;
+    <KEYWORD>else</KEYWORD>    
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_output_buffer</OO> .<OPERATOR>=</OPERATOR> <VARIABLE>$s</VARIABLE>;
+    
+    <VARIABLE>$rule_</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE>;
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_DYNAMIC_DELIMS</CONSTANT>)
+    {
+      <VARIABLE>$rule_</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>clone</KEYWORD> <VARIABLE>$rule</VARIABLE>;
+      <VARIABLE>$dd</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>GetDynamicDelimAtIndex</OO>(<VARIABLE>$start</VARIABLE> <OPERATOR>+</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$s_delim</VARIABLE>)); 
+      <VARIABLE>$rule_</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>delim_2</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>MatchDynamicDelim</OO>(<VARIABLE>$s_delim</VARIABLE>, <VARIABLE>$rule_</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>delim_2</OO>, 
+        <VARIABLE>$dd</VARIABLE>,
+        <VARIABLE>$rule_</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO>);
+      <VARIABLE>$finish</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>null</TYPE>;
+<COMMENT>#     echo "$dd =&gt; {$rule_-&gt;delim_2}&lt;br&gt;";</COMMENT>
+    }
+    
+    
+    <VARIABLE>$array</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>(<STRING>'state'</STRING> <OPERATOR>=</OPERATOR><OPERATOR>&gt;</OPERATOR> <VARIABLE>$state</VARIABLE>, 
+                    <STRING>'start'</STRING> <OPERATOR>=</OPERATOR><OPERATOR>&gt;</OPERATOR> <VARIABLE>$start</VARIABLE>, 
+                    <STRING>'finish'</STRING> <OPERATOR>=</OPERATOR><OPERATOR>&gt;</OPERATOR> <VARIABLE>$finish</VARIABLE>, 
+                    <STRING>'rule'</STRING> <OPERATOR>=</OPERATOR><OPERATOR>&gt;</OPERATOR> <VARIABLE>$rule_</VARIABLE>, 
+                    <STRING>'buffer_index'</STRING> <OPERATOR>=</OPERATOR><OPERATOR>&gt;</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_output_buffer</OO>)
+                    );
+
+    <COMMENT>// protection vs infinite loops</COMMENT>
+    <VARIABLE>$i</VARIABLE><OPERATOR>=</OPERATOR>count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO>)<OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>;
+    <KEYWORD>for</KEYWORD>(; <VARIABLE>$i</VARIABLE> <OPERATOR>&gt;</OPERATOR><OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>; <VARIABLE>$i</VARIABLE><OPERATOR>--</OPERATOR>)
+    {
+      <VARIABLE>$s_</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO><OPERATOR>[</OPERATOR><VARIABLE>$i</VARIABLE><OPERATOR>]</OPERATOR>;
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$s_</VARIABLE><OPERATOR>[</OPERATOR><STRING>'start'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <VARIABLE>$start</VARIABLE>)
+        <KEYWORD>break</KEYWORD>;
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$s_</VARIABLE><OPERATOR>[</OPERATOR><STRING>'state'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>===</OPERATOR> <VARIABLE>$state</VARIABLE>)
+      {
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_output_buffer</OO> .<OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO><OPERATOR>[</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO><OPERATOR>++</OPERATOR><OPERATOR>]</OPERATOR>;
+        <KEYWORD>return</KEYWORD>;
+      }
+    }
+    
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO><OPERATOR>[</OPERATOR><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <VARIABLE>$array</VARIABLE>;
+    
+    <KEYWORD>if</KEYWORD> ((<VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_CONSUME</CONSTANT>)
+      <OPERATOR>&amp;&amp;</OPERATOR> (<OPERATOR>!</OPERATOR>(<VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_COMPLETE</CONSTANT>))
+     <OPERATOR>||</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO> <OPERATOR>&amp;&amp;</OPERATOR> <CONSTANT>LUMINOUS_DYNAMIC_DELIMS</CONSTANT>)
+    {
+<COMMENT>//       echo $rule-&gt;type . '&lt;br&gt;';</COMMENT>
+      <VARIABLE>$start</VARIABLE> <OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$s_delim</VARIABLE>);
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_output_buffer</OO> .<OPERATOR>=</OPERATOR> <VARIABLE>$s_delim</VARIABLE>;
+    }    
+      
+    assert(<VARIABLE>$start</VARIABLE> <OPERATOR>&gt;</OPERATOR><OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>);
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$start</VARIABLE>;
+  }
+  
+  
+  
+  
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>PopState</USER_FUNCTION>(<VARIABLE>$index</VARIABLE><OPERATOR>=</OPERATOR><TYPE>null</TYPE>)
+  {    
+    <VARIABLE>$completed_state</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array_pop</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO>);
+    
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$index</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>null</TYPE>)
+      <VARIABLE>$completed_state</VARIABLE><OPERATOR>[</OPERATOR><STRING>'finish'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <VARIABLE>$index</VARIABLE>;
+    
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$completed_state</VARIABLE><OPERATOR>[</OPERATOR><STRING>'finish'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>===</OPERATOR> <TYPE>null</TYPE>)       
+      <VARIABLE>$completed_state</VARIABLE><OPERATOR>[</OPERATOR><STRING>'finish'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>GetStateEnd</OO>(<VARIABLE>$completed_state</VARIABLE>);
+    
+    <COMMENT>/* <COMMENT_NOTE>XXX</COMMENT_NOTE>: this indicates a problem with the grammar's rule - it's catching </COMMENT>
+<COMMENT>     * zero length matches, which means that the index pointer won't be</COMMENT>
+<COMMENT>     * progressed, which means infinite loop.</COMMENT>
+<COMMENT>     * so we discard the rule.</COMMENT>
+<COMMENT>     */</COMMENT>    
+    <KEYWORD>if</KEYWORD>(<VARIABLE>$completed_state</VARIABLE><OPERATOR>[</OPERATOR><STRING>'finish'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>-</OPERATOR> <VARIABLE>$completed_state</VARIABLE><OPERATOR>[</OPERATOR><STRING>'start'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>==</OPERATOR> <NUMERIC>0</NUMERIC>)
+    {
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>DiscardStateRule</OO>(<VARIABLE>$completed_state</VARIABLE><OPERATOR>[</OPERATOR><STRING>'rule'</STRING><OPERATOR>]</OPERATOR>);
+      <KEYWORD>return</KEYWORD>;
+    }
+    
+    <VARIABLE>$s</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>, 
+                <VARIABLE>$completed_state</VARIABLE><OPERATOR>[</OPERATOR><STRING>'finish'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>-</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>);
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_output_buffer</OO> .<OPERATOR>=</OPERATOR> <VARIABLE>$s</VARIABLE>;
+    
+    <VARIABLE>$s_n</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$completed_state</VARIABLE><OPERATOR>[</OPERATOR><STRING>'state'</STRING><OPERATOR>]</OPERATOR>;
+    <KEYWORD>if</KEYWORD> (<FUNCTION>isset</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_mapping_cache</OO><OPERATOR>[</OPERATOR><VARIABLE>$s_n</VARIABLE><OPERATOR>]</OPERATOR>))
+      <VARIABLE>$tag</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_mapping_cache</OO><OPERATOR>[</OPERATOR><VARIABLE>$s_n</VARIABLE><OPERATOR>]</OPERATOR>;
+    <KEYWORD>else</KEYWORD>    
+    {
+      <VARIABLE>$tag</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>GetMapping</OO>(<VARIABLE>$s_n</VARIABLE>);
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$tag</VARIABLE> <OPERATOR>===</OPERATOR> <TYPE>null</TYPE>)
+        <VARIABLE>$tag</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_mapping_cache</OO><OPERATOR>[</OPERATOR><VARIABLE>$s_n</VARIABLE><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <VARIABLE>$tag</VARIABLE>;
+    }
+    
+    <VARIABLE>$rule</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$completed_state</VARIABLE><OPERATOR>[</OPERATOR><STRING>'rule'</STRING><OPERATOR>]</OPERATOR>;
+    
+    <VARIABLE>$callback</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>callback</OO>;
+    
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$callback</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>null</TYPE> <OPERATOR>||</OPERATOR> (<VARIABLE>$tag</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>false</TYPE> <OPERATOR>&amp;&amp;</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>tag_input</OO>))
+    {
+      <VARIABLE>$b_i</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$completed_state</VARIABLE><OPERATOR>[</OPERATOR><STRING>'buffer_index'</STRING><OPERATOR>]</OPERATOR>;
+      <COMMENT>// we split the string output buffer into two, the latter of which is the </COMMENT>
+      <COMMENT>// code matched by THIS rule, from its opening point.</COMMENT>
+      <VARIABLE>$buffer_0</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_output_buffer</OO>, <NUMERIC>0</NUMERIC>, 
+                        <VARIABLE>$b_i</VARIABLE>);
+      <VARIABLE>$buffer_1</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_output_buffer</OO>, 
+                        <VARIABLE>$b_i</VARIABLE>);
+
+
+      
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$callback</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>null</TYPE>)
+      {
+        <KEYWORD>if</KEYWORD> (<FUNCTION>isset</FUNCTION>(<VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>match_array</OO>))
+          <VARIABLE>$buffer_1</VARIABLE> <OPERATOR>=</OPERATOR> call_user_func(<VARIABLE>$callback</VARIABLE>, <VARIABLE>$buffer_1</VARIABLE>, <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>match_array</OO>);          
+        <KEYWORD>else</KEYWORD> 
+          <VARIABLE>$buffer_1</VARIABLE> <OPERATOR>=</OPERATOR> call_user_func(<VARIABLE>$callback</VARIABLE>, <VARIABLE>$buffer_1</VARIABLE>);
+      }
+      
+      
+      
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$tag</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>false</TYPE> <OPERATOR>&amp;&amp;</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>tag_input</OO>) <COMMENT>// false indicates a dummy state, which we don't tag.</COMMENT>
+      {
+        <COMMENT>// we split this to avoid overwriting prior replacements.</COMMENT>
+        <VARIABLE>$b1_</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>preg_split</FUNCTION>(<STRING>'<REGEX>/<REGEX_SUBPATTERN_MARKER>(</REGEX_SUBPATTERN_MARKER>&lt;&amp;R_<REGEX_CLASS_MARKER>[</REGEX_CLASS_MARKER>0-9<REGEX_CLASS_MARKER>]</REGEX_CLASS_MARKER><REGEX_OPERATOR>+</REGEX_OPERATOR>&gt;<REGEX_SUBPATTERN_MARKER>)</REGEX_SUBPATTERN_MARKER>/</REGEX>'</STRING>, <VARIABLE>$buffer_1</VARIABLE>, <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>, <CONSTANT>PREG_SPLIT_DELIM_CAPTURE</CONSTANT><OPERATOR>|</OPERATOR><CONSTANT>PREG_SPLIT_NO_EMPTY</CONSTANT>);
+        <KEYWORD>foreach</KEYWORD>(<VARIABLE>$b1_</VARIABLE> <KEYWORD>as</KEYWORD> <OPERATOR>&amp;</OPERATOR><VARIABLE>$b_</VARIABLE>)
+        {
+          <KEYWORD>if</KEYWORD> (<VARIABLE>$b_</VARIABLE><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <STRING>'&lt;'</STRING>)
+            <VARIABLE>$b_</VARIABLE> <OPERATOR>=</OPERATOR> tag_block(<VARIABLE>$tag</VARIABLE>, <VARIABLE>$b_</VARIABLE>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>separate_lines</OO>);
+        }
+        <VARIABLE>$buffer_1</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>implode</FUNCTION>(<STRING>''</STRING>, <VARIABLE>$b1_</VARIABLE>);
+      }
+      
+      <COMMENT>// Hide the string if there are only null states below</COMMENT>
+      <VARIABLE>$null</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+      
+      <KEYWORD>for</KEYWORD> (<VARIABLE>$i</VARIABLE><OPERATOR>=</OPERATOR><NUMERIC>0</NUMERIC>; <VARIABLE>$i</VARIABLE><OPERATOR>&lt;</OPERATOR>count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO>) <OPERATOR>&amp;&amp;</OPERATOR> <VARIABLE>$null</VARIABLE>; <VARIABLE>$i</VARIABLE><OPERATOR>++</OPERATOR>)
+        <VARIABLE>$null</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>GetMapping</OO>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO><OPERATOR>[</OPERATOR><VARIABLE>$i</VARIABLE><OPERATOR>]</OPERATOR><OPERATOR>[</OPERATOR><STRING>'state'</STRING><OPERATOR>]</OPERATOR>) <OPERATOR>===</OPERATOR> <TYPE>null</TYPE>;
+      
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$null</VARIABLE>)
+        <VARIABLE>$buffer_1</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>AddReplacement</OO>(<VARIABLE>$buffer_1</VARIABLE>);
+      
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_output_buffer</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$buffer_0</VARIABLE> . <VARIABLE>$buffer_1</VARIABLE>;
+      
+      
+    }
+    
+    <KEYWORD>if</KEYWORD> (empty(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO>))
+    {
+<COMMENT>//       $this-&gt;state_output_buffer =  $this-&gt;AddReplacement($this-&gt;state_output_buffer);</COMMENT>
+<COMMENT>//       if ($tag !== false)</COMMENT>
+<COMMENT>//         $this-&gt;output .= $this-&gt;AddReplacement($this-&gt;state_output_buffer);</COMMENT>
+<COMMENT>//       else</COMMENT>
+         <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> .<OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_output_buffer</OO>;
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_output_buffer</OO> <OPERATOR>=</OPERATOR> <STRING>""</STRING>;
+    }
+<COMMENT>//     echo "pop {$completed_state['state']}&lt;br&gt;";</COMMENT>
+<COMMENT>//     echo count($this-&gt;stack) . "&lt;br&gt;";</COMMENT>
+    assert(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO> <OPERATOR>&lt;</OPERATOR><OPERATOR>=</OPERATOR> <VARIABLE>$completed_state</VARIABLE><OPERATOR>[</OPERATOR><STRING>'finish'</STRING><OPERATOR>]</OPERATOR>) <KEYWORD>or</KEYWORD> die(<STRING>"<VARIABLE>{$this-&gt;index}</VARIABLE> &gt; <VARIABLE>{$completed_state['finish']}</VARIABLE>"</STRING>);
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$completed_state</VARIABLE><OPERATOR>[</OPERATOR><STRING>'finish'</STRING><OPERATOR>]</OPERATOR>;
+    
+    
+  }  
+  
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>DiscardStateRule</USER_FUNCTION>(<VARIABLE>$rule</VARIABLE>)
+  {
+    <KEYWORD>foreach</KEYWORD>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens_cached</OO> <KEYWORD>as</KEYWORD> <VARIABLE>$k</VARIABLE><OPERATOR>=</OPERATOR><OPERATOR>&gt;</OPERATOR><OPERATOR>&amp;</OPERATOR><VARIABLE>$v</VARIABLE>)
+    {
+      <KEYWORD>foreach</KEYWORD>(<VARIABLE>$v</VARIABLE> <KEYWORD>as</KEYWORD> <VARIABLE>$i</VARIABLE><OPERATOR>=</OPERATOR><OPERATOR>&gt;</OPERATOR><VARIABLE>$r</VARIABLE>)
+      {
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$r</VARIABLE> <OPERATOR>==</OPERATOR> <VARIABLE>$rule</VARIABLE>)
+        {
+          <FUNCTION>unset</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens_cached</OO><OPERATOR>[</OPERATOR><VARIABLE>$k</VARIABLE><OPERATOR>]</OPERATOR><OPERATOR>[</OPERATOR><VARIABLE>$i</VARIABLE><OPERATOR>]</OPERATOR>);
+        }
+      }
+    }
+  }
+  
+  
+  
+
+
+
+
+  
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * Constructor. Nothing interesting here.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> src </DOCPROPERTY>the source string (optionally set this later with </DOCCOMMENT>
+<DOCCOMMENT>   *    SetSource)</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\see</DOCTAG><DOCSTR> Luminous::SetSource</DOCSTR></DOCCOMMENT>
+<DOCCOMMENT>   */</DOCCOMMENT> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>__construct</USER_FUNCTION>(<VARIABLE>$src</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>null</TYPE>)
+  {
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$src</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>=</OPERATOR> <TYPE>null</TYPE>)
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$src</VARIABLE>;
+  }
+  
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>    * Sets the input source string</DOCCOMMENT>
+<DOCCOMMENT>    * <DOCTAG>\param</DOCTAG><DOCPROPERTY> src </DOCPROPERTY>the string of source code to parse</DOCCOMMENT>
+<DOCCOMMENT>    */</DOCCOMMENT>
+  <KEYWORD>public</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>SetSource</USER_FUNCTION>(<VARIABLE>$src</VARIABLE>)
+  {
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$src</VARIABLE>;
+  }
+
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\internal</DOCTAG></DOCCOMMENT>
+<DOCCOMMENT>   * Sets the extraction offset to start at.  This is for recursive calls on</DOCCOMMENT>
+<DOCCOMMENT>   * the same string,  so that different parser objects do not collide and</DOCCOMMENT>
+<DOCCOMMENT>   * overwrite each other's changes with their own</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> num </DOCPROPERTY>The base number to start from.</DOCCOMMENT>
+<DOCCOMMENT>   */</DOCCOMMENT>
+
+  <KEYWORD>public</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>SetExtractionsOffset</USER_FUNCTION>(<VARIABLE>$num</VARIABLE>)
+  {
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>extractions_offset</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$num</VARIABLE>;
+  }
+
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * Sets Luminous's grammar</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> grammar </DOCPROPERTY>the LuminousGrammar object</DOCCOMMENT>
+<DOCCOMMENT>   */</DOCCOMMENT>
+
+  <KEYWORD>public</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>SetGrammar</USER_FUNCTION>(LuminousGrammar <VARIABLE>$grammar</VARIABLE>)
+  {
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>grammar</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$grammar</VARIABLE>;
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>SetRuleset</OO>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>);
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>num_escape_chars</OO> <OPERATOR>=</OPERATOR> count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>escape_chars</OO>);
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>local_rules</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$grammar</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>delimited_types</OO>;
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>local_simple_types</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$grammar</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>simple_types</OO>;
+        
+    <KEYWORD>foreach</KEYWORD>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>local_simple_types</OO> <KEYWORD>as</KEYWORD> <VARIABLE>$k</VARIABLE><OPERATOR>=</OPERATOR><OPERATOR>&gt;</OPERATOR><VARIABLE>$r</VARIABLE>)
+    { 
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$r</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>verbosity</OO> <OPERATOR>&gt;</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>verbosity</OO>)
+        <FUNCTION>unset</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>local_simple_types</OO><OPERATOR>[</OPERATOR><VARIABLE>$k</VARIABLE><OPERATOR>]</OPERATOR>);
+    }
+    <KEYWORD>foreach</KEYWORD>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>local_rules</OO> <KEYWORD>as</KEYWORD> <VARIABLE>$k</VARIABLE><OPERATOR>=</OPERATOR><OPERATOR>&gt;</OPERATOR><VARIABLE>$r</VARIABLE>)
+    {
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$r</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>verbosity</OO> <OPERATOR>&gt;</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>verbosity</OO>)
+        <FUNCTION>unset</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>local_rules</OO><OPERATOR>[</OPERATOR><VARIABLE>$k</VARIABLE><OPERATOR>]</OPERATOR>);
+        
+    }
+        
+<COMMENT>//     foreach($this-&gt;local_simple_types as $k=&gt;$s)</COMMENT>
+<COMMENT>//     {</COMMENT>
+<COMMENT>//       $r = $s;</COMMENT>
+<COMMENT>//       $text = $s-&gt;text;</COMMENT>
+<COMMENT>//       if ($s &amp; LUMINOUS_LIST)</COMMENT>
+<COMMENT>//       {</COMMENT>
+<COMMENT>//         foreach($rule-&gt;values as $v)</COMMENT>
+<COMMENT>//           if ($rule-&gt;replace_str !== null)</COMMENT>
+<COMMENT>//       }</COMMENT>
+<COMMENT>//       $r = new LuminousDelimiterRule(0, $s-&gt;name,</COMMENT>
+<COMMENT>//         $s-&gt;type | LUMINOUS_COMPLETE, $s-&gt;text);</COMMENT>
+<COMMENT>// //       $r-&gt;type |= LUMINOUS_COMPLETE;</COMMENT>
+<COMMENT>//       $this-&gt;local_rules[] = $r;</COMMENT>
+<COMMENT>//       </COMMENT>
+<COMMENT>//       unset($this-&gt;local_simple_types[$k]);</COMMENT>
+<COMMENT>//     }</COMMENT>
+    
+    
+    
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_transitions</OO> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>null</TYPE>)
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>SetupStates</OO>();
+    
+    <KEYWORD>if</KEYWORD> (<FUNCTION>isset</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>info</OO><OPERATOR>[</OPERATOR><STRING>'language'</STRING><OPERATOR>]</OPERATOR>) <OPERATOR>&amp;&amp;</OPERATOR> 
+      <FUNCTION>strlen</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>info</OO><OPERATOR>[</OPERATOR><STRING>'language'</STRING><OPERATOR>]</OPERATOR>))
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>language</OO> <OPERATOR>=</OPERATOR> <FUNCTION>strtoupper</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>info</OO><OPERATOR>[</OPERATOR><STRING>'language'</STRING><OPERATOR>]</OPERATOR>);
+    <KEYWORD>else</KEYWORD>
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>language</OO> <OPERATOR>=</OPERATOR> <STRING>"oops"</STRING>;
+  }
+
+
+  
+
+
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * Determines if a character at a given index is escaped or not</DOCCOMMENT>
+<DOCCOMMENT>   *  <DOCTAG>\param</DOCTAG><DOCPROPERTY> index </DOCPROPERTY>the index of the character. If null, the current $this-&gt;index</DOCCOMMENT>
+<DOCCOMMENT>   * is used</DOCCOMMENT>
+<DOCCOMMENT>   *  <DOCTAG>\return</DOCTAG><DOCSTR> true or false</DOCSTR></DOCCOMMENT>
+<DOCCOMMENT>   */</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>CharIsEscaped</USER_FUNCTION>(<VARIABLE>$index</VARIABLE><OPERATOR>=</OPERATOR><TYPE>null</TYPE>)
+  {
+    <VARIABLE>$index</VARIABLE> <OPERATOR>=</OPERATOR> (<VARIABLE>$index</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>null</TYPE>)? <VARIABLE>$index</VARIABLE> : <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>;
+    <KEYWORD>if</KEYWORD> (<FUNCTION>isset</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>escape_cache</OO><OPERATOR>[</OPERATOR><VARIABLE>$index</VARIABLE><OPERATOR>]</OPERATOR>))
+      <KEYWORD>return</KEYWORD> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>escape_cache</OO><OPERATOR>[</OPERATOR><VARIABLE>$index</VARIABLE><OPERATOR>]</OPERATOR>;
+    
+    <VARIABLE>$e</VARIABLE> <OPERATOR>=</OPERATOR> is_escaped(
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, 
+      <VARIABLE>$index</VARIABLE>,
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>escape_chars</OO>);
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>escape_cache</OO><OPERATOR>[</OPERATOR><VARIABLE>$index</VARIABLE><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <VARIABLE>$e</VARIABLE>;
+    <KEYWORD>return</KEYWORD> <VARIABLE>$e</VARIABLE>;
+  }
+  
+
+
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * Adds a 'replacement' to the internal data. The given string isreplaced by</DOCCOMMENT>
+<DOCCOMMENT>   * some pattern, and the alias lookup stored internally</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> replacement </DOCPROPERTY>the string to be replaced</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> tag </DOCPROPERTY>the type (tag) of the data which is being stored. This may be </DOCCOMMENT>
+<DOCCOMMENT>   *    null but if the data is all of one type, it really shouldn't be.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\return</DOCTAG><DOCSTR> the alias which now represents the string.</DOCSTR></DOCCOMMENT>
+<DOCCOMMENT>   */</DOCCOMMENT>  
+  <KEYWORD>public</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>AddReplacement</USER_FUNCTION>(<VARIABLE>$replacement</VARIABLE>, <VARIABLE>$tag</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>null</TYPE>)
+  {
+    <VARIABLE>$i</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>num_extractions</OO><OPERATOR>+</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>extractions_offset</OO>;
+    <VARIABLE>$pattern</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>'&lt;&amp;R_'</STRING>. <VARIABLE>$i</VARIABLE> . <STRING>'&gt;'</STRING>;
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$tag</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>null</TYPE>)
+    {
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>tag_input</OO>);
+        <VARIABLE>$replacement</VARIABLE> <OPERATOR>=</OPERATOR> tag_block(<VARIABLE>$tag</VARIABLE>, <VARIABLE>$replacement</VARIABLE>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>separate_lines</OO>);
+    }
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>html_extractions</OO><OPERATOR>[</OPERATOR><VARIABLE>$i</VARIABLE><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <VARIABLE>$replacement</VARIABLE>;
+    
+    
+    <OPERATOR>++</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>num_extractions</OO>;
+    <KEYWORD>return</KEYWORD> <VARIABLE>$pattern</VARIABLE>;
+  }
+  
+  
+  
+  <KEYWORD>private</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>DoNestedReplacements</USER_FUNCTION>(<VARIABLE>$rule</VARIABLE>, <VARIABLE>$start</VARIABLE>, <VARIABLE>$end</VARIABLE>)
+  {    
+    <VARIABLE>$callback</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>callback</OO>;
+    <VARIABLE>$tag</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>name</OO>;
+    
+    <VARIABLE>$substr</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$start</VARIABLE>, <VARIABLE>$end</VARIABLE><OPERATOR>-</OPERATOR><VARIABLE>$start</VARIABLE>);
+    <VARIABLE>$args</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>(<TYPE>null</TYPE>, <TYPE>null</TYPE>);
+    <VARIABLE>$use_cb</VARIABLE> <OPERATOR>=</OPERATOR> (<VARIABLE>$callback</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>null</TYPE> <OPERATOR>&amp;&amp;</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>verbosity</OO> <OPERATOR>&gt;</OPERATOR><OPERATOR>=</OPERATOR> <NUMERIC>3</NUMERIC>);
+    <VARIABLE>$s</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>preg_split</FUNCTION>(<STRING>'<REGEX>/<REGEX_SUBPATTERN_MARKER>(</REGEX_SUBPATTERN_MARKER>&lt;&amp;R_<REGEX_CLASS_MARKER>[</REGEX_CLASS_MARKER>0-9<REGEX_CLASS_MARKER>]</REGEX_CLASS_MARKER><REGEX_OPERATOR>+</REGEX_OPERATOR>&gt;<REGEX_SUBPATTERN_MARKER>)</REGEX_SUBPATTERN_MARKER>/</REGEX>'</STRING>, <VARIABLE>$substr</VARIABLE>, <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>, <CONSTANT>PREG_SPLIT_DELIM_CAPTURE</CONSTANT><OPERATOR>|</OPERATOR><CONSTANT>PREG_SPLIT_NO_EMPTY</CONSTANT>);
+    <KEYWORD>foreach</KEYWORD>(<VARIABLE>$s</VARIABLE> <KEYWORD>as</KEYWORD> <OPERATOR>&amp;</OPERATOR><VARIABLE>$s_</VARIABLE>)
+    {
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$s_</VARIABLE><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR> <OPERATOR>===</OPERATOR> <STRING>'&lt;'</STRING>)
+        <KEYWORD>continue</KEYWORD>;
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$use_cb</VARIABLE>)
+      {
+        <VARIABLE>$args</VARIABLE><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <VARIABLE>$s_</VARIABLE>;
+        <VARIABLE>$args</VARIABLE><OPERATOR>[</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <FUNCTION>isset</FUNCTION>(<VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>match_array</OO>)? <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>match_array</OO> : <TYPE>null</TYPE>;
+        <VARIABLE>$s_</VARIABLE> <OPERATOR>=</OPERATOR> call_user_func_array(<VARIABLE>$callback</VARIABLE>, <VARIABLE>$args</VARIABLE>);
+      }
+      <VARIABLE>$s_</VARIABLE> <OPERATOR>=</OPERATOR> tag_block(<VARIABLE>$tag</VARIABLE>, <VARIABLE>$s_</VARIABLE>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>separate_lines</OO>);
+    }    
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> .<OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>AddReplacement</OO>(<FUNCTION>implode</FUNCTION>(<STRING>''</STRING>, <VARIABLE>$s</VARIABLE>), <TYPE>null</TYPE>); 
+  }
+  
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> rule </DOCPROPERTY>the current rule for which to search for an ending</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> match_txt </DOCPROPERTY>the text of the next match, returned as a reference</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\return</DOCTAG><DOCSTR> the index of the next matching delimiter for the given rule_text</DOCSTR></DOCCOMMENT>
+<DOCCOMMENT>   */</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> <KEYWORD>function</KEYWORD> <USER_FUNCTION>GetNextEndDelim</USER_FUNCTION>(<VARIABLE>$rule</VARIABLE>, <OPERATOR>&amp;</OPERATOR><VARIABLE>$match_txt</VARIABLE>)
+  {
+    
+    <VARIABLE>$rule_type</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO>;
+    
+    <VARIABLE>$index</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>open_index</OO> <OPERATOR>+</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>open_delim_len</OO> <OPERATOR>-</OPERATOR> <NUMERIC>1</NUMERIC>;
+    <VARIABLE>$regex</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule_type</VARIABLE> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_REGEX</CONSTANT>;
+    <VARIABLE>$m_</VARIABLE> <OPERATOR>=</OPERATOR> (<VARIABLE>$regex</VARIABLE>)?<TYPE>null</TYPE> : <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>close_delim</OO>;
+    <VARIABLE>$end</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;
+    <KEYWORD>while</KEYWORD>(<NUMERIC>1</NUMERIC>)
+    {
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$regex</VARIABLE>)
+        <VARIABLE>$end</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>strsearch_closing_delimiters</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>PregSearch</OO>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>close_delim</OO>, <VARIABLE>$index</VARIABLE><OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC>, <VARIABLE>$m_</VARIABLE>);
+      <KEYWORD>else</KEYWORD>
+        <VARIABLE>$end</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>strsearch_closing_delimiters</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>StrSearch</OO>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>close_delim</OO>, <VARIABLE>$index</VARIABLE><OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC>);
+      
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$end</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>false</TYPE> <OPERATOR>&amp;&amp;</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>CharIsEscaped</OO>(<VARIABLE>$end</VARIABLE>))
+        <OPERATOR>++</OPERATOR><VARIABLE>$index</VARIABLE>;
+      <KEYWORD>else</KEYWORD>
+        <KEYWORD>break</KEYWORD>;
+    }
+    <VARIABLE>$match_txt</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$m_</VARIABLE>;
+    <KEYWORD>return</KEYWORD> <VARIABLE>$end</VARIABLE>;
+  }
+
+  
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * Finds the corresponding ending delimiter to the currently open starting</DOCCOMMENT>
+<DOCCOMMENT>   * delimiter.</DOCCOMMENT>
+<DOCCOMMENT>   * It also completes the process of extracting a delimited type and moves the</DOCCOMMENT>
+<DOCCOMMENT>   * input pointer along appropriately.</DOCCOMMENT>
+<DOCCOMMENT>   */</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>DoEndingDelim</USER_FUNCTION>(<VARIABLE>$rule</VARIABLE>, <VARIABLE>$end</VARIABLE><OPERATOR>=</OPERATOR><TYPE>false</TYPE>)
+  {
+    <VARIABLE>$rule_type</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO>;    
+
+    <VARIABLE>$match_txt</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING>;
+    
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$end</VARIABLE> <OPERATOR>===</OPERATOR> <TYPE>false</TYPE>)
+      <VARIABLE>$end</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>GetNextEndDelim</OO>(<VARIABLE>$rule</VARIABLE>, <VARIABLE>$match_txt</VARIABLE>);
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$end</VARIABLE> <OPERATOR>===</OPERATOR> <TYPE>false</TYPE>)
+      <VARIABLE>$end</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>);
+    
+    <VARIABLE>$stop_at_end</VARIABLE> <OPERATOR>=</OPERATOR> (<VARIABLE>$rule_type</VARIABLE> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_STOP_AT_END</CONSTANT>);    
+    <VARIABLE>$stopping_at_end</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$stop_at_end</VARIABLE>)
+    {
+      <VARIABLE>$close</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>Get_Next_End</OO>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>open_index</OO>);
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$end</VARIABLE> <OPERATOR>===</OPERATOR> <TYPE>false</TYPE> <OPERATOR>||</OPERATOR> (<VARIABLE>$close</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>null</TYPE> <OPERATOR>&amp;&amp;</OPERATOR> <VARIABLE>$close</VARIABLE> <OPERATOR>&lt;</OPERATOR><OPERATOR>=</OPERATOR> <VARIABLE>$end</VARIABLE>) )
+      {
+        <VARIABLE>$end</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$close</VARIABLE>;
+
+        <KEYWORD>if</KEYWORD> (
+          <OPERATOR>!</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>ends_excludes</OO><OPERATOR>[</OPERATOR><VARIABLE>$close</VARIABLE><OPERATOR>]</OPERATOR>)
+        {
+          <VARIABLE>$end</VARIABLE> <OPERATOR>-</OPERATOR><OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>ends_length</OO><OPERATOR>[</OPERATOR><VARIABLE>$close</VARIABLE><OPERATOR>]</OPERATOR>;
+          
+          <COMMENT>// This is probably not the right way to handle this situation</COMMENT>
+          <COMMENT>// there might be a bug elsewhere that causes this to happen.</COMMENT>
+          <VARIABLE>$end</VARIABLE> <OPERATOR>=</OPERATOR> max(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>open_index</OO><OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC>, <VARIABLE>$end</VARIABLE>);
+        }
+        <VARIABLE>$stopping_at_end</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+      }
+    }
+    
+
+    <VARIABLE>$match_len</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$match_txt</VARIABLE>);
+    
+    <VARIABLE>$t</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>open_tag</OO>;
+
+    <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><VARIABLE>$stopping_at_end</VARIABLE> <OPERATOR>&amp;&amp;</OPERATOR> <OPERATOR>!</OPERATOR>(<VARIABLE>$rule_type</VARIABLE> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_EXCLUDE</CONSTANT>))
+      <VARIABLE>$end</VARIABLE> <OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR> <VARIABLE>$match_len</VARIABLE>;
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>DoNestedReplacements</OO>(<VARIABLE>$rule</VARIABLE>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>open_index</OO>, <VARIABLE>$end</VARIABLE>);
+
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$rule_type</VARIABLE> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_EXCLUDE</CONSTANT>)
+    {
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> .<OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>AddReplacement</OO>(<FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$end</VARIABLE>, <VARIABLE>$match_len</VARIABLE>));
+      <VARIABLE>$end</VARIABLE> <OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR> <VARIABLE>$match_len</VARIABLE>;        
+    }
+
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$end</VARIABLE>;
+    <KEYWORD>return</KEYWORD> <TYPE>true</TYPE>;
+  }
+
+
+
+
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * Escapes the input string to make it suitable for processing.</DOCCOMMENT>
+<DOCCOMMENT>   * This should be called once and only once on any input. Child grammars </DOCCOMMENT>
+<DOCCOMMENT>   * shouldn't escape the string again.</DOCCOMMENT>
+<DOCCOMMENT>   */</DOCCOMMENT>
+  <KEYWORD>public</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>EscapeInput</USER_FUNCTION>()
+  {
+    
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO> <OPERATOR>=</OPERATOR> <FUNCTION>str_replace</FUNCTION>(<STRING>"&amp;"</STRING>, <STRING>"&amp;amp;"</STRING>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>);
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO> <OPERATOR>=</OPERATOR> <FUNCTION>str_replace</FUNCTION>(<STRING>"&gt;"</STRING>, <STRING>"&amp;gt;"</STRING>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>);
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO> <OPERATOR>=</OPERATOR> <FUNCTION>str_replace</FUNCTION>(<STRING>"&lt;"</STRING>, <STRING>"&amp;lt;"</STRING>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>);
+    
+    <COMMENT>// DOS line endings</COMMENT>
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO> <OPERATOR>=</OPERATOR> <FUNCTION>str_replace</FUNCTION>(<STRING>"<ESC>\r</ESC><ESC>\n</ESC>"</STRING>, <STRING>"<ESC>\n</ESC>"</STRING>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>);
+    
+    <COMMENT>// Mac line endings?</COMMENT>
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO> <OPERATOR>=</OPERATOR> <FUNCTION>str_replace</FUNCTION>(<STRING>"<ESC>\r</ESC>"</STRING>, <STRING>"<ESC>\n</ESC>"</STRING>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>);
+    
+    <KEYWORD>if</KEYWORD> (<FUNCTION>strlen</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>) <OPERATOR>&amp;&amp;</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO><OPERATOR>[</OPERATOR><FUNCTION>strlen</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>)<OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR>
+      <OPERATOR>!</OPERATOR><OPERATOR>=</OPERATOR> <STRING>"<ESC>\n</ESC>"</STRING>)
+    {
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO> .<OPERATOR>=</OPERATOR> <STRING>"<ESC>\n</ESC>"</STRING>;
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>append_newline</OO> <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+    }
+  }
+  
+  
+  
+  
+  <KEYWORD>private</KEYWORD> <KEYWORD>function</KEYWORD>
+  <USER_FUNCTION>GetDynamicDelimAtIndex</USER_FUNCTION>(<VARIABLE>$index</VARIABLE>)
+  {
+    <VARIABLE>$dyn_delim</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO><OPERATOR>[</OPERATOR><VARIABLE>$index</VARIABLE><OPERATOR>]</OPERATOR>;
+    
+    <COMMENT>// don't split entities</COMMENT>
+    <KEYWORD>if</KEYWORD>(<VARIABLE>$dyn_delim</VARIABLE> <OPERATOR>===</OPERATOR> <STRING>'&amp;'</STRING>)
+    {
+      <FUNCTION>preg_match</FUNCTION>(<STRING>'<REGEX>/^&amp;<REGEX_CLASS_MARKER>[</REGEX_CLASS_MARKER>^;<REGEX_CLASS_MARKER>]</REGEX_CLASS_MARKER><REGEX_OPERATOR>+</REGEX_OPERATOR>;/</REGEX>'</STRING>, 
+                 <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$next</VARIABLE><OPERATOR>+</OPERATOR><FUNCTION>strlen</FUNCTION>(<VARIABLE>$s_delim</VARIABLE>)), <VARIABLE>$m_</VARIABLE>);
+      <VARIABLE>$dyn_delim</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$m_</VARIABLE><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR>;
+    }
+    
+    <KEYWORD>elseif</KEYWORD> (<FUNCTION>ctype_alnum</FUNCTION>(<VARIABLE>$dyn_delim</VARIABLE>) <OPERATOR>||</OPERATOR> <VARIABLE>$dyn_delim</VARIABLE> <OPERATOR>===</OPERATOR> <STRING>'_'</STRING>)
+    {
+      
+      <KEYWORD>if</KEYWORD> (<FUNCTION>preg_match</FUNCTION>(<STRING>'<REGEX>/^<REGEX_CLASS_MARKER>[</REGEX_CLASS_MARKER>a-zA-Z_0-9<REGEX_CLASS_MARKER>]</REGEX_CLASS_MARKER><REGEX_OPERATOR>+</REGEX_OPERATOR>/</REGEX>'</STRING>, 
+                     <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$index</VARIABLE>), 
+                     <VARIABLE>$m_</VARIABLE>)
+        )
+        <VARIABLE>$dyn_delim</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$m_</VARIABLE><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR>;
+    }
+    <KEYWORD>return</KEYWORD> <VARIABLE>$dyn_delim</VARIABLE>;
+  }
+  
+  <KEYWORD>private</KEYWORD> <KEYWORD>function</KEYWORD>
+  <USER_FUNCTION>MatchDynamicDelim</USER_FUNCTION>(<OPERATOR>&amp;</OPERATOR><VARIABLE>$s_delim</VARIABLE>, <VARIABLE>$e_delim</VARIABLE>, <VARIABLE>$dyn_delim</VARIABLE>, <VARIABLE>$rule_type</VARIABLE>)
+  {
+    <VARIABLE>$s_delim</VARIABLE> .<OPERATOR>=</OPERATOR> <VARIABLE>$dyn_delim</VARIABLE>;
+    
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$rule_type</VARIABLE> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_REGEX</CONSTANT>)
+    {
+      <VARIABLE>$e</VARIABLE> <OPERATOR>=</OPERATOR> match_delimiter(<VARIABLE>$dyn_delim</VARIABLE>, <TYPE>true</TYPE>);
+      
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$rule_type</VARIABLE> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_COMPLETE</CONSTANT>)
+        <VARIABLE>$e_delim</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>'/'</STRING> . <VARIABLE>$e</VARIABLE> . <STRING>'/'</STRING>;
+      <KEYWORD>else</KEYWORD>
+        <VARIABLE>$e_delim</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>'/('</STRING> . <VARIABLE>$e</VARIABLE> . <STRING>')'</STRING> . <VARIABLE>$e_delim</VARIABLE>;
+    }
+    <KEYWORD>else</KEYWORD>
+      <VARIABLE>$e_delim</VARIABLE> <OPERATOR>=</OPERATOR> match_delimiter(<VARIABLE>$dyn_delim</VARIABLE>, <TYPE>false</TYPE>);
+    
+    <KEYWORD>return</KEYWORD> <VARIABLE>$e_delim</VARIABLE>;
+  }
+
+  <KEYWORD>private</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>GetStartDelim</USER_FUNCTION>(<OPERATOR>&amp;</OPERATOR><VARIABLE>$match_rule</VARIABLE>, <OPERATOR>&amp;</OPERATOR><VARIABLE>$s_delim</VARIABLE>, <OPERATOR>&amp;</OPERATOR><VARIABLE>$matches</VARIABLE><OPERATOR>=</OPERATOR><TYPE>null</TYPE>)
+  {    
+    <VARIABLE>$rules</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>null</TYPE>;
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stateful</OO>)
+      <VARIABLE>$rules</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>state_tokens</OO>;
+    <KEYWORD>else</KEYWORD>
+      <VARIABLE>$rules</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>local_rules</OO>;
+    
+    <VARIABLE>$next</VARIABLE> <OPERATOR>=</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>;
+    
+    <KEYWORD>foreach</KEYWORD> (<VARIABLE>$rules</VARIABLE> <KEYWORD>as</KEYWORD> <VARIABLE>$key</VARIABLE><OPERATOR>=</OPERATOR><OPERATOR>&gt;</OPERATOR><VARIABLE>$rule</VARIABLE>)
+    {
+      <VARIABLE>$type</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO>;        
+      <VARIABLE>$opener</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>delim_1</OO>;
+      <VARIABLE>$rule_text</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>delim_1</OO>;
+      
+      <VARIABLE>$r</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>; <COMMENT>// index of the next match.</COMMENT>
+      <VARIABLE>$false</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;
+      
+      <VARIABLE>$m_</VARIABLE> <OPERATOR>=</OPERATOR>  (<VARIABLE>$type</VARIABLE> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_MATCHES</CONSTANT>)? <TYPE>null</TYPE> : <TYPE>false</TYPE>;
+      
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$type</VARIABLE> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_REGEX</CONSTANT>)
+        <VARIABLE>$r</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>strsearch_opening_delimiters</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>PregSearch</OO>(<VARIABLE>$opener</VARIABLE>, 
+              <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>, 
+              <VARIABLE>$rule_text</VARIABLE>,
+              <VARIABLE>$m_</VARIABLE>
+            );
+      <KEYWORD>else</KEYWORD>
+        <VARIABLE>$r</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>strsearch_opening_delimiters</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>StrSearch</OO>(<VARIABLE>$opener</VARIABLE>,
+               <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>,
+               (<VARIABLE>$next</VARIABLE> <OPERATOR>===</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>)? <TYPE>null</TYPE>
+                 : <VARIABLE>$next</VARIABLE>
+             );
+
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$r</VARIABLE> <OPERATOR>===</OPERATOR> <TYPE>false</TYPE>) <COMMENT>// no match.</COMMENT>
+      {
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stateful</OO>)
+          <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>DiscardStateRule</OO>(<VARIABLE>$rule</VARIABLE>);
+        <KEYWORD>else</KEYWORD>
+          <FUNCTION>unset</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>local_rules</OO><OPERATOR>[</OPERATOR><VARIABLE>$key</VARIABLE><OPERATOR>]</OPERATOR>);
+        <KEYWORD>continue</KEYWORD>;
+      }
+
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$next</VARIABLE> <OPERATOR>==</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC> <OPERATOR>||</OPERATOR> <VARIABLE>$r</VARIABLE> <OPERATOR>&lt;</OPERATOR> <VARIABLE>$next</VARIABLE>)
+      { 
+        <VARIABLE>$next</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$r</VARIABLE>;
+        <VARIABLE>$s_delim</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule_text</VARIABLE>;
+        <VARIABLE>$match_rule</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE>;
+        
+        <KEYWORD>if</KEYWORD> ((<VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_COMPLETE</CONSTANT>) <OPERATOR>&amp;&amp;</OPERATOR> <VARIABLE>$m_</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>null</TYPE> <OPERATOR>&amp;&amp;</OPERATOR> <VARIABLE>$m_</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>false</TYPE>)
+          <VARIABLE>$matches</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$m_</VARIABLE>;
+        
+        <COMMENT>// no point continuing if we've got an instant adjacent match</COMMENT>
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$next</VARIABLE> <OPERATOR>===</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>)
+          <KEYWORD>return</KEYWORD> <VARIABLE>$next</VARIABLE>;
+      }
+    }
+    <KEYWORD>return</KEYWORD> <VARIABLE>$next</VARIABLE>;
+  }
+  
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * Parses delimited types according to the grammar rules</DOCCOMMENT>
+<DOCCOMMENT>   */</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>ParseDelimiters</USER_FUNCTION>()
+  {
+
+    <VARIABLE>$strlen</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>);
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>;
+    <VARIABLE>$last_end</VARIABLE> <OPERATOR>=</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>;
+
+    <KEYWORD>if</KEYWORD>(count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>starts</OO>))
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>starts</OO><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR>;
+
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> <OPERATOR>=</OPERATOR> <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <NUMERIC>0</NUMERIC>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>);
+    
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> .<OPERATOR>=</OPERATOR> <STRING>"&lt;&amp;START&gt;"</STRING>;
+
+    <VARIABLE>$start_open</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+    
+    <VARIABLE>$last_index</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO><OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>;
+    
+    <KEYWORD>while</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO> <OPERATOR>&lt;</OPERATOR> <VARIABLE>$strlen</VARIABLE>)
+    {
+<COMMENT>//       echo '&lt;pre&gt;';</COMMENT>
+<COMMENT>//       echo "{$this-&gt;index}\n";</COMMENT>
+<COMMENT>//       print_r($this-&gt;stack);</COMMENT>
+<COMMENT>//       echo '&lt;/pre&gt;';</COMMENT>
+
+      <COMMENT>/* <COMMENT_NOTE>XXX</COMMENT_NOTE>: These are just safety checks. Triggering one probably indicates</COMMENT>
+<COMMENT>       * a bug in a grammar.</COMMENT>
+<COMMENT>       * <COMMENT_NOTE>TODO</COMMENT_NOTE> handle them better.</COMMENT>
+<COMMENT>       */</COMMENT>
+      <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stateful</OO> <OPERATOR>&amp;&amp;</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO> <OPERATOR>&lt;</OPERATOR><OPERATOR>=</OPERATOR> <VARIABLE>$last_index</VARIABLE>)
+      {
+        <COMMENT>// This PROBABLY indicates a zero-length match, which is a grammar bug.</COMMENT>
+        <COMMENT>// <COMMENT_NOTE>TODO</COMMENT_NOTE> handle this when the rule is 'completed', then discard the rule.</COMMENT>
+        <KEYWORD>if</KEYWORD>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO> <OPERATOR>===</OPERATOR> <VARIABLE>$last_index</VARIABLE>)
+        {
+          <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO><OPERATOR>++</OPERATOR>;
+          <KEYWORD>continue</KEYWORD>;
+        }
+        die(<STRING>"Looks like the parser hit an infinite loop. This shouldn't have happened.&lt;br&gt;Index: <VARIABLE>{$this-&gt;index}</VARIABLE>"</STRING>);
+      }
+      <COMMENT>/* the stateful parser can legally hit the same index more than once,</COMMENT>
+<COMMENT>       * as long as it has different transitions available to it.</COMMENT>
+<COMMENT>       * </COMMENT>
+<COMMENT>       * zero length matches for the stateful engine are handled in PopState.</COMMENT>
+<COMMENT>       */</COMMENT>
+      <KEYWORD>if</KEYWORD>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stateful</OO> <OPERATOR>&amp;&amp;</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO> <OPERATOR>&lt;</OPERATOR> <VARIABLE>$last_index</VARIABLE>)
+      {
+         die(<STRING>"Looks like the parser hit an infinite loop. This shouldn't have happened. State:&lt;pre&gt;"</STRING> . print_r(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO>, <TYPE>true</TYPE>) 
+           . <STRING>"&lt;/pre&gt;&lt;br&gt;Index: <VARIABLE>{$this-&gt;index}</VARIABLE>&lt;br&gt;"</STRING>);
+      }
+      
+      
+      <VARIABLE>$last_index</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>;
+      
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stateful</OO>)
+      {
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>LoadTokensForState</OO>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>GetStateName</OO>());
+      }
+      
+      
+      <VARIABLE>$next</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$strlen</VARIABLE>;
+      <VARIABLE>$s_delim</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>null</TYPE>;
+      <VARIABLE>$e_delim</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>null</TYPE>;
+      <VARIABLE>$open_tag</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>null</TYPE>;
+      <VARIABLE>$match_array</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>null</TYPE>;
+      <VARIABLE>$next</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>GetStartDelim</OO>(<VARIABLE>$rule</VARIABLE>, <VARIABLE>$s_delim</VARIABLE>, <VARIABLE>$match_array</VARIABLE>);
+      
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$match_array</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>null</TYPE>)
+        <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>match_array</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$match_array</VARIABLE>;
+      
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stateful</OO> <OPERATOR>&amp;&amp;</OPERATOR> count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO>))
+      {
+        <VARIABLE>$state</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>GetState</OO>();
+        <VARIABLE>$finish</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$state</VARIABLE><OPERATOR>[</OPERATOR><STRING>'finish'</STRING><OPERATOR>]</OPERATOR>;
+        <VARIABLE>$stretchy</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$finish</VARIABLE> <OPERATOR>===</OPERATOR> <TYPE>null</TYPE>)
+        {
+          <COMMENT>// if finish is null the state is 'stretchy', i.e. the state can be</COMMENT>
+          <COMMENT>// extended by child-states.</COMMENT>
+          <VARIABLE>$stretchy</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+          <VARIABLE>$finish</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>GetStateEnd</OO>(<VARIABLE>$state</VARIABLE>, <TYPE>false</TYPE>);
+        }        
+        <COMMENT>// overlapping is defined as when one rule intersects with another but </COMMENT>
+        <COMMENT>// does not fully engulf it. Think of it as being like malformed xml.</COMMENT>
+        <COMMENT>// Does not apply to stretchy states.</COMMENT>
+        <VARIABLE>$overlapping</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;        
+        <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><VARIABLE>$stretchy</VARIABLE> <OPERATOR>&amp;&amp;</OPERATOR> <VARIABLE>$next</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC> 
+          <OPERATOR>&amp;&amp;</OPERATOR> (<VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_COMPLETE</CONSTANT> 
+              <OPERATOR>&amp;&amp;</OPERATOR> <OPERATOR>!</OPERATOR>(<VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO> <OPERATOR>&amp;&amp;</OPERATOR> <CONSTANT>LUMINOUS_DYNAMIC_DELIMS</CONSTANT>)
+             )
+         )
+        {
+          <COMMENT>// rule ends at</COMMENT>
+          <VARIABLE>$e</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$next</VARIABLE> <OPERATOR>+</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$s_delim</VARIABLE>);
+          <KEYWORD>if</KEYWORD> (<VARIABLE>$next</VARIABLE> <OPERATOR>&lt;</OPERATOR> <VARIABLE>$finish</VARIABLE> <OPERATOR>&amp;&amp;</OPERATOR> <VARIABLE>$e</VARIABLE> <OPERATOR>&gt;</OPERATOR> <VARIABLE>$finish</VARIABLE>)
+            <VARIABLE>$overlapping</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+        }
+        
+        <COMMENT>// this condition is a mess.</COMMENT>
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$next</VARIABLE> <OPERATOR>==</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC> <OPERATOR>||</OPERATOR> <VARIABLE>$overlapping</VARIABLE> <OPERATOR>||</OPERATOR> 
+          (<VARIABLE>$finish</VARIABLE> <OPERATOR>&lt;</OPERATOR> <VARIABLE>$next</VARIABLE> <OPERATOR>&amp;&amp;</OPERATOR> <VARIABLE>$stretchy</VARIABLE>) <OPERATOR>||</OPERATOR> (<VARIABLE>$finish</VARIABLE> <OPERATOR>&lt;</OPERATOR><OPERATOR>=</OPERATOR> <VARIABLE>$next</VARIABLE> <OPERATOR>&amp;&amp;</OPERATOR> <OPERATOR>!</OPERATOR><VARIABLE>$stretchy</VARIABLE>))
+        {
+          <KEYWORD>if</KEYWORD> (count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO>))
+          {
+            <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>PopState</OO>();
+            <KEYWORD>continue</KEYWORD>;
+          }
+          <KEYWORD>else</KEYWORD>
+          {
+            <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> .<OPERATOR>=</OPERATOR> copy_string(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>);
+            <KEYWORD>break</KEYWORD>;
+          }
+        }
+      }
+      
+      <COMMENT>// Don't parse the delimiters if it comes after an 'END'</COMMENT>
+      <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>parse_all</OO>)
+      {
+        <VARIABLE>$e</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$last_end</VARIABLE>;
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$e</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>null</TYPE> <OPERATOR>&amp;&amp;</OPERATOR> <VARIABLE>$e</VARIABLE> <OPERATOR>&lt;</OPERATOR><OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>)
+        {
+          <VARIABLE>$e</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>Get_Next_End</OO>();
+          <VARIABLE>$last_end</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$e</VARIABLE>;
+        }        
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$e</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>null</TYPE> 
+          <OPERATOR>&amp;&amp;</OPERATOR> (<VARIABLE>$e</VARIABLE> <OPERATOR>&lt;</OPERATOR><OPERATOR>=</OPERATOR> <VARIABLE>$next</VARIABLE> <OPERATOR>||</OPERATOR> <VARIABLE>$next</VARIABLE> <OPERATOR>==</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>))
+        {
+          <VARIABLE>$s</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>, <VARIABLE>$e</VARIABLE><OPERATOR>-</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>);
+          <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> .<OPERATOR>=</OPERATOR> <STRING>"<VARIABLE>$s</VARIABLE>&lt;&amp;END&gt;"</STRING>;
+          <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$e</VARIABLE>;
+          <VARIABLE>$st</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>Get_Next_Start</OO>(<VARIABLE>$e</VARIABLE>);
+          <VARIABLE>$start_open</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;
+          <KEYWORD>if</KEYWORD> (<VARIABLE>$st</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>null</TYPE>)
+          {
+            <VARIABLE>$s</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$e</VARIABLE>, <VARIABLE>$st</VARIABLE><OPERATOR>-</OPERATOR><VARIABLE>$e</VARIABLE>);
+            <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> .<OPERATOR>=</OPERATOR> <STRING>"<VARIABLE>$s</VARIABLE>&lt;&amp;START&gt;"</STRING>;
+            <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$st</VARIABLE>;
+            <VARIABLE>$start_open</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+            <KEYWORD>continue</KEYWORD>;
+          }
+          <KEYWORD>else</KEYWORD>
+          {
+            <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> .<OPERATOR>=</OPERATOR> <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>);
+            <KEYWORD>while</KEYWORD> (count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO>))
+              <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>PopState</OO>();
+            <KEYWORD>break</KEYWORD>;
+          }
+        }
+      }
+      
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$next</VARIABLE> <OPERATOR>&gt;</OPERATOR><OPERATOR>=</OPERATOR> <VARIABLE>$strlen</VARIABLE> <OPERATOR>||</OPERATOR> <VARIABLE>$next</VARIABLE> <OPERATOR>&lt;</OPERATOR> <NUMERIC>0</NUMERIC>)
+      {
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stateful</OO> <OPERATOR>&amp;&amp;</OPERATOR> count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO>))
+        {
+          <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>PopState</OO>();
+          <KEYWORD>continue</KEYWORD>;
+        }
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> .<OPERATOR>=</OPERATOR> <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>);
+        <KEYWORD>break</KEYWORD>;
+      }
+      
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stateful</OO>)
+      {
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>PushState</OO>(<VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>name</OO>, <VARIABLE>$rule</VARIABLE>, <VARIABLE>$next</VARIABLE>, <VARIABLE>$s_delim</VARIABLE>);
+        <KEYWORD>continue</KEYWORD>;
+      }
+      
+      
+      <COMMENT>// trim whitespace from the start of the match, which prevents </COMMENT>
+      <COMMENT>// 'background colour' highlighting from bleeding on a rule which may have</COMMENT>
+      <COMMENT>// had to specify whitespace as a captured match due to fixed-length </COMMENT>
+      <COMMENT>// lookbehind assertions</COMMENT>
+      <KEYWORD>if</KEYWORD> (<FUNCTION>strlen</FUNCTION>(<VARIABLE>$s_delim</VARIABLE>) <OPERATOR>&amp;&amp;</OPERATOR> <FUNCTION>ctype_space</FUNCTION>(<VARIABLE>$s_delim</VARIABLE><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR>))
+      {
+        <VARIABLE>$t</VARIABLE> <OPERATOR>=</OPERATOR> ltrim(<VARIABLE>$s_delim</VARIABLE>);
+        <VARIABLE>$dist</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$s_delim</VARIABLE>) <OPERATOR>-</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$t</VARIABLE>);
+        <VARIABLE>$s_delim</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$t</VARIABLE>;
+<COMMENT>//         $this-&gt;output .= substr($this-&gt;input_src, $this-&gt;index, $dist);</COMMENT>
+        <VARIABLE>$next</VARIABLE> <OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR> <VARIABLE>$dist</VARIABLE>;
+      }
+      
+      <VARIABLE>$next_rule_type</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO>;
+      <VARIABLE>$next_rule_name</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>name</OO>;
+      <VARIABLE>$e_delim</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>delim_2</OO>;
+      <VARIABLE>$open_tag</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>name</OO>;
+      
+<COMMENT>//       echo "DELIM: $s_delim\n";          </COMMENT>
+      
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$next_rule_type</VARIABLE> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_DYNAMIC_DELIMS</CONSTANT>)
+      {
+        <VARIABLE>$dyn_delim</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>GetDynamicDelimAtIndex</OO>(<VARIABLE>$next</VARIABLE><OPERATOR>+</OPERATOR><FUNCTION>strlen</FUNCTION>(<VARIABLE>$s_delim</VARIABLE>));
+      }
+      
+      <COMMENT>// if we get to here we're parsing the delimiters.</COMMENT>
+        
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> .<OPERATOR>=</OPERATOR> <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>, 
+                              <VARIABLE>$next</VARIABLE> <OPERATOR>-</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>);
+      
+      <COMMENT>// complete match, no need to search for an ending.</COMMENT>
+      <KEYWORD>if</KEYWORD> ((<VARIABLE>$next_rule_type</VARIABLE> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_COMPLETE</CONSTANT>)
+        <OPERATOR>&amp;&amp;</OPERATOR> <OPERATOR>!</OPERATOR>(<VARIABLE>$next_rule_type</VARIABLE> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_DYNAMIC_DELIMS</CONSTANT>))
+      {
+        <VARIABLE>$s</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$s_delim</VARIABLE>);
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>DoNestedReplacements</OO>(<VARIABLE>$rule</VARIABLE>, <VARIABLE>$next</VARIABLE>, <VARIABLE>$next</VARIABLE><OPERATOR>+</OPERATOR><VARIABLE>$s</VARIABLE>);
+        
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$next</VARIABLE> <OPERATOR>+</OPERATOR> <VARIABLE>$s</VARIABLE>;
+      }
+      <COMMENT>// uh oh</COMMENT>
+      <KEYWORD>else</KEYWORD>
+      {
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$next_rule_type</VARIABLE> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_DYNAMIC_DELIMS</CONSTANT>)
+        {
+          <VARIABLE>$e_delim</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>MatchDynamicDelim</OO>(<VARIABLE>$s_delim</VARIABLE>, <VARIABLE>$e_delim</VARIABLE>, <VARIABLE>$dyn_delim</VARIABLE>,
+            <VARIABLE>$next_rule_type</VARIABLE>);
+        }
+        
+
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>CharIsEscaped</OO>(<VARIABLE>$next</VARIABLE>))
+        {
+          <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$next</VARIABLE><OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC>;
+          <KEYWORD>continue</KEYWORD>;
+        }
+        
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>open_delim_len</OO> <OPERATOR>=</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$s_delim</VARIABLE>);
+        
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$next_rule_type</VARIABLE> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_EXCLUDE</CONSTANT>)
+        {
+          <VARIABLE>$inc</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$s_delim</VARIABLE>);
+          <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> .<OPERATOR>=</OPERATOR>  <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>AddReplacement</OO>(
+            <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$next</VARIABLE>, <VARIABLE>$inc</VARIABLE>));
+
+          
+          <VARIABLE>$next</VARIABLE> <OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR> <VARIABLE>$inc</VARIABLE>;
+          <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>open_delim_len</OO> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>;
+        }
+        
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$next</VARIABLE>;
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>open_tag</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$next_rule_name</VARIABLE>;
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>open_index</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$next</VARIABLE>;
+        
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>close_delim</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$e_delim</VARIABLE>;
+        
+        <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>DoEndingDelim</OO>(<VARIABLE>$rule</VARIABLE>))
+        {
+          <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> .<OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO><OPERATOR>[</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO><OPERATOR>]</OPERATOR>;
+          <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$next</VARIABLE><OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC>;
+          <KEYWORD>continue</KEYWORD>;
+        }
+      }
+      
+      
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$next_rule_type</VARIABLE> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_END_IS_END</CONSTANT>)
+      {
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> .<OPERATOR>=</OPERATOR> <STRING>'&lt;&amp;END&gt;'</STRING>;
+        <VARIABLE>$start_open</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;
+        
+        <VARIABLE>$st</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>Get_Next_Start</OO>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>);
+    
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$st</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>null</TYPE>)
+        {
+          <VARIABLE>$s</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>, <VARIABLE>$st</VARIABLE><OPERATOR>-</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>);
+          <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> .<OPERATOR>=</OPERATOR> <STRING>"<VARIABLE>$s</VARIABLE>&lt;&amp;START&gt;"</STRING>;
+          <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$st</VARIABLE>;
+          <VARIABLE>$start_open</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+          <KEYWORD>continue</KEYWORD>;
+        }
+        <KEYWORD>else</KEYWORD>
+        {
+          <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> .<OPERATOR>=</OPERATOR> <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>);
+          <KEYWORD>break</KEYWORD>;
+        }
+      } 
+    }
+    
+    <KEYWORD>while</KEYWORD> (count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>stack</OO>))
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>PopState</OO>();
+
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$start_open</VARIABLE>)
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> .<OPERATOR>=</OPERATOR> <STRING>"&lt;&amp;END&gt;"</STRING>;
+
+
+  }
+
+
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   *    Callback function for a preg_replace_callback in ParseRegex()</DOCCOMMENT>
+<DOCCOMMENT>  */</DOCCOMMENT>
+  <KEYWORD>private</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>Parse_Regex_Replace_Callback</USER_FUNCTION>(<VARIABLE>$matches</VARIABLE>)
+  {     
+    <COMMENT>// need to exclude &lt;&gt;s</COMMENT>
+    
+    <VARIABLE>$group_no</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>callback_data2</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>group</OO>;
+    <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><FUNCTION>isset</FUNCTION>(<VARIABLE>$matches</VARIABLE><OPERATOR>[</OPERATOR><VARIABLE>$group_no</VARIABLE><OPERATOR>]</OPERATOR>))
+    {
+      trigger_error(<STRING>"Grammar error <VARIABLE>{$this-&gt;grammar-&gt;info['language']}</VARIABLE>: No such captured group '<VARIABLE>$group_no</VARIABLE>' in rule </STRING>
+<STRING>      <VARIABLE>{$this-&gt;callback_data2-&gt;name}</VARIABLE>"</STRING>);
+      <KEYWORD>return</KEYWORD> <VARIABLE>$matches</VARIABLE><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR>;
+    }
+    <VARIABLE>$g</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$matches</VARIABLE><OPERATOR>[</OPERATOR><VARIABLE>$group_no</VARIABLE><OPERATOR>]</OPERATOR>;
+    
+    <KEYWORD>if</KEYWORD> (<FUNCTION>strpos</FUNCTION>(<VARIABLE>$g</VARIABLE>, <STRING>'&lt;'</STRING>) <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>false</TYPE>)
+    {
+
+      <VARIABLE>$g_split</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>preg_split</FUNCTION>(<STRING>'<REGEX>/<REGEX_SUBPATTERN_MARKER>(</REGEX_SUBPATTERN_MARKER>&lt;&amp;R_\d<REGEX_OPERATOR>+</REGEX_OPERATOR>&gt;<REGEX_SUBPATTERN_MARKER>)</REGEX_SUBPATTERN_MARKER>/</REGEX>'</STRING>, <VARIABLE>$g</VARIABLE>, <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>, <CONSTANT>PREG_SPLIT_DELIM_CAPTURE</CONSTANT><OPERATOR>|</OPERATOR><CONSTANT>PREG_SPLIT_NO_EMPTY</CONSTANT>);
+      <KEYWORD>foreach</KEYWORD>(<VARIABLE>$g_split</VARIABLE> <KEYWORD>as</KEYWORD> <OPERATOR>&amp;</OPERATOR><VARIABLE>$g_</VARIABLE>)
+      {
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$g_</VARIABLE><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <STRING>'&lt;'</STRING>)
+          <VARIABLE>$g_</VARIABLE> <OPERATOR>=</OPERATOR> tag_block(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>callback_data</OO>, <VARIABLE>$g_</VARIABLE>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>separate_lines</OO>);
+      }
+      <VARIABLE>$g</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>AddReplacement</OO>(<FUNCTION>implode</FUNCTION>(<STRING>''</STRING>, <VARIABLE>$g_split</VARIABLE>), <TYPE>null</TYPE>);
+      
+    }
+    <KEYWORD>else</KEYWORD>
+      <VARIABLE>$g</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>AddReplacement</OO>(<VARIABLE>$g</VARIABLE>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>callback_data</OO>);
+    
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$group_no</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <NUMERIC>0</NUMERIC>)
+    {
+      <VARIABLE>$pre</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING>;
+      <VARIABLE>$post</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING>;
+      <VARIABLE>$c</VARIABLE> <OPERATOR>=</OPERATOR> count(<VARIABLE>$matches</VARIABLE>);
+      <KEYWORD>for</KEYWORD> (<VARIABLE>$i</VARIABLE><OPERATOR>=</OPERATOR><NUMERIC>1</NUMERIC>; <VARIABLE>$i</VARIABLE><OPERATOR>&lt;</OPERATOR><VARIABLE>$group_no</VARIABLE>; <VARIABLE>$i</VARIABLE><OPERATOR>++</OPERATOR>)
+        <VARIABLE>$pre</VARIABLE> .<OPERATOR>=</OPERATOR> <VARIABLE>$matches</VARIABLE><OPERATOR>[</OPERATOR><VARIABLE>$i</VARIABLE><OPERATOR>]</OPERATOR>;
+      
+      <KEYWORD>for</KEYWORD> (<VARIABLE>$i</VARIABLE><OPERATOR>=</OPERATOR><VARIABLE>$group_no</VARIABLE><OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC>; <VARIABLE>$i</VARIABLE><OPERATOR>&lt;</OPERATOR><VARIABLE>$c</VARIABLE>; <VARIABLE>$i</VARIABLE><OPERATOR>++</OPERATOR>)
+        <VARIABLE>$post</VARIABLE> .<OPERATOR>=</OPERATOR> <VARIABLE>$matches</VARIABLE><OPERATOR>[</OPERATOR><VARIABLE>$i</VARIABLE><OPERATOR>]</OPERATOR>;
+      
+      <VARIABLE>$s</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$pre</VARIABLE> . <VARIABLE>$g</VARIABLE> . <VARIABLE>$post</VARIABLE>;
+      
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>callback_data2</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>consume_other_groups</OO>)
+        <VARIABLE>$s</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>AddReplacement</OO>(<VARIABLE>$s</VARIABLE>);
+      <KEYWORD>return</KEYWORD> <VARIABLE>$s</VARIABLE>;
+    }
+    <KEYWORD>return</KEYWORD> <VARIABLE>$g</VARIABLE>;
+    
+  }
+
+  <KEYWORD>private</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>Parse_Regex_Wrapper_Callback</USER_FUNCTION>(<VARIABLE>$matches</VARIABLE>)
+  {
+    <KEYWORD>return</KEYWORD> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>AddReplacement</OO>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>ParseRegex</OO>(<VARIABLE>$matches</VARIABLE><OPERATOR>[</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR>));
+  }
+  
+  <KEYWORD>private</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>DoSimpleRule</USER_FUNCTION>(<VARIABLE>$rule</VARIABLE>, <VARIABLE>$needle</VARIABLE>, <VARIABLE>$str</VARIABLE>)
+  {
+    <VARIABLE>$cb_array</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>(<VARIABLE>$this</VARIABLE>, <STRING>'Parse_Regex_Replace_Callback'</STRING>);
+    <VARIABLE>$type</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO>;
+    <VARIABLE>$regex</VARIABLE> <OPERATOR>=</OPERATOR> (<VARIABLE>$type</VARIABLE> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_REGEX</CONSTANT>) <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>;
+    <VARIABLE>$name</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>name</OO>;
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>callback_data</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>name</OO>;
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>callback_data2</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE>;
+    
+    <VARIABLE>$num_extractions_start</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>num_extractions</OO>;
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$regex</VARIABLE>)
+    {
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>case_insensitive</OO> <OPERATOR>===</OPERATOR> <TYPE>true</TYPE>)
+        <VARIABLE>$needle</VARIABLE> .<OPERATOR>=</OPERATOR> <STRING>'i'</STRING>;      
+      <VARIABLE>$str1</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;
+      <VARIABLE>$str1</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>preg_replace_callback</FUNCTION>(<VARIABLE>$needle</VARIABLE>, <VARIABLE>$cb_array</VARIABLE>, <VARIABLE>$str</VARIABLE>);      
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$str1</VARIABLE> <OPERATOR>===</OPERATOR> <TYPE>null</TYPE>)
+      {
+        <KEYWORD>while</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>num_extractions</OO> <OPERATOR>&gt;</OPERATOR> <VARIABLE>$num_extractions_start</VARIABLE>)
+        {
+          <FUNCTION>array_pop</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>html_extractions</OO>);
+          <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>num_extractions</OO><OPERATOR>--</OPERATOR>;
+        }
+        trigger_error(<STRING>"PCRE error: "</STRING> . pcre_error_decode(<FUNCTION>preg_last_error</FUNCTION>()));
+      }
+      <KEYWORD>else</KEYWORD> <KEYWORD>if</KEYWORD> (<VARIABLE>$str1</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>false</TYPE>)
+        <VARIABLE>$str</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$str1</VARIABLE>;
+    }
+    <KEYWORD>else</KEYWORD>
+    {            
+      <VARIABLE>$str_rep</VARIABLE> <OPERATOR>=</OPERATOR> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>case_insensitive</OO>)?<STRING>'str_ireplace'</STRING> : 
+      <STRING>'str_replace'</STRING>;        
+        <COMMENT>// need a str_replace_callback!          </COMMENT>
+        <VARIABLE>$str</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$str_rep</VARIABLE>(<VARIABLE>$needle</VARIABLE>, 
+                        <STRING>"&lt;<VARIABLE>$name</VARIABLE>&gt;<VARIABLE>$needle</VARIABLE>&lt;/<VARIABLE>$name</VARIABLE>&gt;"</STRING>,
+                        <VARIABLE>$str</VARIABLE>);
+    }
+    <KEYWORD>return</KEYWORD> <VARIABLE>$str</VARIABLE>;
+  }
+  
+  
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * Deals with SimpleRules</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> str </DOCPROPERTY>the input string to parse.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\return</DOCTAG><DOCSTR> the input tagged according to the given simple rules.</DOCSTR></DOCCOMMENT>
+<DOCCOMMENT>   */</DOCCOMMENT> 
+  <KEYWORD>private</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>ParseRegex</USER_FUNCTION>(<VARIABLE>$str</VARIABLE>)
+  {
+    <COMMENT>// in some versions of PHP this seems to be 'self::Parse_Regex_Replace_Callback'</COMMENT>
+    <COMMENT>// in others, it's this</COMMENT>
+    <VARIABLE>$cb_array</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>(<VARIABLE>$this</VARIABLE>, <STRING>'Parse_Regex_Replace_Callback'</STRING>);
+    <KEYWORD>foreach</KEYWORD>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>local_simple_types</OO> <KEYWORD>as</KEYWORD> <VARIABLE>$rule</VARIABLE>)
+    {
+      <VARIABLE>$name</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>name</OO>;
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>callback_data</OO> <OPERATOR>=</OPERATOR> <OPERATOR>&amp;</OPERATOR><VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>name</OO>;
+      <VARIABLE>$type</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO>;
+      
+      <VARIABLE>$regex</VARIABLE> <OPERATOR>=</OPERATOR> (<VARIABLE>$type</VARIABLE> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_REGEX</CONSTANT>) <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>;
+      <VARIABLE>$literal</VARIABLE> <OPERATOR>=</OPERATOR> <OPERATOR>!</OPERATOR><FUNCTION>isset</FUNCTION>(<VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>replace_str</OO>);
+      
+      <VARIABLE>$needle</VARIABLE> <OPERATOR>=</OPERATOR> <OPERATOR>&amp;</OPERATOR><VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>text</OO>;
+      
+      <VARIABLE>$list</VARIABLE> <OPERATOR>=</OPERATOR> (<VARIABLE>$type</VARIABLE> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_LIST</CONSTANT>) <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>;
+      <VARIABLE>$str_start</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$str</VARIABLE>;
+      <VARIABLE>$num_extractions_start</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>num_extractions</OO>;
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$list</VARIABLE>)
+      {
+        <KEYWORD>foreach</KEYWORD>(<VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>values</OO> <KEYWORD>as</KEYWORD> <VARIABLE>$v</VARIABLE>)
+        {
+          <KEYWORD>if</KEYWORD> (<VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>replace_str</OO> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>null</TYPE>)
+            <VARIABLE>$v</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>str_replace</FUNCTION>(<VARIABLE>$rule</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>replace_str</OO>, <VARIABLE>$v</VARIABLE>, <VARIABLE>$needle</VARIABLE>);
+          <VARIABLE>$str</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>DoSimpleRule</OO>(<VARIABLE>$rule</VARIABLE>, <VARIABLE>$v</VARIABLE>, <VARIABLE>$str</VARIABLE>);         
+        }
+      }
+      <KEYWORD>else</KEYWORD>
+        <VARIABLE>$str</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>DoSimpleRule</OO>(<VARIABLE>$rule</VARIABLE>, <VARIABLE>$needle</VARIABLE>, <VARIABLE>$str</VARIABLE>);         
+    }
+    <KEYWORD>return</KEYWORD> <VARIABLE>$str</VARIABLE>;
+  }
+
+
+  <KEYWORD>private</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>Get_Next_End</USER_FUNCTION>(<VARIABLE>$index</VARIABLE><OPERATOR>=</OPERATOR><TYPE>null</TYPE>)
+  {
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$index</VARIABLE> <OPERATOR>===</OPERATOR> <TYPE>null</TYPE>)
+      <VARIABLE>$index</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>;
+    <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>num_ends</OO>)
+      <KEYWORD>return</KEYWORD> <TYPE>null</TYPE>;
+    <VARIABLE>$i</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>;
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$index</VARIABLE> <OPERATOR>&gt;</OPERATOR><OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>last_str_index_gne</OO>)
+      <VARIABLE>$i</VARIABLE><OPERATOR>=</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>last_arr_index_gne</OO>;
+    
+    <VARIABLE>$num</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>num_ends</OO>;
+    
+    <KEYWORD>for</KEYWORD>(<VARIABLE>$i</VARIABLE>; <VARIABLE>$i</VARIABLE><OPERATOR>&lt;</OPERATOR><VARIABLE>$num</VARIABLE>; <VARIABLE>$i</VARIABLE><OPERATOR>++</OPERATOR>)
+    {
+      <VARIABLE>$s</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>ends</OO><OPERATOR>[</OPERATOR><VARIABLE>$i</VARIABLE><OPERATOR>]</OPERATOR>;
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$s</VARIABLE> <OPERATOR>&gt;</OPERATOR><OPERATOR>=</OPERATOR> <VARIABLE>$index</VARIABLE>)
+      {
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>last_str_index_gne</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$s</VARIABLE>;
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>last_arr_index_gne</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$i</VARIABLE>;
+        <KEYWORD>return</KEYWORD> <VARIABLE>$s</VARIABLE>;
+      }
+    }
+    <KEYWORD>return</KEYWORD> <TYPE>null</TYPE>;
+  }
+
+  <KEYWORD>private</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>Get_Next_Start</USER_FUNCTION>(<VARIABLE>$index</VARIABLE><OPERATOR>=</OPERATOR><TYPE>null</TYPE>)
+  {
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$index</VARIABLE> <OPERATOR>===</OPERATOR> <TYPE>null</TYPE>)
+      <VARIABLE>$index</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>index</OO>;
+
+    <VARIABLE>$i</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>;
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$index</VARIABLE> <OPERATOR>&gt;</OPERATOR><OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>last_str_index_gns</OO>)
+      <VARIABLE>$i</VARIABLE><OPERATOR>=</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>last_arr_index_gns</OO>;
+
+    <VARIABLE>$num</VARIABLE> <OPERATOR>=</OPERATOR> count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>starts</OO>);
+
+    <KEYWORD>for</KEYWORD>(<VARIABLE>$i</VARIABLE>; <VARIABLE>$i</VARIABLE><OPERATOR>&lt;</OPERATOR><VARIABLE>$num</VARIABLE>; <VARIABLE>$i</VARIABLE><OPERATOR>++</OPERATOR>)
+    {
+      <VARIABLE>$s</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>starts</OO><OPERATOR>[</OPERATOR><VARIABLE>$i</VARIABLE><OPERATOR>]</OPERATOR>;
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$s</VARIABLE> <OPERATOR>&gt;</OPERATOR><OPERATOR>=</OPERATOR> <VARIABLE>$index</VARIABLE>)
+      {
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>last_str_index_gns</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$s</VARIABLE>;
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>last_arr_index_gns</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$i</VARIABLE>;
+        <KEYWORD>return</KEYWORD> <VARIABLE>$s</VARIABLE>;
+      }
+    }
+    <KEYWORD>return</KEYWORD> <TYPE>null</TYPE>;
+  }  
+
+
+
+
+  <KEYWORD>private</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>DoStartEnds</USER_FUNCTION>()
+  {
+
+    <VARIABLE>$s_cache</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>();
+    <VARIABLE>$e_cache</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>();
+    <VARIABLE>$merge</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;
+    <VARIABLE>$num</VARIABLE><OPERATOR>=</OPERATOR><NUMERIC>0</NUMERIC>;
+    
+    <KEYWORD>foreach</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>ignore_outside</OO> <KEYWORD>as</KEYWORD> <OPERATOR>&amp;</OPERATOR><VARIABLE>$ignore</VARIABLE>)
+    {
+      
+      <VARIABLE>$s</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$ignore</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>delim_1</OO>;
+      <VARIABLE>$e</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$ignore</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>delim_2</OO>;
+
+      <VARIABLE>$s_matches</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>();
+      <VARIABLE>$e_matches</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>();
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$ignore</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_REGEX</CONSTANT>)
+      {
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>case_insensitive</OO>)
+        {
+          <VARIABLE>$s</VARIABLE> .<OPERATOR>=</OPERATOR> <STRING>'i'</STRING>;
+          <VARIABLE>$e</VARIABLE> .<OPERATOR>=</OPERATOR> <STRING>'i'</STRING>;
+        }
+          
+        <FUNCTION>preg_match_all</FUNCTION>(<VARIABLE>$s</VARIABLE>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$s_matches</VARIABLE>, <CONSTANT>PREG_SET_ORDER</CONSTANT><OPERATOR>|</OPERATOR><CONSTANT>PREG_OFFSET_CAPTURE</CONSTANT>);
+        <FUNCTION>preg_match_all</FUNCTION>(<VARIABLE>$e</VARIABLE>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$e_matches</VARIABLE>, <CONSTANT>PREG_SET_ORDER</CONSTANT><OPERATOR>|</OPERATOR><CONSTANT>PREG_OFFSET_CAPTURE</CONSTANT>);
+
+        <KEYWORD>foreach</KEYWORD>(<VARIABLE>$s_matches</VARIABLE> <KEYWORD>as</KEYWORD> <VARIABLE>$match</VARIABLE>)
+        {
+          <VARIABLE>$group</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$match</VARIABLE><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR>;
+          <VARIABLE>$offset</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$match</VARIABLE><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR><OPERATOR>[</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR>;
+          <KEYWORD>if</KEYWORD> (<VARIABLE>$ignore</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_EXCLUDE</CONSTANT>)
+            <VARIABLE>$offset</VARIABLE> <OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$group</VARIABLE>);
+          <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>starts</OO><OPERATOR>[</OPERATOR><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <VARIABLE>$offset</VARIABLE>;
+          <VARIABLE>$s_cache</VARIABLE><OPERATOR>[</OPERATOR><VARIABLE>$offset</VARIABLE><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <VARIABLE>$num</VARIABLE><OPERATOR>++</OPERATOR>;
+        }
+        <KEYWORD>foreach</KEYWORD>(<VARIABLE>$e_matches</VARIABLE> <KEYWORD>as</KEYWORD> <VARIABLE>$match</VARIABLE>)
+        {
+          <VARIABLE>$group</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$match</VARIABLE><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR>;
+          <VARIABLE>$offset</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$match</VARIABLE><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR><OPERATOR>[</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR>;
+          <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR>(<VARIABLE>$ignore</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_EXCLUDE</CONSTANT>))
+            <VARIABLE>$offset</VARIABLE> <OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$group</VARIABLE>);
+          <KEYWORD>if</KEYWORD> (<FUNCTION>isset</FUNCTION>(<VARIABLE>$s_cache</VARIABLE><OPERATOR>[</OPERATOR><VARIABLE>$offset</VARIABLE><OPERATOR>]</OPERATOR>))
+          {
+            <COMMENT>// zero length match.</COMMENT>
+            <FUNCTION>unset</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>starts</OO><OPERATOR>[</OPERATOR><VARIABLE>$s_cache</VARIABLE><OPERATOR>[</OPERATOR><VARIABLE>$offset</VARIABLE><OPERATOR>]]</OPERATOR>);
+            <VARIABLE>$merge</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+          }
+          <KEYWORD>else</KEYWORD>
+          {
+            <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>ends</OO><OPERATOR>[</OPERATOR><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <VARIABLE>$offset</VARIABLE>;
+            <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>ends_length</OO><OPERATOR>[</OPERATOR><VARIABLE>$offset</VARIABLE><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$group</VARIABLE>);
+            <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>ends_excludes</OO><OPERATOR>[</OPERATOR><VARIABLE>$offset</VARIABLE><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> (<VARIABLE>$ignore</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_EXCLUDE</CONSTANT>) <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>;
+          }
+        }
+      }
+      <KEYWORD>else</KEYWORD>
+      {
+        <VARIABLE>$pos</VARIABLE> <OPERATOR>=</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>;
+        <VARIABLE>$strpos</VARIABLE> <OPERATOR>=</OPERATOR> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>case_insensitive</OO>)?<STRING>'stripos'</STRING> : <STRING>'strpos'</STRING>;        
+        
+        <KEYWORD>while</KEYWORD> ( (<VARIABLE>$pos</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$strpos</VARIABLE>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$s</VARIABLE>, <VARIABLE>$pos</VARIABLE><OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC>)) <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>false</TYPE> )
+        {
+          <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>starts</OO><OPERATOR>[</OPERATOR><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <VARIABLE>$pos</VARIABLE>;
+          <VARIABLE>$s_cache</VARIABLE><OPERATOR>[</OPERATOR><VARIABLE>$pos</VARIABLE><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <VARIABLE>$num</VARIABLE><OPERATOR>++</OPERATOR>;
+        }
+        <VARIABLE>$pos</VARIABLE><OPERATOR>=</OPERATOR><OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>;
+        <KEYWORD>while</KEYWORD> ( (<VARIABLE>$pos</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$strpos</VARIABLE>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <VARIABLE>$e</VARIABLE>, <VARIABLE>$pos</VARIABLE><OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC>)) <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>false</TYPE> )
+        {
+          <KEYWORD>if</KEYWORD> (<FUNCTION>isset</FUNCTION>(<VARIABLE>$s_cache</VARIABLE><OPERATOR>[</OPERATOR><VARIABLE>$pos</VARIABLE><OPERATOR>]</OPERATOR>))
+          {
+            <COMMENT>// zero length match.</COMMENT>
+            <FUNCTION>unset</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>starts</OO><OPERATOR>[</OPERATOR><VARIABLE>$s_cache</VARIABLE><OPERATOR>[</OPERATOR><VARIABLE>$pos</VARIABLE><OPERATOR>]]</OPERATOR>);
+            <VARIABLE>$merge</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+          }
+          <KEYWORD>else</KEYWORD>
+          {
+            <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>ends</OO><OPERATOR>[</OPERATOR><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <VARIABLE>$pos</VARIABLE>;
+            <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>ends_length</OO><OPERATOR>[</OPERATOR><VARIABLE>$pos</VARIABLE><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$e</VARIABLE>);
+            <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>ends_excludes</OO><OPERATOR>[</OPERATOR><VARIABLE>$pos</VARIABLE><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> (<VARIABLE>$ignore</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>type</OO> <OPERATOR>&amp;</OPERATOR> <CONSTANT>LUMINOUS_EXCLUDE</CONSTANT>) <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>;
+          }
+        }
+      }
+    }
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>num_ends</OO> <OPERATOR>=</OPERATOR> count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>ends</OO>);
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$merge</VARIABLE>)
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>starts</OO> <OPERATOR>=</OPERATOR> <FUNCTION>array_merge</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>starts</OO>);
+
+  }
+  
+  
+  
+  <KEYWORD>private</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>SplitStartEnds</USER_FUNCTION>()
+  {
+    <COMMENT>// Here we're going to split up the &lt;&amp;START&gt;(.*?)&lt;&amp;END&gt;/s blocks, but</COMMENT>
+    <COMMENT>// on largeish source files (say 200k) this may trigger the backtrack</COMMENT>
+    <COMMENT>// limit in PCRE, so instead we do it the old fashioned way.</COMMENT>
+    <COMMENT>// we send everything between start/end through a 'parse me'</COMMENT>
+    <COMMENT>// function.</COMMENT>
+    <VARIABLE>$split</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>array</FUNCTION>();
+    <VARIABLE>$p</VARIABLE> <OPERATOR>=</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>;
+    <VARIABLE>$last_p</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>;
+    <VARIABLE>$strlen_start</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>strlen</FUNCTION>(<STRING>'&lt;&amp;START&gt;'</STRING>);
+    <VARIABLE>$strlen_end</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>strlen</FUNCTION>(<STRING>'&lt;&amp;END&gt;'</STRING>);
+    <KEYWORD>while</KEYWORD> ((<VARIABLE>$p</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>strpos</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>, <STRING>'&lt;&amp;START&gt;'</STRING>, <VARIABLE>$last_p</VARIABLE>)) <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>false</TYPE>)
+    {
+      <VARIABLE>$split</VARIABLE><OPERATOR>[</OPERATOR><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>, <VARIABLE>$last_p</VARIABLE>, <VARIABLE>$p</VARIABLE><OPERATOR>-</OPERATOR><VARIABLE>$last_p</VARIABLE>);
+      
+      <COMMENT>// This check should be redundant.</COMMENT>
+      <KEYWORD>if</KEYWORD> ((<VARIABLE>$e</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>strpos</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>, <STRING>'&lt;&amp;END&gt;'</STRING>, <VARIABLE>$p</VARIABLE>)) <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>false</TYPE>)
+      {
+        <VARIABLE>$lower_bound</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$strlen_start</VARIABLE> <OPERATOR>+</OPERATOR> <VARIABLE>$p</VARIABLE>;
+        <VARIABLE>$length</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$e</VARIABLE><OPERATOR>-</OPERATOR><VARIABLE>$lower_bound</VARIABLE>;
+        <VARIABLE>$split</VARIABLE><OPERATOR>[</OPERATOR><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>Parse_Regex_Wrapper_Callback</OO>(
+            <FUNCTION>array</FUNCTION>(<TYPE>false</TYPE>, <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>, <VARIABLE>$lower_bound</VARIABLE>, <VARIABLE>$length</VARIABLE>))
+        );
+        <VARIABLE>$p</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$e</VARIABLE> <OPERATOR>+</OPERATOR> <VARIABLE>$strlen_end</VARIABLE>;
+      }
+      
+      <VARIABLE>$last_p</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$p</VARIABLE>;
+    }
+    <VARIABLE>$split</VARIABLE><OPERATOR>[</OPERATOR><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>, <VARIABLE>$last_p</VARIABLE>);
+    
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> <OPERATOR>=</OPERATOR> <FUNCTION>implode</FUNCTION>(<STRING>''</STRING>, <VARIABLE>$split</VARIABLE>);    
+  }
+  
+  
+  
+
+
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * Handles the parsing process. It's recommended to use Easy_Parse instead,</DOCCOMMENT>
+<DOCCOMMENT>   * which wraps this function (and others).</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\return</DOCTAG><DOCSTR> a string which is formatted with an internal tagging spec.</DOCSTR></DOCCOMMENT>
+<DOCCOMMENT>   *    But the caller should not worry about that, it's only for recursion.</DOCCOMMENT>
+<DOCCOMMENT>   *</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\throw</DOCTAG><DOCPROPERTY> Exception </DOCPROPERTY>in the event that the PCRE module fails somehow. The</DOCCOMMENT>
+<DOCCOMMENT>   *    error is given in the exception message, but this is likely down to an</DOCCOMMENT>
+<DOCCOMMENT>   *    exceptionally large string which is triggering the PCRE backtrack limit.</DOCCOMMENT>
+<DOCCOMMENT>   *    The parser should survive, but the string will not by syntax highlighted</DOCCOMMENT>
+<DOCCOMMENT>   * </DOCCOMMENT>
+<DOCCOMMENT>   */</DOCCOMMENT>
+
+    
+  <KEYWORD>public</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>Parse_Full</USER_FUNCTION>()
+  {
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>DoStartEnds</OO>();
+
+
+    <VARIABLE>$pos</VARIABLE> <OPERATOR>=</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>;
+    
+    <VARIABLE>$parse_nothing</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;
+    <VARIABLE>$parse_everything</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;
+    
+    <COMMENT>// no legal start/end</COMMENT>
+    <KEYWORD>if</KEYWORD> (count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>ignore_outside</OO>) <OPERATOR>&amp;&amp;</OPERATOR>
+      (<OPERATOR>!</OPERATOR>count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>starts</OO>) <OPERATOR>||</OPERATOR> <OPERATOR>!</OPERATOR>count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>ends</OO>)
+        )
+      )
+    {
+      <COMMENT>// Strict mode - don't parse anything</COMMENT>
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>ignore_outside_strict</OO>)
+      {
+        <VARIABLE>$parse_nothing</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+      }
+    }
+
+    <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR>count(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>ignore_outside</OO>))
+    {
+      <VARIABLE>$parse_everything</VARIABLE> <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+    }
+
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$parse_nothing</VARIABLE>)
+    {
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>;
+    }
+    <KEYWORD>else</KEYWORD>
+    {
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$parse_everything</VARIABLE>)
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>parse_all</OO> <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+      
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>ParseDelimiters</OO>();
+
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$parse_everything</VARIABLE>)
+      {
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> <OPERATOR>=</OPERATOR> <FUNCTION>str_replace</FUNCTION>(<STRING>"&lt;&amp;START&gt;"</STRING>, <STRING>""</STRING>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>);
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> <OPERATOR>=</OPERATOR> <FUNCTION>str_replace</FUNCTION>(<STRING>"&lt;&amp;END&gt;"</STRING>, <STRING>""</STRING>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>);
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>Parse_Regex_Wrapper_Callback</OO>(<FUNCTION>array</FUNCTION>(<NUMERIC>0</NUMERIC>, <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>));
+      }
+      <KEYWORD>else</KEYWORD>
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>SplitStartEnds</OO>();
+    }
+    
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> <OPERATOR>===</OPERATOR> <TYPE>null</TYPE> <OPERATOR>&amp;&amp;</OPERATOR> <FUNCTION>preg_last_error</FUNCTION>() <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <CONSTANT>PREG_NO_ERROR</CONSTANT> )
+    {
+      <KEYWORD>throw</KEYWORD> <KEYWORD>new</KEYWORD> Exception(<STRING>"PCRE error: "</STRING> . pcre_error_decode(<FUNCTION>preg_last_error</FUNCTION>()));
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input</OO>;
+      <KEYWORD>return</KEYWORD> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input</OO>;
+    }
+    
+
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>child_grammar</OO> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>null</TYPE>)
+    {
+      <VARIABLE>$highlighter</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> Luminous();
+      <VARIABLE>$highlighter</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>verbosity</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>verbosity</OO>;
+      <VARIABLE>$highlighter</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>SetSource</OO>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>);
+      <VARIABLE>$highlighter</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>SetGrammar</OO>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>child_grammar</OO>);      
+      <VARIABLE>$highlighter</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>SetExtractionsOffset</OO>((<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>num_extractions</OO><OPERATOR>+</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>extractions_offset</OO>));
+      <VARIABLE>$highlighter</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>FinaliseSetup</OO>();
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$highlighter</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>Parse_Full</OO>();
+    }
+    
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>DoReplacements</OO>();
+    <KEYWORD>return</KEYWORD> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>;
+  }
+
+
+  <KEYWORD>private</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>Replacements_cb</USER_FUNCTION>(<VARIABLE>$matches</VARIABLE>)
+  {
+    <VARIABLE>$i</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$matches</VARIABLE><OPERATOR>[</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR>;
+    <KEYWORD>if</KEYWORD> (<FUNCTION>isset</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>html_extractions</OO><OPERATOR>[</OPERATOR><VARIABLE>$i</VARIABLE><OPERATOR>]</OPERATOR>))
+    {
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>num_extractions</OO><OPERATOR>--</OPERATOR>;
+      <KEYWORD>return</KEYWORD> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>html_extractions</OO><OPERATOR>[</OPERATOR><VARIABLE>$i</VARIABLE><OPERATOR>]</OPERATOR>;
+    }
+    <KEYWORD>else</KEYWORD> <KEYWORD>return</KEYWORD> <VARIABLE>$matches</VARIABLE><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR>;
+  }
+  
+  
+
+  
+  <KEYWORD>private</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>DoReplacements</USER_FUNCTION>()
+  {
+    <KEYWORD>while</KEYWORD>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>num_extractions</OO> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>)
+    {
+      <VARIABLE>$num_start</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>num_extractions</OO>;
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> <OPERATOR>=</OPERATOR> <FUNCTION>preg_replace_callback</FUNCTION>(<STRING>"<REGEX>/&lt;&amp;R_<REGEX_SUBPATTERN_MARKER>(</REGEX_SUBPATTERN_MARKER><REGEX_CLASS_MARKER>[</REGEX_CLASS_MARKER>0-9<REGEX_CLASS_MARKER>]</REGEX_CLASS_MARKER><REGEX_OPERATOR>+</REGEX_OPERATOR><REGEX_SUBPATTERN_MARKER>)</REGEX_SUBPATTERN_MARKER>&gt;/</REGEX>"</STRING>,
+        <FUNCTION>array</FUNCTION>(<VARIABLE>$this</VARIABLE>, <STRING>"Replacements_cb"</STRING>),  <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>);
+        
+      <VARIABLE>$num_end</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>num_extractions</OO>;  
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$num_start</VARIABLE> <OPERATOR>===</OPERATOR> <VARIABLE>$num_end</VARIABLE>)
+      {
+        trigger_error(<STRING>"The parser was unable to perform all substitutions </STRING>
+<STRING>        (<VARIABLE>$num_end</VARIABLE> are missing). If this is the only error, please ensure your </STRING>
+<STRING>          rules do not target the parser's internal tagging system. </STRING>
+<STRING>          See the doxygen API docs for details on what you've probably done wrong.</STRING>
+<STRING>          Output is probably malformed"</STRING>);
+          
+        <KEYWORD>return</KEYWORD> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>;
+      }
+        
+    }
+    
+    <KEYWORD>return</KEYWORD> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>;
+  }
+
+  <DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT>   * Recommended method to complete the entire parsing process. Takes in a </DOCCOMMENT>
+<DOCCOMMENT>   * source string and its language or gramamr and returns to you a formatted </DOCCOMMENT>
+<DOCCOMMENT>   * HTML string (we hope).</DOCCOMMENT>
+<DOCCOMMENT>   * </DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> source_string: </DOCPROPERTY>The source to parse, as a string</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> grammar </DOCPROPERTY>The LuminousGrammar to apply to the source.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\return</DOCTAG><DOCSTR> return A string which is 'tagged' by Luminous's spec. This should</DOCSTR></DOCCOMMENT>
+<DOCCOMMENT>   * then be given to an instance of LuminousFormatter to be turned into </DOCCOMMENT>
+<DOCCOMMENT>   * something more universal.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\throw</DOCTAG><DOCPROPERTY> Exception </DOCPROPERTY>if no suitable grammar is given.</DOCCOMMENT>
+<DOCCOMMENT>   * </DOCCOMMENT>
+<DOCCOMMENT>  */</DOCCOMMENT>
+
+  <KEYWORD>public</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>Easy_Parse</USER_FUNCTION>(<VARIABLE>$source_string</VARIABLE>, LuminousGrammar <VARIABLE>$grammar</VARIABLE>)
+  {
+    <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR>is_subclass_of(<VARIABLE>$grammar</VARIABLE>, <STRING>'LuminousGrammar'</STRING>))
+      <KEYWORD>throw</KEYWORD> <KEYWORD>new</KEYWORD> Exception(<STRING>"Bad grammar"</STRING>);
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>SetSource</OO>(<VARIABLE>$source_string</VARIABLE>);
+    
+    <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>pre_escaped</OO>)      
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>EscapeInput</OO>();
+    
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>SetGrammar</OO>(<VARIABLE>$grammar</VARIABLE>);
+    
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>FinaliseSetup</OO>();
+    
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>Parse_Full</OO>();
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>append_newline</OO>)
+    {
+      <VARIABLE>$pos</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>strrpos</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>, <STRING>"<ESC>\n</ESC>"</STRING>);
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$pos</VARIABLE> <OPERATOR>!</OPERATOR><OPERATOR>==</OPERATOR> <TYPE>false</TYPE>)
+      {
+        <VARIABLE>$s1</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>, <NUMERIC>0</NUMERIC>, <VARIABLE>$pos</VARIABLE>);
+        <VARIABLE>$s2</VARIABLE> <OPERATOR>=</OPERATOR> ((<VARIABLE>$pos</VARIABLE><OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC>)<OPERATOR>&lt;</OPERATOR><FUNCTION>strlen</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>))? <FUNCTION>substr</FUNCTION>(<VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>, <VARIABLE>$pos</VARIABLE><OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC>) : <STRING>""</STRING>;
+        <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$s1</VARIABLE> . <VARIABLE>$s2</VARIABLE>;
+      }
+    }
+<COMMENT>//     $this-&gt;output = preg_replace("/(&lt;LANG_.*?)\n/s", "$1", $this-&gt;output);</COMMENT>
+    <KEYWORD>return</KEYWORD> <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>output</OO>;
+  }
+  
+  
+  
+  
+  
+  <KEYWORD>private</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>FinaliseSetup</USER_FUNCTION>()
+  {
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>strsearch_opening_delimiters</OO> <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> LuminousStringSearch(
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <OPERATOR>!</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>case_insensitive</OO>
+    );
+    <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>strsearch_closing_delimiters</OO> <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> LuminousStringSearch(
+      <VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>input_src</OO>, <OPERATOR>!</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OBJ>grammar</OBJ><OPERATOR>-</OPERATOR><OPERATOR>&gt;</OPERATOR><OO>case_insensitive</OO>
+      );    
+  }
+  
+  
+  
+}
+
