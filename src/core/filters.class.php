@@ -211,7 +211,20 @@ class LuminousFilters {
         $str); 
     return $token;
   }
-  
+
+
+  static function upper_to_constant($token) {
+    // check for this because it may have been mapped to a function or something
+    if ($token[0] === 'IDENT' && preg_match('/^[A-Z_]+$/', $token[1]))
+      $token[0] = 'CONSTANT';
+    return $token;
+  }
+
+  static function clean_ident($token) {
+    if ($token[0] === 'IDENT') $token[0] = null;
+    return $token;
+  }
+
 }
   
   

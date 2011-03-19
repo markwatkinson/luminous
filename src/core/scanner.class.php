@@ -423,7 +423,7 @@ class LuminousScanner extends Scanner {
   function __construct($src=null) {
     parent::__construct($src);
 
-    $this->add_filter('map-ident', 'IDENT', array($this, 
+    $this->add_filter('map-ident', 'IDENT', array($this,
       'map_identifier_filter'));
     
     $this->add_filter('comment-note', 'COMMENT', array('LuminousFilters', 'comment_note'));    
@@ -432,9 +432,14 @@ class LuminousScanner extends Scanner {
     $this->add_filter('pcre', 'REGEX', array('LuminousFilters', 'pcre'));
     $this->add_filter('user-defs', 'IDENT', array($this, 'user_def_filter'));
 
+    $this->add_filter('constant', 'IDENT', array('LuminousFilters', 'upper_to_constant'));
+
+    $this->add_filter('constant', 'IDENT', array('LuminousFilters', 'clean_ident'));
+    
+
     $this->add_stream_filter('rule-map', array($this, 'rule_mapper_filter'));
     $this->add_stream_filter('oo-syntax', array($this, 'oo_stream_filter'));
-  }
+}
   
   
   
@@ -618,7 +623,7 @@ class LuminousScanner extends Scanner {
     return $default;
   }
   function map_identifier_filter($token) {
-    $token[0] = $this->map_identifier($token[1], null);
+    $token[0] = $this->map_identifier($token[1], 'IDENT');
     return $token;
   }
   
