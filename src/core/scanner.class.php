@@ -237,7 +237,13 @@ class Scanner {
       if (($pos = $this->ss->match($pattern, $this->index, $matches)) !== false) {
         if ($instant && $pos !== $index) {
           $matches = null;
-        }        
+        }
+        // don't consume match and not instant: the match we are interested in
+        // is actually the substring between the start and the match.
+        // this is used by scan_to
+        if (!$consume_match && !$instant) {
+          $matches = array(substr($this->src, $this->index, $pos-$this->index));
+        }
       }
       else $matches = null;
 
@@ -258,6 +264,15 @@ class Scanner {
   function scan($pattern) {
     return $this->__check($pattern);
   }
+  /**
+   * Returns the substring between here and the given pattern. The
+   * substring is logged as the match and consumed. The actual pattern
+   * is not consumed
+   */
+  function scan_to($pattern) {
+    return $this->__check($pattern, false, true, false, true);
+  }
+  
   /**
    * Looks for the given pattern at the current index and logs it
    * if it is found, but does not consume it. This is a look-ahead.
@@ -417,6 +432,7 @@ class LuminousScanner extends Scanner {
     $this->add_filter('pcre', 'REGEX', array('LuminousFilters', 'pcre'));
     $this->add_filter('user-defs', 'IDENT', array($this, 'user_def_filter'));
 
+    $this->add_stream_filter('rule-map', array($this, 'rule_mapper_filter'));
     $this->add_stream_filter('oo-syntax', array($this, 'oo_stream_filter'));
   }
   
@@ -432,6 +448,15 @@ class LuminousScanner extends Scanner {
     }
     return $token;
   }
+
+  protected function rule_mapper_filter($tokens) {
+    foreach($tokens as &$t) {
+      if (isset($this->rule_tag_map[$t[0]]))
+        $t[0] = $this->rule_tag_map[$t[0]];
+    }
+    return $tokens;
+  }
+
 
   protected function oo_stream_filter($tokens) {
     $last;
@@ -533,7 +558,6 @@ class LuminousScanner extends Scanner {
   }
   
   function record($string, $type, $pre_escaped=false) {    
-    if (isset($this->rule_tag_map[$type])) $type = $this->rule_tag_map[$type];
     $this->tokens[] = array($type, $string, $pre_escaped);
   }
   
@@ -569,7 +593,6 @@ class LuminousScanner extends Scanner {
   
   function tagged() {
     $out = '';
-    
     $this->process_filters();
     
     foreach($this->tokens as $t) {
