@@ -172,7 +172,7 @@ abstract class Luminous {
     return realpath(dirname(__FILE__) . '/../');
   }
 
-  static function get_themes() {
+  static function themes() {
     $themes_uri = self::root() . "/style/";
     $themes = array();
     foreach(glob($themes_uri . "/*.css") as $css) {
@@ -191,10 +191,10 @@ abstract class Luminous {
   }
 
   static function theme_exists($theme) {
-    return in_array($theme, self::get_themes());
+    return in_array($theme, self::themes());
   }
   
-  static function get_theme($theme) {
+  static function theme($theme) {
     if (self::theme_exists($theme)) 
       return file_get_contents(self::luminous_root() . "/style/" . $theme);
     else
@@ -218,11 +218,15 @@ abstract class Luminous {
     else $luminous_->settings[$option] = $value;
   }
 
-  static function get_scanners() {
+  static function scanners() {
     global $luminous_;
     return $luminous_->scanners->ListScanners();
   }
 
+  static function formatter() {
+    global $luminous_;
+    return $luminous_->get_formatter();
+  }
 
 
 /**

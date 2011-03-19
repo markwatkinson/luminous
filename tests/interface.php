@@ -22,7 +22,7 @@ Luminous::set('max-height', 300);
   <div style='text-align:center'>
     <form method='post' action='interface.php'>
     <select name='lang'>
-    <?php foreach(Luminous::get_scanners() as $lang=>$codes) {
+    <?php foreach(Luminous::scanners() as $lang=>$codes) {
       $def = (isset($_POST['lang']) && $_POST['lang'] === $codes[0])?
         ' selected' : '';
       echo $_POST['lang'];
