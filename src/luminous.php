@@ -63,6 +63,8 @@ class _Luminous {
       
     $this->scanners->AddScanner(array('python', 'py'),
       'LuminousPythonScanner', 'Python', "$language_dir/python.php");
+    $this->scanners->AddScanner(array('sql', 'mysql'),
+      'LuminousSQLScanner', 'SQL', "$language_dir/sql.php");
   }
 
   function get_formatter() {
