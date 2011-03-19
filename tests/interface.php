@@ -14,7 +14,9 @@ Luminous::set('max-height', 300);
 <body>
   <?php
     if (count($_POST)) {
-      echo Luminous::highlight($_POST['lang'], $_POST['src']);
+      // turn off caching for the moment or it's hard to see what changes
+      // are having effect
+      echo Luminous::highlight($_POST['lang'], $_POST['src'], false);
     }
     ?>
   <div style='text-align:center'>
