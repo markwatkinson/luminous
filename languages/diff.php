@@ -78,7 +78,7 @@ class LuminousDiffScanner extends LuminousScanner {
       elseif($this->scan('/(?:\**|=*|\w.*)$/m')) $tok = 'KEYWORD';
       // this is a header line which may contain a file path. If it does,
       // update the child scanner according to its extension.
-      elseif($this->scan("@[+\-\*]{3}(\s+(?<path>.*)\t)?.*@")) {
+      elseif($this->scan("@[+\-\*]{3}(\s+(?<path>[^\s]*)(\t|$))?.*@m")) {
         $m = $this->match_groups();
         // unified uses +++, context uses *
         if ($m[0][0] === '+' || $m[0][0] === '*')
