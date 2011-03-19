@@ -76,13 +76,13 @@ class LuminousCppScanner extends LuminousScanner {
         $this->skip_whitespace();
         // special case: #if 0
         // pretty sure nulls everything inside it and doesn't nest?
-        if ($this->scan("/#if\s+0[ \t]*$.*?^[ \t]*#endif/"))
+        if ($this->scan("/\#if\s+0[ \t]*$.*?^[ \t]*\#endif/"))
           $tok = 'COMMENT';
         else {
           // fortunately comments don't nest so we can zap this with a, errr,
           // fairly simple regex :-\
           // well it beats a loop and a stack anyway.
-          $m = $this->scan("@ ( [^/\n\\\\]+ | /\* (?s:.*) \*/ | //.* | / | \\\\(?s:.)  )* @x");
+          $m = $this->scan("@ \# ( [^/\n\\\\]+ | /\* (?s:.*?) \*/ | //.* | / )* @x");
           assert($m !== null);
           // we'll leave highlighting the nested tokens as a task for a filter
         }
