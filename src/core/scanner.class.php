@@ -365,7 +365,12 @@ abstract class LuminousTokenPresets {
     (?:e[+-]?\d+)?                     # exponent
     /ix';
   static $C_COMMENT_SL = '% // .* %x';
-  static $C_COMMENT_ML = '% / \* .*? (?: \*/ | $) %sx';  
+  static $C_COMMENT_ML = '% / \* .*? (?: \*/ | $) %sx';
+  static $PERL_COMMENT = '/#.*/';
+  static $SQL_SINGLE_STR = "/ ' (?: [^']+ | '' )* (?: '|$)/x";
+  static $SQL_SINGLE_STR_BSLASH = "/ ' (?: [^'\\\\]+ | '' | \\\\. )* (?: '|$)/x";
+  
+  
 }
 
 
@@ -744,3 +749,25 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
   }
   
 }
+
+
+
+class LuminousSimpleScanner extends LuminousScanner {
+
+  function main() {
+    while (!$this->eos()) {
+      $index = $this->pos();
+      if (($match = $this->next_match()) !== null) {
+        $tok = $match[0];
+        if ($match[1] > $index) {
+          $this->record(substr($this->string(), $index, $match[1] - $index), null);
+        }
+        $this->record($this->match(), $tok);
+      } else {
+        $this->record(substr($this->string(), $index), null);
+        break;
+      }
+    }
+  }
+}
+
