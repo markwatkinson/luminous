@@ -16,11 +16,10 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
     
     $this->add_pattern('START', '/<\?(php|=)?/'); 
     $this->add_pattern('TERM', '/\?>/'); 
-    // Why does hash need escaping?
     $this->add_pattern('COMMENT', '% (?://|\#) .* (?=\\?>|$)  %xm');
     $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_ML); 
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
-    $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);    
+    $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
     $this->add_pattern('OPERATOR', '@[!%^&*\-=+~:<>?/]+@');
     $this->add_pattern('VARIABLE', '/\\$\\$?[a-zA-Z_]\w*/');
     $this->add_pattern('IDENT', '/[a-zA-Z_]\w*/');
@@ -93,7 +92,7 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
       }
       
       
-      if ($tok === 'IDENT') {
+      if($tok === 'IDENT') {
         $m = $this->match();
         if ($m === 'class') $expecting = 'class';
         elseif ($m === 'function') $expecting = 'function';
@@ -108,8 +107,29 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
           }
           $expecting = false;
         }
-        
       }
+
+      elseif($tok === 'OPERATOR') {
+        // figure out heredoc syntax here 
+        if (strpos($this->match(), '<<<') !== false) {
+          $this->record($this->match(), $tok); 
+          // TODO add filters to convert nowdoc to heredoc, and 
+          // process interpolation in heredoc but not nowdoc.
+          $nowdoc = $this->peek() === "'";
+          if ($nowdoc) $this->record($this->get(), null);
+          $delimiter = $this->scan('/\w+/');
+          $this->record($delimiter, 'KEYWORD');
+          // bump us to the end of the line
+          if (strlen($this->scan('/.*/')))
+            $this->record($this->match(), null);
+          if ($this->scan_to("/^$delimiter|\z/m")) {
+            $this->record($this->match(), 'HEREDOC');
+            $this->record($this->scan('/\w+/'), 'KEYWORD');
+          }
+          continue;
+        }
+      }
+
       assert($this->pos() > $index) or die("$tok didn't consume anything");
       $this->record($this->match(), $tok);
     }
