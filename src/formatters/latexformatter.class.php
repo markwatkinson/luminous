@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__) . '/../tools/cssconverter.php');
+require_once(dirname(__FILE__) . '/../utils/cssparser.class.php');
 
 /**
  * LaTeX output formatter for Luminous.
@@ -15,14 +15,13 @@ class LuminousFormatterLatex extends LuminousFormatter
   
   function SetTheme($theme)
   {
-    $this->css = new CSSConverter();
-    $this->css->verbose = false;
-    $this->css->Convert($theme);
+    $this->css = new LuminousCSSParser();
+    $this->css->convert($theme);
   }
   
   static function hex2rgb($hex)
   {
-    $x = hexdec($hex);
+    $x = hexdec(substr($hex, 1));
     $b = $x % 256;
     $g = ($x >> 8) % 256;
     $r = ($x >> 16) % 256;
@@ -45,16 +44,16 @@ class LuminousFormatterLatex extends LuminousFormatter
   function DefineStyleCommands()
   {
     $cmds = array();
-    foreach($this->css->GetRules() as $name=>$properties)
+    foreach($this->css->rules() as $name=>$properties)
     {
       if (!preg_match('/^\w+$/', $name))
         continue;
       $cmd = "{#1}" ;
-      if ($this->css->GetValue($name, 'bold') === true)
+      if ($this->css->value($name, 'bold', false) === true)
         $cmd = "{\\textbf$cmd}";
-      if ($this->css->GetValue($name, 'italic') === true)
+      if ($this->css->value($name, 'italic', false) === true)
         $cmd = "{\\emph$cmd}";
-      if (($col = $this->css->GetValue($name, 'color')) !== false)
+      if (($col = $this->css->value($name, 'color', null)) !== null)
       {
         if (preg_match('/^#[a-f0-9]{6}$/i', $col))
         {
@@ -70,7 +69,7 @@ class LuminousFormatterLatex extends LuminousFormatter
     
     if (
       $this->line_numbers && 
-      ($col = $this->css->GetValue('code', 'color')) !== false)
+      ($col = $this->css->value('code', 'color', null)) !== null)
     {
       if (preg_match('/^#[a-f0-9]{6}$/i', $col))
       {
@@ -87,7 +86,7 @@ class LuminousFormatterLatex extends LuminousFormatter
   
   function GetBackgroundColor()
   {
-    if (($col = $this->css->GetValue('code', 'bgcolor')) !== false)
+    if (($col = $this->css->value('code', 'bgcolor', null)) !== null)
     {
       if (preg_match('/^#[a-f0-9]{6}$/i', $col))
         $rgb = $this::hex2rgb($col);
