@@ -503,6 +503,13 @@ class LuminousScanner extends Scanner {
       }
     }
   }
+  
+  public function remove_stream_filter($name) {
+    foreach($this->stream_filters as $k=>$f) {
+      if ($f[0] === $name) unset($this->stream_filters[$k]);
+    }
+  }
+
 
   public function add_stream_filter($arg1, $arg2=null) {
     $filter = null;
