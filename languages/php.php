@@ -29,11 +29,14 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
     $this->add_identifier_mapping('KEYWORD', $GLOBALS['luminous_php_keywords']);
 
     $this->add_filter('STRING', array($this, 'str_filter'));
+    $this->add_filter('HEREDOC', array($this, 'str_filter'));
+    $this->add_filter('NOWDOC', array($this, 'nowdoc_filter'));
+    
+    
   }
 
   static function str_filter($token) {
-
-    if ($token[1][0] !== '"') return $token;
+    if ($token[1][0] !== '"' && $token[0] !== 'HEREDOC') return $token;
     elseif(strpos($token[1], '$') === false) return $token;
     
     $token = LuminousUtils::escape_token($token);
@@ -43,6 +46,11 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
       \$\$?[a-zA-Z_]\w*
       /x', '<VARIABLE>$0</VARIABLE>',
     $token[1]);
+    return $token;
+  }
+  
+  static function nowdoc_filter($token) {
+    $token[0] = 'HEREDOC';
     return $token;
   }
   
@@ -112,18 +120,24 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
       elseif($tok === 'OPERATOR') {
         // figure out heredoc syntax here 
         if (strpos($this->match(), '<<<') !== false) {
-          $this->record($this->match(), $tok); 
-          // TODO add filters to convert nowdoc to heredoc, and 
-          // process interpolation in heredoc but not nowdoc.
-          $nowdoc = $this->peek() === "'";
-          if ($nowdoc) $this->record($this->get(), null);
-          $delimiter = $this->scan('/\w+/');
+          $this->record($this->match(), $tok);
+          $this->scan('/([\'"]?)([\w]*)((?:\\1)?)/');
+          $g = $this->match_groups();
+          $nowdoc = false;
+          if ($g[1]) {
+            // nowdocs are delimited by single quotes. Heredocs MAY be 
+            // delimited by double quotes, or not.
+            $nowdoc = $g[1] === "'";
+            $this->record($g[1], null);
+          }
+          $delimiter = $g[2];
           $this->record($delimiter, 'KEYWORD');
+          if ($g[3]) $this->record($g[3], null);
           // bump us to the end of the line
           if (strlen($this->scan('/.*/')))
             $this->record($this->match(), null);
           if ($this->scan_to("/^$delimiter|\z/m")) {
-            $this->record($this->match(), 'HEREDOC');
+            $this->record($this->match(), ($nowdoc)? 'NOWDOC' : 'HEREDOC');
             $this->record($this->scan('/\w+/'), 'KEYWORD');
           }
           continue;
