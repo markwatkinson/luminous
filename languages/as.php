@@ -5,7 +5,7 @@
 // and override the identifier names.
 // but we also override init so as to prevent any embedding
 
-class LuminousActionScriptScanner extends LuminousJSScanner {
+class LuminousActionScriptScanner extends LuminousECMAScriptScanner {
 
 
   function init() {

@@ -58,7 +58,7 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
     $this->add_pattern('', '/</');
     $this->state_ = 'global';
     if ($this->scripts) {
-      $js = new LuminousJSScanner($this->string());
+      $js = new LuminousJavaScriptScanner($this->string());
       $js->embedded_server = $this->embedded_server;
       $js->embedded_html = true;
       $js->init();

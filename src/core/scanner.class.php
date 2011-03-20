@@ -633,7 +633,9 @@ class LuminousScanner extends Scanner {
       if (!$this->case_sensitive) $m = strtolower($m);
       $array[$m] = true;
     }
-    $this->ident_map[$name] = $array;
+    if (!isset($this->ident_map[$name]))
+      $this->ident_map[$name] = array();
+    $this->ident_map[$name] = array_merge($this->ident_map[$name], $array);
   }
   
   function skip_whitespace() {

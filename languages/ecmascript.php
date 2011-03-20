@@ -1,7 +1,12 @@
 <?php
 
+/**
+ * This is a rename of the JavaScript scanner.
+ * TODO Some of these things are JS specific and should be moved into
+ * the new JS scanner.
+ */
 
-class LuminousJSScanner extends LuminousEmbeddedWebScript {
+class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
   
   // TODO clean up redunancy here and in constructor
   public $server_tags = '<?';

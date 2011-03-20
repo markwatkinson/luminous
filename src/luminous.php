@@ -41,8 +41,12 @@ class _Luminous {
     // when it starts growing.
     $language_dir = Luminous::root() . '/languages/';
 
+
+    // BUG: we have circular dependencies with ECMAScript.
+    // ActionScript depends on HTML (for XML literals), which
+    // depends on JS depends on HTML again (for XML literals)
     $this->scanners->AddScanner(array('as', 'actionscript'),
-      'LuminousActionScriptScanner', 'ActionScript', "$language_dir/as.php", 'js');
+    'LuminousActionScriptScanner', 'ActionScript', "$language_dir/as.php", array('xml', 'ecma'));
     
     $this->scanners->AddScanner(array('c', 'cpp', 'h', 'hpp', 'cxx', 'hxx'),
       'LuminousCppScanner', 'C/C++', "$language_dir/cpp.php");
@@ -56,13 +60,16 @@ class _Luminous {
     $this->scanners->AddScanner(array('html', 'htm', 'xml'),
       'LuminousHTMLScanner', 'HTML/XML', "$language_dir/html.php",
       array('js', 'css'));
+      
+    $this->scanners->AddScanner(array('ecma', 'ecmascript'),
+      'LuminousECMAScriptScanner', 'ECMAScript', "$language_dir/ecmascript.php");
 
     $this->scanners->AddScanner('java',
       'LuminousJavaScanner', 'Java', "$language_dir/java.php");
       
-    $this->scanners->AddScanner('js',
-      'LuminousJSScanner', 'JavaScript', "$language_dir/js.php",
-      'html');
+    $this->scanners->AddScanner(array('js', 'javascript'),
+      'LuminousJavaScriptScanner', 'JavaScript', "$language_dir/javascript.php",
+      array('xml', 'ecma'));
       
     $this->scanners->AddScanner('php',
       'LuminousPHPScanner', 'PHP', "$language_dir/php.php",
