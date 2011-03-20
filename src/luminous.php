@@ -48,10 +48,6 @@ class _Luminous {
       "$language_dir/include/ecma.php");
       
 
-
-    // BUG: we have circular dependencies with ECMAScript.
-    // ActionScript depends on HTML (for XML literals), which
-    // depends on JS depends on HTML again (for XML literals)
     $this->scanners->AddScanner(array('as', 'actionscript'),
     'LuminousActionScriptScanner', 'ActionScript', "$language_dir/as.php", 
     'ecma');
