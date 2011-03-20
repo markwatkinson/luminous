@@ -36,6 +36,7 @@ class LuminousSQLScanner extends LuminousSimpleScanner {
     $this->case_sensitive = false;
     $this->remove_stream_filter('oo-syntax');
     $this->remove_filter('comment-to-doc');
+    $this->remove_filter('constant');
     $this->add_identifier_mapping('KEYWORD', $GLOBALS['luminous_sql_keywords']);
     $this->add_identifier_mapping('TYPE', $GLOBALS['luminous_sql_types']);
 

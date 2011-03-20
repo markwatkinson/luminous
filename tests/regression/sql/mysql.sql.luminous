@@ -1,0 +1,12 @@
+<COMMENT>/* mysql has a few extras which we should be wary of */</COMMENT>
+<COMMENT># http://dev.mysql.com/doc/refman/5.1/en/language-structure.html</COMMENT>
+<COMMENT>-- kate doesn't get this right</COMMENT>
+
+<COMMENT>-- these should all be valid strings</COMMENT>
+
+<KEYWORD>SELECT</KEYWORD> <STRING>'abcdefgh'</STRING>;
+<KEYWORD>SELECT</KEYWORD> <STRING>"abcdefgh"</STRING>;
+<KEYWORD>CREATE</KEYWORD> <KEYWORD>TABLE</KEYWORD> <STRING>`xyz`</STRING>;
+<KEYWORD>SELECT</KEYWORD> <STRING>'an apost''rophe'</STRING>
+<KEYWORD>SELECT</KEYWORD> <STRING>'an apost<ESC>\'</ESC>rophe'</STRING>;
+

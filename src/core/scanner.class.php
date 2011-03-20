@@ -434,7 +434,7 @@ class LuminousScanner extends Scanner {
 
     $this->add_filter('constant', 'IDENT', array('LuminousFilters', 'upper_to_constant'));
 
-    $this->add_filter('constant', 'IDENT', array('LuminousFilters', 'clean_ident'));
+    $this->add_filter('clean-ident', 'IDENT', array('LuminousFilters', 'clean_ident'));
     
 
     $this->add_stream_filter('rule-map', array($this, 'rule_mapper_filter'));
