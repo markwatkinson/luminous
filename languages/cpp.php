@@ -34,7 +34,7 @@ class LuminousCppScanner extends LuminousScanner {
   // TEST: don't know if comments are yet.
   // Strings work though.
   static function preprocessor_filter_cb($matches) {
-    if ($matches[0][0] === '"' || $matches[0][0] === '<') 
+    if (isset($matches['STR']))
       return LuminousUtils::tag_block('STRING', $matches[0]);
     else
       return LuminousUtils::tag_block('COMMENT', $matches[0]);
@@ -43,8 +43,7 @@ class LuminousCppScanner extends LuminousScanner {
   static function preprocessor_filter($token) {
     $token = LuminousUtils::escape_token($token);
     $token[1] = preg_replace_callback("@
-      \" (?: [^\\\\\n\"]+ | \\\\. )* (?: \"|$)
-      | < .* >
+    (?P<STR>  \" (?: [^\\\\\n\"]+ | \\\\. )* (?: \"|$) | (?<=&lt;) .*? (?=&gt;))
       | // .*
       | /\* .*? \*/
     @x",
