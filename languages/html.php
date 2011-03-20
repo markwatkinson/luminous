@@ -170,8 +170,8 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
         $c === '"' && $this->scan('/" (?: [^"\\\\>]+ | \\\\.)* (?:"|$|(?=>))/xs')) {
         $tok = 'DSTRING';
         $this->expecting = '';
-      }
-      elseif($in_tag && $this->scan('/[^\s=<>]+/')) {
+      }      
+      elseif($in_tag && $this->scan('@(?:(?<=<)/)?[^\s=<>/]+@')) {
         if ($this->expecting === 'tagname') {
           $tok = 'HTMLTAG';
           $this->expecting = '';
@@ -196,7 +196,6 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
 
       $this->record($get? $this->get(): $this->match(), $tok);
       assert ($index < $this->pos()) or die("Failed to consume for $tok");
-
       if ($this->xml_literal && $this->state_ !== 'tag' && empty($this->tag_stack)) {
         return;
       }
