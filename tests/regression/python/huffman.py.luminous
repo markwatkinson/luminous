@@ -1,0 +1,131 @@
+<SHEBANG>#!/usr/bin/env python</SHEBANG>
+<SHEBANG></SHEBANG><COMMENT># -*- coding: utf-8 -*-</COMMENT>
+<DOCCOMMENT>"""</DOCCOMMENT>
+<DOCCOMMENT>    huffman.py: Calculates a Huffman coding scheme for a given code</DOCCOMMENT>
+<DOCCOMMENT>    </DOCCOMMENT>
+<DOCCOMMENT>    Copyright (C) 2007 Mark Watkinson</DOCCOMMENT>
+<DOCCOMMENT></DOCCOMMENT>
+<DOCCOMMENT>    This program is free software: you can redistribute it and/or modify</DOCCOMMENT>
+<DOCCOMMENT>    it under the terms of the GNU General Public License as published by</DOCCOMMENT>
+<DOCCOMMENT>    the Free Software Foundation, either version 3 of the License, or</DOCCOMMENT>
+<DOCCOMMENT>    (at your option) any later version.</DOCCOMMENT>
+<DOCCOMMENT></DOCCOMMENT>
+<DOCCOMMENT>    This program is distributed in the hope that it will be useful,</DOCCOMMENT>
+<DOCCOMMENT>    but WITHOUT ANY WARRANTY; without even the implied warranty of</DOCCOMMENT>
+<DOCCOMMENT>    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</DOCCOMMENT>
+<DOCCOMMENT>    GNU General Public License for more details.</DOCCOMMENT>
+<DOCCOMMENT></DOCCOMMENT>
+<DOCCOMMENT>    You should have received a copy of the GNU General Public License</DOCCOMMENT>
+<DOCCOMMENT>    along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;.</DOCCOMMENT>
+<DOCCOMMENT>"""</DOCCOMMENT>    
+
+<DOCCOMMENT>""" </DOCCOMMENT>
+<DOCCOMMENT>  Example usage:</DOCCOMMENT>
+<DOCCOMMENT>  ./huffman.py a 15 b 7 c 6 d 6 e 5</DOCCOMMENT>
+<DOCCOMMENT>  a : 0</DOCCOMMENT>
+<DOCCOMMENT>  e : 100</DOCCOMMENT>
+<DOCCOMMENT>  c : 101</DOCCOMMENT>
+<DOCCOMMENT>  d : 110</DOCCOMMENT>
+<DOCCOMMENT>  b : 111</DOCCOMMENT>
+<DOCCOMMENT>  average 2.231 bits per symbol</DOCCOMMENT>
+<DOCCOMMENT>"""</DOCCOMMENT>
+
+
+
+
+<KEYWORD>import</KEYWORD> <TYPE>sys</TYPE>
+
+
+<COMMENT># builds the binary tree. </COMMENT>
+<COMMENT># symbols_to_freqs is a dictionary mapping symbol names to relative frequencies,</COMMENT>
+<COMMENT># which should be normalsed such that they all add up to 1.</COMMENT>
+<COMMENT># Returns the tree's root node. Each node is:</COMMENT>
+<COMMENT># (</COMMENT>
+<COMMENT>#  node's symbol ( | None if is a parent), </COMMENT>
+<COMMENT>#  total frequency of children,</COMMENT>
+<COMMENT>#  childnode1 | None,</COMMENT>
+<COMMENT>#  childnode2 | None,</COMMENT>
+<COMMENT># )</COMMENT>
+<COMMENT># where childnodes are the same structure.</COMMENT>
+<KEYWORD>def</KEYWORD> <USER_FUNCTION>build_tree</USER_FUNCTION>(symbols_to_freqs):
+  
+  <COMMENT>#alphabet = list of: (symbol, relative freq)</COMMENT>
+  alphabet <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR> (symbol, symbols_to_freqs<OPERATOR>[</OPERATOR>symbol<OPERATOR>]</OPERATOR>) <KEYWORD>for</KEYWORD> symbol <OPERATOR>in</OPERATOR> <OBJ>symbols_to_freqs</OBJ>.<OO>keys</OO>() <OPERATOR>]</OPERATOR>
+  
+  sign <OPERATOR>=</OPERATOR> <KEYWORD>lambda</KEYWORD> x: <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC> <KEYWORD>if</KEYWORD> x<OPERATOR>&lt;</OPERATOR><NUMERIC>0</NUMERIC> <KEYWORD>else</KEYWORD> (<NUMERIC>1</NUMERIC> <KEYWORD>if</KEYWORD> x<OPERATOR>&gt;</OPERATOR><NUMERIC>0</NUMERIC> <KEYWORD>else</KEYWORD> <NUMERIC>0</NUMERIC>)
+  <OBJ>alphabet</OBJ>.<OO>sort</OO>( <KEYWORD>lambda</KEYWORD> a, b: sign(a<OPERATOR>[</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR> <OPERATOR>-</OPERATOR> b<OPERATOR>[</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR>))
+  <OBJ>alphabet</OBJ>.<OO>reverse</OO>()
+  <COMMENT># tree = list of (symbol, relative freq, child1, child2</COMMENT>
+  tree <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR> (symbol, freq, <TYPE>None</TYPE>, <TYPE>None</TYPE>) <KEYWORD>for</KEYWORD> symbol, freq <OPERATOR>in</OPERATOR> alphabet<OPERATOR>]</OPERATOR>
+
+  <KEYWORD>while</KEYWORD> <FUNCTION>len</FUNCTION>(tree) <OPERATOR>&gt;</OPERATOR> <NUMERIC>1</NUMERIC>:
+    <COMMENT># pop the two lowest probability nodes </COMMENT>
+    <COMMENT># and amalgamate them to form a parent.</COMMENT>
+    node1 <OPERATOR>=</OPERATOR> <OBJ>tree</OBJ>.<OO>pop</OO>()
+    node2 <OPERATOR>=</OPERATOR> <OBJ>tree</OBJ>.<OO>pop</OO>()
+    
+    sym1, freq1, dummy, dummy2 <OPERATOR>=</OPERATOR> node1
+    sym2, freq2, dummy3, dummy4 <OPERATOR>=</OPERATOR> node2
+    
+    <COMMENT>#node 3 is the parent.</COMMENT>
+    freq3 <OPERATOR>=</OPERATOR> freq1 <OPERATOR>+</OPERATOR> freq2
+    
+    node3 <OPERATOR>=</OPERATOR> (<TYPE>None</TYPE>, freq3, node1, node2)
+    <COMMENT># now put it back on the tree.</COMMENT>
+    <OBJ>tree</OBJ>.<OO>append</OO>(node3)  
+    <OBJ>tree</OBJ>.<OO>sort</OO>(<KEYWORD>lambda</KEYWORD> a, b: sign(a<OPERATOR>[</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR> <OPERATOR>-</OPERATOR> b<OPERATOR>[</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR>))
+    <OBJ>tree</OBJ>.<OO>reverse</OO>()  
+
+  <KEYWORD>return</KEYWORD> tree<OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR>
+
+
+<COMMENT># recurses the tree to build a huffman code</COMMENT>
+<COMMENT># returns code as a list of (symbol, binary string)</COMMENT>
+<KEYWORD>def</KEYWORD> <USER_FUNCTION>build_symbols</USER_FUNCTION>(node, sym_string <OPERATOR>=</OPERATOR> <STRING>""</STRING>):
+  c, f, n1, n2 <OPERATOR>=</OPERATOR> node
+  <COMMENT># base case</COMMENT>
+  code <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR><OPERATOR>]</OPERATOR>
+  <KEYWORD>if</KEYWORD> n1 <OPERATOR>is</OPERATOR> <TYPE>None</TYPE> <OPERATOR>and</OPERATOR> n2 <OPERATOR>is</OPERATOR> <TYPE>None</TYPE>:
+    code <OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR>  <OPERATOR>[</OPERATOR>(c, sym_string)<OPERATOR>]</OPERATOR> 
+  
+  <KEYWORD>if</KEYWORD> n1 <OPERATOR>is</OPERATOR> <OPERATOR>not</OPERATOR> <TYPE>None</TYPE>:
+     code <OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR> build_symbols(n1, sym_string <OPERATOR>+</OPERATOR> <STRING>"0"</STRING>)
+  
+  <KEYWORD>if</KEYWORD> n2 <OPERATOR>is</OPERATOR> <OPERATOR>not</OPERATOR> <TYPE>None</TYPE>:
+    code <OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR> build_symbols(n2, sym_string <OPERATOR>+</OPERATOR> <STRING>"1"</STRING>)
+    
+  <KEYWORD>return</KEYWORD> code
+    
+<KEYWORD>def</KEYWORD> <USER_FUNCTION>main</USER_FUNCTION>():
+  <KEYWORD>if</KEYWORD> <STRING>"--help"</STRING> <OPERATOR>in</OPERATOR> <OBJ>sys</OBJ>.<OO>argv</OO> <OPERATOR>or</OPERATOR> <FUNCTION>len</FUNCTION>(<OBJ>sys</OBJ>.<OO>argv</OO>) <OPERATOR>==</OPERATOR> <NUMERIC>1</NUMERIC>:
+    <KEYWORD>print</KEYWORD> <STRING>"Usage:"</STRING>, <OBJ>sys</OBJ>.<OO>argv</OO><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR>,  <STRING>"symbol_1 freq_1 symbol_2 freq_1 ... symbol_n freq_n"</STRING>
+    <OBJ>sys</OBJ>.<OO>exit</OO>()   
+  
+  <COMMENT># Parse arguments</COMMENT>
+  symbols <OPERATOR>=</OPERATOR> <OBJ>sys</OBJ>.<OO>argv</OO><OPERATOR>[</OPERATOR><NUMERIC>1</NUMERIC>::<NUMERIC>2</NUMERIC><OPERATOR>]</OPERATOR>  
+  freqs <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR><TYPE>float</TYPE>(x) <KEYWORD>for</KEYWORD> x <OPERATOR>in</OPERATOR> <OBJ>sys</OBJ>.<OO>argv</OO><OPERATOR>[</OPERATOR><NUMERIC>2</NUMERIC>::<NUMERIC>2</NUMERIC><OPERATOR>]]</OPERATOR>
+  <COMMENT># convert freqs to relative freqs</COMMENT>
+  total <OPERATOR>=</OPERATOR> <FUNCTION>sum</FUNCTION>(freqs)
+  freqs <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>x<OPERATOR>/</OPERATOR>total <KEYWORD>for</KEYWORD> x <OPERATOR>in</OPERATOR> freqs<OPERATOR>]</OPERATOR>
+  
+  <COMMENT># set up the symbol =&gt; frequency lookup dictionary</COMMENT>
+  symbols_to_freqs <OPERATOR>=</OPERATOR> {}
+  <KEYWORD>for</KEYWORD> sym, freq <OPERATOR>in</OPERATOR> <FUNCTION>zip</FUNCTION>(symbols, freqs):
+    symbols_to_freqs<OPERATOR>[</OPERATOR>sym<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> freq
+    
+  <COMMENT># build the tree</COMMENT>
+  tree <OPERATOR>=</OPERATOR> build_tree(symbols_to_freqs)
+  <COMMENT># recurse to build a huffman code</COMMENT>
+  code <OPERATOR>=</OPERATOR> build_symbols(tree)    
+  
+  <COMMENT>#sort by bit length</COMMENT>
+  <OBJ>code</OBJ>.<OO>sort</OO>( <KEYWORD>lambda</KEYWORD> a,b: <FUNCTION>len</FUNCTION>(a<OPERATOR>[</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR>) <OPERATOR>-</OPERATOR> <FUNCTION>len</FUNCTION>(b<OPERATOR>[</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR>) )
+  <COMMENT>#calculate average symbol length</COMMENT>
+  avg_bits <OPERATOR>=</OPERATOR> <FUNCTION>sum</FUNCTION>( <OPERATOR>[</OPERATOR><FUNCTION>len</FUNCTION>(binary_code)<OPERATOR>*</OPERATOR>symbols_to_freqs<OPERATOR>[</OPERATOR>symbol<OPERATOR>]</OPERATOR> <KEYWORD>for</KEYWORD> symbol, binary_code <OPERATOR>in</OPERATOR> code<OPERATOR>]</OPERATOR> )
+
+  <KEYWORD>print</KEYWORD> <STRING>"<ESC>\n</ESC>"</STRING>.<OO>join</OO>( <OPERATOR>[</OPERATOR>symbol <OPERATOR>+</OPERATOR> <STRING>" : "</STRING> <OPERATOR>+</OPERATOR> binary_code <KEYWORD>for</KEYWORD> symbol, binary_code <OPERATOR>in</OPERATOR> code<OPERATOR>]</OPERATOR> )
+  <KEYWORD>print</KEYWORD> <STRING>"average"</STRING>, <FUNCTION>round</FUNCTION>(avg_bits, <NUMERIC>3</NUMERIC>) , <STRING>"bits per symbol"</STRING>
+
+  
+<KEYWORD>if</KEYWORD> __name__ <OPERATOR>==</OPERATOR> <STRING>"__main__"</STRING>:
+  main()

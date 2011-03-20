@@ -1,0 +1,104 @@
+<SHEBANG>#!/usr/bin/env python</SHEBANG>
+<SHEBANG></SHEBANG>
+<KEYWORD>import</KEYWORD> <TYPE>random</TYPE> 
+
+<KEYWORD>import</KEYWORD> <TYPE>syllables</TYPE>
+
+<KEYWORD>class</KEYWORD> <USER_FUNCTION>PasswordGenerator</USER_FUNCTION>:
+
+<DOCCOMMENT>  """</DOCCOMMENT>
+<DOCCOMMENT>    m: a markov model instance</DOCCOMMENT>
+<DOCCOMMENT>  """</DOCCOMMENT>
+  <KEYWORD>def</KEYWORD> <USER_FUNCTION>__init__</USER_FUNCTION>(<TYPE>self</TYPE>, m, lookbehind_chars<OPERATOR>=</OPERATOR><NUMERIC>2</NUMERIC>):
+    
+    <TYPE>self</TYPE>.<OO>__m</OO> <OPERATOR>=</OPERATOR> m
+    <TYPE>self</TYPE>.<OO>__lookbehind</OO> <OPERATOR>=</OPERATOR> lookbehind_chars
+    <TYPE>self</TYPE>.<OO>punc</OO> <OPERATOR>=</OPERATOR>  <STRING>'_-!.;,#?'</STRING>
+    <TYPE>self</TYPE>.<OO>char_number_mappings</OO> <OPERATOR>=</OPERATOR>  {<STRING>'a'</STRING>: <STRING>'4@&amp;'</STRING>, <STRING>'e'</STRING>: <STRING>'3'</STRING>, <STRING>'l'</STRING>: <STRING>'1!'</STRING>, <STRING>'s'</STRING>: <STRING>'$5'</STRING>, 
+      <STRING>'t'</STRING>: <STRING>'+'</STRING>, <STRING>'o'</STRING>:<STRING>'0*'</STRING>, <STRING>'i'</STRING>:<STRING>'!'</STRING>}
+    
+    <COMMENT># probability of case mangling any alphanumeric char</COMMENT>
+    <TYPE>self</TYPE>.<OO>case_mangling_p</OO> <OPERATOR>=</OPERATOR> <NUMERIC>0.25</NUMERIC>
+    
+    <COMMENT># probability of converting any given char to a number </COMMENT>
+    <COMMENT># (present in char_number_mappings)</COMMENT>
+    <TYPE>self</TYPE>.<OO>char_mangling_p</OO> <OPERATOR>=</OPERATOR> <NUMERIC>0.5</NUMERIC> 
+    
+    <TYPE>self</TYPE>.<OO>mangle_chars</OO> <OPERATOR>=</OPERATOR> <TYPE>True</TYPE>
+    <TYPE>self</TYPE>.<OO>mangle_punc</OO> <OPERATOR>=</OPERATOR> <TYPE>True</TYPE>
+    <TYPE>self</TYPE>.<OO>mangle_case</OO> <OPERATOR>=</OPERATOR> <TYPE>True</TYPE>
+    
+
+  <KEYWORD>def</KEYWORD> <USER_FUNCTION>generate_base_phrase</USER_FUNCTION>(<TYPE>self</TYPE>, length):    
+    alpha <OPERATOR>=</OPERATOR> <STRING>'abcdefghijklmnopqrstuvwxyz'</STRING>
+    string <OPERATOR>=</OPERATOR>  <STRING>' '</STRING> <OPERATOR>+</OPERATOR> <OBJ>random</OBJ>.<OO>choice</OO>(alpha)
+    <KEYWORD>for</KEYWORD> i <OPERATOR>in</OPERATOR> <FUNCTION>xrange</FUNCTION>(<NUMERIC>0</NUMERIC>, length):
+
+      j<OPERATOR>=</OPERATOR><FUNCTION>len</FUNCTION>(string)
+      
+      lb <OPERATOR>=</OPERATOR> <FUNCTION>max</FUNCTION>(<NUMERIC>0</NUMERIC>, j<OPERATOR>-</OPERATOR><TYPE>self</TYPE>.<OO>__lookbehind</OO>)
+      inc <OPERATOR>=</OPERATOR> <TYPE>False</TYPE>
+      <KEYWORD>while</KEYWORD> lb <OPERATOR>&lt;</OPERATOR> j <OPERATOR>and</OPERATOR> <OPERATOR>not</OPERATOR> inc:
+        c <OPERATOR>=</OPERATOR> <TYPE>self</TYPE>.<OBJ>__m</OBJ>.<OO>get_transition</OO>(string<OPERATOR>[</OPERATOR>lb:j<OPERATOR>]</OPERATOR>, <OBJ>random</OBJ>.<OO>random</OO>(), 
+          forbidden<OPERATOR>=</OPERATOR><STRING>' '</STRING>, min_transitions<OPERATOR>=</OPERATOR><NUMERIC>3</NUMERIC>)
+        
+        <KEYWORD>if</KEYWORD> c <OPERATOR>is</OPERATOR> <OPERATOR>not</OPERATOR> <TYPE>None</TYPE> <OPERATOR>and</OPERATOR> <OBJ>c</OBJ>.<OO>isspace</OO>() <OPERATOR>and</OPERATOR> <OBJ>random</OBJ>.<OO>random</OO>() <OPERATOR>&gt;</OPERATOR> <NUMERIC>0.5</NUMERIC>:
+          <KEYWORD>continue</KEYWORD>
+        
+        <KEYWORD>if</KEYWORD> c <OPERATOR>is</OPERATOR> <OPERATOR>not</OPERATOR> <TYPE>None</TYPE>:          
+          string<OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR>c
+          inc <OPERATOR>=</OPERATOR> <TYPE>True</TYPE>
+          
+        lb<OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR><NUMERIC>1</NUMERIC>
+      <COMMENT># no transitions  </COMMENT>
+      <KEYWORD>if</KEYWORD> <OPERATOR>not</OPERATOR> inc:
+        string <OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR> <OBJ>random</OBJ>.<OO>choice</OO>(alpha)
+      <KEYWORD>if</KEYWORD> <FUNCTION>len</FUNCTION>(string) <OPERATOR>&gt;</OPERATOR> length: <KEYWORD>break</KEYWORD>
+
+    <KEYWORD>return</KEYWORD> string<OPERATOR>[</OPERATOR><NUMERIC>1</NUMERIC>:<OPERATOR>]</OPERATOR>
+  
+  
+  
+  <KEYWORD>def</KEYWORD> <USER_FUNCTION>__mangle_punctuation</USER_FUNCTION>(<TYPE>self</TYPE>, phrase):
+    
+    s <OPERATOR>=</OPERATOR> <OBJ>syllables</OBJ>.<OO>split_syllables</OO>(phrase)
+    s <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>s_ <OPERATOR>+</OPERATOR> (<STRING>''</STRING> <KEYWORD>if</KEYWORD> <OBJ>random</OBJ>.<OO>randint</OO>(<NUMERIC>0</NUMERIC>, <NUMERIC>4</NUMERIC>) <OPERATOR>==</OPERATOR> <NUMERIC>0</NUMERIC> 
+      <KEYWORD>else</KEYWORD> <OBJ>random</OBJ>.<OO>choice</OO>(<TYPE>self</TYPE>.<OO>punc</OO>)) 
+      <KEYWORD>for</KEYWORD> s_ <OPERATOR>in</OPERATOR> s<OPERATOR>]</OPERATOR>
+    <KEYWORD>return</KEYWORD> <STRING>''</STRING>.<OO>join</OO>(s)
+      
+  
+  <KEYWORD>def</KEYWORD> <USER_FUNCTION>__mangle_spaces_to_punc</USER_FUNCTION>(<TYPE>self</TYPE>, phrase):    
+    assert(<TYPE>self</TYPE>.<OBJ>punc</OBJ>.<OO>count</OO>(<STRING>' '</STRING>) <OPERATOR>==</OPERATOR> <NUMERIC>0</NUMERIC>) <COMMENT># infinite loop condition</COMMENT>
+    <KEYWORD>while</KEYWORD> <NUMERIC>1</NUMERIC>:
+      s <OPERATOR>=</OPERATOR> <OBJ>phrase</OBJ>.<OO>replace</OO>(<STRING>' '</STRING>, <OBJ>random</OBJ>.<OO>choice</OO>(<TYPE>self</TYPE>.<OO>punc</OO>), <NUMERIC>1</NUMERIC>)
+      <KEYWORD>if</KEYWORD> s <OPERATOR>==</OPERATOR> phrase: <KEYWORD>break</KEYWORD>
+      phrase <OPERATOR>=</OPERATOR> s
+    <KEYWORD>return</KEYWORD> phrase
+  
+  <KEYWORD>def</KEYWORD> <USER_FUNCTION>__mangle_char_to_num</USER_FUNCTION>(<TYPE>self</TYPE>, phrase):    
+    <KEYWORD>for</KEYWORD> i, c <OPERATOR>in</OPERATOR> <FUNCTION>enumerate</FUNCTION>(phrase):
+      <KEYWORD>if</KEYWORD> <TYPE>self</TYPE>.<OBJ>char_number_mappings</OBJ>.<OO>get</OO>(c, <TYPE>None</TYPE>):
+        <KEYWORD>if</KEYWORD> <OBJ>random</OBJ>.<OO>random</OO>() <OPERATOR>&lt;</OPERATOR>  <TYPE>self</TYPE>.<OO>char_mangling_p</OO>:
+          phrase <OPERATOR>=</OPERATOR> phrase<OPERATOR>[</OPERATOR>:i<OPERATOR>]</OPERATOR> <OPERATOR>+</OPERATOR> \
+            <OBJ>random</OBJ>.<OO>choice</OO>(<TYPE>self</TYPE>.<OBJ>char_number_mappings</OBJ>.<OO>get</OO>(c)) <OPERATOR>+</OPERATOR> \
+            phrase<OPERATOR>[</OPERATOR>i<OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC>:<OPERATOR>]</OPERATOR>
+    <KEYWORD>return</KEYWORD> phrase
+  
+  <KEYWORD>def</KEYWORD> <USER_FUNCTION>__mangle_case</USER_FUNCTION>(<TYPE>self</TYPE>, phrase):    
+    <KEYWORD>for</KEYWORD> i, c <OPERATOR>in</OPERATOR> <FUNCTION>enumerate</FUNCTION>(phrase):      
+      <KEYWORD>if</KEYWORD> <OBJ>c</OBJ>.<OO>isalpha</OO>:
+        <KEYWORD>if</KEYWORD> <OBJ>c</OBJ>.<OO>isupper</OO>() <OPERATOR>and</OPERATOR> <OBJ>random</OBJ>.<OO>random</OO>() <OPERATOR>&lt;</OPERATOR>  <TYPE>self</TYPE>.<OO>case_mangling_p</OO>:
+          phrase <OPERATOR>=</OPERATOR> phrase<OPERATOR>[</OPERATOR>:i<OPERATOR>]</OPERATOR> <OPERATOR>+</OPERATOR> <OBJ>c</OBJ>.<OO>lower</OO>() <OPERATOR>+</OPERATOR> phrase<OPERATOR>[</OPERATOR>i<OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC>:<OPERATOR>]</OPERATOR>
+        <KEYWORD>if</KEYWORD> <OBJ>c</OBJ>.<OO>lower</OO>() <OPERATOR>and</OPERATOR> <OBJ>random</OBJ>.<OO>random</OO>() <OPERATOR>&lt;</OPERATOR> <TYPE>self</TYPE>.<OO>case_mangling_p</OO>:
+          phrase <OPERATOR>=</OPERATOR> phrase<OPERATOR>[</OPERATOR>:i<OPERATOR>]</OPERATOR> <OPERATOR>+</OPERATOR> <OBJ>c</OBJ>.<OO>upper</OO>() <OPERATOR>+</OPERATOR> phrase<OPERATOR>[</OPERATOR>i<OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC>:<OPERATOR>]</OPERATOR>  
+    <KEYWORD>return</KEYWORD> phrase
+  
+  <KEYWORD>def</KEYWORD> <USER_FUNCTION>mangle</USER_FUNCTION>(<TYPE>self</TYPE>, phrase):
+    <KEYWORD>if</KEYWORD> <TYPE>self</TYPE>.<OO>mangle_punc</OO>:
+      phrase <OPERATOR>=</OPERATOR> <TYPE>self</TYPE>.<OO>__mangle_punctuation</OO>(phrase)
+    <KEYWORD>if</KEYWORD> <TYPE>self</TYPE>.<OO>mangle_chars</OO>:
+      phrase <OPERATOR>=</OPERATOR> <TYPE>self</TYPE>.<OO>__mangle_char_to_num</OO>(phrase)
+    <KEYWORD>if</KEYWORD> <TYPE>self</TYPE>.<OO>mangle_case</OO>:
+      phrase <OPERATOR>=</OPERATOR> <TYPE>self</TYPE>.<OO>__mangle_case</OO>(phrase)
+    <KEYWORD>return</KEYWORD> phrase

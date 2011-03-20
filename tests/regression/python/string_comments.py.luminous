@@ -1,0 +1,51 @@
+<COMMENT>#####################################################################</COMMENT>
+<COMMENT># Python string/comment test cases</COMMENT>
+
+
+<COMMENT>"this is probably a comment"</COMMENT>
+<COMMENT>'this is probably a comment'</COMMENT>
+<DOCCOMMENT>"""this is probably a comment"""</DOCCOMMENT>
+<DOCCOMMENT>'''this is probably a comment'''</DOCCOMMENT>
+
+
+x <OPERATOR>=</OPERATOR> <STRING>"this is not a comment"</STRING>
+x <OPERATOR>=</OPERATOR> <STRING>'this is not a comment'</STRING>
+x <OPERATOR>=</OPERATOR> <STRING>"""this is not a comment"""</STRING>
+x <OPERATOR>=</OPERATOR> <STRING>'''this is not a comment'''</STRING>
+
+
+<COMMENT>"Some function"</COMMENT>
+<KEYWORD>def</KEYWORD> <USER_FUNCTION>x</USER_FUNCTION>():
+<COMMENT>  "prints 1"</COMMENT>
+  <KEYWORD>print</KEYWORD> <NUMERIC>1</NUMERIC>
+
+<COMMENT># we currently get these wrong, but so does kate</COMMENT>
+<COMMENT>","</COMMENT>.<OO>join</OO>(<OPERATOR>[</OPERATOR><STRING>'this line probably is a real string'</STRING><OPERATOR>]</OPERATOR>)
+<COMMENT>','</COMMENT>.<OO>join</OO>(<OPERATOR>[</OPERATOR><STRING>'this line probably is a real string'</STRING><OPERATOR>]</OPERATOR>)
+<DOCCOMMENT>""","""</DOCCOMMENT>.<OO>join</OO>(<OPERATOR>[</OPERATOR><STRING>'this line probably is a real string'</STRING><OPERATOR>]</OPERATOR>)
+<DOCCOMMENT>''','''</DOCCOMMENT>.<OO>join</OO>(<OPERATOR>[</OPERATOR><STRING>'this line probably is a real string'</STRING><OPERATOR>]</OPERATOR>)
+
+
+  
+<COMMENT># These are all strings</COMMENT>
+
+letscallafunction(<NUMERIC>1</NUMERIC>, <NUMERIC>2</NUMERIC>, <NUMERIC>3</NUMERIC>, <NUMERIC>4</NUMERIC>, <NUMERIC>5</NUMERIC>, <NUMERIC>6</NUMERIC>, <NUMERIC>7</NUMERIC>
+  <STRING>'hello'</STRING>)
+strings <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>
+  <STRING>'1'</STRING>,
+  <STRING>"2"</STRING>,
+  <STRING>"""3"""</STRING>,
+  <STRING>'''4'''</STRING>
+<OPERATOR>]</OPERATOR>
+  
+
+options <OPERATOR>=</OPERATOR> {
+  <STRING>'colours'</STRING>: <TYPE>True</TYPE>,
+  <STRING>'fuzz'</STRING>: <TYPE>False</TYPE>,
+  <STRING>'regression'</STRING> : <TYPE>False</TYPE>,
+  <STRING>'simple'</STRING> : <TYPE>False</TYPE>,
+  <STRING>'languages'</STRING>: <OPERATOR>[</OPERATOR><OPERATOR>]</OPERATOR>,
+  <STRING>'suppressions'</STRING> : {},
+  <STRING>'verbose'</STRING> : <TYPE>False</TYPE>
+}
+

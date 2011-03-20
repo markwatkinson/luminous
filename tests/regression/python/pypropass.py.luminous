@@ -1,0 +1,201 @@
+<SHEBANG>#!/usr/bin/env python</SHEBANG>
+<SHEBANG></SHEBANG>
+<KEYWORD>import</KEYWORD> <TYPE>sys</TYPE>
+
+<KEYWORD>from</KEYWORD> <TYPE>markov</TYPE> <KEYWORD>import</KEYWORD> <TYPE>Markov</TYPE>
+<KEYWORD>from</KEYWORD> <TYPE>generator</TYPE> <KEYWORD>import</KEYWORD> <TYPE>PasswordGenerator</TYPE>
+<KEYWORD>from</KEYWORD> <TYPE>trainer</TYPE> <KEYWORD>import</KEYWORD> <TYPE>MarkovTrainer</TYPE>
+
+ui_data <OPERATOR>=</OPERATOR> {<STRING>'progress_cb'</STRING>:<TYPE>None</TYPE>}
+
+
+<KEYWORD>def</KEYWORD> <USER_FUNCTION>print_usage</USER_FUNCTION>():
+  <KEYWORD>print</KEYWORD> <STRING>"""</STRING>
+<STRING>Usage: {0} [OPTIONS] [LENGTH]</STRING>
+<STRING>  </STRING>
+<STRING>Options:</STRING>
+<STRING>  </STRING>
+<STRING>  </STRING>
+<STRING>  --dont-mangle </STRING>
+<STRING>                Doesn't mangle the password at all (equivalent to </STRING>
+<STRING>                  --dont-mangle-case --dont-mangle-chars --dont-mangle-punc)</STRING>
+<STRING>  --dont-mangle-case</STRING>
+<STRING>                Doesn't mangle the case of the password                  </STRING>
+<STRING>  --dont-mangle-chars</STRING>
+<STRING>                Doesn't mangle the characters of the password (i.e. l will    </STRING>
+<STRING>                  not be converted to 1, e will not be converted to 3, etc)</STRING>
+<STRING>  --dont-mangle-punc</STRING>
+<STRING>                Doesn't mangle the punctuation of the password (i.e. all </STRING>
+<STRING>                  spaces will be preserved as spaces)</STRING>
+<STRING>                  </STRING>
+<STRING>  -f</STRING>
+<STRING>  --fresh       Does not load any previously saved training data. Use in </STRING>
+<STRING>                combination with -l and/or -r</STRING>
+<STRING>  </STRING>
+<STRING>  -l PATH PATH2 ... @</STRING>
+<STRING>  --local-train PATH PATH2 ... @</STRING>
+<STRING>                The file(s) in the given path are used to train the model.</STRING>
+<STRING>                PATH may be either a single file or a directory. Directories</STRING>
+<STRING>                are not scanned recursively. Terminate this list with an @</STRING>
+<STRING>                                </STRING>
+<STRING>  -m password,</STRING>
+<STRING>  --mangle password</STRING>
+<STRING>                Mangles the given password, does not generate a new one</STRING>
+<STRING>  -n n,</STRING>
+<STRING>  --number n    Number of passwords to generate. Each will be printed on an </STRING>
+<STRING>                individual line</STRING>
+<STRING>                </STRING>
+<STRING>  -r n</STRING>
+<STRING>  --remote-train n</STRING>
+<STRING>                Enables remote training. Random articles are fetched from </STRING>
+<STRING>                Wikipedia. N is the number of articles to fetch to use as the </STRING>
+<STRING>                training data. Note that for reasons of etiquette, there is</STRING>
+<STRING>                a pause of 1 second between requesting pages.</STRING>
+<STRING>  -s,</STRING>
+<STRING>  --save        Saves the training data. This is a potential security risk as</STRING>
+<STRING>                someone with access to it would be able to drastically reduce</STRING>
+<STRING>                the entropy of the password. But it means future runs can run</STRING>
+<STRING>                without needing to re-train.                </STRING>
+<STRING></STRING>
+<STRING>  -v            Be verbose</STRING>
+<STRING>  </STRING>
+<STRING>                </STRING>
+<STRING>  LENGTH:       Approximate length of resulting password in characters. </STRING>
+<STRING>                Default:20</STRING>
+<STRING>                </STRING>
+<STRING>                </STRING>
+<STRING>  """</STRING>.<FUNCTION>format</FUNCTION>( (<OBJ>sys</OBJ>.<OO>argv</OO><OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR>) )
+  
+  
+<KEYWORD>def</KEYWORD> <USER_FUNCTION>verbose</USER_FUNCTION>(string, level):
+  <KEYWORD>if</KEYWORD> level:
+    <KEYWORD>print</KEYWORD> string
+
+
+<KEYWORD>def</KEYWORD> <USER_FUNCTION>main_</USER_FUNCTION>(argv):
+  
+  <KEYWORD>if</KEYWORD> ui_data<OPERATOR>[</OPERATOR><STRING>'progress_cb'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>is</OPERATOR> <OPERATOR>not</OPERATOR> <TYPE>None</TYPE>:
+    ui_data<OPERATOR>[</OPERATOR><STRING>'progress_cb'</STRING><OPERATOR>]</OPERATOR>(<STRING>''</STRING>, <NUMERIC>0</NUMERIC>)
+    
+  <KEYWORD>if</KEYWORD> <STRING>'-h'</STRING> <OPERATOR>in</OPERATOR> argv <OPERATOR>or</OPERATOR> <STRING>'--help'</STRING> <OPERATOR>in</OPERATOR> argv:
+    print_usage()
+    <OBJ>sys</OBJ>.<OO>exit</OO>(<NUMERIC>0</NUMERIC>)
+    
+  opts <OPERATOR>=</OPERATOR> {
+      <STRING>'length'</STRING>: <NUMERIC>20</NUMERIC>,
+      <STRING>'save'</STRING>: <TYPE>False</TYPE>,
+      <STRING>'local'</STRING>:<OPERATOR>[</OPERATOR><OPERATOR>]</OPERATOR>,
+      <STRING>'remote'</STRING>:<TYPE>False</TYPE>,
+      <STRING>'mangle'</STRING> : <TYPE>True</TYPE>,
+      <STRING>'mangle-case'</STRING> : <TYPE>True</TYPE>,
+      <STRING>'mangle-chars'</STRING>: <TYPE>True</TYPE>,
+      <STRING>'mangle-punc'</STRING>: <TYPE>True</TYPE>,
+      <STRING>'num'</STRING>: <NUMERIC>1</NUMERIC>,
+      <STRING>'to_mangle'</STRING>:<TYPE>False</TYPE>,
+      <STRING>'fresh'</STRING>: <TYPE>False</TYPE>,
+      <STRING>'verbose'</STRING>:<NUMERIC>0</NUMERIC>
+
+    }
+  i <OPERATOR>=</OPERATOR> <NUMERIC>1</NUMERIC>
+  
+  <KEYWORD>while</KEYWORD> i <OPERATOR>&lt;</OPERATOR> <FUNCTION>len</FUNCTION>(argv):
+    a <OPERATOR>=</OPERATOR> argv<OPERATOR>[</OPERATOR>i<OPERATOR>]</OPERATOR>
+    
+    <KEYWORD>if</KEYWORD> a <OPERATOR>==</OPERATOR> <STRING>'--save'</STRING> <OPERATOR>or</OPERATOR> a <OPERATOR>==</OPERATOR> <STRING>'-s'</STRING>:
+      opts<OPERATOR>[</OPERATOR><STRING>'save'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <TYPE>True</TYPE>
+
+    <KEYWORD>elif</KEYWORD> a <OPERATOR>==</OPERATOR> <STRING>'--dont-mangle'</STRING>:
+      opts<OPERATOR>[</OPERATOR><STRING>'mangle'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <TYPE>False</TYPE>
+    <KEYWORD>elif</KEYWORD> a <OPERATOR>==</OPERATOR> <STRING>'--dont-mangle-case'</STRING>:
+      opts<OPERATOR>[</OPERATOR><STRING>'mangle-case'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <TYPE>False</TYPE>
+    <KEYWORD>elif</KEYWORD> a <OPERATOR>==</OPERATOR> <STRING>'--dont-mangle-chars'</STRING>:
+      opts<OPERATOR>[</OPERATOR><STRING>'mangle-chars'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <TYPE>False</TYPE>
+    <KEYWORD>elif</KEYWORD> a <OPERATOR>==</OPERATOR> <STRING>'--dont-mangle-punc'</STRING>:
+      opts<OPERATOR>[</OPERATOR><STRING>'mangle-punc'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <TYPE>False</TYPE>
+    <KEYWORD>elif</KEYWORD> a <OPERATOR>==</OPERATOR> <STRING>'-n'</STRING> <OPERATOR>or</OPERATOR> a <OPERATOR>==</OPERATOR> <STRING>'--number'</STRING>:
+      opts<OPERATOR>[</OPERATOR><STRING>'num'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <TYPE>int</TYPE>(argv<OPERATOR>[</OPERATOR>i<OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR>)
+      i<OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR><NUMERIC>1</NUMERIC>
+    <KEYWORD>elif</KEYWORD> a <OPERATOR>==</OPERATOR> <STRING>'-r'</STRING> <OPERATOR>or</OPERATOR> a <OPERATOR>==</OPERATOR> <STRING>'--remote-train'</STRING>:
+      opts<OPERATOR>[</OPERATOR><STRING>'remote'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <TYPE>int</TYPE>(argv<OPERATOR>[</OPERATOR>i<OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR>)
+      i<OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR><NUMERIC>1</NUMERIC>
+    <KEYWORD>elif</KEYWORD> a <OPERATOR>==</OPERATOR> <STRING>'-l'</STRING> <OPERATOR>or</OPERATOR> a <OPERATOR>==</OPERATOR> <STRING>'--local-train'</STRING>:
+      
+      <KEYWORD>while</KEYWORD> i <OPERATOR>&lt;</OPERATOR> <FUNCTION>len</FUNCTION>(argv)<OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>:        
+        <KEYWORD>if</KEYWORD> argv<OPERATOR>[</OPERATOR>i<OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR>.<OO>startswith</OO>(<STRING>'-'</STRING>):
+          <KEYWORD>break</KEYWORD>
+        <KEYWORD>if</KEYWORD> argv<OPERATOR>[</OPERATOR>i<OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR> <OPERATOR>==</OPERATOR> <STRING>'@'</STRING>:
+          i<OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR><NUMERIC>1</NUMERIC> 
+          <KEYWORD>break</KEYWORD>
+        opts<OPERATOR>[</OPERATOR><STRING>'local'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>argv<OPERATOR>[</OPERATOR>i<OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]]</OPERATOR>
+        i<OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR><NUMERIC>1</NUMERIC>
+      
+    <KEYWORD>elif</KEYWORD> a <OPERATOR>==</OPERATOR> <STRING>'-m'</STRING> <OPERATOR>or</OPERATOR> a <OPERATOR>==</OPERATOR> <STRING>'--mangle'</STRING>:
+      opts<OPERATOR>[</OPERATOR><STRING>'to_mangle'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> argv<OPERATOR>[</OPERATOR>i<OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>]</OPERATOR>
+      
+    <KEYWORD>elif</KEYWORD> a <OPERATOR>==</OPERATOR> <STRING>'-f'</STRING> <OPERATOR>or</OPERATOR> a <OPERATOR>==</OPERATOR> <STRING>'--fresh'</STRING>:
+      opts<OPERATOR>[</OPERATOR><STRING>'fresh'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <TYPE>True</TYPE>
+      
+    <KEYWORD>elif</KEYWORD> a <OPERATOR>==</OPERATOR> <STRING>'-v'</STRING>:
+      opts<OPERATOR>[</OPERATOR><STRING>'verbose'</STRING><OPERATOR>]</OPERATOR><OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR><NUMERIC>1</NUMERIC>
+      
+    <KEYWORD>else</KEYWORD>:
+      opts<OPERATOR>[</OPERATOR><STRING>'length'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <TYPE>int</TYPE>(a)
+    i<OPERATOR>+</OPERATOR><OPERATOR>=</OPERATOR><NUMERIC>1</NUMERIC>
+  
+  opts<OPERATOR>[</OPERATOR><STRING>'length'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> <TYPE>int</TYPE>(opts<OPERATOR>[</OPERATOR><STRING>'length'</STRING><OPERATOR>]</OPERATOR>)
+
+  m <OPERATOR>=</OPERATOR> <TYPE>None</TYPE>
+  trainer <OPERATOR>=</OPERATOR> MarkovTrainer()
+  <KEYWORD>if</KEYWORD> opts<OPERATOR>[</OPERATOR><STRING>'fresh'</STRING><OPERATOR>]</OPERATOR>:
+    verbose(<STRING>'Fresh load -- no previous data restored'</STRING>, opts<OPERATOR>[</OPERATOR><STRING>'verbose'</STRING><OPERATOR>]</OPERATOR>)
+  <KEYWORD>else</KEYWORD>:
+    m <OPERATOR>=</OPERATOR> <OBJ>trainer</OBJ>.<OO>load_state</OO>()
+    
+  <KEYWORD>if</KEYWORD> m <OPERATOR>is</OPERATOR> <TYPE>None</TYPE>:  
+    m <OPERATOR>=</OPERATOR> Markov()
+    
+
+  <KEYWORD>if</KEYWORD> opts<OPERATOR>[</OPERATOR><STRING>'remote'</STRING><OPERATOR>]</OPERATOR>:
+    verbose(<STRING>'Training remotely'</STRING>, opts<OPERATOR>[</OPERATOR><STRING>'verbose'</STRING><OPERATOR>]</OPERATOR>)
+    <KEYWORD>for</KEYWORD> x <OPERATOR>in</OPERATOR> <FUNCTION>xrange</FUNCTION>(<TYPE>int</TYPE>(opts<OPERATOR>[</OPERATOR><STRING>'remote'</STRING><OPERATOR>]</OPERATOR>)):
+      <KEYWORD>if</KEYWORD> ui_data<OPERATOR>[</OPERATOR><STRING>'progress_cb'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>is</OPERATOR> <OPERATOR>not</OPERATOR> <TYPE>None</TYPE>:
+        ui_data<OPERATOR>[</OPERATOR><STRING>'progress_cb'</STRING><OPERATOR>]</OPERATOR>(<STRING>'Training remotely'</STRING>, (x<OPERATOR>+</OPERATOR><NUMERIC>1.0</NUMERIC>)<OPERATOR>/</OPERATOR><TYPE>float</TYPE>(opts<OPERATOR>[</OPERATOR><STRING>'remote'</STRING><OPERATOR>]</OPERATOR>))
+      m <OPERATOR>=</OPERATOR> <OBJ>trainer</OBJ>.<OO>train_remotely</OO>(m, <NUMERIC>1</NUMERIC>)
+  
+    
+  <KEYWORD>if</KEYWORD> opts<OPERATOR>[</OPERATOR><STRING>'local'</STRING><OPERATOR>]</OPERATOR>:
+    <KEYWORD>for</KEYWORD> i, path <OPERATOR>in</OPERATOR> <FUNCTION>enumerate</FUNCTION>(opts<OPERATOR>[</OPERATOR><STRING>'local'</STRING><OPERATOR>]</OPERATOR>):
+      verbose(<STRING>'Training locally: {0}'</STRING>.<FUNCTION>format</FUNCTION>(path), opts<OPERATOR>[</OPERATOR><STRING>'verbose'</STRING><OPERATOR>]</OPERATOR>)
+      <KEYWORD>if</KEYWORD> ui_data<OPERATOR>[</OPERATOR><STRING>'progress_cb'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>is</OPERATOR> <OPERATOR>not</OPERATOR> <TYPE>None</TYPE>:
+        ui_data<OPERATOR>[</OPERATOR><STRING>'progress_cb'</STRING><OPERATOR>]</OPERATOR>(<STRING>'Training locally'</STRING>, (i<OPERATOR>+</OPERATOR><NUMERIC>1.0</NUMERIC>)<OPERATOR>/</OPERATOR><FUNCTION>len</FUNCTION>(opts<OPERATOR>[</OPERATOR><STRING>'local'</STRING><OPERATOR>]</OPERATOR>))
+      m <OPERATOR>=</OPERATOR> <OBJ>trainer</OBJ>.<OO>train_locally</OO>(m, path)
+      
+      
+  <KEYWORD>if</KEYWORD> opts<OPERATOR>[</OPERATOR><STRING>'save'</STRING><OPERATOR>]</OPERATOR>:
+    <OBJ>trainer</OBJ>.<OO>save_state</OO>(m)
+  
+  <KEYWORD>for</KEYWORD> x <OPERATOR>in</OPERATOR> <FUNCTION>xrange</FUNCTION>(<TYPE>int</TYPE>(opts<OPERATOR>[</OPERATOR><STRING>'num'</STRING><OPERATOR>]</OPERATOR>)):
+    pg <OPERATOR>=</OPERATOR> PasswordGenerator(m)  
+    <OBJ>pg</OBJ>.<OO>mangle_punc</OO> <OPERATOR>=</OPERATOR> opts<OPERATOR>[</OPERATOR><STRING>'mangle-punc'</STRING><OPERATOR>]</OPERATOR>
+    <OBJ>pg</OBJ>.<OO>mangle_case</OO> <OPERATOR>=</OPERATOR> opts<OPERATOR>[</OPERATOR><STRING>'mangle-case'</STRING><OPERATOR>]</OPERATOR>
+    <OBJ>pg</OBJ>.<OO>mangle_chars</OO> <OPERATOR>=</OPERATOR> opts<OPERATOR>[</OPERATOR><STRING>'mangle-chars'</STRING><OPERATOR>]</OPERATOR>
+    
+    <KEYWORD>if</KEYWORD> ui_data<OPERATOR>[</OPERATOR><STRING>'progress_cb'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>is</OPERATOR> <OPERATOR>not</OPERATOR> <TYPE>None</TYPE>:
+      ui_data<OPERATOR>[</OPERATOR><STRING>'progress_cb'</STRING><OPERATOR>]</OPERATOR>(<STRING>'Generating passwords'</STRING>, (x<OPERATOR>+</OPERATOR><NUMERIC>1.0</NUMERIC>)<OPERATOR>/</OPERATOR><TYPE>int</TYPE>(opts<OPERATOR>[</OPERATOR><STRING>'num'</STRING><OPERATOR>]</OPERATOR>))
+
+    
+    phrase <OPERATOR>=</OPERATOR> opts<OPERATOR>[</OPERATOR><STRING>'to_mangle'</STRING><OPERATOR>]</OPERATOR> <KEYWORD>if</KEYWORD> opts<OPERATOR>[</OPERATOR><STRING>'to_mangle'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>is</OPERATOR> <OPERATOR>not</OPERATOR> <TYPE>False</TYPE> <KEYWORD>else</KEYWORD> <OBJ>pg</OBJ>.<OO>generate_base_phrase</OO>(opts<OPERATOR>[</OPERATOR><STRING>'length'</STRING><OPERATOR>]</OPERATOR>)
+    
+    <KEYWORD>if</KEYWORD> opts<OPERATOR>[</OPERATOR><STRING>'mangle'</STRING><OPERATOR>]</OPERATOR>:
+      phrase <OPERATOR>=</OPERATOR> <OBJ>pg</OBJ>.<OO>mangle</OO>(phrase)
+    <KEYWORD>yield</KEYWORD> phrase
+  <KEYWORD>if</KEYWORD> ui_data<OPERATOR>[</OPERATOR><STRING>'progress_cb'</STRING><OPERATOR>]</OPERATOR> <OPERATOR>is</OPERATOR> <OPERATOR>not</OPERATOR> <TYPE>None</TYPE>:
+    ui_data<OPERATOR>[</OPERATOR><STRING>'progress_cb'</STRING><OPERATOR>]</OPERATOR>(<STRING>'Done'</STRING>, <NUMERIC>1</NUMERIC>)
+ 
+<KEYWORD>def</KEYWORD> <USER_FUNCTION>main</USER_FUNCTION>(argv):
+  
+  <KEYWORD>for</KEYWORD> out <OPERATOR>in</OPERATOR> main_(argv):
+    <KEYWORD>print</KEYWORD> out
+
+<KEYWORD>if</KEYWORD> __name__ <OPERATOR>==</OPERATOR> <STRING>'__main__'</STRING>:
+  main(<OBJ>sys</OBJ>.<OO>argv</OO>)

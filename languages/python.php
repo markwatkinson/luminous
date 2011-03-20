@@ -24,7 +24,7 @@ class LuminousPythonScanner extends LuminousScanner {
     
     // catch the colon separately so we can use $match === ':' in figuring out
     // where docstrs occur
-    $this->add_pattern('OPERATOR', '/[!%^*\-=+;<>\\\\(){}\[\]]+|:/');
+    $this->add_pattern('OPERATOR', '/[!%^*\-=+;<>\\\\(){}\[\],]+|:/');
     
     // decorator
     $this->add_pattern('TYPE', '/@(\w+\.?)+/');
@@ -76,7 +76,7 @@ class LuminousPythonScanner extends LuminousScanner {
     'finally', 'for', 'from', 'global', 'if', 'import', 'lambda', 
     'print', 'pass', 'raise', 'return', 'try', 'while', 'yield',
     'and', 'not', 'in', 'is', 'or',
-    'print',));
+    'print', 'True', 'False', 'None'));
     
     $this->add_identifier_mapping('FUNCTION', array('all', 'abs', 'any', 
     'basestring', 'bin', 'callable', 'chr', 'classmethod', 'cmp', 'compile',
@@ -88,7 +88,7 @@ class LuminousPythonScanner extends LuminousScanner {
      'round', 'setattr', 'slice', 'sorted', 'staticmethod', 'sum', 'super',
      'type', 'unichr', 'vars', 'xrange', 'zip', '__import__'));
      
-     $this->add_identifier_mapping('TYPE', array('self', 'True', 'False', 'None'));
+
 
   }
   
@@ -143,8 +143,8 @@ class LuminousPythonScanner extends LuminousScanner {
         while ($i--) {
           $t = $this->tokens[$i][0];
           $s = $this->tokens[$i][1];
-          if ($t === null) continue;
-          elseif ($t === 'OPERATOR' || $t === 'KEYWORD') { 
+          if ($t === null || $t === 'COMMENT') continue;
+          elseif ($t === 'OPERATOR' || $t === 'IDENT' || $t === 'NUMERIC') { 
             $tok = 'STRING';
           }
           break;
