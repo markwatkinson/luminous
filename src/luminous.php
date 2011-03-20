@@ -185,17 +185,23 @@ abstract class Luminous {
     return self::highlight($scanner, file_get_contents($file), $cache);
   }
 
-  static function register_scanner($language_code, $classname, $readable_language,
-    $path) {
+  static function register_scanner($language_code, $classname, $readable_language, $path) {
       global $luminous_;
       $luminous_->scanners->AddScanner($language_code, $classname,
         $readable_language, $path);
   }
-
+  
+  /**
+   * returns what Luminous thinks its location is on the filesystem
+   */
   static function root() {
     return realpath(dirname(__FILE__) . '/../');
   }
 
+  /**
+   * returns the list of theme files present in style/.
+   * Each theme will be a filename, and will end in .css
+   */
   static function themes() {
     $themes_uri = self::root() . "/style/";
     $themes = array();
@@ -214,10 +220,18 @@ abstract class Luminous {
     return $themes;
   }
 
+  /**
+   * returns true if a theme exists in style/, else false
+   */
   static function theme_exists($theme) {
     return in_array($theme, self::themes());
   }
   
+  /**
+   * Returns the content of a theme; this is the actual CSS text. 
+   * Use this function for reading themes as it involves security
+   * checks against reading arbitrary files
+   */
   static function theme($theme) {
     if (self::theme_exists($theme)) 
       return file_get_contents(self::luminous_root() . "/style/" . $theme);
@@ -247,6 +261,10 @@ abstract class Luminous {
     return $luminous_->scanners->ListScanners();
   }
 
+  /**
+   * Returns an instance of a LuminousFormatter according to the current
+   * format setting
+   */
   static function formatter() {
     global $luminous_;
     return $luminous_->get_formatter();
