@@ -1,35 +1,35 @@
 <COMMENT># You create the function you will use as a decorator. And stick a decorator on it :-)</COMMENT>
 <COMMENT># Donc forget, the signature is "decorator(func, *args, **kwargs)"</COMMENT>
 <TYPE>@decorator_with_args</TYPE> 
-<KEYWORD>def</KEYWORD> <USER_FUNCTION>decorated_decorator</USER_FUNCTION>(func, <OPERATOR>*</OPERATOR>args, <OPERATOR>**</OPERATOR>kwargs): 
-    <KEYWORD>def</KEYWORD> <USER_FUNCTION>wrapper</USER_FUNCTION>(function_arg1, function_arg2) :
-        <KEYWORD>print</KEYWORD> <STRING>"Decorated with"</STRING>, args, kwargs
-        <KEYWORD>return</KEYWORD> func(function_arg1, function_arg2)
-    <KEYWORD>return</KEYWORD> wrapper
+<KEYWORD>def</KEYWORD> <USER_FUNCTION>decorated_decorator</USER_FUNCTION><OPERATOR>(</OPERATOR>func<OPERATOR>,</OPERATOR> <OPERATOR>*</OPERATOR>args<OPERATOR>,</OPERATOR> <OPERATOR>**</OPERATOR>kwargs<OPERATOR>)</OPERATOR><OPERATOR>:</OPERATOR> 
+    <KEYWORD>def</KEYWORD> <USER_FUNCTION>wrapper</USER_FUNCTION><OPERATOR>(</OPERATOR>function_arg1<OPERATOR>,</OPERATOR> function_arg2<OPERATOR>)</OPERATOR> <OPERATOR>:</OPERATOR>
+        <KEYWORD>print</KEYWORD> <STRING>"Decorated with"</STRING><OPERATOR>,</OPERATOR> args<OPERATOR>,</OPERATOR> kwargs
+        <KEYWORD>return</KEYWORD> func<OPERATOR>(</OPERATOR>function_arg1<OPERATOR>,</OPERATOR> function_arg2<OPERATOR>)</OPERATOR>
+    <KEYWORD>return</KEYWORD> <FUNCTION>wrapper</FUNCTION>
 
 <COMMENT># Then you decorate the functions you wish with your brand new decorated decorator.</COMMENT>
 
-<TYPE>@decorated_decorator</TYPE>(<NUMERIC>42</NUMERIC>, <NUMERIC>404</NUMERIC>, <NUMERIC>1024</NUMERIC>)
-<KEYWORD>def</KEYWORD> <USER_FUNCTION>decorated_function</USER_FUNCTION>(function_arg1, function_arg2) :
-    <KEYWORD>print</KEYWORD> <STRING>"Hello"</STRING>, function_arg1, function_arg2
+<TYPE>@decorated_decorator</TYPE><OPERATOR>(</OPERATOR><NUMERIC>42</NUMERIC><OPERATOR>,</OPERATOR> <NUMERIC>404</NUMERIC><OPERATOR>,</OPERATOR> <NUMERIC>1024</NUMERIC><OPERATOR>)</OPERATOR>
+<KEYWORD>def</KEYWORD> <USER_FUNCTION>decorated_function</USER_FUNCTION><OPERATOR>(</OPERATOR>function_arg1<OPERATOR>,</OPERATOR> function_arg2<OPERATOR>)</OPERATOR> <OPERATOR>:</OPERATOR>
+    <KEYWORD>print</KEYWORD> <STRING>"Hello"</STRING><OPERATOR>,</OPERATOR> function_arg1<OPERATOR>,</OPERATOR> function_arg2
 
-decorated_function(<STRING>"Universe and"</STRING>, <STRING>"everything"</STRING>)
+<FUNCTION>decorated_function</FUNCTION><OPERATOR>(</OPERATOR><STRING>"Universe and"</STRING><OPERATOR>,</OPERATOR> <STRING>"everything"</STRING><OPERATOR>)</OPERATOR>
 <COMMENT>#outputs:</COMMENT>
 <COMMENT>#Decorated with (42, 404, 1024) {}</COMMENT>
 <COMMENT>#Hello Universe and everything</COMMENT>
 
 <COMMENT># Whoooot ! </COMMENT>
-<KEYWORD>def</KEYWORD> <USER_FUNCTION>bar</USER_FUNCTION>(func) :
+<KEYWORD>def</KEYWORD> <USER_FUNCTION>bar</USER_FUNCTION><OPERATOR>(</OPERATOR>func<OPERATOR>)</OPERATOR> <OPERATOR>:</OPERATOR>
     <COMMENT># We say that "wrapper", is wrapping "func"</COMMENT>
     <COMMENT># and the magic begins</COMMENT>
-    <TYPE>@functools.wraps</TYPE>(func)
-    <KEYWORD>def</KEYWORD> <USER_FUNCTION>wrapper</USER_FUNCTION>() :
+    <TYPE>@functools.wraps</TYPE><OPERATOR>(</OPERATOR>func<OPERATOR>)</OPERATOR>
+    <KEYWORD>def</KEYWORD> <USER_FUNCTION>wrapper</USER_FUNCTION><OPERATOR>()</OPERATOR> <OPERATOR>:</OPERATOR>
         <KEYWORD>print</KEYWORD> <STRING>"bar"</STRING>
-        <KEYWORD>return</KEYWORD> func()
-    <KEYWORD>return</KEYWORD> wrapper
+        <KEYWORD>return</KEYWORD> func<OPERATOR>()</OPERATOR>
+    <KEYWORD>return</KEYWORD> <FUNCTION>wrapper</FUNCTION>
 
 <TYPE>@bar</TYPE>
-<KEYWORD>def</KEYWORD> <USER_FUNCTION>foo</USER_FUNCTION>() :
+<KEYWORD>def</KEYWORD> <USER_FUNCTION>foo</USER_FUNCTION><OPERATOR>()</OPERATOR> <OPERATOR>:</OPERATOR>
     <KEYWORD>print</KEYWORD> <STRING>"foo"</STRING>
 
 <KEYWORD>print</KEYWORD> <OBJ>foo</OBJ>.<OO>__name__</OO>
