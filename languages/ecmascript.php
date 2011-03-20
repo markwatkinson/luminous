@@ -23,7 +23,9 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
     $this->rule_tag_map = array(
       'COMMENT_SL' => 'COMMENT',
       'SSTRING' => 'STRING',
-      'DSTRING' => 'STRING'
+      'DSTRING' => 'STRING',
+      'OPENER' => null,
+      'CLOSER' => null,
     );
     $this->dirty_exit_recovery = array(
       'COMMENT_SL' => '/.*/',
@@ -89,6 +91,8 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
     $this->add_pattern('OPERATOR', $op_pattern);
     // we care about openers for figuring out where regular expressions are
     $this->add_pattern('OPENER', '/[\[\{\(]+/');
+    $this->add_pattern('CLOSER', '/[\)\}\]]+/');
+    
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
     $this->add_pattern('SSTRING', LuminousTokenPresets::$SINGLE_STR);
