@@ -76,6 +76,9 @@ class _Luminous {
       'LuminousJavaScriptScanner', 'JavaScript', "$language_dir/javascript.php",
       array('ecma'));
       
+    $this->scanners->AddScanner('json',
+      'LuminousJSONScanner', 'JSON', "$language_dir/json.php");
+      
     $this->scanners->AddScanner('php',
       'LuminousPHPScanner', 'PHP', "$language_dir/php.php",
       array('html'));
