@@ -1,0 +1,70 @@
+LUMINOUS REGRESSION TESTING SUITE
+
+
+==Introduction==
+
+These tests are full source files intended to detect regressions. The given
+outputs aren't necessary correct or final; they have all been verified by eye
+but may contain minor faults or may lack highlighting of certain features. 
+They merely indicate the output of a given snapshot of Luminous. Therefore 
+regressions should be easy to detect, but if a future version of Luminous 
+causes the outputs to change in a good/intentional way, the given outputs will
+need to be regenerated.
+
+
+==Interaction/Usage==
+
+The testing scripts require the command line-php interpretor (php-cli in 
+Ubuntu/Debian), because this is the easiest way to automate interaction
+with Luminous, and doesn't require a full blown HTTP server running locally
+
+To run the tests use test.php:
+
+$ php test.php path/to/script
+
+The path is optional and by default targets every sub-directory in THIS 
+directory. It will recurse directories.
+
+It will print a summary to stdout. If any files do not produce the expected
+output, it will write a diff of the actual vs expected output to the
+directory the offending file exists in. It will be suffixed with
+._diff.luminous, so as to avoid being recognised as a valid test target.
+A diff comparison tool, such as Kompare for KDE, will usefully identify the
+difference.
+
+To remove existing diffs, run
+
+$ php test.php -clean
+
+
+==Regenerating Expected Output==
+
+If expected output needs to be regenerated (i.e. a favourable change has been 
+made to Luminous and the existing test files are now 'wrong'), you can 
+regenerate them with the generate.php script. It is advisable to first 
+generate HTML output and verify it visually,
+
+$ php generate.php -html path/to/script
+
+If the resulting path/to/script.html.luminous looks correct in a web browser,
+then:
+
+$ php generate.php path/to/script
+
+NOTE: the HTML output contains absolute paths to CSS resources, so you will
+have to regenerate this yourself if you need it or move your Luminous 
+directory (I couldn't get relative file:// paths to work).
+
+==Licensing==
+
+The sources in this folder are taken from a variety of open source code. They
+are not intended to be distributed to end users but are publicly available in
+SVN. If there is a licensing violation please report it to the issue tracker 
+at http://code.google.com/p/luminous/
+
+==TODO==
+
+1) We need better coverage of languages; all languages Luminous supports
+should be represented in here with several non-trivially sized test files.
+2) These are mostly real-world sources, we also need to add some more 
+intensive, contrived sources, i.e. probable error cases.

@@ -1,0 +1,761 @@
+<DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>@file</DOCTAG><DOCPROPERTY> core.c </DOCPROPERTY>Purple Core API</DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>@ingroup</DOCTAG><DOCPROPERTY> core </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT> */</DOCCOMMENT>
+
+<COMMENT>/* purple</COMMENT>
+<COMMENT> *</COMMENT>
+<COMMENT> * Purple is the legal property of its developers, whose names are too numerous</COMMENT>
+<COMMENT> * to list here.  Please refer to the COPYRIGHT file distributed with this</COMMENT>
+<COMMENT> * source distribution.</COMMENT>
+<COMMENT> *</COMMENT>
+<COMMENT> * This program is free software; you can redistribute it and/or modify</COMMENT>
+<COMMENT> * it under the terms of the GNU General Public License as published by</COMMENT>
+<COMMENT> * the Free Software Foundation; either version 2 of the License, or</COMMENT>
+<COMMENT> * (at your option) any later version.</COMMENT>
+<COMMENT> *</COMMENT>
+<COMMENT> * This program is distributed in the hope that it will be useful,</COMMENT>
+<COMMENT> * but WITHOUT ANY WARRANTY; without even the implied warranty of</COMMENT>
+<COMMENT> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</COMMENT>
+<COMMENT> * GNU General Public License for more details.</COMMENT>
+<COMMENT> *</COMMENT>
+<COMMENT> * You should have received a copy of the GNU General Public License</COMMENT>
+<COMMENT> * along with this program; if not, write to the Free Software</COMMENT>
+<COMMENT> * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA</COMMENT>
+<COMMENT> */</COMMENT>
+<PREPROCESSOR>#include <STRING>"internal.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"cipher.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"certificate.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"cmds.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"connection.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"conversation.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"core.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"debug.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"dnsquery.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"ft.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"idle.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"imgstore.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"network.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"notify.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"plugin.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"pounce.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"prefs.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"privacy.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"proxy.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"savedstatuses.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"signals.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"smiley.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"sound.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"sound-theme-loader.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"sslconn.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"status.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"stun.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"theme-manager.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"util.h"</STRING></PREPROCESSOR>
+
+<PREPROCESSOR>#ifdef HAVE_DBUS</PREPROCESSOR>
+<PREPROCESSOR>#  ifndef DBUS_API_SUBJECT_TO_CHANGE</PREPROCESSOR>
+<PREPROCESSOR>#    define DBUS_API_SUBJECT_TO_CHANGE</PREPROCESSOR>
+<PREPROCESSOR>#  endif</PREPROCESSOR>
+<PREPROCESSOR>#  include &lt;<STRING>dbus/dbus.h</STRING>&gt;</PREPROCESSOR>
+<PREPROCESSOR>#  include <STRING>"dbus-purple.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#  include <STRING>"dbus-server.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#  include <STRING>"dbus-bindings.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#endif</PREPROCESSOR>
+
+<TYPE>struct</TYPE> PurpleCore
+{
+	<TYPE>char</TYPE> <OPERATOR>*</OPERATOR>ui;
+
+	<TYPE>void</TYPE> <OPERATOR>*</OPERATOR>reserved;
+};
+
+<KEYWORD>static</KEYWORD> PurpleCoreUiOps <OPERATOR>*</OPERATOR>_ops  <OPERATOR>=</OPERATOR> <KEYWORD>NULL</KEYWORD>;
+<KEYWORD>static</KEYWORD> PurpleCore      <OPERATOR>*</OPERATOR>_core <OPERATOR>=</OPERATOR> <KEYWORD>NULL</KEYWORD>;
+
+<CONSTANT>STATIC_PROTO_INIT</CONSTANT>
+
+gboolean
+purple_core_init(<KEYWORD>const</KEYWORD> <TYPE>char</TYPE> <OPERATOR>*</OPERATOR>ui)
+{
+	PurpleCoreUiOps <OPERATOR>*</OPERATOR>ops;
+	PurpleCore <OPERATOR>*</OPERATOR>core;
+
+	g_return_val_if_fail(ui <OPERATOR>!=</OPERATOR> <KEYWORD>NULL</KEYWORD>, <KEYWORD>FALSE</KEYWORD>);
+	g_return_val_if_fail(purple_get_core() <OPERATOR>==</OPERATOR> <KEYWORD>NULL</KEYWORD>, <KEYWORD>FALSE</KEYWORD>);
+
+<PREPROCESSOR>#ifdef ENABLE_NLS</PREPROCESSOR>
+	bindtextdomain(<CONSTANT>PACKAGE</CONSTANT>, <CONSTANT>LOCALEDIR</CONSTANT>);
+<PREPROCESSOR>#endif</PREPROCESSOR>
+<PREPROCESSOR>#ifdef _WIN32</PREPROCESSOR>
+	wpurple_init();
+<PREPROCESSOR>#endif</PREPROCESSOR>
+
+	g_type_init();
+
+	_core <OPERATOR>=</OPERATOR> core <OPERATOR>=</OPERATOR> g_new0(PurpleCore, <NUMERIC>1</NUMERIC>);
+	<OBJ>core</OBJ><OPERATOR>-&gt;</OPERATOR><OO>ui</OO> <OPERATOR>=</OPERATOR> g_strdup(ui);
+	<OBJ>core</OBJ><OPERATOR>-&gt;</OPERATOR><OO>reserved</OO> <OPERATOR>=</OPERATOR> <KEYWORD>NULL</KEYWORD>;
+
+	ops <OPERATOR>=</OPERATOR> purple_core_get_ui_ops();
+
+	<COMMENT>/* The signals subsystem is important and should be first. */</COMMENT>
+	purple_signals_init();
+
+	purple_util_init();
+
+	purple_signal_register(core, <STRING>"uri-handler"</STRING>,
+		purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,
+		purple_value_new(<CONSTANT>PURPLE_TYPE_BOOLEAN</CONSTANT>), <NUMERIC>3</NUMERIC>,
+		purple_value_new(<CONSTANT>PURPLE_TYPE_STRING</CONSTANT>), <COMMENT>/* Protocol */</COMMENT>
+		purple_value_new(<CONSTANT>PURPLE_TYPE_STRING</CONSTANT>), <COMMENT>/* Command */</COMMENT>
+		purple_value_new(<CONSTANT>PURPLE_TYPE_BOXED</CONSTANT>, <STRING>"GHashTable *"</STRING>)); <COMMENT>/* Parameters */</COMMENT>
+
+	purple_signal_register(core, <STRING>"quitting"</STRING>, purple_marshal_VOID, <KEYWORD>NULL</KEYWORD>, <NUMERIC>0</NUMERIC>);
+
+	<COMMENT>/* The prefs subsystem needs to be initialized before static protocols</COMMENT>
+<COMMENT>	 * for protocol prefs to work. */</COMMENT>
+	purple_prefs_init();
+
+	purple_debug_init();
+
+	<KEYWORD>if</KEYWORD> (ops <OPERATOR>!=</OPERATOR> <KEYWORD>NULL</KEYWORD>)
+	{
+		<KEYWORD>if</KEYWORD> (<OBJ>ops</OBJ><OPERATOR>-&gt;</OPERATOR><OO>ui_prefs_init</OO> <OPERATOR>!=</OPERATOR> <KEYWORD>NULL</KEYWORD>)
+			<OBJ>ops</OBJ><OPERATOR>-&gt;</OPERATOR><OO>ui_prefs_init</OO>();
+
+		<KEYWORD>if</KEYWORD> (<OBJ>ops</OBJ><OPERATOR>-&gt;</OPERATOR><OO>debug_ui_init</OO> <OPERATOR>!=</OPERATOR> <KEYWORD>NULL</KEYWORD>)
+			<OBJ>ops</OBJ><OPERATOR>-&gt;</OPERATOR><OO>debug_ui_init</OO>();
+	}
+
+<PREPROCESSOR>#ifdef HAVE_DBUS</PREPROCESSOR>
+	purple_dbus_init();
+<PREPROCESSOR>#endif</PREPROCESSOR>
+
+	purple_ciphers_init();
+	purple_cmds_init();
+
+	<COMMENT>/* Since plugins get probed so early we should probably initialize their</COMMENT>
+<COMMENT>	 * subsystem right away too.</COMMENT>
+<COMMENT>	 */</COMMENT>
+	purple_plugins_init();
+
+	<COMMENT>/* Initialize all static protocols. */</COMMENT>
+	static_proto_init();
+
+	purple_plugins_probe(<CONSTANT>G_MODULE_SUFFIX</CONSTANT>);
+
+	purple_theme_manager_init();
+
+	<COMMENT>/* The buddy icon code uses the imgstore, so init it early. */</COMMENT>
+	purple_imgstore_init();
+
+	<COMMENT>/* Accounts use status, buddy icons and connection signals, so</COMMENT>
+<COMMENT>	 * initialize these before accounts</COMMENT>
+<COMMENT>	 */</COMMENT>
+	purple_status_init();
+	purple_buddy_icons_init();
+	purple_connections_init();
+
+	purple_accounts_init();
+	purple_savedstatuses_init();
+	purple_notify_init();
+	purple_certificate_init();
+	purple_conversations_init();
+	purple_blist_init();
+	purple_log_init();
+	purple_network_init();
+	purple_privacy_init();
+	purple_pounces_init();
+	purple_proxy_init();
+	purple_dnsquery_init();
+	purple_sound_init();
+	purple_ssl_init();
+	purple_stun_init();
+	purple_xfers_init();
+	purple_idle_init();
+	purple_smileys_init();
+	<COMMENT>/*</COMMENT>
+<COMMENT>	 * Call this early on to try to auto-detect our IP address and</COMMENT>
+<COMMENT>	 * hopefully save some time later.</COMMENT>
+<COMMENT>	 */</COMMENT>
+	purple_network_get_my_ip(<OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>);
+
+	<KEYWORD>if</KEYWORD> (ops <OPERATOR>!=</OPERATOR> <KEYWORD>NULL</KEYWORD> <OPERATOR>&amp;&amp;</OPERATOR> <OBJ>ops</OBJ><OPERATOR>-&gt;</OPERATOR><OO>ui_init</OO> <OPERATOR>!=</OPERATOR> <KEYWORD>NULL</KEYWORD>)
+		<OBJ>ops</OBJ><OPERATOR>-&gt;</OPERATOR><OO>ui_init</OO>();
+
+	<COMMENT>/* The UI may have registered some theme types, so refresh them */</COMMENT>
+	purple_theme_manager_refresh();
+
+	<KEYWORD>return</KEYWORD> <KEYWORD>TRUE</KEYWORD>;
+}
+
+<TYPE>void</TYPE>
+purple_core_quit(<TYPE>void</TYPE>)
+{
+	PurpleCoreUiOps <OPERATOR>*</OPERATOR>ops;
+	PurpleCore <OPERATOR>*</OPERATOR>core <OPERATOR>=</OPERATOR> purple_get_core();
+
+	g_return_if_fail(core <OPERATOR>!=</OPERATOR> <KEYWORD>NULL</KEYWORD>);
+
+	<COMMENT>/* The self destruct sequence has been initiated */</COMMENT>
+	purple_signal_emit(purple_get_core(), <STRING>"quitting"</STRING>);
+
+	<COMMENT>/* Transmission ends */</COMMENT>
+	purple_connections_disconnect_all();
+
+	<COMMENT>/*</COMMENT>
+<COMMENT>	 * Certificates must be destroyed before the SSL plugins, because</COMMENT>
+<COMMENT>	 * PurpleCertificates contain pointers to PurpleCertificateSchemes,</COMMENT>
+<COMMENT>	 * and the PurpleCertificateSchemes will be unregistered when the</COMMENT>
+<COMMENT>	 * SSL plugin is uninit.</COMMENT>
+<COMMENT>	 */</COMMENT>
+	purple_certificate_uninit();
+
+	<COMMENT>/* The SSL plugins must be uninit before they're unloaded */</COMMENT>
+	purple_ssl_uninit();
+
+	<COMMENT>/* Unload all non-loader, non-prpl plugins before shutting down</COMMENT>
+<COMMENT>	 * subsystems. */</COMMENT>
+	purple_debug_info(<STRING>"main"</STRING>, <STRING>"Unloading normal plugins<ESC>\n</ESC>"</STRING>);
+	purple_plugins_unload(<CONSTANT>PURPLE_PLUGIN_STANDARD</CONSTANT>);
+
+	<COMMENT>/* Save .xml files, remove signals, etc. */</COMMENT>
+	purple_smileys_uninit();
+	purple_idle_uninit();
+	purple_pounces_uninit();
+	purple_blist_uninit();
+	purple_ciphers_uninit();
+	purple_notify_uninit();
+	purple_conversations_uninit();
+	purple_connections_uninit();
+	purple_buddy_icons_uninit();
+	purple_savedstatuses_uninit();
+	purple_status_uninit();
+	purple_accounts_uninit();
+	purple_sound_uninit();
+	purple_theme_manager_uninit();
+	purple_xfers_uninit();
+	purple_proxy_uninit();
+	purple_dnsquery_uninit();
+	purple_imgstore_uninit();
+	purple_network_uninit();
+
+	<COMMENT>/* Everything after unloading all plugins must not fail if prpls aren't</COMMENT>
+<COMMENT>	 * around */</COMMENT>
+	purple_debug_info(<STRING>"main"</STRING>, <STRING>"Unloading all plugins<ESC>\n</ESC>"</STRING>);
+	purple_plugins_destroy_all();
+
+	ops <OPERATOR>=</OPERATOR> purple_core_get_ui_ops();
+	<KEYWORD>if</KEYWORD> (ops <OPERATOR>!=</OPERATOR> <KEYWORD>NULL</KEYWORD> <OPERATOR>&amp;&amp;</OPERATOR> <OBJ>ops</OBJ><OPERATOR>-&gt;</OPERATOR><OO>quit</OO> <OPERATOR>!=</OPERATOR> <KEYWORD>NULL</KEYWORD>)
+		<OBJ>ops</OBJ><OPERATOR>-&gt;</OPERATOR><OO>quit</OO>();
+
+	<COMMENT>/* Everything after prefs_uninit must not try to read any prefs */</COMMENT>
+	purple_prefs_uninit();
+	purple_plugins_uninit();
+<PREPROCESSOR>#ifdef HAVE_DBUS</PREPROCESSOR>
+	purple_dbus_uninit();
+<PREPROCESSOR>#endif</PREPROCESSOR>
+
+	purple_cmds_uninit();
+	<COMMENT>/* Everything after util_uninit cannot try to write things to the confdir */</COMMENT>
+	purple_util_uninit();
+	purple_log_uninit();
+
+	purple_signals_uninit();
+
+	g_free(<OBJ>core</OBJ><OPERATOR>-&gt;</OPERATOR><OO>ui</OO>);
+	g_free(core);
+
+<PREPROCESSOR>#ifdef _WIN32</PREPROCESSOR>
+	wpurple_cleanup();
+<PREPROCESSOR>#endif</PREPROCESSOR>
+
+	_core <OPERATOR>=</OPERATOR> <KEYWORD>NULL</KEYWORD>;
+}
+
+gboolean
+purple_core_quit_cb(gpointer unused)
+{
+	purple_core_quit();
+
+	<KEYWORD>return</KEYWORD> <KEYWORD>FALSE</KEYWORD>;
+}
+
+<KEYWORD>const</KEYWORD> <TYPE>char</TYPE> <OPERATOR>*</OPERATOR>
+purple_core_get_version(<TYPE>void</TYPE>)
+{
+	<KEYWORD>return</KEYWORD> <CONSTANT>VERSION</CONSTANT>;
+}
+
+<KEYWORD>const</KEYWORD> <TYPE>char</TYPE> <OPERATOR>*</OPERATOR>
+purple_core_get_ui(<TYPE>void</TYPE>)
+{
+	PurpleCore <OPERATOR>*</OPERATOR>core <OPERATOR>=</OPERATOR> purple_get_core();
+
+	g_return_val_if_fail(core <OPERATOR>!=</OPERATOR> <KEYWORD>NULL</KEYWORD>, <KEYWORD>NULL</KEYWORD>);
+
+	<KEYWORD>return</KEYWORD> <OBJ>core</OBJ><OPERATOR>-&gt;</OPERATOR><OO>ui</OO>;
+}
+
+PurpleCore <OPERATOR>*</OPERATOR>
+purple_get_core(<TYPE>void</TYPE>)
+{
+	<KEYWORD>return</KEYWORD> _core;
+}
+
+<TYPE>void</TYPE>
+purple_core_set_ui_ops(PurpleCoreUiOps <OPERATOR>*</OPERATOR>ops)
+{
+	_ops <OPERATOR>=</OPERATOR> ops;
+}
+
+PurpleCoreUiOps <OPERATOR>*</OPERATOR>
+purple_core_get_ui_ops(<TYPE>void</TYPE>)
+{
+	<KEYWORD>return</KEYWORD> _ops;
+}
+
+<PREPROCESSOR>#ifdef HAVE_DBUS</PREPROCESSOR>
+<KEYWORD>static</KEYWORD> <TYPE>char</TYPE> <OPERATOR>*</OPERATOR>purple_dbus_owner_user_dir(<TYPE>void</TYPE>)
+{
+	DBusMessage <OPERATOR>*</OPERATOR>msg <OPERATOR>=</OPERATOR> <KEYWORD>NULL</KEYWORD>, <OPERATOR>*</OPERATOR>reply <OPERATOR>=</OPERATOR> <KEYWORD>NULL</KEYWORD>;
+	DBusConnection <OPERATOR>*</OPERATOR>dbus_connection <OPERATOR>=</OPERATOR> <KEYWORD>NULL</KEYWORD>;
+	DBusError dbus_error;
+	<TYPE>char</TYPE> <OPERATOR>*</OPERATOR>remote_user_dir <OPERATOR>=</OPERATOR> <KEYWORD>NULL</KEYWORD>;
+
+	<KEYWORD>if</KEYWORD> ((dbus_connection <OPERATOR>=</OPERATOR> purple_dbus_get_connection()) <OPERATOR>==</OPERATOR> <KEYWORD>NULL</KEYWORD>)
+		<KEYWORD>return</KEYWORD> <KEYWORD>NULL</KEYWORD>;
+
+	<KEYWORD>if</KEYWORD> ((msg <OPERATOR>=</OPERATOR> dbus_message_new_method_call(<CONSTANT>DBUS_SERVICE_PURPLE</CONSTANT>, <CONSTANT>DBUS_PATH_PURPLE</CONSTANT>, <CONSTANT>DBUS_INTERFACE_PURPLE</CONSTANT>, <STRING>"PurpleUserDir"</STRING>)) <OPERATOR>==</OPERATOR> <KEYWORD>NULL</KEYWORD>)
+		<KEYWORD>return</KEYWORD> <KEYWORD>NULL</KEYWORD>;
+
+	dbus_error_init(<OPERATOR>&amp;</OPERATOR>dbus_error);
+	reply <OPERATOR>=</OPERATOR> dbus_connection_send_with_reply_and_block(dbus_connection, msg, <NUMERIC>5000</NUMERIC>, <OPERATOR>&amp;</OPERATOR>dbus_error);
+	dbus_message_unref(msg);
+	dbus_error_free(<OPERATOR>&amp;</OPERATOR>dbus_error);
+
+	<KEYWORD>if</KEYWORD> (reply)
+	{
+		dbus_error_init(<OPERATOR>&amp;</OPERATOR>dbus_error);
+		dbus_message_get_args(reply, <OPERATOR>&amp;</OPERATOR>dbus_error, <CONSTANT>DBUS_TYPE_STRING</CONSTANT>, <OPERATOR>&amp;</OPERATOR>remote_user_dir, <CONSTANT>DBUS_TYPE_INVALID</CONSTANT>);
+		remote_user_dir <OPERATOR>=</OPERATOR> g_strdup(remote_user_dir);
+		dbus_error_free(<OPERATOR>&amp;</OPERATOR>dbus_error);
+		dbus_message_unref(reply);
+	}
+
+	<KEYWORD>return</KEYWORD> remote_user_dir;
+}
+
+<PREPROCESSOR>#endif <COMMENT>/* HAVE_DBUS */</COMMENT></PREPROCESSOR>
+
+gboolean
+purple_core_ensure_single_instance()
+{
+	gboolean is_single_instance <OPERATOR>=</OPERATOR> <KEYWORD>TRUE</KEYWORD>;
+<PREPROCESSOR>#ifdef HAVE_DBUS</PREPROCESSOR>
+	<COMMENT>/* in the future, other mechanisms might have already set this to FALSE */</COMMENT>
+	<KEYWORD>if</KEYWORD> (is_single_instance)
+	{
+		<KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR>purple_dbus_is_owner())
+		{
+			<KEYWORD>const</KEYWORD> <TYPE>char</TYPE> <OPERATOR>*</OPERATOR>user_dir <OPERATOR>=</OPERATOR> purple_user_dir();
+			<TYPE>char</TYPE> <OPERATOR>*</OPERATOR>dbus_owner_user_dir <OPERATOR>=</OPERATOR> purple_dbus_owner_user_dir();
+
+			is_single_instance <OPERATOR>=</OPERATOR> <OPERATOR>!</OPERATOR>purple_strequal(dbus_owner_user_dir, user_dir);
+			g_free(dbus_owner_user_dir);
+		}
+	}
+<PREPROCESSOR>#endif <COMMENT>/* HAVE_DBUS */</COMMENT></PREPROCESSOR>
+
+	<KEYWORD>return</KEYWORD> is_single_instance;
+}
+
+<KEYWORD>static</KEYWORD> gboolean
+move_and_symlink_dir(<KEYWORD>const</KEYWORD> <TYPE>char</TYPE> <OPERATOR>*</OPERATOR>path, <KEYWORD>const</KEYWORD> <TYPE>char</TYPE> <OPERATOR>*</OPERATOR>basename, <KEYWORD>const</KEYWORD> <TYPE>char</TYPE> <OPERATOR>*</OPERATOR>old_base, <KEYWORD>const</KEYWORD> <TYPE>char</TYPE> <OPERATOR>*</OPERATOR>new_base, <KEYWORD>const</KEYWORD> <TYPE>char</TYPE> <OPERATOR>*</OPERATOR>relative)
+{
+	<TYPE>char</TYPE> <OPERATOR>*</OPERATOR>new_name <OPERATOR>=</OPERATOR> g_build_filename(new_base, basename, <KEYWORD>NULL</KEYWORD>);
+<PREPROCESSOR>#ifndef _WIN32</PREPROCESSOR>
+	<TYPE>char</TYPE> <OPERATOR>*</OPERATOR>old_name;
+<PREPROCESSOR>#endif</PREPROCESSOR>
+	<KEYWORD>if</KEYWORD> (g_rename(path, new_name))
+	{
+		purple_debug_error(<STRING>"core"</STRING>, <STRING>"Error renaming %s to %s: %s. Please report this at "</STRING> <CONSTANT>PURPLE_DEVEL_WEBSITE</CONSTANT> <STRING>"<ESC>\n</ESC>"</STRING>,
+		                   path, new_name, g_strerror(errno));
+		g_free(new_name);
+		<KEYWORD>return</KEYWORD> <KEYWORD>FALSE</KEYWORD>;
+	}
+	g_free(new_name);
+
+<PREPROCESSOR>#ifndef _WIN32</PREPROCESSOR>
+	<COMMENT>/* <COMMENT_NOTE>NOTE:</COMMENT_NOTE> This new_name is relative. */</COMMENT>
+	new_name <OPERATOR>=</OPERATOR> g_build_filename(relative, basename, <KEYWORD>NULL</KEYWORD>);
+	old_name <OPERATOR>=</OPERATOR> g_build_filename(old_base, basename, <KEYWORD>NULL</KEYWORD>);
+	<KEYWORD>if</KEYWORD> (symlink(new_name, old_name))
+	{
+		purple_debug_warning(<STRING>"core"</STRING>, <STRING>"Error symlinking %s to %s: %s. Please report this at "</STRING> <CONSTANT>PURPLE_DEVEL_WEBSITE</CONSTANT> <STRING>"<ESC>\n</ESC>"</STRING>,
+		                     old_name, new_name, g_strerror(errno));
+	}
+	g_free(old_name);
+	g_free(new_name);
+<PREPROCESSOR>#endif</PREPROCESSOR>
+
+	<KEYWORD>return</KEYWORD> <KEYWORD>TRUE</KEYWORD>;
+}
+
+gboolean
+purple_core_migrate(<TYPE>void</TYPE>)
+{
+	<KEYWORD>const</KEYWORD> <TYPE>char</TYPE> <OPERATOR>*</OPERATOR>user_dir <OPERATOR>=</OPERATOR> purple_user_dir();
+	<TYPE>char</TYPE> <OPERATOR>*</OPERATOR>old_user_dir <OPERATOR>=</OPERATOR> g_strconcat(purple_home_dir(),
+	                                 <CONSTANT>G_DIR_SEPARATOR_S</CONSTANT> <STRING>".gaim"</STRING>, <KEYWORD>NULL</KEYWORD>);
+	<TYPE>char</TYPE> <OPERATOR>*</OPERATOR>status_file;
+	<CONSTANT>FILE</CONSTANT> <OPERATOR>*</OPERATOR>fp;
+	GDir <OPERATOR>*</OPERATOR>dir;
+	GError <OPERATOR>*</OPERATOR>err;
+	<KEYWORD>const</KEYWORD> <TYPE>char</TYPE> <OPERATOR>*</OPERATOR>entry;
+<PREPROCESSOR>#ifndef _WIN32</PREPROCESSOR>
+	<TYPE>char</TYPE> <OPERATOR>*</OPERATOR>logs_dir;
+<PREPROCESSOR>#endif</PREPROCESSOR>
+	<TYPE>char</TYPE> <OPERATOR>*</OPERATOR>old_icons_dir;
+
+	<KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR>g_file_test(old_user_dir, <CONSTANT>G_FILE_TEST_EXISTS</CONSTANT>))
+	{
+		<COMMENT>/* ~/.gaim doesn't exist, so there's nothing to migrate. */</COMMENT>
+		g_free(old_user_dir);
+		<KEYWORD>return</KEYWORD> <KEYWORD>TRUE</KEYWORD>;
+	}
+
+	status_file <OPERATOR>=</OPERATOR> g_strconcat(user_dir, <CONSTANT>G_DIR_SEPARATOR_S</CONSTANT> <STRING>"migrating"</STRING>, <KEYWORD>NULL</KEYWORD>);
+
+	<KEYWORD>if</KEYWORD> (g_file_test(user_dir, <CONSTANT>G_FILE_TEST_EXISTS</CONSTANT>))
+	{
+		<COMMENT>/* If we're here, we have both ~/.gaim and .purple. */</COMMENT>
+
+		<KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR>g_file_test(status_file, <CONSTANT>G_FILE_TEST_EXISTS</CONSTANT>))
+		{
+			<COMMENT>/* There's no "migrating" status file,</COMMENT>
+<COMMENT>			 * so ~/.purple is all up to date. */</COMMENT>
+			g_free(status_file);
+			g_free(old_user_dir);
+			<KEYWORD>return</KEYWORD> <KEYWORD>TRUE</KEYWORD>;
+		}
+	}
+
+	<COMMENT>/* If we're here, it's time to migrate from ~/.gaim to ~/.purple. */</COMMENT>
+
+        <COMMENT>/* Ensure the user directory exists */</COMMENT>
+	<KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR>g_file_test(user_dir, <CONSTANT>G_FILE_TEST_IS_DIR</CONSTANT>))
+	{
+		<KEYWORD>if</KEYWORD> (g_mkdir(user_dir, <CONSTANT>S_IRUSR</CONSTANT> <OPERATOR>|</OPERATOR> <CONSTANT>S_IWUSR</CONSTANT> <OPERATOR>|</OPERATOR> <CONSTANT>S_IXUSR</CONSTANT>) <OPERATOR>==</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>)
+		{
+			purple_debug_error(<STRING>"core"</STRING>, <STRING>"Error creating directory %s: %s. Please report this at "</STRING> <CONSTANT>PURPLE_DEVEL_WEBSITE</CONSTANT> <STRING>"<ESC>\n</ESC>"</STRING>,
+			                   user_dir, g_strerror(errno));
+			g_free(status_file);
+			g_free(old_user_dir);
+			<KEYWORD>return</KEYWORD> <KEYWORD>FALSE</KEYWORD>;
+		}
+	}
+
+	<COMMENT>/* This writes ~/.purple/migrating, which allows us to detect</COMMENT>
+<COMMENT>	 * incomplete migrations and properly retry. */</COMMENT>
+	<KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR>(fp <OPERATOR>=</OPERATOR> g_fopen(status_file, <STRING>"w"</STRING>)))
+	{
+		purple_debug_error(<STRING>"core"</STRING>, <STRING>"Error opening file %s for writing: %s. Please report this at "</STRING> <CONSTANT>PURPLE_DEVEL_WEBSITE</CONSTANT> <STRING>"<ESC>\n</ESC>"</STRING>,
+		                   status_file, g_strerror(errno));
+		g_free(status_file);
+		g_free(old_user_dir);
+		<KEYWORD>return</KEYWORD> <KEYWORD>FALSE</KEYWORD>;
+	}
+	<FUNCTION>fclose</FUNCTION>(fp);
+
+	<COMMENT>/* Open ~/.gaim so we can loop over its contents. */</COMMENT>
+	err <OPERATOR>=</OPERATOR> <KEYWORD>NULL</KEYWORD>;
+	<KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR>(dir <OPERATOR>=</OPERATOR> g_dir_open(old_user_dir, <NUMERIC>0</NUMERIC>, <OPERATOR>&amp;</OPERATOR>err)))
+	{
+		purple_debug_error(<STRING>"core"</STRING>, <STRING>"Error opening directory %s: %s. Please report this at "</STRING> <CONSTANT>PURPLE_DEVEL_WEBSITE</CONSTANT> <STRING>"<ESC>\n</ESC>"</STRING>,
+		                   status_file,
+		                   (err <OPERATOR>?</OPERATOR> <OBJ>err</OBJ><OPERATOR>-&gt;</OPERATOR><OO>message</OO> <OPERATOR>:</OPERATOR> <STRING>"Unknown error"</STRING>));
+		<KEYWORD>if</KEYWORD> (err)
+			g_error_free(err);
+		g_free(status_file);
+		g_free(old_user_dir);
+		<KEYWORD>return</KEYWORD> <KEYWORD>FALSE</KEYWORD>;
+	}
+
+	<COMMENT>/* Loop over the contents of ~/.gaim */</COMMENT>
+	<KEYWORD>while</KEYWORD> ((entry <OPERATOR>=</OPERATOR> g_dir_read_name(dir)))
+	{
+		<TYPE>char</TYPE> <OPERATOR>*</OPERATOR>name <OPERATOR>=</OPERATOR> g_build_filename(old_user_dir, entry, <KEYWORD>NULL</KEYWORD>);
+
+<PREPROCESSOR>#ifndef _WIN32</PREPROCESSOR>
+		<COMMENT>/* Deal with symlinks... */</COMMENT>
+		<KEYWORD>if</KEYWORD> (g_file_test(name, <CONSTANT>G_FILE_TEST_IS_SYMLINK</CONSTANT>))
+		{
+			<COMMENT>/* We're only going to duplicate a logs symlink. */</COMMENT>
+			<KEYWORD>if</KEYWORD> (purple_strequal(entry, <STRING>"logs"</STRING>))
+			{
+				<TYPE>char</TYPE> <OPERATOR>*</OPERATOR>link;
+				err <OPERATOR>=</OPERATOR> <KEYWORD>NULL</KEYWORD>;
+
+				<KEYWORD>if</KEYWORD> ((link <OPERATOR>=</OPERATOR> g_file_read_link(name, <OPERATOR>&amp;</OPERATOR>err)) <OPERATOR>==</OPERATOR> <KEYWORD>NULL</KEYWORD>)
+				{
+					<TYPE>char</TYPE> <OPERATOR>*</OPERATOR>name_utf8 <OPERATOR>=</OPERATOR> g_filename_to_utf8(name, <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>, <KEYWORD>NULL</KEYWORD>, <KEYWORD>NULL</KEYWORD>, <KEYWORD>NULL</KEYWORD>);
+					purple_debug_error(<STRING>"core"</STRING>, <STRING>"Error reading symlink %s: %s. Please report this at "</STRING> <CONSTANT>PURPLE_DEVEL_WEBSITE</CONSTANT> <STRING>"<ESC>\n</ESC>"</STRING>,
+					                   name_utf8 <OPERATOR>?</OPERATOR> name_utf8 <OPERATOR>:</OPERATOR> name, <OBJ>err</OBJ><OPERATOR>-&gt;</OPERATOR><OO>message</OO>);
+					g_free(name_utf8);
+					g_error_free(err);
+					g_free(name);
+					g_dir_close(dir);
+					g_free(status_file);
+					g_free(old_user_dir);
+					<KEYWORD>return</KEYWORD> <KEYWORD>FALSE</KEYWORD>;
+				}
+
+				logs_dir <OPERATOR>=</OPERATOR> g_build_filename(user_dir, <STRING>"logs"</STRING>, <KEYWORD>NULL</KEYWORD>);
+
+				<KEYWORD>if</KEYWORD> (purple_strequal(link, <STRING>"../.purple/logs"</STRING>) <OPERATOR>||</OPERATOR>
+				    purple_strequal(link, logs_dir))
+				{
+					<COMMENT>/* If the symlink points to the new directory, we're</COMMENT>
+<COMMENT>					 * likely just trying again after a failed migration,</COMMENT>
+<COMMENT>					 * so there's no need to fail here. */</COMMENT>
+					g_free(link);
+					g_free(logs_dir);
+					<KEYWORD>continue</KEYWORD>;
+				}
+
+				<COMMENT>/* In case we are trying again after a failed migration, we need</COMMENT>
+<COMMENT>				 * to unlink any existing symlink.  If it's a directory, this</COMMENT>
+<COMMENT>				 * will fail, and so will the symlink below, which is good</COMMENT>
+<COMMENT>				 * because the user should sort things out. */</COMMENT>
+				g_unlink(logs_dir);
+
+				<COMMENT>/* Relative links will most likely still be</COMMENT>
+<COMMENT>				 * valid from ~/.purple, though it's not</COMMENT>
+<COMMENT>				 * guaranteed.  Oh well. */</COMMENT>
+				<KEYWORD>if</KEYWORD> (symlink(link, logs_dir))
+				{
+					purple_debug_error(<STRING>"core"</STRING>, <STRING>"Error symlinking %s to %s: %s. Please report this at "</STRING> <CONSTANT>PURPLE_DEVEL_WEBSITE</CONSTANT> <STRING>"<ESC>\n</ESC>"</STRING>,
+					                   logs_dir, link, g_strerror(errno));
+					g_free(link);
+					g_free(name);
+					g_free(logs_dir);
+					g_dir_close(dir);
+					g_free(status_file);
+					g_free(old_user_dir);
+					<KEYWORD>return</KEYWORD> <KEYWORD>FALSE</KEYWORD>;
+				}
+
+				g_free(link);
+				g_free(logs_dir);
+				<KEYWORD>continue</KEYWORD>;
+			}
+
+			<COMMENT>/* Ignore all other symlinks. */</COMMENT>
+			<KEYWORD>continue</KEYWORD>;
+		}
+<PREPROCESSOR>#endif</PREPROCESSOR>
+
+		<COMMENT>/* Deal with directories... */</COMMENT>
+		<KEYWORD>if</KEYWORD> (g_file_test(name, <CONSTANT>G_FILE_TEST_IS_DIR</CONSTANT>))
+		{
+			<KEYWORD>if</KEYWORD> (purple_strequal(entry, <STRING>"icons"</STRING>))
+			{
+				<COMMENT>/* This is a special case for the Album plugin, which</COMMENT>
+<COMMENT>				 * stores data in the icons folder.  We're not copying</COMMENT>
+<COMMENT>				 * the icons directory over because previous bugs</COMMENT>
+<COMMENT>				 * meant that it filled up with junk for many users.</COMMENT>
+<COMMENT>				 * This is a great time to purge it. */</COMMENT>
+
+				GDir <OPERATOR>*</OPERATOR>icons_dir;
+				<TYPE>char</TYPE> <OPERATOR>*</OPERATOR>new_icons_dir;
+				<KEYWORD>const</KEYWORD> <TYPE>char</TYPE> <OPERATOR>*</OPERATOR>icons_entry;
+
+				err <OPERATOR>=</OPERATOR> <KEYWORD>NULL</KEYWORD>;
+				<KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR>(icons_dir <OPERATOR>=</OPERATOR> g_dir_open(name, <NUMERIC>0</NUMERIC>, <OPERATOR>&amp;</OPERATOR>err)))
+				{
+					purple_debug_error(<STRING>"core"</STRING>, <STRING>"Error opening directory %s: %s. Please report this at "</STRING> <CONSTANT>PURPLE_DEVEL_WEBSITE</CONSTANT> <STRING>"<ESC>\n</ESC>"</STRING>,
+					                   name,
+					                   (err <OPERATOR>?</OPERATOR> <OBJ>err</OBJ><OPERATOR>-&gt;</OPERATOR><OO>message</OO> <OPERATOR>:</OPERATOR> <STRING>"Unknown error"</STRING>));
+					<KEYWORD>if</KEYWORD> (err)
+						g_error_free(err);
+					g_free(name);
+					g_dir_close(dir);
+					g_free(status_file);
+					g_free(old_user_dir);
+					<KEYWORD>return</KEYWORD> <KEYWORD>FALSE</KEYWORD>;
+				}
+
+				new_icons_dir <OPERATOR>=</OPERATOR> g_build_filename(user_dir, <STRING>"icons"</STRING>, <KEYWORD>NULL</KEYWORD>);
+			        <COMMENT>/* Ensure the new icon directory exists */</COMMENT>
+				<KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR>g_file_test(new_icons_dir, <CONSTANT>G_FILE_TEST_IS_DIR</CONSTANT>))
+				{
+					<KEYWORD>if</KEYWORD> (g_mkdir(new_icons_dir, <CONSTANT>S_IRUSR</CONSTANT> <OPERATOR>|</OPERATOR> <CONSTANT>S_IWUSR</CONSTANT> <OPERATOR>|</OPERATOR> <CONSTANT>S_IXUSR</CONSTANT>) <OPERATOR>==</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>)
+					{
+						purple_debug_error(<STRING>"core"</STRING>, <STRING>"Error creating directory %s: %s. Please report this at "</STRING> <CONSTANT>PURPLE_DEVEL_WEBSITE</CONSTANT> <STRING>"<ESC>\n</ESC>"</STRING>,
+						                   new_icons_dir, g_strerror(errno));
+						g_free(new_icons_dir);
+						g_dir_close(icons_dir);
+						g_free(name);
+						g_dir_close(dir);
+						g_free(status_file);
+						g_free(old_user_dir);
+						<KEYWORD>return</KEYWORD> <KEYWORD>FALSE</KEYWORD>;
+					}
+				}
+
+				<KEYWORD>while</KEYWORD> ((icons_entry <OPERATOR>=</OPERATOR> g_dir_read_name(icons_dir)))
+				{
+					<TYPE>char</TYPE> <OPERATOR>*</OPERATOR>icons_name <OPERATOR>=</OPERATOR> g_build_filename(name, icons_entry, <KEYWORD>NULL</KEYWORD>);
+
+					<KEYWORD>if</KEYWORD> (g_file_test(icons_name, <CONSTANT>G_FILE_TEST_IS_DIR</CONSTANT>))
+					{
+						<KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR>move_and_symlink_dir(icons_name, icons_entry,
+						                          name, new_icons_dir, <STRING>"../../.purple/icons"</STRING>))
+						{
+							g_free(icons_name);
+							g_free(new_icons_dir);
+							g_dir_close(icons_dir);
+							g_free(name);
+							g_dir_close(dir);
+							g_free(status_file);
+							g_free(old_user_dir);
+							<KEYWORD>return</KEYWORD> <KEYWORD>FALSE</KEYWORD>;
+						}
+					}
+					g_free(icons_name);
+				}
+
+				g_dir_close(icons_dir);
+			}
+			<KEYWORD>else</KEYWORD> <KEYWORD>if</KEYWORD> (purple_strequal(entry, <STRING>"plugins"</STRING>))
+			{
+				<COMMENT>/* Do nothing, because we broke plugin compatibility.</COMMENT>
+<COMMENT>				 * This means that the plugins directory gets left behind. */</COMMENT>
+			}
+			<KEYWORD>else</KEYWORD>
+			{
+				<COMMENT>/* All other directories are moved and symlinked. */</COMMENT>
+				<KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR>move_and_symlink_dir(name, entry, old_user_dir, user_dir, <STRING>"../.purple"</STRING>))
+				{
+					g_free(name);
+					g_dir_close(dir);
+					g_free(status_file);
+					g_free(old_user_dir);
+					<KEYWORD>return</KEYWORD> <KEYWORD>FALSE</KEYWORD>;
+				}
+			}
+		}
+		<KEYWORD>else</KEYWORD> <KEYWORD>if</KEYWORD> (g_file_test(name, <CONSTANT>G_FILE_TEST_IS_REGULAR</CONSTANT>))
+		{
+			<COMMENT>/* Regular files are copied. */</COMMENT>
+
+			<TYPE>char</TYPE> <OPERATOR>*</OPERATOR>new_name;
+			<CONSTANT>FILE</CONSTANT> <OPERATOR>*</OPERATOR>new_file;
+
+			<KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR>(fp <OPERATOR>=</OPERATOR> g_fopen(name, <STRING>"rb"</STRING>)))
+			{
+				purple_debug_error(<STRING>"core"</STRING>, <STRING>"Error opening file %s for reading: %s. Please report this at "</STRING> <CONSTANT>PURPLE_DEVEL_WEBSITE</CONSTANT> <STRING>"<ESC>\n</ESC>"</STRING>,
+				                   name, g_strerror(errno));
+				g_free(name);
+				g_dir_close(dir);
+				g_free(status_file);
+				g_free(old_user_dir);
+				<KEYWORD>return</KEYWORD> <KEYWORD>FALSE</KEYWORD>;
+			}
+
+			new_name <OPERATOR>=</OPERATOR> g_build_filename(user_dir, entry, <KEYWORD>NULL</KEYWORD>);
+			<KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR>(new_file <OPERATOR>=</OPERATOR> g_fopen(new_name, <STRING>"wb"</STRING>)))
+			{
+				purple_debug_error(<STRING>"core"</STRING>, <STRING>"Error opening file %s for writing: %s. Please report this at "</STRING> <CONSTANT>PURPLE_DEVEL_WEBSITE</CONSTANT> <STRING>"<ESC>\n</ESC>"</STRING>,
+				                   new_name, g_strerror(errno));
+				<FUNCTION>fclose</FUNCTION>(fp);
+				g_free(new_name);
+				g_free(name);
+				g_dir_close(dir);
+				g_free(status_file);
+				g_free(old_user_dir);
+				<KEYWORD>return</KEYWORD> <KEYWORD>FALSE</KEYWORD>;
+			}
+
+			<KEYWORD>while</KEYWORD> (<OPERATOR>!</OPERATOR><FUNCTION>feof</FUNCTION>(fp))
+			{
+				<KEYWORD>unsigned</KEYWORD> <TYPE>char</TYPE> buf[<NUMERIC>256</NUMERIC>];
+				<TYPE>size_t</TYPE> size;
+
+				size <OPERATOR>=</OPERATOR> <FUNCTION>fread</FUNCTION>(buf, <NUMERIC>1</NUMERIC>, <KEYWORD>sizeof</KEYWORD>(buf), fp);
+				<KEYWORD>if</KEYWORD> (size <OPERATOR>!=</OPERATOR> <KEYWORD>sizeof</KEYWORD>(buf) <OPERATOR>&amp;&amp;</OPERATOR> <OPERATOR>!</OPERATOR><FUNCTION>feof</FUNCTION>(fp))
+				{
+					purple_debug_error(<STRING>"core"</STRING>, <STRING>"Error reading %s: %s. Please report this at "</STRING> <CONSTANT>PURPLE_DEVEL_WEBSITE</CONSTANT> <STRING>"<ESC>\n</ESC>"</STRING>,
+					                   name, g_strerror(errno));
+					<FUNCTION>fclose</FUNCTION>(new_file);
+					<FUNCTION>fclose</FUNCTION>(fp);
+					g_free(new_name);
+					g_free(name);
+					g_dir_close(dir);
+					g_free(status_file);
+					g_free(old_user_dir);
+					<KEYWORD>return</KEYWORD> <KEYWORD>FALSE</KEYWORD>;
+				}
+
+				<KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><FUNCTION>fwrite</FUNCTION>(buf, size, <NUMERIC>1</NUMERIC>, new_file) <OPERATOR>&amp;&amp;</OPERATOR> <FUNCTION>ferror</FUNCTION>(new_file) <OPERATOR>!=</OPERATOR> <NUMERIC>0</NUMERIC>)
+				{
+					purple_debug_error(<STRING>"core"</STRING>, <STRING>"Error writing %s: %s. Please report this at "</STRING> <CONSTANT>PURPLE_DEVEL_WEBSITE</CONSTANT> <STRING>"<ESC>\n</ESC>"</STRING>,
+					                   new_name, g_strerror(errno));
+					<FUNCTION>fclose</FUNCTION>(new_file);
+					<FUNCTION>fclose</FUNCTION>(fp);
+					g_free(new_name);
+					g_free(name);
+					g_dir_close(dir);
+					g_free(status_file);
+					g_free(old_user_dir);
+					<KEYWORD>return</KEYWORD> <KEYWORD>FALSE</KEYWORD>;
+				}
+			}
+
+			<KEYWORD>if</KEYWORD> (<FUNCTION>fclose</FUNCTION>(new_file))
+			{
+				purple_debug_error(<STRING>"core"</STRING>, <STRING>"Error writing: %s: %s. Please report this at "</STRING> <CONSTANT>PURPLE_DEVEL_WEBSITE</CONSTANT> <STRING>"<ESC>\n</ESC>"</STRING>,
+				                   new_name, g_strerror(errno));
+			}
+			<KEYWORD>if</KEYWORD> (<FUNCTION>fclose</FUNCTION>(fp))
+			{
+				purple_debug_warning(<STRING>"core"</STRING>, <STRING>"Error closing %s: %s<ESC>\n</ESC>"</STRING>,
+				                     name, g_strerror(errno));
+			}
+			g_free(new_name);
+		}
+		<KEYWORD>else</KEYWORD>
+			purple_debug_warning(<STRING>"core"</STRING>, <STRING>"Not a regular file or directory: %s<ESC>\n</ESC>"</STRING>, name);
+
+		g_free(name);
+	}
+
+	<COMMENT>/* The migration was successful, so delete the status file. */</COMMENT>
+	<KEYWORD>if</KEYWORD> (g_unlink(status_file))
+	{
+		purple_debug_error(<STRING>"core"</STRING>, <STRING>"Error unlinking file %s: %s. Please report this at "</STRING> <CONSTANT>PURPLE_DEVEL_WEBSITE</CONSTANT> <STRING>"<ESC>\n</ESC>"</STRING>,
+		                   status_file, g_strerror(errno));
+		g_free(status_file);
+		<KEYWORD>return</KEYWORD> <KEYWORD>FALSE</KEYWORD>;
+	}
+
+	old_icons_dir <OPERATOR>=</OPERATOR> g_build_filename(old_user_dir, <STRING>"icons"</STRING>, <KEYWORD>NULL</KEYWORD>);
+	_purple_buddy_icon_set_old_icons_dir(old_icons_dir);
+	g_free(old_icons_dir);
+
+	g_free(old_user_dir);
+
+	g_free(status_file);
+	<KEYWORD>return</KEYWORD> <KEYWORD>TRUE</KEYWORD>;
+}
+
+GHashTable<OPERATOR>*</OPERATOR> purple_core_get_ui_info() {
+	PurpleCoreUiOps <OPERATOR>*</OPERATOR>ops <OPERATOR>=</OPERATOR> purple_core_get_ui_ops();
+
+	<KEYWORD>if</KEYWORD>(<KEYWORD>NULL</KEYWORD> <OPERATOR>==</OPERATOR> ops <OPERATOR>||</OPERATOR> <KEYWORD>NULL</KEYWORD> <OPERATOR>==</OPERATOR> <OBJ>ops</OBJ><OPERATOR>-&gt;</OPERATOR><OO>get_ui_info</OO>)
+		<KEYWORD>return</KEYWORD> <KEYWORD>NULL</KEYWORD>;
+
+	<KEYWORD>return</KEYWORD> <OBJ>ops</OBJ><OPERATOR>-&gt;</OPERATOR><OO>get_ui_info</OO>();
+}

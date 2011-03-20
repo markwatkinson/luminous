@@ -1,0 +1,176 @@
+<KEYWORD>body</KEYWORD>
+{
+  <TYPE>font-family</TYPE>: <VALUE>sans-serif</VALUE>;
+  <TYPE>font-size</TYPE>:<NUMERIC>10pt</NUMERIC>;
+  <TYPE>padding</TYPE>:<NUMERIC>0px</NUMERIC>;
+  <TYPE>margin</TYPE>:<NUMERIC>0px</NUMERIC>;
+  <TYPE>background-color</TYPE>:<NUMERIC>#F6F6F6</NUMERIC>;  
+}
+
+<KEYWORD>h1</KEYWORD> 
+{
+  <TYPE>text-align</TYPE>:<VALUE>center</VALUE>;
+}
+
+<KEYWORD>h1</KEYWORD>, <KEYWORD>h2</KEYWORD>, <KEYWORD>h3</KEYWORD>, <KEYWORD>h4</KEYWORD>, <KEYWORD>h5</KEYWORD>{
+  <TYPE>text-shadow</TYPE>: <NUMERIC>#9C9C9C</NUMERIC> <NUMERIC>1px</NUMERIC> <NUMERIC>1px</NUMERIC> <NUMERIC>1px</NUMERIC>;
+}
+<KEYWORD>h2</KEYWORD> {  <TYPE>border-bottom</TYPE>: <NUMERIC>1px</NUMERIC> <VALUE>solid</VALUE> <NUMERIC>#AAA</NUMERIC>;}
+
+
+<KEYWORD>span</KEYWORD><VARIABLE>.heading1</VARIABLE>
+{
+  <TYPE>background-color</TYPE>:<NUMERIC>#C9D7F1</NUMERIC>;
+  <TYPE>border</TYPE>:<NUMERIC>1px</NUMERIC> <VALUE>solid</VALUE> <NUMERIC>#2974FF</NUMERIC>;
+  <TYPE>width</TYPE>:<VALUE>auto</VALUE>;
+  <TYPE>margin-left</TYPE>:<VALUE>auto</VALUE>;
+  <TYPE>margin-right</TYPE>:<VALUE>auto</VALUE>;
+  <TYPE>padding-left</TYPE>:<NUMERIC>1em</NUMERIC>;
+  <TYPE>padding-right</TYPE>:<NUMERIC>1em</NUMERIC>;
+}
+
+<KEYWORD>span</KEYWORD><VARIABLE>.heading2</VARIABLE>
+{
+}
+
+<KEYWORD>span</KEYWORD><VARIABLE>.heading3</VARIABLE>
+{
+  <TYPE>padding-left</TYPE>:<NUMERIC>1em</NUMERIC>;
+  <TYPE>padding-right</TYPE>:<NUMERIC>1em</NUMERIC>;
+  <TYPE>font-style</TYPE>: <VALUE>italic</VALUE>;
+}
+
+<KEYWORD>div</KEYWORD><VARIABLE>.heading_content</VARIABLE>
+{
+  <TYPE>border</TYPE>: <NUMERIC>1px</NUMERIC> <VALUE>solid</VALUE>;
+}
+
+<KEYWORD>a</KEYWORD>
+{
+  <TYPE>text-decoration</TYPE>: <VALUE>none</VALUE>;
+  <TYPE>color</TYPE>:<NUMERIC>#0066CC</NUMERIC>;
+  <TYPE>cursor</TYPE>:<VALUE>default</VALUE>;
+  <TYPE>border-bottom</TYPE>:<NUMERIC>1px</NUMERIC> <VALUE>dashed</VALUE> <VALUE>gray</VALUE>;
+  <TYPE>font-weight</TYPE>:<VALUE>bold</VALUE>;
+}
+<VARIABLE>.luminous</VARIABLE> <KEYWORD>a</KEYWORD>
+{
+  <TYPE>text-decoration</TYPE>: <VALUE>none</VALUE>;
+  <TYPE>color</TYPE>:<NUMERIC>#0066CC</NUMERIC>;
+  <TYPE>cursor</TYPE>:<VALUE>default</VALUE>;
+  <TYPE>border-bottom</TYPE>:<VALUE>none</VALUE>;
+  <TYPE>font-weight</TYPE>:<VALUE>normal</VALUE>;
+}
+
+<KEYWORD>a</KEYWORD>:<KEYWORD>hover</KEYWORD>
+{
+<COMMENT>/*   background-color:#eee; */</COMMENT>
+  
+  <TYPE>text-shadow</TYPE>: <NUMERIC>#9C9C9C</NUMERIC> <NUMERIC>1px</NUMERIC> <NUMERIC>0px</NUMERIC> <NUMERIC>5px</NUMERIC>;
+}
+
+<KEYWORD>a</KEYWORD> <KEYWORD>img</KEYWORD> {<TYPE>border</TYPE>:<NUMERIC>0px</NUMERIC>}
+
+<VARIABLE>.code_example</VARIABLE>
+{
+  <TYPE>border</TYPE>:<NUMERIC>1px</NUMERIC> <VALUE>dashed</VALUE> <VALUE>blue</VALUE>;
+  <TYPE>font-family</TYPE>: <VALUE>monospace</VALUE>;
+  <TYPE>font-size</TYPE>:<NUMERIC>13px</NUMERIC>;
+  <TYPE>white-space</TYPE>:<VALUE>pre</VALUE>;
+  <TYPE>background-color</TYPE>:<NUMERIC>#F9F9F9</NUMERIC>;
+  <TYPE>max-width</TYPE>:<NUMERIC>70%</NUMERIC>;
+  <TYPE>min-width</TYPE>:<NUMERIC>40%</NUMERIC>;
+  <TYPE>overflow</TYPE>:<VALUE>auto</VALUE>;
+  <TYPE>margin-left</TYPE>:<VALUE>auto</VALUE>;
+  <TYPE>margin-right</TYPE>:<VALUE>auto</VALUE>;
+}
+
+<VARIABLE>.code_example_highlighted</VARIABLE>
+{
+  <TYPE>border</TYPE>:<NUMERIC>1px</NUMERIC> <VALUE>dashed</VALUE> <VALUE>blue</VALUE>;
+  <TYPE>font-size</TYPE>:<NUMERIC>13px</NUMERIC>;
+  <TYPE>background-color</TYPE>:<NUMERIC>#F9F9F9</NUMERIC>;
+  <TYPE>max-width</TYPE>:<NUMERIC>70%</NUMERIC>;
+  <TYPE>min-width</TYPE>:<NUMERIC>40%</NUMERIC>;
+  <TYPE>margin-left</TYPE>:<VALUE>auto</VALUE>;
+  <TYPE>margin-right</TYPE>:<VALUE>auto</VALUE>;
+  <TYPE>display</TYPE>:<VALUE>block</VALUE>;
+}
+
+
+<VARIABLE>.page</VARIABLE>
+{
+  <TYPE>padding</TYPE>:<NUMERIC>1em</NUMERIC>;
+  <TYPE>border</TYPE>:<NUMERIC>1px</NUMERIC> <VALUE>solid</VALUE> <NUMERIC>#B5CFFF</NUMERIC>;
+  <TYPE>width</TYPE>:<NUMERIC>90%</NUMERIC>;
+  <TYPE>margin-left</TYPE>:<VALUE>auto</VALUE>;
+  <TYPE>margin-right</TYPE>:<VALUE>auto</VALUE>;
+  <TYPE>background-color</TYPE>:<VALUE>white</VALUE>;  
+  <TYPE>border-radius</TYPE>:<NUMERIC>1em</NUMERIC>;  
+  <TYPE>-moz-border-radius</TYPE>:<NUMERIC>1em</NUMERIC>;
+  
+ <TYPE>-moz-box-shadow</TYPE>: <NUMERIC>1em</NUMERIC> <NUMERIC>0.5em</NUMERIC> <NUMERIC>1em</NUMERIC> <NUMERIC>-0.5em</NUMERIC> <NUMERIC>#B7D0FB</NUMERIC>;
+ <TYPE>-webkit-box-shadow</TYPE>: <NUMERIC>1em</NUMERIC> <NUMERIC>0.5em</NUMERIC> <NUMERIC>1em</NUMERIC> <NUMERIC>-0.5em</NUMERIC> <NUMERIC>#B7D0FB</NUMERIC>;
+  <TYPE>box-shadow</TYPE>: <NUMERIC>1em</NUMERIC> <NUMERIC>0.5em</NUMERIC> <NUMERIC>1em</NUMERIC> <NUMERIC>-0.5em</NUMERIC> <NUMERIC>#B7D0FB</NUMERIC>;
+  
+}
+<VARIABLE>.rounded</VARIABLE>
+{
+  <TYPE>border-left</TYPE>:<NUMERIC>1px</NUMERIC> <VALUE>solid</VALUE> <NUMERIC>#B5CFFF</NUMERIC>;
+  <TYPE>border-right</TYPE>:<NUMERIC>1px</NUMERIC> <VALUE>solid</VALUE> <NUMERIC>#B5CFFF</NUMERIC>;
+  <TYPE>background-color</TYPE>:<VALUE>white</VALUE>;
+  <TYPE>margin</TYPE>:<VALUE>auto</VALUE>;
+  <TYPE>min-width</TYPE>:<NUMERIC>0px</NUMERIC>;
+  <TYPE>height</TYPE>:<NUMERIC>1px</NUMERIC>;
+}
+<VARIABLE>.rounded_top</VARIABLE>
+{
+  <TYPE>border-top</TYPE>:<NUMERIC>1px</NUMERIC> <VALUE>solid</VALUE> <NUMERIC>#B5CFFF</NUMERIC>;
+}
+
+<VARIABLE>.header</VARIABLE>
+{
+  <TYPE>color</TYPE>:<VALUE>black</VALUE>;
+  <TYPE>padding-left</TYPE>:<NUMERIC>3em</NUMERIC>;
+  <TYPE>padding-top</TYPE>:<NUMERIC>2px</NUMERIC>;
+  <TYPE>background-image</TYPE>:<FUNCTION>url</FUNCTION>(/<VALUE>img</VALUE>/<VALUE>headerblend2</VALUE>.<VALUE>png</VALUE>);
+  <TYPE>background-repeat</TYPE>:<VALUE>repeat-x</VALUE>;
+  <TYPE>height</TYPE>:<NUMERIC>50px</NUMERIC>;
+  <TYPE>text-align</TYPE>:<VALUE>center</VALUE>;
+  <TYPE>font-size</TYPE>:<VALUE>larger</VALUE>;
+}
+
+<VARIABLE>.menubar_container</VARIABLE>
+{
+  <TYPE>padding-left</TYPE>:<NUMERIC>0.5em</NUMERIC>;
+  <TYPE>padding-bottom</TYPE>:<NUMERIC>0.5em</NUMERIC>;
+}
+
+<VARIABLE>.menubar</VARIABLE>
+{  
+  <COMMENT>/*   border: 1px solid #C9D7F1; */</COMMENT>
+  <TYPE>padding-left</TYPE>:<NUMERIC>0.5em</NUMERIC>;
+  <TYPE>padding-right</TYPE>:<NUMERIC>0.5em</NUMERIC>;
+  <COMMENT>/*   background-color:#F6F6F6 */</COMMENT>
+}
+
+
+
+
+
+<KEYWORD>table</KEYWORD>
+{
+  <TYPE>border</TYPE>:<NUMERIC>1px</NUMERIC> <VALUE>solid</VALUE>;
+  <TYPE>border-collapse</TYPE>:<VALUE>collapse</VALUE>;
+}
+
+<KEYWORD>td</KEYWORD>
+{
+  <TYPE>border</TYPE>:<NUMERIC>1px</NUMERIC> <VALUE>solid</VALUE>;
+}
+
+<KEYWORD>td</KEYWORD><VARIABLE>.title</VARIABLE>, <KEYWORD>tr</KEYWORD><VARIABLE>.title</VARIABLE>
+{
+  <TYPE>background-color</TYPE>:<NUMERIC>#C9D7F1</NUMERIC>;
+  <TYPE>font-weight</TYPE>:<VALUE>bold</VALUE>;
+}

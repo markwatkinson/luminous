@@ -1,0 +1,389 @@
+<COMMENT>/*</COMMENT>
+<COMMENT> Copyright 2010 Mark Watkinson</COMMENT>
+<COMMENT> </COMMENT>
+<COMMENT> This file is part of Luminous.</COMMENT>
+<COMMENT> </COMMENT>
+<COMMENT> Luminous is free software: you can redistribute it and/or</COMMENT>
+<COMMENT> modify</COMMENT>
+<COMMENT> it under the terms of the GNU General Public License as published by</COMMENT>
+<COMMENT> the Free Software Foundation, either version 3 of the License, or</COMMENT>
+<COMMENT> (at your option) any later version.</COMMENT>
+<COMMENT> </COMMENT>
+<COMMENT> Luminous is distributed in the hope that it will be useful,</COMMENT>
+<COMMENT> but WITHOUT ANY WARRANTY; without even the implied warranty of</COMMENT>
+<COMMENT> MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</COMMENT>
+<COMMENT> GNU General Public License for more details.</COMMENT>
+<COMMENT> </COMMENT>
+<COMMENT> You should have received a copy of the GNU General Public License</COMMENT>
+<COMMENT> along with Luminous.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</COMMENT>
+<COMMENT> </COMMENT>
+<COMMENT> */</COMMENT>
+
+
+
+
+
+
+
+<COMMENT>/*******************************************************************************</COMMENT>
+<COMMENT> * FONTS.</COMMENT>
+<COMMENT> * </COMMENT>
+<COMMENT> * We override the fonts because the line numbering relies on a consistent</COMMENT>
+<COMMENT> * line-height. Unfortunately, some fonts, when italicised, gain a pixel or two</COMMENT>
+<COMMENT> * and this results in a drift which pushes the line numbers and lines out of</COMMENT>
+<COMMENT> * sync.</COMMENT>
+<COMMENT> */</COMMENT> 
+
+<COMMENT>/* IE fonts */</COMMENT>
+<KEYWORD>@font-face</KEYWORD> { 
+  <TYPE>font-family</TYPE>: <VALUE>VeraMono</VALUE>;
+  <TYPE>src</TYPE>: <FUNCTION>url</FUNCTION>(<STRING>'../client/font/VeraMono.eot'</STRING>);  
+  <TYPE>font-weight</TYPE>: <VALUE>normal</VALUE>;
+  <TYPE>font-style</TYPE>: <VALUE>normal</VALUE>;
+}
+<KEYWORD>@font-face</KEYWORD> { 
+  <TYPE>font-family</TYPE>: <VALUE>VeraMono</VALUE>;
+  <TYPE>src</TYPE>: <FUNCTION>url</FUNCTION>(<STRING>'../client/font/VeraMoIt.eot'</STRING>);  
+  <TYPE>font-weight</TYPE>: <VALUE>normal</VALUE>;
+  <TYPE>font-style</TYPE>: <VALUE>italic</VALUE>;
+}
+<KEYWORD>@font-face</KEYWORD> { 
+  <TYPE>font-family</TYPE>: <VALUE>VeraMono</VALUE>;
+  <TYPE>src</TYPE>: <FUNCTION>url</FUNCTION>(<STRING>'../client/font/VeraMoBd.eot'</STRING>);  
+  <TYPE>font-weight</TYPE>: <VALUE>bold</VALUE>;
+  <TYPE>font-style</TYPE>: <VALUE>normal</VALUE>;
+}
+<KEYWORD>@font-face</KEYWORD> { 
+  <TYPE>font-family</TYPE>: <VALUE>VeraMono</VALUE>;
+  <TYPE>src</TYPE>: <FUNCTION>url</FUNCTION>(<STRING>'../client/font/VeraMoBI.eot'</STRING>);  
+  <TYPE>font-weight</TYPE>: <VALUE>bold</VALUE>;
+  <TYPE>font-style</TYPE>: <VALUE>italic</VALUE>;
+}
+<COMMENT>/* Others */</COMMENT>
+<KEYWORD>@font-face</KEYWORD> { 
+  <TYPE>font-family</TYPE>: <VALUE>VeraMono</VALUE>;
+  <TYPE>src</TYPE>: <FUNCTION>url</FUNCTION>(<STRING>'../client/font/VeraMono.ttf'</STRING>);  
+  <TYPE>font-weight</TYPE>: <VALUE>normal</VALUE>;
+  <TYPE>font-style</TYPE>: <VALUE>normal</VALUE>;
+}
+<KEYWORD>@font-face</KEYWORD> { 
+  <TYPE>font-family</TYPE>: <VALUE>VeraMono</VALUE>;
+  <TYPE>src</TYPE>: <FUNCTION>url</FUNCTION>(<STRING>'../client/font/VeraMoIt.ttf'</STRING>);  
+  <TYPE>font-weight</TYPE>: <VALUE>normal</VALUE>;
+  <TYPE>font-style</TYPE>: <VALUE>italic</VALUE>;
+}
+<KEYWORD>@font-face</KEYWORD> { 
+  <TYPE>font-family</TYPE>: <VALUE>VeraMono</VALUE>;
+  <TYPE>src</TYPE>: <FUNCTION>url</FUNCTION>(<STRING>'../client/font/VeraMoBd.ttf'</STRING>);  
+  <TYPE>font-weight</TYPE>: <VALUE>bold</VALUE>;
+  <TYPE>font-style</TYPE>: <VALUE>normal</VALUE>;
+}
+<KEYWORD>@font-face</KEYWORD> { 
+  <TYPE>font-family</TYPE>: <VALUE>VeraMono</VALUE>;
+  <TYPE>src</TYPE>: <FUNCTION>url</FUNCTION>(<STRING>'../client/font/VeraMoBI.ttf'</STRING>);  
+  <TYPE>font-weight</TYPE>: <VALUE>bold</VALUE>;
+  <TYPE>font-style</TYPE>: <VALUE>italic</VALUE>;
+}
+
+
+
+
+
+
+
+
+
+
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.link</VARIABLE>, <VARIABLE>.link</VARIABLE>:<KEYWORD>visited</KEYWORD>
+{
+  <TYPE>text-decoration</TYPE>:<VALUE>underline</VALUE> <KEYWORD>!important</KEYWORD>;
+}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.link</VARIABLE>:<KEYWORD>hover</KEYWORD>
+{
+  <TYPE>text-decoration</TYPE>:<VALUE>none</VALUE> <KEYWORD>!important</KEYWORD>;
+}
+
+<VARIABLE>.luminous</VARIABLE> <KEYWORD>pre</KEYWORD>, <VARIABLE>.luminous</VARIABLE> <VARIABLE>.code_container</VARIABLE>
+{
+  <TYPE>font-size</TYPE>:<VALUE>inherit</VALUE> <KEYWORD>!important</KEYWORD>;
+  <TYPE>font-family</TYPE>:<VALUE>inherit</VALUE> <KEYWORD>!important</KEYWORD>;
+<COMMENT>/*   line-height:normal !important; */</COMMENT>
+  <TYPE>width</TYPE>:<VALUE>auto</VALUE> <KEYWORD>!important</KEYWORD>;
+}
+
+<VARIABLE>.luminous</VARIABLE> <KEYWORD>table</KEYWORD><VARIABLE>.code_container</VARIABLE>
+{
+<COMMENT>/*   overflow:hidden !important; */</COMMENT>
+  <TYPE>max-height</TYPE>: <NUMERIC>100%</NUMERIC>;
+}
+
+<VARIABLE>.luminous</VARIABLE> <KEYWORD>pre</KEYWORD>
+{
+<COMMENT>/*   overflow:hidden !important; */</COMMENT>
+  <TYPE>max-height</TYPE>:<NUMERIC>100%</NUMERIC> <KEYWORD>!important</KEYWORD>;
+}
+
+<KEYWORD>div</KEYWORD><VARIABLE>.code_container</VARIABLE>
+{
+  <TYPE>overflow</TYPE>:<VALUE>auto</VALUE>;
+  <TYPE>max-width</TYPE>:<NUMERIC>100%</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <COMMENT>/* Necessary for IE 7 */</COMMENT>
+  <TYPE>position</TYPE>:<VALUE>relative</VALUE> <KEYWORD>!important</KEYWORD>;
+}
+
+
+<KEYWORD>div</KEYWORD><VARIABLE>.luminous</VARIABLE> 
+{
+  <TYPE>position</TYPE>:<VALUE>relative</VALUE> <KEYWORD>!important</KEYWORD>;
+  <TYPE>font-size</TYPE>:<VALUE>inherit</VALUE>; 
+  <TYPE>text-align</TYPE>:<VALUE>left</VALUE> <KEYWORD>!important</KEYWORD>;
+  <TYPE>min-width</TYPE>:<NUMERIC>100%</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>max-width</TYPE>:<NUMERIC>100%</NUMERIC> <KEYWORD>!important</KEYWORD>; 
+  <TYPE>line-height</TYPE>: <NUMERIC>120%</NUMERIC> <KEYWORD>!important</KEYWORD>; <COMMENT>/*normal !important; */</COMMENT>
+}
+
+
+
+
+<COMMENT>/* IE &lt; 8 needs it like this */</COMMENT>
+<KEYWORD>div</KEYWORD><VARIABLE>.luminous</VARIABLE>, <VARIABLE>.luminous</VARIABLE> <VARIABLE>.line</VARIABLE>, <VARIABLE>.luminous</VARIABLE> <KEYWORD>pre</KEYWORD>
+{
+  <TYPE>font-family</TYPE>:  <STRING>"DejaVu Sans Mono"</STRING>, <STRING>"Bitstream Vera Sans Mono"</STRING>,  <VALUE>VeraMono</VALUE>, 
+    <STRING>"Andale Mono"</STRING>, <STRING>"Lucida Sans Typewriter"</STRING>,  <STRING>"FreeMono"</STRING>,  
+    <STRING>"Liberation Mono"</STRING>,  <STRING>"Consolas"</STRING>,<STRING>"Lucida Console"</STRING>, <VALUE>monospace</VALUE> <KEYWORD>!important</KEYWORD>;
+  
+  <TYPE>font-size</TYPE>:<VALUE>inherit</VALUE>; 
+  
+}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.line</VARIABLE>
+{
+
+  <TYPE>padding</TYPE>:<NUMERIC>0px</NUMERIC>;
+  <TYPE>border</TYPE>:<NUMERIC>0px</NUMERIC>;
+  <TYPE>margin</TYPE>:<NUMERIC>0px</NUMERIC>;
+  <TYPE>padding-left</TYPE>:<NUMERIC>1em</NUMERIC>;
+  
+  <TYPE>display</TYPE>:<VALUE>block</VALUE>;
+
+}
+
+<VARIABLE>.luminous</VARIABLE> <KEYWORD>pre</KEYWORD><VARIABLE>.code</VARIABLE>, <VARIABLE>.luminous</VARIABLE> <KEYWORD>pre</KEYWORD><VARIABLE>.line_numbers</VARIABLE> 
+{
+  <TYPE>font-size</TYPE>:<VALUE>inherit</VALUE> <KEYWORD>!important</KEYWORD>;
+  <TYPE>font-family</TYPE>:<VALUE>inherit</VALUE> <KEYWORD>!important</KEYWORD>;
+  
+  <TYPE>margin</TYPE>:<NUMERIC>0px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>position</TYPE>:<VALUE>relative</VALUE>;
+  <TYPE>padding</TYPE>:<NUMERIC>0px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>background</TYPE>:<VALUE>none</VALUE> <KEYWORD>!important</KEYWORD>;
+  <TYPE>overflow</TYPE>:<VALUE>hidden</VALUE>;
+}
+
+
+<KEYWORD>div</KEYWORD><VARIABLE>.luminous</VARIABLE> <KEYWORD>table</KEYWORD><VARIABLE>.code_container</VARIABLE> <KEYWORD>span</KEYWORD><VARIABLE>.line_number</VARIABLE>
+{
+  <TYPE>margin</TYPE>:<NUMERIC>0px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>text-align</TYPE>:<VALUE>center</VALUE> <KEYWORD>!important</KEYWORD>;
+}
+
+<KEYWORD>div</KEYWORD><VARIABLE>.luminous</VARIABLE> <KEYWORD>table</KEYWORD><VARIABLE>.code_container</VARIABLE> <VARIABLE>.line_number_emphasised</VARIABLE>
+{
+ <TYPE>font-weight</TYPE>:<VALUE>bold</VALUE>;
+}
+
+<KEYWORD>a</KEYWORD><VARIABLE>.line_number</VARIABLE>:<KEYWORD>hover</KEYWORD>
+{
+  <TYPE>text-decoration</TYPE>:<VALUE>underline</VALUE>;
+}
+
+<COMMENT>/* The table related rules only apply to the line numbered widget. */</COMMENT>
+<KEYWORD>div</KEYWORD><VARIABLE>.luminous</VARIABLE> <KEYWORD>table</KEYWORD><VARIABLE>.code_container</VARIABLE> <KEYWORD>td</KEYWORD><VARIABLE>.line_number_bar</VARIABLE>
+{
+  <TYPE>padding</TYPE>:<NUMERIC>0px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>vertical-align</TYPE>:<VALUE>top</VALUE> <KEYWORD>!important</KEYWORD>;
+  <TYPE>border-left</TYPE>:<NUMERIC>0px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>border-top</TYPE>:<NUMERIC>0px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>border-bottom</TYPE>:<NUMERIC>0px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>text-align</TYPE>:<VALUE>right</VALUE> <KEYWORD>!important</KEYWORD>;
+}
+
+<KEYWORD>div</KEYWORD><VARIABLE>.luminous</VARIABLE> <KEYWORD>table</KEYWORD><VARIABLE>.code_container</VARIABLE> <KEYWORD>td</KEYWORD><VARIABLE>.code</VARIABLE>
+{
+  <TYPE>padding</TYPE>:<NUMERIC>0px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>border</TYPE>:<NUMERIC>0px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>vertical-align</TYPE>:<VALUE>top</VALUE> <KEYWORD>!important</KEYWORD>;
+<COMMENT>/*   padding-left:1em !important; */</COMMENT>
+  <TYPE>width</TYPE>:<NUMERIC>100%</NUMERIC> <KEYWORD>!important</KEYWORD>;
+}
+
+<KEYWORD>div</KEYWORD><VARIABLE>.luminous</VARIABLE> <KEYWORD>table</KEYWORD><VARIABLE>.code_container</VARIABLE>
+{
+  <TYPE>border</TYPE>: <NUMERIC>0px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <COMMENT>/* Causes IE Bug    */</COMMENT>
+<COMMENT>/*   height:100% !important;  */</COMMENT>
+  <TYPE>width</TYPE>:<NUMERIC>100%</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>padding</TYPE>:<NUMERIC>0px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>border-collapse</TYPE>:<VALUE>collapse</VALUE> <KEYWORD>!important</KEYWORD>;
+  <TYPE>margin</TYPE>:<NUMERIC>0px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  
+}
+
+<COMMENT>/* None-line numbered widget */</COMMENT>
+<KEYWORD>div</KEYWORD><VARIABLE>.luminous</VARIABLE> <KEYWORD>div</KEYWORD><VARIABLE>.code</VARIABLE>
+{
+  <TYPE>padding-left</TYPE>:<NUMERIC>1em</NUMERIC> <KEYWORD>!important</KEYWORD>;
+}
+
+
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.metabar</VARIABLE>
+{
+  <TYPE>width</TYPE>:<NUMERIC>100%</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>background-color</TYPE>:<FUNCTION>rgb</FUNCTION>(<NUMERIC>202</NUMERIC>, <NUMERIC>202</NUMERIC>, <NUMERIC>202</NUMERIC>) <KEYWORD>!important</KEYWORD>;  
+<COMMENT>/*   background-color:rgba(202, 202, 202, 0.75); */</COMMENT>
+  <TYPE>border-bottom</TYPE>: <NUMERIC>1px</NUMERIC> <VALUE>solid</VALUE> <VALUE>black</VALUE> <KEYWORD>!important</KEYWORD>;
+  <TYPE>white-space</TYPE>:<VALUE>normal</VALUE> <KEYWORD>!important</KEYWORD>;
+  <TYPE>height</TYPE>:<NUMERIC>20px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>min-height</TYPE>:<NUMERIC>20px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.metabar_buttons_fixed</VARIABLE>
+{
+  <TYPE>position</TYPE>:<VALUE>absolute</VALUE> <KEYWORD>!important</KEYWORD>; 
+  <TYPE>right</TYPE>:<NUMERIC>1px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>top</TYPE>:<NUMERIC>0px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+
+  
+}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.metabar_buttons</VARIABLE> 
+{
+  <TYPE>white-space</TYPE>:<VALUE>normal</VALUE> <KEYWORD>!important</KEYWORD>;
+
+}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.metabar_buttons_floating</VARIABLE>
+{
+  <TYPE>position</TYPE>: <VALUE>fixed</VALUE> <KEYWORD>!important</KEYWORD>; 
+  <TYPE>z-index</TYPE>:<NUMERIC>2</NUMERIC> <KEYWORD>!important</KEYWORD>;  
+  <TYPE>padding-top</TYPE>:<NUMERIC>2px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>padding-bottom</TYPE>:<NUMERIC>2px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>min-height</TYPE>:<NUMERIC>16px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>border-width</TYPE>:<NUMERIC>1px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>border-style</TYPE>:<VALUE>solid</VALUE> <KEYWORD>!important</KEYWORD>;  
+  <TYPE>top</TYPE>:<NUMERIC>0px</NUMERIC>;
+  <TYPE>border-radius</TYPE>:<NUMERIC>1em</NUMERIC>; 
+  
+}
+
+
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.metabar_buttons</VARIABLE> <KEYWORD>a</KEYWORD>, 
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.metabar_buttons</VARIABLE> <KEYWORD>a</KEYWORD>:<KEYWORD>link</KEYWORD>,
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.metabar_buttons</VARIABLE> <KEYWORD>a</KEYWORD>:<KEYWORD>hover</KEYWORD>,
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.metabar_buttons</VARIABLE> <KEYWORD>a</KEYWORD>:<KEYWORD>active</KEYWORD>,
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.metabar_buttons</VARIABLE> <KEYWORD>a</KEYWORD>:<KEYWORD>visited</KEYWORD>,
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.luminous_clicker</VARIABLE>
+{
+  <TYPE>text-decoration</TYPE>:<VALUE>none</VALUE> <KEYWORD>!important</KEYWORD>;  
+  <TYPE>padding-left</TYPE>:<NUMERIC>8px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>padding-right</TYPE>:<NUMERIC>8px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>font-size</TYPE>:<NUMERIC>16px</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>background-repeat</TYPE>:<VALUE>no-repeat</VALUE> <KEYWORD>!important</KEYWORD>;
+  <TYPE>background-position</TYPE>:<VALUE>center</VALUE> <KEYWORD>!important</KEYWORD>; 
+  <TYPE>border</TYPE>: <VALUE>none</VALUE> <KEYWORD>!important</KEYWORD>;
+}
+
+<VARIABLE>.luminous_close_search_clicker</VARIABLE>
+{
+  <TYPE>background-image</TYPE>:<FUNCTION>url</FUNCTION>(<STRING>'../client/img/close.png'</STRING>) <KEYWORD>!important</KEYWORD>;
+}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.metabar_buttons</VARIABLE> <KEYWORD>a</KEYWORD><VARIABLE>.info</VARIABLE>
+{
+  <TYPE>background-image</TYPE>:<FUNCTION>url</FUNCTION>(<STRING>'../client/img/info.png'</STRING>) <KEYWORD>!important</KEYWORD>;
+
+}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.metabar_buttons</VARIABLE> <KEYWORD>a</KEYWORD><VARIABLE>.print</VARIABLE>
+{
+  <TYPE>background-image</TYPE>:<FUNCTION>url</FUNCTION>(<STRING>'../client/img/print.png'</STRING>) <KEYWORD>!important</KEYWORD>;
+
+}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.metabar_buttons</VARIABLE> <KEYWORD>a</KEYWORD><VARIABLE>.highlight</VARIABLE>
+{
+  <TYPE>background-image</TYPE>:<FUNCTION>url</FUNCTION>(<STRING>'../client/img/highlight.png'</STRING>) <KEYWORD>!important</KEYWORD>;
+
+}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.metabar_buttons</VARIABLE> <KEYWORD>a</KEYWORD><VARIABLE>.unhighlight</VARIABLE>
+{
+  <TYPE>background-image</TYPE>:<FUNCTION>url</FUNCTION>(<STRING>'../client/img/unhighlight.png'</STRING>) <KEYWORD>!important</KEYWORD>;
+}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.metabar_buttons</VARIABLE> <KEYWORD>a</KEYWORD><VARIABLE>.zoomout</VARIABLE>
+{
+  <TYPE>background-image</TYPE>:<FUNCTION>url</FUNCTION>(<STRING>'../client/img/zoom-out.png'</STRING>) <KEYWORD>!important</KEYWORD>;
+}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.metabar_buttons</VARIABLE> <KEYWORD>a</KEYWORD><VARIABLE>.zoomin</VARIABLE>
+{
+  <TYPE>background-image</TYPE>:<FUNCTION>url</FUNCTION>(<STRING>'../client/img/zoom-in.png'</STRING>) <KEYWORD>!important</KEYWORD>;
+}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.luminous_search_clicker</VARIABLE>
+{
+  <TYPE>background-image</TYPE>:<FUNCTION>url</FUNCTION>(<STRING>'../client/img/find.png'</STRING>) <KEYWORD>!important</KEYWORD>;
+}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.luminous_uncollapse_clicker</VARIABLE>
+{
+  <TYPE>background-image</TYPE>:<FUNCTION>url</FUNCTION>(<STRING>'../client/img/arrow-down.png'</STRING>) <KEYWORD>!important</KEYWORD>;
+}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.luminous_collapse_clicker</VARIABLE>
+{
+  <TYPE>background-image</TYPE>:<FUNCTION>url</FUNCTION>(<STRING>'../client/img/arrow-up.png'</STRING>) <KEYWORD>!important</KEYWORD>;
+}
+
+<VARIABLE>.luminous_info</VARIABLE>
+{
+  <TYPE>text-align</TYPE>:<VALUE>center</VALUE>;
+  <TYPE>position</TYPE>:<VALUE>absolute</VALUE>; 
+  <TYPE>left</TYPE>:<NUMERIC>0px</NUMERIC>;
+  <TYPE>z-index</TYPE>:<NUMERIC>1</NUMERIC>;
+  <TYPE>min-width</TYPE>:<NUMERIC>100%</NUMERIC>;  
+  <TYPE>width</TYPE>:<NUMERIC>100%</NUMERIC>;
+  <TYPE>display</TYPE>:<VALUE>inline-block</VALUE>;
+  <TYPE>margin</TYPE>:<NUMERIC>0px</NUMERIC>;
+
+  <TYPE>height</TYPE>:<NUMERIC>100%</NUMERIC>; 
+  <TYPE>top</TYPE>:<NUMERIC>0px</NUMERIC>;
+  <TYPE>white-space</TYPE>:<VALUE>normal</VALUE>; 
+  <TYPE>display</TYPE>:<VALUE>none</VALUE>;
+  <TYPE>overflow</TYPE>:<VALUE>auto</VALUE>;
+  
+}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.luminous_search_container</VARIABLE>
+{
+  <TYPE>position</TYPE>:<VALUE>fixed</VALUE>;
+  <TYPE>white-space</TYPE>:<VALUE>normal</VALUE>;
+  <TYPE>z-index</TYPE>:<NUMERIC>3</NUMERIC>;
+}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.luminous_search</VARIABLE>
+{
+  <TYPE>border</TYPE>: <NUMERIC>1px</NUMERIC> <VALUE>solid</VALUE> <VALUE>black</VALUE>;
+}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.user_highlight</VARIABLE>
+{
+  <TYPE>background-color</TYPE>:<NUMERIC>#00FF00</NUMERIC>;
+}
+
+<VARIABLE>.luminous</VARIABLE> <KEYWORD>pre</KEYWORD><VARIABLE>.plain</VARIABLE>
+{
+  <TYPE>margin</TYPE>:<NUMERIC>0px</NUMERIC>; 
+  <TYPE>padding-left</TYPE>:<NUMERIC>1em</NUMERIC> <KEYWORD>!important</KEYWORD>;
+}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.line_number_bar</VARIABLE> <KEYWORD>a</KEYWORD>
+{
+  <TYPE>text-decoration</TYPE>:<VALUE>none</VALUE>;
+}
+

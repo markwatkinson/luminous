@@ -1,0 +1,135 @@
+<COMMENT>/*</COMMENT>
+<COMMENT> * Copyright 2010 Mark Watkinson</COMMENT>
+<COMMENT> * </COMMENT>
+<COMMENT> * This file is part of Luminous.</COMMENT>
+<COMMENT> * </COMMENT>
+<COMMENT> * Luminous is free software: you can redistribute it and/or</COMMENT>
+<COMMENT> * modify</COMMENT>
+<COMMENT> * it under the terms of the GNU General Public License as published by</COMMENT>
+<COMMENT> * the Free Software Foundation, either version 3 of the License, or</COMMENT>
+<COMMENT> * (at your option) any later version.</COMMENT>
+<COMMENT> * </COMMENT>
+<COMMENT> * Luminous is distributed in the hope that it will be useful,</COMMENT>
+<COMMENT> * but WITHOUT ANY WARRANTY; without even the implied warranty of</COMMENT>
+<COMMENT> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</COMMENT>
+<COMMENT> * GNU General Public License for more details.</COMMENT>
+<COMMENT> * </COMMENT>
+<COMMENT> * You should have received a copy of the GNU General Public License</COMMENT>
+<COMMENT> * along with Luminous.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</COMMENT>
+<COMMENT> * </COMMENT>
+<COMMENT> */</COMMENT>
+
+
+<COMMENT>/*</COMMENT>
+<COMMENT> * Based on the Zenburn theme.</COMMENT>
+<COMMENT> * Colours largely taken from:</COMMENT>
+<COMMENT> https://spreadsheets.google.com/ccc?key=pKLGtBDTfcpZoRtJFr_eeAg&amp;hl=en#gid=0</COMMENT>
+<COMMENT> */</COMMENT>
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.character</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#DCA3A3</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.comment</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#7F9F7F</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.comment_note</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#DFDFDF</NUMERIC> <KEYWORD>!important</KEYWORD>; 
+  <TYPE>font-style</TYPE>:<VALUE>normal</VALUE> <KEYWORD>!important</KEYWORD>; <TYPE>font-weight</TYPE>:<VALUE>bold</VALUE> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.constant</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#DCA3A3</NUMERIC>; <TYPE>font-weight</TYPE>:<VALUE>bold</VALUE> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.esc</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#478ca3</NUMERIC>  <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.function</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#efef8f</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.heredoc</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#cc9393</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.htmltag</VARIABLE>{<TYPE>font-weight</TYPE>:<VALUE>bold</VALUE> <KEYWORD>!important</KEYWORD>; <TYPE>color</TYPE>:<NUMERIC>#e89393</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.keyword</VARIABLE>{<TYPE>font-weight</TYPE>:<VALUE>bold</VALUE> <KEYWORD>!important</KEYWORD>; <TYPE>color</TYPE>:<NUMERIC>#f0dfaf</NUMERIC> <KEYWORD>!important</KEYWORD>; }
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.numeric</VARIABLE> {<TYPE>color</TYPE>:<NUMERIC>#8cd0d3</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.operator</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#888888</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.obj</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#dfdfbf</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.oo</VARIABLE>{}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.preprocessor</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#ffcfaf</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.shebang</VARIABLE>{<TYPE>font-weight</TYPE>:<VALUE>bold</VALUE> <KEYWORD>!important</KEYWORD>; <TYPE>font-style</TYPE>:<VALUE>normal</VALUE> <KEYWORD>!important</KEYWORD>; 
+  <TYPE>color</TYPE>:<NUMERIC>#c0ffc0</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.string</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#cc9393</NUMERIC>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.type</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#dfdfbf</NUMERIC> <KEYWORD>!important</KEYWORD>; }
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.user_function</VARIABLE>{<TYPE>color</TYPE>: <NUMERIC>#BAAD88</NUMERIC> <KEYWORD>!important</KEYWORD>; <TYPE>font-weight</TYPE>:<VALUE>bold</VALUE> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.value</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#C0FFFF</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.variable</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#f0dfaf</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.doccomment</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#82a282</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.doctag</VARIABLE> {<TYPE>color</TYPE>:<NUMERIC>#d7afaf</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.docstr</VARIABLE> {<TYPE>color</TYPE>:<NUMERIC>#FF9B9B</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.docproperty</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#FFFF87</NUMERIC> <KEYWORD>!important</KEYWORD>; <TYPE>font-weight</TYPE>:<VALUE>bold</VALUE> <KEYWORD>!important</KEYWORD>;}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.diff_header_new</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#D7D7AF</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.diff_header_old</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#D7D7AF</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.diff_range</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#D7D7AF</NUMERIC> <KEYWORD>!important</KEYWORD>; }
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.diff_old</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#D7AFAF</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.diff_new</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#FFD7AF</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+
+
+<COMMENT>/* .luminous .lang_latex{color:#b1b1ff;} */</COMMENT>
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.latex_function</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#FFDCA8</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.latex_operator</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#888888</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.code</VARIABLE> {}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.long_delim</VARIABLE>{<TYPE>font-weight</TYPE>:<VALUE>bold</VALUE> <KEYWORD>!important</KEYWORD>;}
+
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.generics</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#adff5a</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+
+
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.regex</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#E6CDFF</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.regex_subpattern</VARIABLE>{<TYPE>font-weight</TYPE>:<VALUE>bold</VALUE> <KEYWORD>!important</KEYWORD>; 
+  <TYPE>color</TYPE>:<NUMERIC>#FF8D8D</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.regex_class_marker</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#7CB7E1</NUMERIC>; <TYPE>font-weight</TYPE>:<VALUE>bold</VALUE>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.regex_subpattern_marker</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#8FC08F</NUMERIC> <KEYWORD>!important</KEYWORD>; 
+  <TYPE>font-weight</TYPE>:<VALUE>bold</VALUE> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.regex_repeat_marker</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#b1b1ff</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.regex_operator</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#8FC08F</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.make_target</VARIABLE>{<TYPE>color</TYPE>:<NUMERIC>#FFD5FF</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.make_dep</VARIABLE>{<TYPE>color</TYPE>: <NUMERIC>#b1b1ff</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.whitespace_space</VARIABLE>{<TYPE>background-color</TYPE>:<NUMERIC>#ff5151</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.whitespace_tab</VARIABLE>{<TYPE>background-color</TYPE>:<NUMERIC>#a1b6ff</NUMERIC> <KEYWORD>!important</KEYWORD>;}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.link</VARIABLE>, <VARIABLE>.luminous</VARIABLE> <VARIABLE>.link</VARIABLE>:<KEYWORD>visited</KEYWORD>
+{
+  <TYPE>color</TYPE>:<NUMERIC>#C0FFC0</NUMERIC> <KEYWORD>!important</KEYWORD>;
+}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.link</VARIABLE>:<KEYWORD>hover</KEYWORD>
+{
+  <TYPE>color</TYPE>:<NUMERIC>#FFC0FF</NUMERIC> <KEYWORD>!important</KEYWORD>;
+}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.line_number_bar</VARIABLE>
+
+{
+  <TYPE>background-color</TYPE>:<NUMERIC>#444444</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>border-right</TYPE>:<NUMERIC>1px</NUMERIC> <VALUE>solid</VALUE> <NUMERIC>#5F5F5F</NUMERIC> <KEYWORD>!important</KEYWORD>;
+}
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.line_number</VARIABLE>
+{
+  <TYPE>color</TYPE>: <NUMERIC>#A8A8A8</NUMERIC> <KEYWORD>!important</KEYWORD>;
+}
+
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.code</VARIABLE>
+{
+  <TYPE>background-color</TYPE>:<NUMERIC>#3a3a3a</NUMERIC> <KEYWORD>!important</KEYWORD>;
+  <TYPE>color</TYPE>:<NUMERIC>#DCDCCC</NUMERIC> <KEYWORD>!important</KEYWORD>;
+}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.metabar_buttons_floating</VARIABLE>
+{
+  <TYPE>background-color</TYPE>:<NUMERIC>#D6CFFF</NUMERIC> <KEYWORD>!important</KEYWORD>;  
+  <TYPE>background-color</TYPE>:<FUNCTION>rgba</FUNCTION>(<NUMERIC>214</NUMERIC>, <NUMERIC>207</NUMERIC>, <NUMERIC>255</NUMERIC>, <NUMERIC>0.50</NUMERIC>) <KEYWORD>!important</KEYWORD>;    
+}
+
+
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.line_alt</VARIABLE>
+{
+  <TYPE>background-color</TYPE>: <NUMERIC>#404040</NUMERIC> <KEYWORD>!important</KEYWORD>;
+}
+
+<VARIABLE>.luminous</VARIABLE> <VARIABLE>.highlighted_line</VARIABLE>
+{
+  <TYPE>background-color</TYPE>:<NUMERIC>#6D6D6D</NUMERIC> <KEYWORD>!important</KEYWORD>;
+}

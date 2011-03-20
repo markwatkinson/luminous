@@ -1,0 +1,176 @@
+body
+{
+  font-family: sans-serif;
+  font-size:10pt;
+  padding:0px;
+  margin:0px;
+  background-color:#F6F6F6;  
+}
+
+h1 
+{
+  text-align:center;
+}
+
+h1, h2, h3, h4, h5{
+  text-shadow: #9C9C9C 1px 1px 1px;
+}
+h2 {  border-bottom: 1px solid #AAA;}
+
+
+span.heading1
+{
+  background-color:#C9D7F1;
+  border:1px solid #2974FF;
+  width:auto;
+  margin-left:auto;
+  margin-right:auto;
+  padding-left:1em;
+  padding-right:1em;
+}
+
+span.heading2
+{
+}
+
+span.heading3
+{
+  padding-left:1em;
+  padding-right:1em;
+  font-style: italic;
+}
+
+div.heading_content
+{
+  border: 1px solid;
+}
+
+a
+{
+  text-decoration: none;
+  color:#0066CC;
+  cursor:default;
+  border-bottom:1px dashed gray;
+  font-weight:bold;
+}
+.luminous a
+{
+  text-decoration: none;
+  color:#0066CC;
+  cursor:default;
+  border-bottom:none;
+  font-weight:normal;
+}
+
+a:hover
+{
+/*   background-color:#eee; */
+  
+  text-shadow: #9C9C9C 1px 0px 5px;
+}
+
+a img {border:0px}
+
+.code_example
+{
+  border:1px dashed blue;
+  font-family: monospace;
+  font-size:13px;
+  white-space:pre;
+  background-color:#F9F9F9;
+  max-width:70%;
+  min-width:40%;
+  overflow:auto;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.code_example_highlighted
+{
+  border:1px dashed blue;
+  font-size:13px;
+  background-color:#F9F9F9;
+  max-width:70%;
+  min-width:40%;
+  margin-left:auto;
+  margin-right:auto;
+  display:block;
+}
+
+
+.page
+{
+  padding:1em;
+  border:1px solid #B5CFFF;
+  width:90%;
+  margin-left:auto;
+  margin-right:auto;
+  background-color:white;  
+  border-radius:1em;  
+  -moz-border-radius:1em;
+  
+ -moz-box-shadow: 1em 0.5em 1em -0.5em #B7D0FB;
+ -webkit-box-shadow: 1em 0.5em 1em -0.5em #B7D0FB;
+  box-shadow: 1em 0.5em 1em -0.5em #B7D0FB;
+  
+}
+.rounded
+{
+  border-left:1px solid #B5CFFF;
+  border-right:1px solid #B5CFFF;
+  background-color:white;
+  margin:auto;
+  min-width:0px;
+  height:1px;
+}
+.rounded_top
+{
+  border-top:1px solid #B5CFFF;
+}
+
+.header
+{
+  color:black;
+  padding-left:3em;
+  padding-top:2px;
+  background-image:url(/img/headerblend2.png);
+  background-repeat:repeat-x;
+  height:50px;
+  text-align:center;
+  font-size:larger;
+}
+
+.menubar_container
+{
+  padding-left:0.5em;
+  padding-bottom:0.5em;
+}
+
+.menubar
+{  
+  /*   border: 1px solid #C9D7F1; */
+  padding-left:0.5em;
+  padding-right:0.5em;
+  /*   background-color:#F6F6F6 */
+}
+
+
+
+
+
+table
+{
+  border:1px solid;
+  border-collapse:collapse;
+}
+
+td
+{
+  border:1px solid;
+}
+
+td.title, tr.title
+{
+  background-color:#C9D7F1;
+  font-weight:bold;
+}
