@@ -130,7 +130,9 @@
 .luminous .xml .string {
   color: #0057AE !important;
 }
-
+.luminous .xml .comment {
+  color: gray !important;
+}
 
 
 
