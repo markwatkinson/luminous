@@ -156,10 +156,9 @@ class LuminousDiffScanner extends LuminousScanner {
       }
       else $this->scan('/.*/');
 
-      
-      assert($this->pos() > $index);
-      assert($this->match() !== null);
-      $this->record($this->match(), $tok);
+      // previous else clause can capture empty strings
+      if ($this->match !== '') 
+        $this->record($this->match(), $tok);
       
       assert($this->eol());
       // consume newline
