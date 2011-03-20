@@ -39,7 +39,8 @@ class LuminousScanners
    * \param language_name may be either a string or an array of strings, if
    *    multiple languages are to use the same scanner
    * \param $scanner the name of the LuminousScanner object as string, (not an
-   * actual instance!)
+   * actual instance!). If the file is actually a dummy file (say for includes),
+   * leave $scanner as \c null.
    * \param lang_description a human-readable description of the language.
    * \param file the path to the file in which the scanner is defined.
    * \param dependencies optional, a string or array of strings representing
@@ -52,6 +53,8 @@ class LuminousScanners
   public function AddScanner($language_name, $scanner,
     $lang_description, $file=null, $dependencies=null)
   {
+    
+    $dummy = $scanner === null;
     $d = array();
     if (is_array($dependencies))
       $d = $dependencies;
@@ -60,21 +63,16 @@ class LuminousScanners
     
     $insert = array('scanner'=>$scanner,
                     'file'=>$file, 
-                    'dependencies'=>$d);
-                    
-    if (is_array($language_name))
-    {
-      foreach($language_name as $l)
-      {
-        $this->lookup_table[$l] = $insert;
+                    'dependencies'=>$d,        
+                    );
+    if (!is_array($language_name))
+      $language_name = array($language_name);
+    foreach($language_name as $l) {
+      $this->lookup_table[$l] = $insert;
+      if (!$dummy)
         $this->AddDescription($lang_description, $l);
-      }
     }
-    else
-    {      
-      $this->lookup_table[$language_name] = $insert;
-      $this->AddDescription($lang_description, $language_name);
-    }
+    
   }
   
   private function AddDescription($language_name, $language_code)

@@ -40,13 +40,21 @@ class _Luminous {
     // we should probably hide this in an include for neatness
     // when it starts growing.
     $language_dir = Luminous::root() . '/languages/';
+    
+    
+    // this is a dummy file which includes ECMAScript dependencies in a 
+    // non-circular way.
+    $this->scanners->AddScanner('ecma-includes', null, null, 
+      "$language_dir/include/ecma.php");
+      
 
 
     // BUG: we have circular dependencies with ECMAScript.
     // ActionScript depends on HTML (for XML literals), which
     // depends on JS depends on HTML again (for XML literals)
     $this->scanners->AddScanner(array('as', 'actionscript'),
-    'LuminousActionScriptScanner', 'ActionScript', "$language_dir/as.php", array('xml', 'ecma'));
+    'LuminousActionScriptScanner', 'ActionScript', "$language_dir/as.php", 
+    'ecma');
     
     $this->scanners->AddScanner(array('c', 'cpp', 'h', 'hpp', 'cxx', 'hxx'),
       'LuminousCppScanner', 'C/C++', "$language_dir/cpp.php");
@@ -62,14 +70,15 @@ class _Luminous {
       array('js', 'css'));
       
     $this->scanners->AddScanner(array('ecma', 'ecmascript'),
-      'LuminousECMAScriptScanner', 'ECMAScript', "$language_dir/ecmascript.php");
+      'LuminousECMAScriptScanner', 'ECMAScript', 
+      "$language_dir/ecmascript.php", 'ecma-includes');
 
     $this->scanners->AddScanner('java',
       'LuminousJavaScanner', 'Java', "$language_dir/java.php");
       
     $this->scanners->AddScanner(array('js', 'javascript'),
       'LuminousJavaScriptScanner', 'JavaScript', "$language_dir/javascript.php",
-      array('xml', 'ecma'));
+      array('ecma'));
       
     $this->scanners->AddScanner('php',
       'LuminousPHPScanner', 'PHP', "$language_dir/php.php",
@@ -77,6 +86,7 @@ class _Luminous {
       
     $this->scanners->AddScanner(array('python', 'py'),
       'LuminousPythonScanner', 'Python', "$language_dir/python.php");
+      
     $this->scanners->AddScanner(array('sql', 'mysql'),
       'LuminousSQLScanner', 'SQL', "$language_dir/sql.php");
   }
