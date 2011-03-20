@@ -215,7 +215,7 @@ class LuminousFilters {
 
   static function upper_to_constant($token) {
     // check for this because it may have been mapped to a function or something
-    if ($token[0] === 'IDENT' && preg_match('/^[A-Z_]+$/', $token[1]))
+    if ($token[0] === 'IDENT' && preg_match('/^[A-Z_][A-Z_0-9]{3,}$/', $token[1]))
       $token[0] = 'CONSTANT';
     return $token;
   }
