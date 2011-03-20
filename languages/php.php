@@ -16,7 +16,7 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
     
     $this->add_pattern('START', '/<\?(php|=)?/'); 
     $this->add_pattern('TERM', '/\?>/'); 
-    $this->add_pattern('COMMENT', '% (?://|\#) .* (?=\\?>|$)  %xm');
+    $this->add_pattern('COMMENT', '% (?://|\#) .*? (?=\\?>|$)  %xm');
     $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_ML); 
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);

@@ -3,11 +3,18 @@
 class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
   
   private $child_state = null;
+
+  public $scripts = true;
   
+  // XML literals are part of several languages. Settings this makes the scanner
+  // halt as soon as it pops the its root tag from the stack, so no trailing 
+  // code is consumed.
+  public $xml_literal = false;
+  private $tag_stack = array();
   function __construct($src=null) {
    
 
-    $this->dirty_exit_recoveries = array(      
+    $this->dirty_exit_recoveries = array(
       'DSTRING' => '/(?: [^\\\\">]+ | \\\\[^>])*("|$|(?=>))/',
       'SSTRING' => "/(?: [^\\\\'>]+ | \\\\[^>])*('|$|(?=>))/",
       'COMMENT1' => '/.*?(?:-->|$)/s',
@@ -29,13 +36,13 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
   
   
   function scan_child($lang) {
-    assert (isset($this->child_scanners[$lang])) or die("No such child scanner: $lang");    
+    assert (isset($this->child_scanners[$lang])) or die("No such child scanner: $lang");
     $scanner = $this->child_scanners[$lang];   
     $scanner->pos($this->pos());
     $substr = $scanner->main();
     $this->tokens[] = array(null, $scanner->tagged(), true);
     $this->pos($scanner->pos());
-    if (!$scanner->clean_exit) {
+    if ($scanner->interrupt) {
       $this->child_state = array($lang, $this->pos());
     } else {
       $this->child_state = null;
@@ -50,29 +57,35 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
     }
     $this->add_pattern('', '/</');
     $this->state_ = 'global';
-    
-    $js = new LuminousJSScanner($this->string());
-    $js->embedded_server = $this->embedded_server;
-    $js->embedded_html = true;
-    $js->init();
-    
-    $css = new LuminousCSSScanner($this->string());
-    $css->embedded_server = $this->embedded_server;
-    $css->embedded_html = true;
-    $css->init();
-    
-    $this->add_child_scanner('js', $js);
-    $this->add_child_scanner('css', $css);
+    if ($this->scripts) {
+      $js = new LuminousJSScanner($this->string());
+      $js->embedded_server = $this->embedded_server;
+      $js->embedded_html = true;
+      $js->init();
+
+      $css = new LuminousCSSScanner($this->string());
+      $css->embedded_server = $this->embedded_server;
+      $css->embedded_html = true;
+      $css->init();
+
+      $this->add_child_scanner('js', $js);
+      $this->add_child_scanner('css', $css);
+    }
   }
   
+  private $tagname = '';
+  private $expecting = '';
+  
   function main() {
-    
-    $tagname = '';
-    
-    $expecting = '';
     $this->start();
-    
+    $this->interrupt = false;
     while (!$this->eos()) {
+      $index = $this->pos();
+      
+      if ($this->embedded_server &&  $this->peek(2) === '<?') {
+        $this->interrupt = true;
+        break;
+      }      
       
       if (!$this->clean_exit) {
         $tok = $this->resume();
@@ -92,11 +105,17 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
           $skip = $next[1] - $this->pos();
           $this->record($this->get($skip), null);
           if ($next[0] === 'TERM') {
+//             $this->interrupt = true;
             break;
           }
         }
+      } else {
+        
       }
-      $index = $this->pos();      
+
+
+      
+      $index = $this->pos();
       $c = $this->peek();
       
       $tok = null;
@@ -123,47 +142,53 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
         } else {
           // check for <script>          
           $this->state_ = 'tag';
-          $expecting = 'tagname';
+          $this->expecting = 'tagname';
           $get = true;
         }
       }
       elseif($c === '>') {
         $get = true; 
         $this->state_ = 'global';
-        if ($tagname === 'script' || $tagname === 'style') {
+        if ($this->scripts && ($this->tagname === 'script' || $this->tagname === 'style')) {
           $this->record($this->get(), null);          
-          $this->scan_child( ($tagname === 'script')? 'js' : 'css');
-          continue;          
+          $this->scan_child( ($this->tagname === 'script')? 'js' : 'css');
+          continue;
         }
-        $tagname = '';
+        $this->tagname = '';
+      }
+      elseif($in_tag && $this->scan('@/\s*>@')) {
+        $this->state_ = 'global';
+        array_pop($this->tag_stack);
       }
       elseif($in_tag && 
-        $c === "'" && $this->scan("/' (?: [^'\\\\>]+ | \\\\.)* (?:'|$|(?=>))/xs")) {          
+        $c === "'" && $this->scan("/' (?: [^'\\\\>]+ | \\\\.)* (?:'|$|(?=>))/xs")) {
         $tok = 'SSTRING';
-        $expecting = '';
+        $this->expecting = '';
       }
       
       elseif($in_tag && 
         $c === '"' && $this->scan('/" (?: [^"\\\\>]+ | \\\\.)* (?:"|$|(?=>))/xs')) {
         $tok = 'DSTRING';
-        $expecting = '';
+        $this->expecting = '';
       }
       elseif($in_tag && $this->scan('/[^\s=<>]+/')) {
-        if ($expecting === 'tagname') {
+        if ($this->expecting === 'tagname') {
           $tok = 'HTMLTAG';
-          $expecting = '';
-          $tagname = strtolower($this->match());
+          $this->expecting = '';
+          $this->tagname = strtolower($this->match());
+          if ($this->tagname[0] === '/') array_pop($this->tag_stack);
+          else $this->tag_stack[] = $this->tagname;
         }
-        elseif($expecting === 'value') {
+        elseif($this->expecting === 'value') {
           $tok = 'VALUE'; // val as in < a href=*/index.html*
-          $expecting = '';
+          $this->expecting = '';
         }
         else {
           $tok = 'TYPE';     // attr, as in <a *HREF*= .... 
         }
       }
       elseif($in_tag && $c === '=') {
-        $expecting = 'value';
+        $this->expecting = 'value';
         $get = true;
       }
       else $get = true;
@@ -171,6 +196,10 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
 
       $this->record($get? $this->get(): $this->match(), $tok);
       assert ($index < $this->pos()) or die("Failed to consume for $tok");
+
+      if ($this->xml_literal && $this->state_ !== 'tag' && empty($this->tag_stack)) {
+        return;
+      }
     }
   }
   

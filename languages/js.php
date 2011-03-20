@@ -11,6 +11,8 @@ class LuminousJSScanner extends LuminousEmbeddedWebScript {
   // operators vs regexes.
   private $tokens_ = array(); 
   
+  private $child_state = null;
+  
   function __construct($src=null) {
     
     $this->rule_tag_map = array(
@@ -49,7 +51,7 @@ class LuminousJSScanner extends LuminousEmbeddedWebScript {
       'undefined', 'window'));
   }
   
-  static function is_regex($tokens) {
+  static function is_operand($tokens) {
     $i = count($tokens);
     while ($i--) {
       $t = $tokens[$i];
@@ -99,11 +101,37 @@ class LuminousJSScanner extends LuminousEmbeddedWebScript {
       $this->add_pattern('STOP', $this->stop_pattern);
     }
     
+    $xml_scanner = new LuminousHTMLScanner($this->string());
+    $xml_scanner->xml_literal = true;
+    $xml_scanner->scripts = false;
+    $xml_scanner->embedded_server = $this->embedded_server;
+    $xml_scanner->init();
+    $xml_scanner->pos($this->pos());
+    $this->add_child_scanner('xml', $xml_scanner);
   }
+  
+  
+  
+  
+  // c+p from HTML scanner
+  function scan_child($lang) {
+    assert (isset($this->child_scanners[$lang])) or die("No such child scanner: $lang");
+    $scanner = $this->child_scanners[$lang];   
+    $scanner->pos($this->pos());
+    $substr = $scanner->main();
+    $this->record($scanner->tagged(), 'XML', true);
+    $this->pos($scanner->pos());
+    if ($scanner->interrupt) {
+      $this->child_state = array($lang, $this->pos());
+    } else {
+      $this->child_state = null;
+    }
+  } 
+
   
   function main() {
     $this->start();
-    
+    $this->interrupt = false;
     while (!$this->eos()) {
       $index = $this->pos();
       $tok = null;
@@ -113,6 +141,11 @@ class LuminousJSScanner extends LuminousEmbeddedWebScript {
       if (!$this->clean_exit) {
         $tok = $this->resume();
       }
+      if ($this->child_state !== null) {
+        $this->scan_child($this->child_state[0]);
+        continue;
+      }
+      
       elseif (($rule = $this->next_match()) !== null) {
         $tok = $rule[0];
         if ($rule[1] > $index) {
@@ -121,11 +154,12 @@ class LuminousJSScanner extends LuminousEmbeddedWebScript {
       } else {
         $this->record(substr($this->string(), $index), null);
         $this->clean_exit = true;
+        $this->interrupt = false;
         break;
       }
       
-     if ($tok === 'SLASH') {
-      if (self::is_regex($this->tokens_)) {
+      if ($tok === 'SLASH') {
+        if (self::is_operand($this->tokens_)) {
         $this->unscan();
         assert ($this->peek() === '/');
         $tok = 'REGEX';
@@ -135,7 +169,23 @@ class LuminousJSScanner extends LuminousEmbeddedWebScript {
           $tok = 'OPERATOR';
         }
       }
+      elseif ($this->match() === '<') {
+        // confusing function name, actually checks operator/operand position
+        if (self::is_operand($this->tokens_)) {
+          // XML literal. TODO, we need a dedicated XML scanner which will
+          // terminate when it it runs out of tags.
+          $this->unscan();
+          $this->scan_child('xml');
+          if ($this->embedded_server && $this->peek(2) === '<?') {
+            $this->interrupt = true;
+            break;
+          }
+          continue;
+        }
+      }
+
       elseif ($tok === 'STOP') {
+        if ($this->match() === '<?') $this->interrupt = true;
         $this->unscan();
         break;
       }
@@ -147,8 +197,7 @@ class LuminousJSScanner extends LuminousEmbeddedWebScript {
         && $this->script_break($tok)
       ) 
         break;
-      
-      assert($this->pos() > $index) or die("$tok didn't consume anything");
+      assert($this->pos() > $index) or die("'$tok' didn't consume anything");
       $this->tokens_[] = $tok;
       
       $tag = $tok;

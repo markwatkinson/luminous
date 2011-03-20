@@ -634,7 +634,7 @@ class LuminousScanner extends Scanner {
       $array[$m] = true;
     }
     $this->ident_map[$name] = $array;
-  }  
+  }
   
   function skip_whitespace() {
     if (ctype_space($this->peek())) {
@@ -678,12 +678,19 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
   public $server_tags = '<?';
   public $script_tags;
   
+  
+  /** specifies whether or not we reached an interrupt by a server-side 
+    * script block */    
+  public $interrupt = false;
+  
   /** 
    * Signifies whether the program exited due to inconvenient interruption by 
    * a parent language (i.e. a server-side langauge), or whether it reached 
    * a legitimate break.
    */
   public $clean_exit = true;
+  
+  
   
   
   protected $child_scanners = array();
@@ -725,6 +732,7 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
       return;
     }
     $this->exit_state = $state;
+    $this->interrupt = true;
     $this->clean_exit = false;
   }
   
@@ -737,8 +745,10 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
   function resume() {
     assert (!$this->clean_exit) or die();
     $this->clean_exit = true;
+    $this->interrupt = false;
     if (!isset($this->dirty_exit_recovery[$this->exit_state])) {
-      assert(0) or die("No such state exit data: {$this}");
+      echo "No such state exit data: {$this->exit_state}";
+      assert(0);
       return null;
     }
     $pattern = $this->dirty_exit_recovery[$this->exit_state];

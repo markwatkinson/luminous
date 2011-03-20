@@ -40,6 +40,9 @@ class _Luminous {
     // we should probably hide this in an include for neatness
     // when it starts growing.
     $language_dir = Luminous::root() . '/languages/';
+
+    $this->scanners->AddScanner(array('as', 'actionscript'),
+      'LuminousActionScriptScanner', 'ActionScript', "$language_dir/as.php", 'js');
     
     $this->scanners->AddScanner(array('c', 'cpp', 'h', 'hpp', 'cxx', 'hxx'),
       'LuminousCppScanner', 'C/C++', "$language_dir/cpp.php");
@@ -53,9 +56,13 @@ class _Luminous {
     $this->scanners->AddScanner(array('html', 'htm', 'xml'),
       'LuminousHTMLScanner', 'HTML/XML', "$language_dir/html.php",
       array('js', 'css'));
+
+    $this->scanners->AddScanner('java',
+      'LuminousJavaScanner', 'Java', "$language_dir/java.php");
       
     $this->scanners->AddScanner('js',
-      'LuminousJSScanner', 'JavaScript', "$language_dir/js.php");
+      'LuminousJSScanner', 'JavaScript', "$language_dir/js.php",
+      'html');
       
     $this->scanners->AddScanner('php',
       'LuminousPHPScanner', 'PHP', "$language_dir/php.php",
