@@ -115,7 +115,7 @@
 
 
 .luminous .xml {
-  color: black !important;  
+  color: #666 !important;
 }
 .luminous .xml * {
   color: black !important;  
@@ -125,7 +125,7 @@
 }
 .luminous .xml .htmltag {
   color: #00892C !important;  
-  font-weight: normal !important;
+/*   font-weight: normal !important; */
 }
 .luminous .xml .string {
   color: #0057AE !important;
