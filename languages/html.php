@@ -136,8 +136,8 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
           // urgh
           elseif($this->scan('/<!\\[CDATA\\[.*?(?:\\]\\]>|$)/is')) 
             $tok = 'CDATA';
-          elseif($this->scan('/<!--.*?-->/s')) $tok = 'COMMENT1';
-          elseif($this->scan('/<!.*?>/s')) $tok = 'COMMENT2';
+          elseif($this->scan('/<!--.*?(?:-->|$)/s')) $tok = 'COMMENT1';
+          elseif($this->scan('/<!.*?(?:>|$)/s')) $tok = 'COMMENT2';
           else assert(0);
         } else {
           // check for <script>          
