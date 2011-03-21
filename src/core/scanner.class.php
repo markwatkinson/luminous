@@ -308,6 +308,34 @@ class Scanner {
 #    return $this->__check($pattern, false, true, true, true);
 #  }
 
+  function get_next($patterns) {
+    $next = -1;
+    $match = null;
+    foreach($patterns as $p) {
+      $index = $this->ss->match($pattern, $this->index, $m);
+      if ($index === false) continue;
+      if ($next === -1 || $index < $next) {
+        $next = $index;
+        $match = $next;
+      }
+    }
+    return array($next, $match);
+  }
+
+  function get_next_strpos($patterns) {
+    $next = -1;
+    $match = null;
+    foreach($patterns as $p) {
+      $index = strpos($this->src, $p, $this->index);
+      if ($index === false) continue;      
+      if ($next === -1 || $index < $next) {
+        $next = $index;
+        $match = $p;
+      }
+    }
+    return array($next, $match);
+  }
+
 
   /**
    * Adds a predefined pattern which is visible to next_match.

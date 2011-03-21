@@ -79,6 +79,9 @@ class _Luminous {
     $this->scanners->AddScanner('json',
       'LuminousJSONScanner', 'JSON', "$language_dir/json.php");
       
+    $this->scanners->AddScanner('ruby',
+      'LuminousRubyScanner', 'Ruby', "$language_dir/ruby.php");
+      
     $this->scanners->AddScanner('php',
       'LuminousPHPScanner', 'PHP', "$language_dir/php.php",
       array('html'));
