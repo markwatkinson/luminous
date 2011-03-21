@@ -8,17 +8,10 @@
  *   heredocs
  *   balanced AND NESTED string/regex delimiters
  *   interpolation
+ *
+ * disclaimer: I don't actually know ruby.
  */
 
-/*
- * TODO: This is very incomplete right now. We have got a skeletal
- * and badly tested implementation consisting of:
- * balanced/nested string delimiters and interpolation,
- * numerics, $@ variables, ...
- *
- * We currently need to do AT LEAST:
- *  keywords, slash delimited regexen, heredoc,
- */
 
 class LuminousRubyScanner extends LuminousScanner {
 
@@ -89,6 +82,46 @@ class LuminousRubyScanner extends LuminousScanner {
       ));
   }
 
+  protected function is_regex() {
+    for($i=count($this->tokens)-1; $i>=0; $i--) {
+      $tok = $this->tokens[$i];
+      if ($tok[0] === 'COMMENT') continue;
+      elseif ($tok[0] === 'OPERATOR') return true;
+      elseif ($tok[1] === '(' || $tok[1] === ',' || $tok[1] === '{' ||
+          $tok[1] === '[') return true;
+      elseif($tok[0] === null) continue;
+      elseif ($tok[0] === 'IDENT') {
+        switch(rtrim($tok[1], '!?')) {
+          
+          // this is by no means exhaustive. Ruby doesn't enforce that you
+          // use brackets around methods' argument lists, which means we
+          // really have no idea if the preceding identifier is a variable,
+          // like  x=0;y=1;z=2;   x / y / z
+          // or if x is a method which takes a regex.
+          // we're guessing at best. Ruby only has itself to blame.
+          case 'split':
+          case 'index':
+          case 'match':
+          case 'case':
+          case 'end':
+          case 'if':
+          case 'or':
+          case 'and':
+          case 'when':
+          case 'until':
+          case 'print':
+            return true;
+        }
+        if (strpos($tok[1], 'scan' ) !== false) return true;
+        if (strpos($tok[1], 'sub') !== false) return true;
+        return false;
+        
+      }
+      return false;
+    }
+    return true; // no preceding tokens, presumably a code fragment.
+  }
+
 
 
   public function main() {
@@ -102,7 +135,6 @@ class LuminousRubyScanner extends LuminousScanner {
       // interpolation is handled by passing the string down to a sub-scanner,
       // which is expected to figure out where the interpolation ends.
 
-      // TODO, all of these closing delimiters need to test for escaping
       if (($s = $this->state()) !== null) {
         $balanced = $s[1] !== $s[2];
         $interp = $s[4];
@@ -250,6 +282,7 @@ class LuminousRubyScanner extends LuminousScanner {
       elseif (($c === '"' || $c === "'" || $c === '`' || $c === '%') &&
         $this->scan('/[\'"`]|%([qQrswWx]?)(?![[:alnum:]])/')) {
         $interpolation = false;
+        $type = 'STRING';
         $delimiter = $this->match();
         if ($this->match() === '"') {
           $interpolation = true;
@@ -260,14 +293,24 @@ class LuminousRubyScanner extends LuminousScanner {
           $m1 = $this->match_group(1);
           if ($m1 === 'Q' || $m1 === 'r' || $m1 === 'W' || $m1 === 'x')
             $interpolation = true;
+          if ($m1 === 'x') $type = 'FUNCTION';
+          elseif($m1 === 'r') $type = 'REGEX';
         }
-        $this->state_[] = array('STRING', $delimiter, self::balance_delimiter($delimiter),
+        $this->state_[] = array($type, $delimiter, self::balance_delimiter($delimiter),
           $this->match_pos(), $interpolation);
       }
       elseif( (ctype_alpha($c) || $c === '_') &&
-        $this->scan('/[_a-zA-Z]\w*[!?]?/'))
+        $this->scan('/[_a-zA-Z]\w*[!?]?/')) {
         $this->record($this->match(), 'IDENT');
-      elseif($this->scan('/[!%^&*\-+=:;|<>\/?]+/'))
+      }
+      elseif($c === '/' && $this->is_regex()) {
+        $m = $this->scan('% / (?: [^\\\\/]+ | \\\\.) * (?: / [iomx]* | $) %x');
+        assert($m !== null);
+        $this->record($m, 'REGEX');
+      }
+      
+      
+      elseif($this->scan('/[~!%^&*\-+=:;|<>\/?]+/'))
         $this->record($this->match(), 'OPERATOR');
       else {
         $this->record($this->get(), null);
