@@ -597,7 +597,8 @@ class LuminousScanner extends Scanner {
     $this->tokens = array();
   }
   
-  function record($string, $type, $pre_escaped=false) {    
+  function record($string, $type, $pre_escaped=false) {
+    if ($string === null) throw new Exception('Tagging null string');
     $this->tokens[] = array($type, $string, $pre_escaped);
   }
   

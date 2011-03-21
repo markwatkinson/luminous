@@ -125,7 +125,7 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
   // c+p from HTML scanner
   function scan_child($lang) {
     assert (isset($this->child_scanners[$lang])) or die("No such child scanner: $lang");
-    $scanner = $this->child_scanners[$lang];   
+    $scanner = $this->child_scanners[$lang];
     $scanner->pos($this->pos());
     $substr = $scanner->main();
     $this->record($scanner->tagged(), 'XML', true);
