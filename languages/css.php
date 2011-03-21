@@ -66,7 +66,8 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
         $this->scan('/#[a-fA-F0-9]{3}(?:[a-fA-F0-9]{3})?/'))
         $tok = 'NUMERIC';
       elseif($in_block && (ctype_digit($c) || $c === '-') 
-        && $this->scan('/-?(?>\d+)(\.(?>\d+))?(?:em|px|ex|ch|mm|cm|in|pt|%)?/')) {
+        && $this->scan('/-?(?>\d+)(\.(?>\d+))?(?:em|px|ex|ch|mm|cm|in|pt|%)?/')
+        !== null) {
         $tok = 'NUMERIC';
       }
       elseif(( ctype_alpha($c) || $c === '!' || $c === '@' || $c === '_' || $c === '-' )
