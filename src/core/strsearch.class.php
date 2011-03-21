@@ -26,10 +26,12 @@ class LuminousStringSearch
     $r = false;
     if (isset($this->cache[$search])) {
       $a = $this->cache[$search];
-      if ($a === false) return;
+      if ($a === false) return false;
       
       $r = $a[0];
       $matches = $a[1];
+      assert($matches !== null);
+      
       if ($r >= $index)
         return $r;
     }
@@ -46,7 +48,7 @@ class LuminousStringSearch
       $v = $v[0];
 
     $this->cache[$search] = array($r, $matches_);
-        
+    
     $matches = $matches_;
     return $r;
   }
