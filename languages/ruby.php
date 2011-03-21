@@ -106,16 +106,18 @@ class LuminousRubyScanner extends LuminousScanner {
       if (($s = $this->state()) !== null) {
         $balanced = $s[1] !== $s[2];
         $interp = $s[4];
-        $next_patterns = array($s[1], $s[2]);
-        if ($interp) $next_patterns[] = '#{';
-        $next = $this->get_next_strpos($next_patterns);
+        $template = '/(?<!\\\\)(?:\\\\\\\\)*%s/';
+        $next_patterns = array(sprintf($template, preg_quote($s[1], '/')),
+          sprintf($template, preg_quote($s[2], '/')));
+        if ($interp) $next_patterns[] = '/\#\{/';
+        $next = $this->get_next($next_patterns);
         $old_pos = $this->pos();
         if ($next[0] === -1)
           $this->pos(strlen($this->string()));
         else
-          $this->pos($next[0] + strlen($next[1]));
+          $this->pos($next[0] + strlen($next[1][0]));
         
-        if($next[1] === '#{') {
+        if($next[1][0] === '#{') {
           $i = count($this->state_);
           while($i--) {
             $s_ = $this->state_[$i];
@@ -137,7 +139,7 @@ class LuminousRubyScanner extends LuminousScanner {
           $this->state_[$i][3] = $this->pos();
 
         }
-        elseif ($balanced && $next[1] === $s[1]) { // balanced nesting
+        elseif ($balanced && $next[1][0] === $s[1]) { // balanced nesting
           $this->state_[] = array(null, $s[1], $s[2], null, $interp);
         }
         else {
@@ -246,10 +248,10 @@ class LuminousRubyScanner extends LuminousScanner {
         }
       }
       elseif (($c === '"' || $c === "'" || $c === '`' || $c === '%') &&
-        $this->scan('/[\'"`]|%([qQrswWx])(?![[:alnum:]])/')) {
+        $this->scan('/[\'"`]|%([qQrswWx]?)(?![[:alnum:]])/')) {
         $interpolation = false;
         $delimiter = $this->match();
-        if ($this->match() === '"') {          
+        if ($this->match() === '"') {
           $interpolation = true;
         }
         elseif($this->match() === "'" || $this->match() === '`') {}
