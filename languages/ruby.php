@@ -8,8 +8,8 @@
  *   heredocs
  *   balanced AND NESTED string/regex delimiters
  *   interpolation
- *
- * disclaimer: I don't actually know ruby.
+ * 
+ * disclaimer: I don't actually know Ruby.
  */
 
 
@@ -20,6 +20,7 @@ class LuminousRubyScanner extends LuminousScanner {
   // encounters a } while nothing else is on the stack, i.e. it is being
   // used to process an interpolated block
   public $interpolation = false;
+  protected $curley_braces = 0; // poor man's curly brace stack.
 
 
   // gaaah
@@ -72,16 +73,39 @@ class LuminousRubyScanner extends LuminousScanner {
 
   public function init() {
     $this->add_identifier_mapping('KEYWORD', array('BEGIN', 'END', 'alias',
-      'begin', 'break', 'case', 'class', 'def', 'defined', 'do',
+      'begin', 'break', 'case', 'class', 'def', 'defined?', 'do',
       'else', 'elsif', 'end', 'ensure', 'for', 'if', 'module', 'next',
       'redo', 'rescue', 'retry', 'return', 'self', 'super', 'then',
       'undef', 'unless', 'until', 'when', 'while', 'yield',
       'false', 'nil', 'self', 'true', '__FILE__', '__LINE__', 'TRUE', 'FALSE',
       'NIL', 'STDIN', 'STDERR', 'ENV', 'ARGF', 'ARGV', 'DATA', 'RUBY_VERSION',
-      'RUBY_RELEASE_DATE', 'RUBY_PLATFORM'
+      'RUBY_RELEASE_DATE', 'RUBY_PLATFORM',
+      'and', 'in', 'not', 'or'
       ));
 
-      $this->remove_filter('pcre');
+    // http://www.tutorialspoint.com/ruby/ruby_builtin_functions.htm
+    // don't know how reliable that is... doesn't look incredibly inspiring
+    $this->add_identifier_mapping('FUNCTION', array('abord', 'Array',
+    'at_exit', 'autoload', 'binding', 'block_given?', 'callcc', 'caller',
+    'catch', 'chomp', 'chomp!', 'chop', 'chop!', 'eval', 'exec', 'exit',
+    'exit!', 'fail', 'Float', 'fork', 'format', 'gets', 'global_variables',
+    'gsub', 'gsub!', 'Integer', 'lambda', 'proc', 'load', 'local_variables',
+    'loop', 'open', 'p', 'print', 'printf', 'proc', 'puts', 'raise', 'fail',
+    'rand', 'readlines', 'require', 'scan', 'select', 'set_trace_func',
+    'sleep', 'split', 'sprintf', 'srand', 'String', 'syscall', 'system',
+    'sub', ',sub!', 'test', 'throw', 'trace_var', 'trap', 'untrace_var',
+    'abs', 'ceil', 'coerce', 'divmod', 'floor', 'integer?', 'modulo',
+    'nonzero?', 'remainder', 'round', 'truncate', 'zero?', 'chr', 'size',
+    'step', 'times', 'to_f', 'to_int', 'to_i', 'finite?', 'infinite?',
+    'nan?', 'atan2', 'cos', 'exp', 'frexp', 'ldexp', 'log', 'log10', 'sin',
+    'sqrt', 'tan'));
+
+
+    // this can break a bit with Ruby's whacky syntax
+    $this->remove_filter('pcre');
+    // don't want this.
+    $this->remove_filter('comment-to-doc');
+
   }
 
   protected function is_regex() {
@@ -107,6 +131,7 @@ class LuminousRubyScanner extends LuminousScanner {
           case 'case':
           case 'end':
           case 'if':
+          case 'elsif':
           case 'or':
           case 'and':
           case 'when':
@@ -124,14 +149,18 @@ class LuminousRubyScanner extends LuminousScanner {
     return true; // no preceding tokens, presumably a code fragment.
   }
 
-
+  
 
   public function main() {
 
     while (!$this->eos()) {
 
-      if ($this->interpolation && $this->state() === null && $this->peek() === '}')
-        break;
+      if ($this->interpolation && $this->state() === null) {
+        $c = $this->peek();
+        if ($c === '{') $this->curley_braces++;
+        elseif($c === '}' && !($this->curley_braces--)) break;
+      }
+      
 
       // handles nested string delimiters and interpolation
       // interpolation is handled by passing the string down to a sub-scanner,
@@ -201,9 +230,7 @@ class LuminousRubyScanner extends LuminousScanner {
       }
       elseif( $c === '$' && $this->scan('/\\$
   (?:
-    (?:[!@`\'\+1~=\/\\\,;\._0\*\$\?:"])
-    |
-    (?: &(?:amp|lt|gt); )
+    (?:[!@`\'\+1~=\/\\\,;\._0\*\$\?:"&<>])
     |
     (?: -[0adFiIlpvw])
     |
@@ -211,7 +238,7 @@ class LuminousRubyScanner extends LuminousScanner {
   )/x') || $this->scan('/(\\$|@@?|:)\w+/')) {
         $this->record($this->match(), 'VARIABLE');
       }
-      elseif ( $c === '<' && $this->check('/<<(-?)(?=[\'`"a-z])/i')) {
+      elseif ( $c === '<' && $this->check('/<<-?([\'"`]?)[A-Z_]\w*\\1/i')) {
         // heredoc is a tiny bit ugly.
         // Heredocs can stack, so let's get a list of all the heredocs opened
         // on this line, and keep a list of the declarations as an array:
@@ -219,6 +246,7 @@ class LuminousRubyScanner extends LuminousScanner {
         // BTW I have no idea what happens if you nest an interpolatable one
         // inside a non-interpolatable one.
         $heredoc_queue = array();
+        $m = $this->check('/.*/');
         while (!$this->eol()) {
           // TODO:we need this soemhow linked up with all the other rules:
           //     <<-EOF + "a string"  is I think legal.
@@ -238,7 +266,9 @@ class LuminousRubyScanner extends LuminousScanner {
           // slow
           else $this->record($this->get(), null);
         }
-        assert (!empty($heredoc_queue)) or die();
+        
+
+        assert (!empty($heredoc_queue)) or die($m);
         
         $start = $this->pos();
         
@@ -282,7 +312,7 @@ class LuminousRubyScanner extends LuminousScanner {
         }
       }
       elseif (($c === '"' || $c === "'" || $c === '`' || $c === '%') &&
-        $this->scan('/[\'"`]|%([qQrswWx]?)(?![[:alnum:]])/')
+        $this->scan('/[\'"`]|%([qQrswWx]?)(?![[:alnum:]\s])/')
         || ($c === '/' && $this->is_regex())  // regex
         ) {
         
@@ -316,8 +346,13 @@ class LuminousRubyScanner extends LuminousScanner {
           $pos, $interpolation);
       }
       elseif( (ctype_alpha($c) || $c === '_') &&
-        $this->scan('/[_a-zA-Z]\w*[!?]?/')) {
-        $this->record($this->match(), 'IDENT');
+        ($m = $this->scan('/[_a-zA-Z]\w*[!?]?/')) !== null) {
+        $this->record($m, 'IDENT');
+        if ($m === '__END__') {
+          $this->record($this->rest(), null);
+          break;
+        }
+        
       }
       elseif($this->scan('/[~!%^&*\-+=:;|<>\/?]+/'))
         $this->record($this->match(), 'OPERATOR');
