@@ -3,7 +3,7 @@
 
 class LuminousJSONScanner extends LuminousScanner {
   
-  private $stack;
+  private $stack = array();
   
   
   public function init() {
@@ -54,7 +54,6 @@ class LuminousJSONScanner extends LuminousScanner {
       }
       elseif($this->scan('/\}/')) {
         array_pop($this->stack);
-        
       }
       elseif($state === 'obj' && $this->scan('/:/')) {
         $this->expecting('value');
