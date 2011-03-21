@@ -73,13 +73,15 @@ class LuminousRubyScanner extends LuminousScanner {
   public function init() {
     $this->add_identifier_mapping('KEYWORD', array('BEGIN', 'END', 'alias',
       'begin', 'break', 'case', 'class', 'def', 'defined', 'do',
-      'else', 'elseif', 'end', 'ensure', 'for', 'if', 'module', 'next',
+      'else', 'elsif', 'end', 'ensure', 'for', 'if', 'module', 'next',
       'redo', 'rescue', 'retry', 'return', 'self', 'super', 'then',
       'undef', 'unless', 'until', 'when', 'while', 'yield',
       'false', 'nil', 'self', 'true', '__FILE__', '__LINE__', 'TRUE', 'FALSE',
       'NIL', 'STDIN', 'STDERR', 'ENV', 'ARGF', 'ARGV', 'DATA', 'RUBY_VERSION',
       'RUBY_RELEASE_DATE', 'RUBY_PLATFORM'
       ));
+
+      $this->remove_filter('pcre');
   }
 
   protected function is_regex() {
@@ -280,36 +282,43 @@ class LuminousRubyScanner extends LuminousScanner {
         }
       }
       elseif (($c === '"' || $c === "'" || $c === '`' || $c === '%') &&
-        $this->scan('/[\'"`]|%([qQrswWx]?)(?![[:alnum:]])/')) {
+        $this->scan('/[\'"`]|%([qQrswWx]?)(?![[:alnum:]])/')
+        || ($c === '/' && $this->is_regex())  // regex
+        ) {
+        
         $interpolation = false;
         $type = 'STRING';
-        $delimiter = $this->match();
-        if ($this->match() === '"') {
+        $delimiter;
+        $pos;
+
+        if ($c === '/') {
           $interpolation = true;
-        }
-        elseif($this->match() === "'" || $this->match() === '`') {}
-        else {
-          $delimiter = $this->get();
-          $m1 = $this->match_group(1);
-          if ($m1 === 'Q' || $m1 === 'r' || $m1 === 'W' || $m1 === 'x')
+          $type = 'REGEX';
+          $delimiter = $c;
+          $pos = $this->pos();
+          $this->get();
+        } else {
+          $pos = $this->match_pos();
+          $delimiter = $this->match();
+          if ($delimiter === '"') {
             $interpolation = true;
-          if ($m1 === 'x') $type = 'FUNCTION';
-          elseif($m1 === 'r') $type = 'REGEX';
+          } elseif($delimiter === "'" || $delimiter === '`') {}
+          else {
+            $delimiter = $this->get();
+            $m1 = $this->match_group(1);
+            if ($m1 === 'Q' || $m1 === 'r' || $m1 === 'W' || $m1 === 'x')
+              $interpolation = true;
+            if ($m1 === 'x') $type = 'FUNCTION';
+            elseif($m1 === 'r') $type = 'REGEX';
+          }
         }
         $this->state_[] = array($type, $delimiter, self::balance_delimiter($delimiter),
-          $this->match_pos(), $interpolation);
+          $pos, $interpolation);
       }
       elseif( (ctype_alpha($c) || $c === '_') &&
         $this->scan('/[_a-zA-Z]\w*[!?]?/')) {
         $this->record($this->match(), 'IDENT');
       }
-      elseif($c === '/' && $this->is_regex()) {
-        $m = $this->scan('% / (?: [^\\\\/]+ | \\\\.) * (?: / [iomx]* | $) %x');
-        assert($m !== null);
-        $this->record($m, 'REGEX');
-      }
-      
-      
       elseif($this->scan('/[~!%^&*\-+=:;|<>\/?]+/'))
         $this->record($this->match(), 'OPERATOR');
       else {
