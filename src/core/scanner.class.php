@@ -173,8 +173,13 @@ class Scanner {
    * Throws Exception if no matches have been recorded.
    */   
   function match_group($g=0) {
-    if (isset($this->match_history[0])) 
-      return $this->match_history[0][2][$g];    
+    if (isset($this->match_history[0])) {
+      if (isset($this->match_history[0][2])) {
+        if (isset($this->match_history[0][2][$g]))
+          return $this->match_history[0][2][$g];
+        throw new Exception("No such group '$g'");
+      }
+    }
     throw new Exception('match history empty');
   }
   
@@ -310,16 +315,18 @@ class Scanner {
 
   function get_next($patterns) {
     $next = -1;
-    $match = null;
+    $matches = null;
     foreach($patterns as $p) {
-      $index = $this->ss->match($pattern, $this->index, $m);
+      $m;
+      $index = $this->ss->match($p, $this->index, $m);
       if ($index === false) continue;
       if ($next === -1 || $index < $next) {
         $next = $index;
-        $match = $next;
+        $matches = $m;
+        assert($m !== null);
       }
     }
-    return array($next, $match);
+    return array($next, $matches);
   }
 
   function get_next_strpos($patterns) {
