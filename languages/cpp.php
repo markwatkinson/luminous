@@ -22,7 +22,7 @@ class LuminousCppScanner extends LuminousScanner {
     $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_ML);
     $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_SL);
     $this->add_pattern('STRING', LuminousTokenPresets::$DOUBLE_STR);
-    $this->add_pattern('CHAR', LuminousTokenPresets::$SINGLE_STR);
+    $this->add_pattern('CHARACTER', LuminousTokenPresets::$SINGLE_STR);
     $this->add_pattern('OPERATOR', '@[!%^&*\-/+=~:?.|<>]+@');
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
