@@ -32,6 +32,7 @@ class LuminousJSONScanner extends LuminousScanner {
       list($state, $expecting) = array($this->state(), $this->expecting());
       
       $this->skip_whitespace();
+      if ($this->eos())  break;
       if ($this->scan(LuminousTokenPresets::$NUM_REAL) !== null) {
         $tok = 'NUMERIC';
       }
