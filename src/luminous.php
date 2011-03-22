@@ -51,6 +51,9 @@ class _Luminous {
     $this->scanners->AddScanner(array('as', 'actionscript'),
     'LuminousActionScriptScanner', 'ActionScript', "$language_dir/as.php", 
     'ecma');
+
+    $this->scanners->AddScanner(array('bash', 'sh'),
+    'LuminousBashScanner', 'Bash', "$language_dir/bash.php");
     
     $this->scanners->AddScanner(array('c', 'cpp', 'h', 'hpp', 'cxx', 'hxx'),
       'LuminousCppScanner', 'C/C++', "$language_dir/cpp.php");
