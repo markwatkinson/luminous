@@ -179,6 +179,7 @@ class LuminousRubyScanner extends LuminousScanner {
           $state = $this->state_[0];
           $this->record( substr($this->string(), $state[3]), $state[0]);
           $this->state_ = array();
+          $this->terminate();
           break;
         }
         else
@@ -370,7 +371,7 @@ class LuminousRubyScanner extends LuminousScanner {
     }
 
     // In case not everything was popped
-    if (isset($this->state_[0])) {
+    if (!$this->interpolation && isset($this->state_[0])) {
       $this->record(substr($this->string(), $this->state_[0][3]), $this->state_[0][0]);
     }
   }
