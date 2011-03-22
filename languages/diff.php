@@ -69,16 +69,16 @@ class LuminousDiffScanner extends LuminousScanner {
       assert($this->bol());
       
       $tok = null;
-      if ($this->scan('/diff\s.*$/m'))  $tok = 'KEYWORD';
+      if ($this->scan('/diff\s.*$/m') !== null)  $tok = 'KEYWORD';
       // normal, context and unified ranges
-      elseif($this->scan($this->patterns['range']))
+      elseif($this->scan($this->patterns['range']) !== null)
         $tok = 'DIFF_RANGE';
       elseif($this->scan("/-{3}[ \t]*$/m")) $tok = null;
       
-      elseif($this->scan('/(?:\**|=*|\w.*)$/m')) $tok = 'KEYWORD';
+      elseif($this->scan('/(?:\**|=*|\w.*)$/m') !== null) $tok = 'KEYWORD';
       // this is a header line which may contain a file path. If it does,
       // update the child scanner according to its extension.
-      elseif($this->scan("@[+\-\*]{3}(\s+(?<path>[^\s]*)(\t|$))?.*@m")) {
+      elseif($this->scan("@[+\-\*]{3}(\s+(?<path>[^\s]*)(\t|$))?.*@m") !== null) {
         $m = $this->match_groups();
         // unified uses +++, context uses *
         if ($m[0][0] === '+' || $m[0][0] === '*')
@@ -90,8 +90,8 @@ class LuminousDiffScanner extends LuminousScanner {
           $child = self::get_child_scanner($filename);  
         }
       }
-      elseif($this->scan('/\\\\.*/')) $tok = null;
-      elseif($this->scan($this->patterns['codeblock'])) {
+      elseif($this->scan('/\\\\.*/') !== null) $tok = null;
+      elseif($this->scan($this->patterns['codeblock']) !== null) {
         // this is actual source code.
         // we're going to format this here.
         // we're going to extract the block, and try to re-assemble it as 
