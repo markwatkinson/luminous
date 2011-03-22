@@ -175,8 +175,12 @@ class LuminousRubyScanner extends LuminousScanner {
         if ($interp) $next_patterns[] = '/\#\{/';
         $next = $this->get_next($next_patterns);
         $old_pos = $this->pos();
-        if ($next[0] === -1)
-          $this->pos(strlen($this->string()));
+        if ($next[0] === -1) {
+          $state = $this->state_[0];
+          $this->record( substr($this->string(), $state[3]), $state[0]);
+          $this->state_ = array();
+          break;
+        }
         else
           $this->pos($next[0] + strlen($next[1][0]));
         
@@ -332,7 +336,10 @@ class LuminousRubyScanner extends LuminousScanner {
           $delimiter = $this->match();
           if ($delimiter === '"') {
             $interpolation = true;
-          } elseif($delimiter === "'" || $delimiter === '`') {}
+          } elseif($delimiter === "'") {}
+          elseif($delimiter === '`') {
+            $type = 'FUNCTION';
+          }
           else {
             $delimiter = $this->get();
             $m1 = $this->match_group(1);
@@ -360,6 +367,11 @@ class LuminousRubyScanner extends LuminousScanner {
         $this->record($this->get(), null);
       }
 
+    }
+
+    // In case not everything was popped
+    if (isset($this->state_[0])) {
+      $this->record(substr($this->string(), $this->state_[0][3]), $this->state_[0][0]);
     }
   }
 
