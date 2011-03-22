@@ -358,6 +358,7 @@ class LuminousRubyScanner extends LuminousScanner {
         $this->record($m, 'IDENT');
         if ($m === '__END__') {
           $this->record($this->rest(), null);
+          $this->terminate();
           break;
         }
         
