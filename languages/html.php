@@ -171,7 +171,7 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
         $tok = 'DSTRING';
         $this->expecting = '';
       }      
-      elseif($in_tag && $this->scan('@(?:(?<=<)/)?[^\s=<>/]+@')) {
+      elseif($in_tag && $this->scan('@(?:(?<=<)/)?[^\s=<>/]+@') !== null) {
         if ($this->expecting === 'tagname') {
           $tok = 'HTMLTAG';
           $this->expecting = '';
