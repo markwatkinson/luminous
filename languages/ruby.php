@@ -219,6 +219,7 @@ class LuminousRubyScanner extends LuminousScanner {
           $interpolation_scanner->string($this->string());
           $interpolation_scanner->pos($pos);
           $interpolation_scanner->interpolation = true;
+          $interpolation_scanner->init();
           $interpolation_scanner->main();
           $tagged = $interpolation_scanner->tagged();
           $this->record($tagged, 'INTERPOLATION', true);
@@ -336,6 +337,7 @@ class LuminousRubyScanner extends LuminousScanner {
             $interpolation_scanner->string($this->string());
             $interpolation_scanner->pos($this->pos());
             $interpolation_scanner->interpolation = true;
+            $interpolation_scanner->init();
             $interpolation_scanner->main();
             $this->record($interpolation_scanner->tagged(), 'INTERPOLATION', true);
             $this->pos($interpolation_scanner->pos());
@@ -427,7 +429,6 @@ class LuminousRubyScanner extends LuminousScanner {
       );
       $this->terminate();
     }
-
   }
 
   
