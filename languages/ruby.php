@@ -10,6 +10,15 @@
  *   interpolation
  * 
  * disclaimer: I don't actually know Ruby.
+ *
+ * Problem is that Ruby *appears* to have to disambiguate loads of stuff at
+ * runtime, which is frankly a little optimistic for a syntax highlighter.
+ * Ruby allows you to omit calling parantheses, so it's not practical (and
+ * impossible if the code snippet is incomplete) to figure out operator/operand
+ * position. e.g.
+ *      x = y %r/z/x
+ * is x = y mod r div z div x, unless y is a function, in which case it's:
+ *      x = y( /z/x )     where /z/x is a regex
  */
 
 
@@ -333,8 +342,11 @@ class LuminousRubyScanner extends LuminousScanner {
           }
         }
       }
+      // TODO: "% hello " is I think a valid string, using whitespace as
+      // delimiters. We're going to disallow this for now because
+      // we're not disambiguating between that and modulus
       elseif (($c === '"' || $c === "'" || $c === '`' || $c === '%') &&
-        $this->scan('/[\'"`]|%([qQrswWx]?)(?![[:alnum:]\s])/')
+        $this->scan('/[\'"`]|%( [qQrswWx](?![[:alnum:]]|$) | (?![[:alnum:]\s]|$))/xm')
         || ($c === '/' && $this->is_regex())  // regex
         ) {
         
