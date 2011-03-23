@@ -91,11 +91,11 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
       }
       
       if ($tok === 'TERM') {
-        $tok = 'KEYWORD';
+        $tok = 'DELIMITER';
         $inphp = false;
       }
       elseif($tok === 'START') {
-        $tok = 'KEYWORD';
+        $tok = 'DELIMITER';
         $inphp = true;
       }
       
