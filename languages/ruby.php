@@ -293,7 +293,7 @@ class LuminousRubyScanner extends LuminousScanner {
           $this->skip_whitespace();
           if ($this->scan('/(<<(-?))([\'"`]?)([A-Z_]\w*)(\\3)/i')) {
             $m = $this->match_groups();
-            $this->record($m[0], 'KEYWORD');/*
+            $this->record($m[0], 'DELIMITER');/*
             $this->record($m[1], null);
             if ($m[3]) // 2 is nested in 1
               $this->record($m[3], null);
@@ -344,7 +344,7 @@ class LuminousRubyScanner extends LuminousScanner {
           else {
             $this->pos($next);
             $this->record(substr($this->string(), $start, $this->pos()-$start), 'HEREDOC');
-            $this->record($matches[0], 'KEYWORD');
+            $this->record($matches[0], 'DELIMITER');
             $this->pos($next + strlen($matches[0]));
             $start = $this->pos();
             $i++;
