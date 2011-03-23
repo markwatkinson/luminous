@@ -1,4 +1,4 @@
-<KEYWORD>&lt;?php</KEYWORD>
+<DELIMITER>&lt;?php</DELIMITER>
   <FUNCTION>require_once</FUNCTION>(<STRING>"sql.class.php"</STRING>);
   <FUNCTION>require_once</FUNCTION>(<STRING>"markupwrapper.php"</STRING>);
   
@@ -6,7 +6,7 @@
 
   <VARIABLE>$tabs</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$SQL</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>GetTabs</OO>();
   <VARIABLE>$TAB_VIEW</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD>;
-<KEYWORD>?&gt;</KEYWORD>&lt;<KEYWORD>!DOCTYPE</KEYWORD> <TYPE>html</TYPE>&gt;
+<DELIMITER>?&gt;</DELIMITER>&lt;<KEYWORD>!DOCTYPE</KEYWORD> <TYPE>html</TYPE>&gt;
 
 &lt;<HTMLTAG>html</HTMLTAG>&gt;
 
@@ -100,7 +100,7 @@
         
     &lt;<HTMLTAG>div</HTMLTAG> <TYPE>class</TYPE>=<STRING>'tab_bar'</STRING> <TYPE>style</TYPE>=<STRING>'float:left;position:relative;z-index:1'</STRING>&gt;
 
-    <KEYWORD>&lt;?</KEYWORD>
+    <DELIMITER>&lt;?</DELIMITER>
     <KEYWORD>foreach</KEYWORD>(<VARIABLE>$tabs</VARIABLE> <KEYWORD>as</KEYWORD> <VARIABLE>$t</VARIABLE>)
     {
       <VARIABLE>$title</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"&lt;a href='#<VARIABLE>{$t-&gt;element_id}</VARIABLE>' class='tab_clicker'&gt;<VARIABLE>{$t-&gt;tab_title}</VARIABLE>&lt;/a&gt;"</STRING>;
@@ -109,17 +109,17 @@
         <VARIABLE>$title</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"&lt;img src='<VARIABLE>$img</VARIABLE>' alt='' title=''&gt; <VARIABLE>$title</VARIABLE>"</STRING>;
       <FUNCTION>echo</FUNCTION> <STRING>"&lt;div&gt;<VARIABLE>$title</VARIABLE>&lt;/div&gt;"</STRING>;
     }
-    <KEYWORD>?&gt;</KEYWORD>
+    <DELIMITER>?&gt;</DELIMITER>
     &lt;<HTMLTAG>/div</HTMLTAG>&gt;
     &lt;<HTMLTAG>div</HTMLTAG> <TYPE>class</TYPE>=<STRING>'tab_content'</STRING> <TYPE>style</TYPE>=<STRING>'float:left;position:relative;width:75%; min-height:200px; margin-left:-1px;'</STRING>&gt;
-    <KEYWORD>&lt;?</KEYWORD> 
+    <DELIMITER>&lt;?</DELIMITER> 
         <KEYWORD>foreach</KEYWORD>(<VARIABLE>$tabs</VARIABLE> <KEYWORD>as</KEYWORD> <VARIABLE>$t</VARIABLE>)
         {
           <FUNCTION>echo</FUNCTION> <STRING>"&lt;div id='<VARIABLE>{$t-&gt;element_id}</VARIABLE>' class='content'&gt;"</STRING>;
           <FUNCTION>echo</FUNCTION> markup(<VARIABLE>$t</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>content</OO>);
           <FUNCTION>echo</FUNCTION> <STRING>"&lt;/div&gt;"</STRING>;
         }
-      <KEYWORD>?&gt;</KEYWORD>
+      <DELIMITER>?&gt;</DELIMITER>
    &lt;<HTMLTAG>/div</HTMLTAG>&gt;
  &lt;<HTMLTAG>/div</HTMLTAG>&gt;
 

@@ -1,4 +1,4 @@
-<KEYWORD>&lt;?php</KEYWORD>
+<DELIMITER>&lt;?php</DELIMITER>
 
 <KEYWORD>class</KEYWORD> <USER_FUNCTION>LuminousFormatterHTML</USER_FUNCTION> <KEYWORD>extends</KEYWORD> LuminousFormatter
 {   

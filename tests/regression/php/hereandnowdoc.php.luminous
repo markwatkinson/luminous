@@ -1,4 +1,4 @@
-<KEYWORD>&lt;?php</KEYWORD>
+<DELIMITER>&lt;?php</DELIMITER>
 <COMMENT>// Static variables</COMMENT>
 <KEYWORD>function</KEYWORD> <USER_FUNCTION>foo</USER_FUNCTION>()
 {
