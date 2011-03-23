@@ -158,7 +158,7 @@ class LuminousRubyScanner extends LuminousScanner {
         if ($c === '{') $this->curley_braces++;
         elseif($c === '}') {
           $this->curley_braces--;
-          if ($this->curley_braces <= 0) { echo 'break'; break;}
+          if ($this->curley_braces <= 0) { break;}
         }
       }
       
@@ -174,10 +174,10 @@ class LuminousRubyScanner extends LuminousScanner {
       if (($s = $this->state()) !== null) {
         $balanced = $s[1] !== $s[2];
         $interp = $s[4];
-        $template = '/(?<!\\\\)(?:\\\\\\\\)*%s/';
+        $template = '/(?<!\\\\)((?:\\\\\\\\)*)(%s)/';
         $next_patterns = array(sprintf($template, preg_quote($s[1], '/')),
           sprintf($template, preg_quote($s[2], '/')));
-        if ($interp) $next_patterns[] = '/\#\{/';
+        if ($interp) $next_patterns[] = '/(?<!\\\\)((?:\\\\\\\\)*)(\#\{)/';
         $next = $this->get_next($next_patterns);
         $old_pos = $this->pos();
         if ($next[0] === -1) {
@@ -187,55 +187,56 @@ class LuminousRubyScanner extends LuminousScanner {
           $this->terminate();
           break;
         }
-        else
-          $this->pos($next[0] + strlen($next[1][0]));
+        $pos = $next[0] + strlen($next[1][1]);
 
-        
-        if($next[1][0] === '#{') {
+
+        if($next[1][2] === '#{') {
           $i = count($this->state_);
+          $pos = $next[0] + strlen($next[1][0]);
           while($i--) {
             $s_ = $this->state_[$i];
             if ($s_[0] !== null) {
               $this->record(
-                substr($this->string(), $s_[3], $this->pos() - $s_[3]),
+                substr($this->string(), $s_[3], $pos - $s_[3]),
                 $s_[0]);
               break;
             }
           }
           $interpolation_scanner = new LuminousRubyScanner();
           $interpolation_scanner->string($this->string());
-          $interpolation_scanner->pos($this->pos());
+          $interpolation_scanner->pos($pos);
           $interpolation_scanner->interpolation = true;
           $interpolation_scanner->main();
           $tagged = $interpolation_scanner->tagged();
           $this->record($tagged, 'INTERPOLATION', true);
-          $this->pos($interpolation_scanner->pos());
-          $this->state_[$i][3] = $this->pos();
+          $pos = $interpolation_scanner->pos();
+          $this->state_[$i][3] = $pos;
         }
-        elseif ($balanced && $next[1][0] === $s[1]) { // balanced nesting
+        elseif ($balanced && $next[1][2] === $s[1]) { // balanced nesting
           $this->state_[] = array(null, $s[1], $s[2], null, $interp);
+          $pos = $next[0] + strlen($next[1][0]);
         }
         else {
-          $pop = array_pop($this->state_);          
+          $pop = array_pop($this->state_);
           if ($pop[0] !== null) {
             $fancy_delim =  $pop[5];
             $type = $pop[0];
             if ($fancy_delim) {
-              $pos = $next[0];
               $type = 'DELIMITER';
-            }
-            else $pos = $next[0] + strlen($next[1][0]); // redundant probably
+            } else $pos += strlen($next[1][2]);
 
             $this->record(
               substr($this->string(), $pop[3], $pos - $pop[3]),
               $pop[0]
             );
             if ($fancy_delim) {
-              $this->record($next[1][0], $type);
+              $this->record($next[1][2], $type);
             }
-            $this->pos( $next[0] + strlen($next[1][0]) );
           }
+          $pos = $next[0] + strlen($next[1][0]);
         }
+        $this->pos($pos);
+        
         continue;
       }
 
@@ -388,9 +389,8 @@ class LuminousRubyScanner extends LuminousScanner {
         $this->record($this->match(), 'OPERATOR');
       else {
         $this->record($this->get(), null);
+        $this->skip_whitespace();
       }
-
-      $this->skip_whitespace();
 
     }
 
@@ -398,6 +398,7 @@ class LuminousRubyScanner extends LuminousScanner {
     if (!$this->interpolation && isset($this->state_[0])) {
       $this->record(substr($this->string(), $this->state_[0][3]), $this->state_[0][0]);
     }
+
   }
 
   
