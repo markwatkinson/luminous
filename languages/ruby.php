@@ -149,8 +149,6 @@ class LuminousRubyScanner extends LuminousScanner {
     return true; // no preceding tokens, presumably a code fragment.
   }
 
-  
-
   public function main() {
 
     while (!$this->eos()) {
@@ -158,14 +156,18 @@ class LuminousRubyScanner extends LuminousScanner {
       if ($this->interpolation && $this->state() === null) {
         $c = $this->peek();
         if ($c === '{') $this->curley_braces++;
-        elseif($c === '}' && !($this->curley_braces--)) break;
+        elseif($c === '}') {
+          $this->curley_braces--;
+          if ($this->curley_braces <= 0) { echo 'break'; break;}
+        }
       }
       
 
       // handles nested string delimiters and interpolation
       // interpolation is handled by passing the string down to a sub-scanner,
       // which is expected to figure out where the interpolation ends.
-
+      // this would be far neater if we factored it into its own function
+      // and used its own while loop instead of relying on main.
       if (($s = $this->state()) !== null) {
         $balanced = $s[1] !== $s[2];
         $interp = $s[4];
@@ -184,6 +186,7 @@ class LuminousRubyScanner extends LuminousScanner {
         }
         else
           $this->pos($next[0] + strlen($next[1][0]));
+
         
         if($next[1][0] === '#{') {
           $i = count($this->state_);
@@ -201,11 +204,10 @@ class LuminousRubyScanner extends LuminousScanner {
           $interpolation_scanner->pos($this->pos());
           $interpolation_scanner->interpolation = true;
           $interpolation_scanner->main();
-          $this->record($interpolation_scanner->tagged(), 'INTERPOLATION', true);
+          $tagged = $interpolation_scanner->tagged();
+          $this->record($tagged, 'INTERPOLATION', true);
           $this->pos($interpolation_scanner->pos());
-
           $this->state_[$i][3] = $this->pos();
-
         }
         elseif ($balanced && $next[1][0] === $s[1]) { // balanced nesting
           $this->state_[] = array(null, $s[1], $s[2], null, $interp);
@@ -222,7 +224,6 @@ class LuminousRubyScanner extends LuminousScanner {
         continue;
       }
 
-      $this->skip_whitespace();
       $c = $this->peek();
       if ($c === '=' && $this->scan('/^=begin .*? (^=end|\\z)/msx')) {
         $this->record($this->match(), 'DOCCOMMENT');
@@ -368,6 +369,8 @@ class LuminousRubyScanner extends LuminousScanner {
       else {
         $this->record($this->get(), null);
       }
+
+      $this->skip_whitespace();
 
     }
 
