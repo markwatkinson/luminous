@@ -5,22 +5,9 @@ require_once(dirname(__FILE__) . '/include/java_func_list.php');
 class LuminousJavaScanner extends LuminousSimpleScanner {
 
   function init() {
-    $this->add_identifier_mapping('KEYWORD', array('abstract', 'assert',
-    'break', 'case', 'class', 'continue', 'const', 'default', 'do',
-    'else', 'final', 'finally', 'for', 'goto', 'if', 'implements',
-    'import',
-    'instanceof',
-    'interface',
-    'native', 'new', 'package', 'private', 'public', 'protected',
-    'return', 'static', 'strictfp', 'switch', 'synchronized', 'this', 'throw',
-    'throws', 'transient', 'volatile', 'while',
-    'true', 'false', 'null'
-    ));
-    $this->add_identifier_mapping('TYPE', array_merge(
-      array('bool', 'boolean', 'byte',
-      'char', 'double', 'enum', 'float', 'int', 'long', 'short', 'void'),
-      $GLOBALS['luminous_java_types'])
-    );
+    $this->add_identifier_mapping('KEYWORD',
+      $GLOBALS['luminous_java_keywords']);
+    $this->add_identifier_mapping('TYPE', $GLOBALS['luminous_java_types']);
     
 
     $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_ML);

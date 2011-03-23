@@ -1,7 +1,22 @@
 <?php
 
 global $luminous_java_types;
+global $luminous_java_keywords;
+
+
+$luminous_java_keywords = array('abstract', 'assert',
+'break', 'case', 'class', 'continue', 'const', 'default', 'do',
+'else', 'final', 'finally', 'for', 'goto', 'if', 'implements',
+'import',
+'instanceof',
+'interface',
+'native', 'new', 'package', 'private', 'public', 'protected',
+'return', 'static', 'strictfp', 'switch', 'synchronized', 'this', 'throw',
+'throws', 'transient', 'volatile', 'while',
+'true', 'false', 'null');
 $luminous_java_types = array(
+'bool', 'boolean', 'byte', 'char', 'double', 'enum', 'float', 'int', 'long',
+'short', 'void',
 'ARG_IN',
 'ARG_INOUT',
 'ARG_OUT',
