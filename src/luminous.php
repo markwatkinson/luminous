@@ -58,6 +58,9 @@ class _Luminous {
     $this->scanners->AddScanner(array('c', 'cpp', 'h', 'hpp', 'cxx', 'hxx'),
       'LuminousCppScanner', 'C/C++', "$language_dir/cpp.php");
       
+    $this->scanners->AddScanner(array('cs', 'csharp', 'c#'),
+      'LuminousCSharpScanner', 'C#', "$language_dir/csharp.php");
+      
     $this->scanners->AddScanner('css',
       'LuminousCSSScanner', 'CSS', "$language_dir/css.php");
       
