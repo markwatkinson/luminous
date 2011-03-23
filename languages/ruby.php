@@ -31,6 +31,7 @@ class LuminousRubyScanner extends LuminousScanner {
   public $interpolation = false;
   protected $curley_braces = 0; // poor man's curly brace stack.
 
+  public $rails = false;
 
   // gaaah
   private $numeric = '/
@@ -170,6 +171,9 @@ class LuminousRubyScanner extends LuminousScanner {
           $this->curley_braces--;
           if ($this->curley_braces <= 0) { break;}
         }
+      }
+      if ($this->rails && $this->state() === null && $this->check('/-?%>/')) {
+        break;
       }
       
 
