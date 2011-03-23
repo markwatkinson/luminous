@@ -201,7 +201,7 @@ class LuminousRubyScanner extends LuminousScanner {
 
         if($next[1][2] === '#{') {
           $i = count($this->state_);
-          $pos = $next[0] + strlen($next[1][0]);
+
           while($i--) {
             $s_ = $this->state_[$i];
             if ($s_[0] !== null) {
@@ -211,6 +211,9 @@ class LuminousRubyScanner extends LuminousScanner {
               break;
             }
           }
+          $this->record($next[1][2], 'DELIMITER');
+          $pos = $next[0] + strlen($next[1][0]);
+          
           $interpolation_scanner = new LuminousRubyScanner();
           $interpolation_scanner->string($this->string());
           $interpolation_scanner->pos($pos);
@@ -218,6 +221,12 @@ class LuminousRubyScanner extends LuminousScanner {
           $interpolation_scanner->main();
           $tagged = $interpolation_scanner->tagged();
           $this->record($tagged, 'INTERPOLATION', true);
+          $peek = $interpolation_scanner->peek();
+//           echo $interpolation_scanner->rest();
+          assert($peek === '}' || $peek === '');
+          if ($peek === '}') {
+            $this->record($interpolation_scanner->get(), 'DELIMITER');
+          }
           $pos = $interpolation_scanner->pos();
           $this->state_[$i][3] = $pos;
         }
@@ -383,6 +392,7 @@ class LuminousRubyScanner extends LuminousScanner {
             $this->record($this->match() . $delimiter, 'DELIMITER');
             $pos = $this->pos();
           }
+          
         }
         $this->state_[] = array($type, $delimiter, self::balance_delimiter($delimiter),
           $pos, $interpolation, $fancy_delim);
@@ -407,8 +417,13 @@ class LuminousRubyScanner extends LuminousScanner {
     }
 
     // In case not everything was popped
-    if (!$this->interpolation && isset($this->state_[0])) {
-      $this->record(substr($this->string(), $this->state_[0][3]), $this->state_[0][0]);
+    if (isset($this->state_[0])) {
+      $this->record(
+        substr($this->string(), $this->state_[0][3],
+          $this->pos() - $this->state_[0][3]),
+          $this->state_[0][0]
+      );
+      $this->terminate();
     }
 
   }
