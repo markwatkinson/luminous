@@ -223,8 +223,7 @@ class LuminousRubyScanner extends LuminousScanner {
           $tagged = $interpolation_scanner->tagged();
           $this->record($tagged, 'INTERPOLATION', true);
           $peek = $interpolation_scanner->peek();
-//           echo $interpolation_scanner->rest();
-          assert($peek === '}' || $peek === '');
+          // The child scanner may have reached }, EOS or __END__.
           if ($peek === '}') {
             $this->record($interpolation_scanner->get(), 'DELIMITER');
           }
@@ -402,8 +401,10 @@ class LuminousRubyScanner extends LuminousScanner {
         ($m = $this->scan('/[_a-zA-Z]\w*[!?]?/')) !== null) {
         $this->record($m, 'IDENT');
         if ($m === '__END__') {
-          $this->record($this->rest(), null);
-          $this->terminate();
+          if (!$this->interpolation) {
+            $this->record($this->rest(), null);
+            $this->terminate();
+          }
           break;
         }
         
