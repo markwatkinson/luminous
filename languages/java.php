@@ -16,7 +16,7 @@ class LuminousJavaScanner extends LuminousSimpleScanner {
     $this->add_pattern('CHARACTER', LuminousTokenPresets::$SINGLE_STR);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
-    $this->add_pattern('IDENT', '/[a-zA-Z]\w*/');
+    $this->add_pattern('IDENT', '/[a-zA-Z$_][$\w]*/');
     $this->add_pattern('OPERATOR', '/[!%^&*\-=+:?|<>]+/');
   }
 
