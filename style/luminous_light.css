@@ -135,6 +135,19 @@
 }
 
 
+.luminous .interpolation * {  
+  background-color: transparent !important;
+}
+.luminous .interpolation {
+  font-style: italic;
+  background-color: rgba(30, 80, 200, 0.1);
+}
+
+.luminous .delimiter {
+  font-weight:bold;
+  color: #644A9B;
+}
+
 
 
 .luminous .line_number_bar
