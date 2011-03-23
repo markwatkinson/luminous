@@ -13,7 +13,8 @@ $luminous_java_keywords = array('abstract', 'assert',
 'native', 'new', 'package', 'private', 'public', 'protected',
 'return', 'static', 'strictfp', 'switch', 'synchronized', 'this', 'throw',
 'throws', 'transient', 'volatile', 'while',
-'true', 'false', 'null');
+'true', 'false', 'null',
+'try', 'catch');
 $luminous_java_types = array(
 'bool', 'boolean', 'byte', 'char', 'double', 'enum', 'float', 'int', 'long',
 'short', 'void',
