@@ -3,7 +3,7 @@
 class LuminousCSSScanner extends LuminousEmbeddedWebScript {
   
   
-  
+  private $expecting;
   
   function __construct($src=null) {
     parent::__construct($src);
@@ -28,6 +28,8 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
   
   
   function init() {
+    $this->expecting = null;
+    
   }
     
   
@@ -36,18 +38,14 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
     
     $comment_regex = '% /\* .*? \*/ %sx';
     
-    $expecting = null;
     
-    
-    $this->out = '';
+    $this->start();
     
     while (!$this->eos()) {
       if (!$this->clean_exit) {
-        
         $tok = $this->resume();
         $this->record($this->match(), $tok);
         continue;
-        
       }
       $this->skip_whitespace();
       $pos = $this->pos();
@@ -73,8 +71,8 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
       elseif(( ctype_alpha($c) || $c === '!' || $c === '@' || $c === '_' || $c === '-' )
         &&  $this->scan('/(!?)[\-\w@]+/')) {
         if (!$in_block || $this->match_group(1) !== '') $tok = 'TAG';
-        elseif($expecting === 'key') $tok = 'KEY';
-        elseif($expecting === 'value') {
+        elseif($this->expecting === 'key') $tok = 'KEY';
+        elseif($this->expecting === 'value') {
           $m = $this->match();
           if ($m === 'url' || $m === 'rgb' || $m === 'rgba') $tok = 'FUNCTION';
           else $tok = 'VALUE';
@@ -95,7 +93,7 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
           array_pop($this->state_);
         elseif (!$in_block && $c === '{') {
           $this->state_[] = 'block';
-          $expecting = 'key';
+          $this->expecting = 'key';
         }
       }
       elseif($c === '"' && $this->scan('/" (?: [^"\\\\]+ | \\\\.)* (?:"|$)/xs') )
@@ -103,23 +101,26 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
       elseif($c === "'" && $this->scan("/' (?: [^'\\\\]+ | \\\\.)* (?:'|$)/xs"))         
         $tok = 'SSTRING';
       elseif($c === ':' && $in_block) {
-        $expecting = 'value';
+        $this->expecting = 'value';
         $get = true;
       }
       elseif($c=== ';' && $in_block) {
-        $expecting = 'key';
+        $this->expecting = 'key';
         $get = true;
       }
-      elseif($this->embedded_html && $this->scan('%<\s*/\s*style%i')) {
-        $this->unscan();
+      elseif($this->embedded_html && $this->check('%<\s*/\s*style%i')) {
+        $this->interrupt = false;
+        $this->clean_exit = true;
+        
         break;
       }
-      elseif($this->embedded_server && $this->scan('/<\?/')) {
-        $this->unscan();
+      elseif($this->embedded_server && $this->check(sprintf('/%s/', preg_quote($this->server_tags, '/')))) {
+        $this->interrupt = true;
+        $this->clean_exit = true;        
         break;
-      }      
+      }
       else {
-        $get = true;        
+        $get = true;
       }
       
      if ($this->server_break($tok)) break;

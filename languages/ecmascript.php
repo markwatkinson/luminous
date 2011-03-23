@@ -79,7 +79,8 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
     else {
       // build an alternation with a < followed by a lookahead
       $op_pattern .= ']|<(?![';
-      if ($this->embedded_server) $op_pattern .= '?';
+      // XXX this covers <? and <% but not very well
+      if ($this->embedded_server) $op_pattern .= '?%';
       if ($this->embedded_html) $op_pattern .= '/';
       $op_pattern .= '])'; // closes lookahead
       $op_pattern = "(?:$op_pattern)+";
@@ -103,7 +104,7 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
     $this->add_pattern('SLASH', '%/%');
     
     $stop_patterns = array();
-    if ($this->embedded_server) $stop_patterns[] = "(?P<SERVER><\\?)";
+    if ($this->embedded_server) $stop_patterns[] = "(?P<SERVER>" . preg_quote($this->server_tags, '%') . ")";
     if ($this->embedded_html) $stop_patterns[] = "(?P<SCRIPT_TERM></script>)";
     if (!empty($stop_patterns)) {
       $this->stop_pattern = '%' . join('|', $stop_patterns) . '%i';
@@ -194,7 +195,7 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
       }
 
       elseif ($tok === 'STOP') {
-        if ($this->match() === '<?') $this->interrupt = true;
+        if ($this->match() === $this->server_tags) $this->interrupt = true;
         $this->unscan();
         break;
       }
