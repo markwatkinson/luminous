@@ -75,6 +75,10 @@ class _Luminous {
       'LuminousECMAScriptScanner', 'ECMAScript', 
       "$language_dir/ecmascript.php", 'ecma-includes');
 
+    $this->scanners->AddScanner(array('groovy'),
+      'LuminousGroovyScanner', 'Groovy',
+      "$language_dir/groovy.php");
+
     $this->scanners->AddScanner('java',
       'LuminousJavaScanner', 'Java', "$language_dir/java.php");
       

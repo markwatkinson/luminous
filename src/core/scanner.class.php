@@ -374,6 +374,7 @@ class Scanner {
       
       if ($index !== false && $index < $target) {
         $index = $this->ss->match($pattern, $target, $match_data);
+
         $this->patterns[$k][2] = $index;
         $this->patterns[$k][3] = $match_data;
       }
@@ -837,6 +838,10 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
 
 class LuminousSimpleScanner extends LuminousScanner {
 
+
+  protected $overrides = array();
+  
+
   function main() {
     while (!$this->eos()) {
       $index = $this->pos();
@@ -845,7 +850,16 @@ class LuminousSimpleScanner extends LuminousScanner {
         if ($match[1] > $index) {
           $this->record(substr($this->string(), $index, $match[1] - $index), null);
         }
-        $this->record($this->match(), $tok);
+        $match = $this->match();
+        if (isset($this->overrides[$tok])) {
+          $groups = $this->match_groups();
+          $this->unscan();
+          $p = $this->pos();
+          call_user_func($this->overrides[$tok], $groups);
+          if ($this->pos() <= $p)
+            throw new Exception('Failed to consume any string in override for ' . $tok);
+        } else
+          $this->record($match, $tok);
       } else {
         $this->record(substr($this->string(), $index), null);
         break;
