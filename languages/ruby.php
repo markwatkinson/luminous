@@ -166,8 +166,11 @@ class LuminousRubyScanner extends LuminousScanner {
       // handles nested string delimiters and interpolation
       // interpolation is handled by passing the string down to a sub-scanner,
       // which is expected to figure out where the interpolation ends.
+
+      
+      // XXX: This block is a mess!
       // this would be far neater if we factored it into its own function
-      // and used its own while loop instead of relying on main.
+      // and used its own while loop instead of relying on main.      
       if (($s = $this->state()) !== null) {
         $balanced = $s[1] !== $s[2];
         $interp = $s[4];
@@ -213,12 +216,24 @@ class LuminousRubyScanner extends LuminousScanner {
           $this->state_[] = array(null, $s[1], $s[2], null, $interp);
         }
         else {
-          $pop = array_pop($this->state_);
+          $pop = array_pop($this->state_);          
           if ($pop[0] !== null) {
+            $fancy_delim =  $pop[5];
+            $type = $pop[0];
+            if ($fancy_delim) {
+              $pos = $next[0];
+              $type = 'DELIMITER';
+            }
+            else $pos = $next[0] + strlen($next[1][0]); // redundant probably
+
             $this->record(
-              substr($this->string(), $pop[3], $this->pos() - $pop[3]),
+              substr($this->string(), $pop[3], $pos - $pop[3]),
               $pop[0]
             );
+            if ($fancy_delim) {
+              $this->record($next[1][0], $type);
+            }
+            $this->pos( $next[0] + strlen($next[1][0]) );
           }
         }
         continue;
@@ -326,6 +341,7 @@ class LuminousRubyScanner extends LuminousScanner {
         $type = 'STRING';
         $delimiter;
         $pos;
+        $fancy_delim = false;
 
         if ($c === '/') {
           $interpolation = true;
@@ -349,10 +365,14 @@ class LuminousRubyScanner extends LuminousScanner {
               $interpolation = true;
             if ($m1 === 'x') $type = 'FUNCTION';
             elseif($m1 === 'r') $type = 'REGEX';
+
+            $fancy_delim = true;
+            $this->record($this->match() . $delimiter, 'DELIMITER');
+            $pos = $this->pos();
           }
         }
         $this->state_[] = array($type, $delimiter, self::balance_delimiter($delimiter),
-          $pos, $interpolation);
+          $pos, $interpolation, $fancy_delim);
       }
       elseif( (ctype_alpha($c) || $c === '_') &&
         ($m = $this->scan('/[_a-zA-Z]\w*[!?]?/')) !== null) {
