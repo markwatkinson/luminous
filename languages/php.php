@@ -1,6 +1,6 @@
 <?php
 
-require_once( dirname(__FILE__) . '/php_func_list.php');
+require_once( dirname(__FILE__) . '/include/php_func_list.php');
 
 class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
   

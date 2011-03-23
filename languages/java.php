@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__) . '/java_func_list.php');
+require_once(dirname(__FILE__) . '/include/java_func_list.php');
 
 class LuminousJavaScanner extends LuminousSimpleScanner {
 

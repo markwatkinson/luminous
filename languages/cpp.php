@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__) . '/c_func_list.php');
+require_once(dirname(__FILE__) . '/include/c_func_list.php');
 // TODO: trigraph... does anyone use these?
 
 class LuminousCppScanner extends LuminousScanner {
