@@ -89,7 +89,8 @@ class LuminousRubyScanner extends LuminousScanner {
       'false', 'nil', 'self', 'true', '__FILE__', '__LINE__', 'TRUE', 'FALSE',
       'NIL', 'STDIN', 'STDERR', 'ENV', 'ARGF', 'ARGV', 'DATA', 'RUBY_VERSION',
       'RUBY_RELEASE_DATE', 'RUBY_PLATFORM',
-      'and', 'in', 'not', 'or'
+      'and', 'in', 'not', 'or',
+      'public', 'private', 'protected'
       ));
 
     // http://www.tutorialspoint.com/ruby/ruby_builtin_functions.htm
