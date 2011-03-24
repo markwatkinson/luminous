@@ -39,7 +39,7 @@ class _Luminous {
   private function register_default_scanners() {
     // we should probably hide this in an include for neatness
     // when it starts growing.
-    $language_dir = Luminous::root() . '/languages/';
+    $language_dir = luminous::root() . '/languages/';
     
     
     // this is a dummy file which includes ECMAScript dependencies in a 
@@ -191,7 +191,7 @@ $luminous_ = new _Luminous();
 // here's our 'real' UI class, which uses the above singleton. This is all
 // static because these are actually procudural functions, we're using the
 // class as a namespace.
-abstract class Luminous {
+abstract class luminous {
 
 
   static function highlight($scanner, $source, $cache=true) {

@@ -17,12 +17,12 @@ $testfiles = glob(dirname(__FILE__) . '/samples/output/*');
 
 $EXIT_STATUS = 0;
 
-Luminous::set('format', 'latex');
+luminous::set('format', 'latex');
 foreach($testfiles as $t)
 {
-  $ts = Luminous::themes();
-  $theme = $ts[array_rand(Luminous::themes())];
-  $formatter = Luminous::formatter();
+  $ts = luminous::themes();
+  $theme = $ts[array_rand(luminous::themes())];
+  $formatter = luminous::formatter();
   $formatter->SetTheme(file_get_contents('../../style/' . $theme));
   
   $src = file_get_contents($t);

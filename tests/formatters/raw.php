@@ -13,7 +13,7 @@ require_once('helpers.inc');
 
 $samples = glob('./samples/src/*');
 
-Luminous::set('format', null);
+luminous::set('format', null);
 
 libxml_use_internal_errors(true);
 
@@ -25,7 +25,7 @@ foreach($samples as $s)
   $language = substr($s, strrpos($s, '.')+1);
   $src = file_get_contents($s);
   
-  $out = Luminous::highlight($language, $src, false);
+  $out = luminous::highlight($language, $src, false);
   $out = <<<EOF
 <?xml version='1.0' encoding='UTF-8'?>
 <LUMINOUS>

@@ -5,7 +5,7 @@ $path = dirname(__FILE__);
 $lpath = realpath($lroot . '/luminous.php');
 require ($lpath);
 
-Luminous::set('format', null);
+luminous::set('format', null);
 $output_ext = '.luminous';
 
 
@@ -33,7 +33,7 @@ function highlight_luminous($path)
     return;
   
   $src = file_get_contents($path);
-  return Luminous::highlight($lang, $src, false);
+  return luminous::highlight($lang, $src, false);
 }
 
 

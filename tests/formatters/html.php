@@ -155,11 +155,11 @@ $num_requests = count($samples) * count($doctypes_);
 $req = 0;
 
 
-Luminous::set('format', ($inline)?'html_inline' : 'html');
+luminous::set('format', ($inline)?'html_inline' : 'html');
 
 foreach($samples as $s)
 {
-  $formatter = Luminous::formatter();
+  $formatter = luminous::formatter();
   $formatter->line_numbers = true;
   $formatter->link = true;
   

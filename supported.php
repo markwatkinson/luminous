@@ -27,7 +27,9 @@ tr.header > * {
 <tr class='header'><td style='border: 0px'></td><td>Language</td><td>Valid Codes</td></tr>
 <?php
 $i = 0;
-foreach(Luminous::scanners() as $l=>$codes) { ?>
+foreach(luminous::scanners() as $l=>$codes) { ?>
   <tr> <td><?php echo ++$i; ?> </td><td> <?php echo $l; ?> </td><td> <?php echo join(', ', $codes); ?> </td></tr>
 <?php } ?>
 </table>
+</body>
+</html>

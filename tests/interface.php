@@ -2,13 +2,13 @@
 
 require_once('../src/luminous.php');
 
-Luminous::set('max-height', 300);
-//Luminous::set('theme', 'zenophilia');
+luminous::set('max-height', 300);
+// luminous::set('theme', 'oxygen');
 ?>
 <!DOCTYPE html>
 <html>
   <head>
-  <?php echo Luminous::head_html(false, false, '/luminous-exp/'); ?>
+  <?php echo luminous::head_html(false, false, '/luminous-exp/'); ?>
 
   </head>
 <body>
@@ -16,16 +16,20 @@ Luminous::set('max-height', 300);
     if (count($_POST)) {
       // turn off caching for the moment or it's hard to see what changes
       // are having effect
-      echo Luminous::highlight($_POST['lang'], $_POST['src'], false);
+      $t = microtime(true);
+      $out = luminous::highlight($_POST['lang'], $_POST['src'], false);
+      $t1 = microtime(true);
+      echo ($t1-$t) . 'seconds <br>';
+      echo $out;
     }
     ?>
   <div style='text-align:center'>
     <form method='post' action='interface.php'>
     <select name='lang'>
-    <?php foreach(Luminous::scanners() as $lang=>$codes) {
+    <?php foreach(luminous::scanners() as $lang=>$codes) {
       $def = (isset($_POST['lang']) && $_POST['lang'] === $codes[0])?
         ' selected' : '';
-      echo $_POST['lang'];
+ //     echo $_POST['lang'];
       echo "<option value='{$codes[0]}'$def>$lang</option>\n";
     } ?>
     </select>

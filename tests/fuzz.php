@@ -22,11 +22,11 @@ function random_source($size=102400) {
   return $src;
 }
 
-$scanners = Luminous::scanners();
+$scanners = luminous::scanners();
 
 
   foreach($scanners as $language) {
-    $src = random_source(102400);
+    $src = random_source();
     $scanner = $luminous_->scanners->GetScanner($language[0]);
 
     // take this source because it has line endings normalised.

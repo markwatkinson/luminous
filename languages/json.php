@@ -44,23 +44,29 @@ class LuminousJSONScanner extends LuminousScanner {
       }
       elseif($this->scan('/\[/')) {
         $this->stack[] = array('array', null);
+        $tok = 'OPERATOR';
       }
       elseif($this->scan('/\]/')) {
         if ($state === 'array') {
           array_pop($this->stack);
+          $tok = 'OPERATOR';
         }
       }
       elseif($this->scan('/\{/')) {
         $this->stack[] = array('obj', 'key');
+        $tok = 'OPERATOR';
       }
       elseif($this->scan('/\}/')) {
         array_pop($this->stack);
+        $tok = 'OPERATOR';
       }
       elseif($state === 'obj' && $this->scan('/:/')) {
         $this->expecting('value');
+        $tok = 'OPERATOR';
       }
       elseif($state === 'obj' && $this->scan('/,/')) {
         $this->expecting('key');
+        $tok = 'OPERATOR';
       }
       else $this->scan('/./');
       

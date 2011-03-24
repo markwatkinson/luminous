@@ -13,8 +13,8 @@ for ($i=1; $i<$argc; $i++)
   if ($x == '-html')
   {
     $output_ext = '._html.luminous';
-    Luminous::set('format', 'html');
-    Luminous::set('max-height', -1);
+    luminous::set('format', 'html');
+    luminous::set('max-height', -1);
   }
   else
     $targets[] = $argv[$i];
