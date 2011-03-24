@@ -182,7 +182,7 @@ class LuminousCSSParser {
       $value .= $m[1];
     // remove quotes
     $value = trim($value);
-    if (preg_match('/^(["\'])(.*)\\1$/', $value, $m)) $value = $m[1];
+    if (preg_match('/^(["\'])(.*)\\1$/', $value, $m)) $value = $m[2];
 
     // now get it into a simpler form:
     switch($prop) {
