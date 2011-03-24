@@ -202,11 +202,11 @@ class LuminousFormatterHTMLInline extends LuminousFormatterHTML
 {   
   protected $template =  '<div class="luminous luminous_inline"><div class="code_container" %s>%s</div></div>';
     
-  public function Format($src) 
+  public function format($src) 
   {
     $this->line_numbers = false;
     $this->height = 0;
-    return parent::Format($src);
+    return parent::format($src);
   }
   
 }
