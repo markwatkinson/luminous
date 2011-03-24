@@ -169,7 +169,7 @@ foreach($samples as $s)
   $formatter->strict_standards = true;
   
   $src = file_get_contents($s);
-  $output = $formatter->Format($src);
+  $output = $formatter->format($src);
   
   $out[$s] = array();
   

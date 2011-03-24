@@ -67,10 +67,10 @@ abstract class LuminousFormatter
    * Luminous.
    * \return The input string reformatted to some other specification.
    */ 
-  public abstract function Format($src);
+  public abstract function format($src);
   
   
-  public function SetTheme($theme)
+  public function set_theme($theme)
   {
   }
   

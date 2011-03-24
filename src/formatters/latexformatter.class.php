@@ -13,7 +13,7 @@ class LuminousFormatterLatex extends LuminousFormatter
   private $css = null;
   function __construct() { }
   
-  function SetTheme($theme)
+  function set_theme($theme)
   {
     $this->css = new LuminousCSSParser();
     $this->css->convert($theme);
@@ -100,7 +100,7 @@ class LuminousFormatterLatex extends LuminousFormatter
   
   
   
-  function Format($str)
+  function format($str)
   {
     $out = '';
     

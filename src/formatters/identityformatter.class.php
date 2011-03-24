@@ -2,7 +2,7 @@
 
 class LuminousIdentityFormatter extends LuminousFormatter {
 
-  public function Format($str) {
+  public function format($str) {
     return $str;
   }
 }

@@ -23,12 +23,12 @@ foreach($testfiles as $t)
   $ts = luminous::themes();
   $theme = $ts[array_rand(luminous::themes())];
   $formatter = luminous::formatter();
-  $formatter->SetTheme(file_get_contents('../../style/' . $theme));
+  $formatter->set_theme(file_get_contents('../../style/' . $theme));
   
   $src = file_get_contents($t);
   
   $t = preg_replace('%.*/%', '', $t);
-  $fmt = $formatter->Format($src);
+  $fmt = $formatter->format($src);
   file_put_contents(dirname(__FILE__)  . "/filedump/$t.tex", $fmt);
   chdir('filedump');
   

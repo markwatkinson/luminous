@@ -172,7 +172,7 @@ class _Luminous {
       $out_raw = $scanner->highlight($source);
       $formatter = $this->get_formatter();
       $this->set_formatter_options($formatter);
-      $out = $formatter->Format($out_raw);
+      $out = $formatter->format($out_raw);
     }
 
     if ($use_cache) {

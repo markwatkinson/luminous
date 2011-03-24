@@ -35,7 +35,7 @@ class LuminousFormatterHTML extends LuminousFormatter
   
   
   public 
-  function Format($src)
+  function format($src)
   {
     $line_numbers = false;
     
