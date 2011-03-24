@@ -117,7 +117,7 @@ class _Luminous {
       case 'html' :
         require_once($fmt_path . 'htmlformatter.class.php');
         return new LuminousFormatterHTML();
-      case 'html_inline':
+      case 'html-inline':
         require_once($fmt_path . 'htmlformatter.class.php');
         return new LuminousFormatterHTMLInline();
       case 'latex':
