@@ -46,7 +46,7 @@
 .luminous .htmltag{font-weight:bold !important; color:purple !important;}  
 .luminous .keyword{font-weight:bold !important; color:#0066FF !important;}
 .luminous .numeric {color:blue !important;}
-.luminous .operator{color:green !important;}
+.luminous .operator{color:#0000BF !important;}
 
 .luminous .oo{color:#339900 !important;}
 .luminous .obj{color:#3366FF !important;}
