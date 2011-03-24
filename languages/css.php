@@ -12,7 +12,7 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
       'TAG' => 'KEYWORD',
       'KEY' => 'TYPE',
       'SELECTOR' => 'VARIABLE',
-      'ATTR_SELECTOR' => 'VARIABLE',
+      'ATTR_SELECTOR' => 'OPERATOR',
       'SSTRING' => 'STRING',
       'DSTRING' => 'STRING',
     );
@@ -68,6 +68,8 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
         !== null) {
         $tok = 'NUMERIC';
       }
+      elseif(!$in_block && $this->scan('/(?<=[#\.:])[\w\-]+/'))
+        $tok = 'SELECTOR';      
       elseif(( ctype_alpha($c) || $c === '!' || $c === '@' || $c === '_' || $c === '-' )
         &&  $this->scan('/(!?)[\-\w@]+/')) {
         if (!$in_block || $this->match_group(1) !== '') $tok = 'TAG';
@@ -78,10 +80,7 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
           else $tok = 'VALUE';
         }
       }
-      elseif($c === '#' && !$in_block && $this->scan('/#[\w\-]+/'))
-        $tok = 'SELECTOR';
-      elseif($c === '.' && !$in_block && $this->scan('/\.[\w+\-]+/'))
-        $tok = 'SELECTOR';
+
       // TODO attr selectors should handle embedded strings, I think.
       elseif(!$in_block && $c === '[' 
         && $this->scan('/\[ (?: [^\\]\\\\]+ | \\\\.)* \]/sx'))
@@ -103,10 +102,12 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
       elseif($c === ':' && $in_block) {
         $this->expecting = 'value';
         $get = true;
+        $tok = 'OPERATOR';
       }
       elseif($c=== ';' && $in_block) {
         $this->expecting = 'key';
         $get = true;
+        $tok = 'OPERATOR';
       }
       elseif($this->embedded_html && $this->check('%<\s*/\s*style%i')) {
         $this->interrupt = false;
@@ -119,6 +120,8 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
         $this->clean_exit = true;        
         break;
       }
+      elseif($this->scan('/[:\\.#>*]+/')) $tok = 'OPERATOR';
+      
       else {
         $get = true;
       }
