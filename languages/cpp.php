@@ -7,8 +7,8 @@ class LuminousCppScanner extends LuminousScanner {
 
   function __construct($src=null) {
     parent::__construct($src);
-//     $this->add_filter('preprocessor', 'PREPROCESSOR',
-//       array($this, 'preprocessor_filter'));
+    $this->add_filter('preprocessor', 'PREPROCESSOR',
+      array($this, 'preprocessor_filter'));
 
     $this->add_identifier_mapping('FUNCTION',
       $GLOBALS['luminous_c_funcs']);
