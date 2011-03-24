@@ -7,8 +7,8 @@ class LuminousCppScanner extends LuminousScanner {
 
   function __construct($src=null) {
     parent::__construct($src);
-    $this->add_filter('preprocessor', 'PREPROCESSOR',
-      array($this, 'preprocessor_filter'));
+//     $this->add_filter('preprocessor', 'PREPROCESSOR',
+//       array($this, 'preprocessor_filter'));
 
     $this->add_identifier_mapping('FUNCTION',
       $GLOBALS['luminous_c_funcs']);
@@ -75,13 +75,13 @@ class LuminousCppScanner extends LuminousScanner {
         $this->skip_whitespace();
         // special case: #if 0
         // pretty sure nulls everything inside it and doesn't nest?
-        if ($this->scan("/\s*\#\s*if\s+0\\b.*?^[ \t]*\#endif/ms"))
+        if ($this->scan("/\#\s*if\s+0\\b.*?^\s*\#endif/ms"))
           $tok = 'COMMENT';
-        else {
+        else  {
           // fortunately comments don't nest so we can zap this with a, errr,
           // fairly simple regex :-\
           // well it beats a loop and a stack anyway.
-          $m = $this->scan("@ \# ( [^/\n\\\\]+ | /\* (?s:.*?) \*/ | //.* | / | \\\\.)* @xs");
+          $m = $this->scan("@ \# (?: [^/\n\\\\]+ | /\* (?s:.*?) \*/ | //.* | / | \\\\(?s:.) )* @x");
           assert($m !== null);
           // we'll leave highlighting the nested tokens as a task for a filter
         }
