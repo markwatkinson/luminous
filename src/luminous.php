@@ -144,7 +144,6 @@ class _Luminous {
   private function cache_id($scanner, $source) {
     $settings = $this->settings;
     ksort($settings);
-    echo serialize($scanner);
     $id = md5($source);
     $id = md5($id . serialize($scanner));
     $id = md5($id . serialize($settings));
