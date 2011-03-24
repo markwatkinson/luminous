@@ -1,0 +1,17 @@
+
+<COMMENT>% multiline comments in MATLAB nest.</COMMENT>
+<COMMENT>% this is a single line comment</COMMENT>
+
+<COMMENT>%{ This is a multiline</COMMENT>
+<COMMENT>  comment %}</COMMENT>
+
+<COMMENT>%{ </COMMENT>
+<COMMENT>  This is a nested multi</COMMENT>
+<COMMENT>  A = B</COMMENT>
+<COMMENT>    %{ line comment</COMMENT>
+<COMMENT>    A = B</COMMENT>
+<COMMENT>    %}  </COMMENT>
+<COMMENT>  A = B</COMMENT>
+<COMMENT>%}</COMMENT>
+
+

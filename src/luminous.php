@@ -88,6 +88,9 @@ class _Luminous {
       
     $this->scanners->AddScanner('json',
       'LuminousJSONScanner', 'JSON', "$language_dir/json.php");
+      
+    $this->scanners->AddScanner(array('m', 'matlab'),
+      'LuminousMATLABScanner', 'MATLAB', "$language_dir/matlab.php");
 
     $this->scanners->AddScanner(array('rails','rhtml', 'ror'),
       'LuminousRailsScanner', 'Ruby on Rails',
