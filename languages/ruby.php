@@ -280,9 +280,14 @@ class LuminousRubyScanner extends LuminousScanner {
     (?: -[0adFiIlpvw])
     |
     (?:DEBUG|FILENAME|LOAD_PATH|stderr|stdin|stdout|VERBOSE)
-  )/x') || $this->scan('/(\\$|@@?|:)\w+/')) {
+  )/x') || $this->scan('/(\\$|@@?)\w+/')) {
         $this->record($this->match(), 'VARIABLE');
       }
+      elseif($this->scan('/:\w+/')) {
+        $this->record($this->match(), 'VALUE');
+      }
+
+
       elseif ( $c === '<' && $this->check('/<<-?([\'"`]?)[A-Z_]\w*\\1/i')) {
         // heredoc is a tiny bit ugly.
         // Heredocs can stack, so let's get a list of all the heredocs opened
