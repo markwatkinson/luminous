@@ -111,6 +111,9 @@ class _Luminous {
       
     $this->scanners->AddScanner(array('sql', 'mysql'),
       'LuminousSQLScanner', 'SQL', "$language_dir/sql.php");
+      
+    $this->scanners->AddScanner(array('vim', 'vimscript'),
+      'LuminousVimScriptScanner', 'Vim Script', "$language_dir/vim.php");
   }
 
   function get_formatter() {
