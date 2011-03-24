@@ -1243,34 +1243,34 @@ uint_32 stic_gmem_peek(periph_t <OPERATOR>*</OPERATOR>per, periph_t <OPERATOR>*<
     <TYPE>int</TYPE> v_dly, h_dly, top, lft;
     uint_32 bord <OPERATOR>=</OPERATOR> stic_color_mask[<OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>raw</OO>[<NUMERIC>0x2C</NUMERIC>] <OPERATOR>&amp;</OPERATOR> <NUMERIC>0xF</NUMERIC>];
 
-<PREPROCESSOR>#if 0</PREPROCESSOR>
-    <COMMENT>/* -------------------------------------------------------------------- */</COMMENT>
-    <COMMENT>/*  First, re-tile the backtab display list.  That should be quick.     */</COMMENT>
-    <COMMENT>/* -------------------------------------------------------------------- */</COMMENT>
-    <KEYWORD>for</KEYWORD> (bt <OPERATOR>=</OPERATOR> r <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>, ri <OPERATOR>=</OPERATOR> <NUMERIC>1</NUMERIC> <OPERATOR>+</OPERATOR> <NUMERIC>8</NUMERIC><OPERATOR>*</OPERATOR><NUMERIC>24</NUMERIC>; r <OPERATOR>&lt;</OPERATOR> <NUMERIC>12</NUMERIC>; r<OPERATOR>++</OPERATOR>, ri <OPERATOR>+=</OPERATOR> <NUMERIC>8</NUMERIC><OPERATOR>*</OPERATOR><NUMERIC>24</NUMERIC>)
-    {
-        <KEYWORD>for</KEYWORD> (c <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>; c <OPERATOR>&lt;</OPERATOR> <NUMERIC>20</NUMERIC>; c<OPERATOR>++</OPERATOR>, bt<OPERATOR>++</OPERATOR>)
-        {
-            uint_32 img0 <OPERATOR>=</OPERATOR> bt_img[bt<OPERATOR>*</OPERATOR><NUMERIC>8</NUMERIC> <OPERATOR>+</OPERATOR> <NUMERIC>0</NUMERIC>];
-            uint_32 img1 <OPERATOR>=</OPERATOR> bt_img[bt<OPERATOR>*</OPERATOR><NUMERIC>8</NUMERIC> <OPERATOR>+</OPERATOR> <NUMERIC>1</NUMERIC>];
-            uint_32 img2 <OPERATOR>=</OPERATOR> bt_img[bt<OPERATOR>*</OPERATOR><NUMERIC>8</NUMERIC> <OPERATOR>+</OPERATOR> <NUMERIC>2</NUMERIC>];
-            uint_32 img3 <OPERATOR>=</OPERATOR> bt_img[bt<OPERATOR>*</OPERATOR><NUMERIC>8</NUMERIC> <OPERATOR>+</OPERATOR> <NUMERIC>3</NUMERIC>];
-            uint_32 img4 <OPERATOR>=</OPERATOR> bt_img[bt<OPERATOR>*</OPERATOR><NUMERIC>8</NUMERIC> <OPERATOR>+</OPERATOR> <NUMERIC>4</NUMERIC>];
-            uint_32 img5 <OPERATOR>=</OPERATOR> bt_img[bt<OPERATOR>*</OPERATOR><NUMERIC>8</NUMERIC> <OPERATOR>+</OPERATOR> <NUMERIC>5</NUMERIC>];
-            uint_32 img6 <OPERATOR>=</OPERATOR> bt_img[bt<OPERATOR>*</OPERATOR><NUMERIC>8</NUMERIC> <OPERATOR>+</OPERATOR> <NUMERIC>6</NUMERIC>];
-            uint_32 img7 <OPERATOR>=</OPERATOR> bt_img[bt<OPERATOR>*</OPERATOR><NUMERIC>8</NUMERIC> <OPERATOR>+</OPERATOR> <NUMERIC>7</NUMERIC>];
-
-            xbt_img[ri <OPERATOR>+</OPERATOR> c <OPERATOR>+</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>*</OPERATOR><NUMERIC>24</NUMERIC>] <OPERATOR>=</OPERATOR> img0;
-            xbt_img[ri <OPERATOR>+</OPERATOR> c <OPERATOR>+</OPERATOR> <NUMERIC>1</NUMERIC><OPERATOR>*</OPERATOR><NUMERIC>24</NUMERIC>] <OPERATOR>=</OPERATOR> img1;
-            xbt_img[ri <OPERATOR>+</OPERATOR> c <OPERATOR>+</OPERATOR> <NUMERIC>2</NUMERIC><OPERATOR>*</OPERATOR><NUMERIC>24</NUMERIC>] <OPERATOR>=</OPERATOR> img2;
-            xbt_img[ri <OPERATOR>+</OPERATOR> c <OPERATOR>+</OPERATOR> <NUMERIC>3</NUMERIC><OPERATOR>*</OPERATOR><NUMERIC>24</NUMERIC>] <OPERATOR>=</OPERATOR> img3;
-            xbt_img[ri <OPERATOR>+</OPERATOR> c <OPERATOR>+</OPERATOR> <NUMERIC>4</NUMERIC><OPERATOR>*</OPERATOR><NUMERIC>24</NUMERIC>] <OPERATOR>=</OPERATOR> img4;
-            xbt_img[ri <OPERATOR>+</OPERATOR> c <OPERATOR>+</OPERATOR> <NUMERIC>5</NUMERIC><OPERATOR>*</OPERATOR><NUMERIC>24</NUMERIC>] <OPERATOR>=</OPERATOR> img5;
-            xbt_img[ri <OPERATOR>+</OPERATOR> c <OPERATOR>+</OPERATOR> <NUMERIC>6</NUMERIC><OPERATOR>*</OPERATOR><NUMERIC>24</NUMERIC>] <OPERATOR>=</OPERATOR> img6;
-            xbt_img[ri <OPERATOR>+</OPERATOR> c <OPERATOR>+</OPERATOR> <NUMERIC>7</NUMERIC><OPERATOR>*</OPERATOR><NUMERIC>24</NUMERIC>] <OPERATOR>=</OPERATOR> img7;
-        }
-    }
-<PREPROCESSOR>#endif</PREPROCESSOR>
+<COMMENT>#if 0</COMMENT>
+<COMMENT>    /* -------------------------------------------------------------------- */</COMMENT>
+<COMMENT>    /*  First, re-tile the backtab display list.  That should be quick.     */</COMMENT>
+<COMMENT>    /* -------------------------------------------------------------------- */</COMMENT>
+<COMMENT>    for (bt = r = 0, ri = 1 + 8*24; r &lt; 12; r++, ri += 8*24)</COMMENT>
+<COMMENT>    {</COMMENT>
+<COMMENT>        for (c = 0; c &lt; 20; c++, bt++)</COMMENT>
+<COMMENT>        {</COMMENT>
+<COMMENT>            uint_32 img0 = bt_img[bt*8 + 0];</COMMENT>
+<COMMENT>            uint_32 img1 = bt_img[bt*8 + 1];</COMMENT>
+<COMMENT>            uint_32 img2 = bt_img[bt*8 + 2];</COMMENT>
+<COMMENT>            uint_32 img3 = bt_img[bt*8 + 3];</COMMENT>
+<COMMENT>            uint_32 img4 = bt_img[bt*8 + 4];</COMMENT>
+<COMMENT>            uint_32 img5 = bt_img[bt*8 + 5];</COMMENT>
+<COMMENT>            uint_32 img6 = bt_img[bt*8 + 6];</COMMENT>
+<COMMENT>            uint_32 img7 = bt_img[bt*8 + 7];</COMMENT>
+<COMMENT></COMMENT>
+<COMMENT>            xbt_img[ri + c + 0*24] = img0;</COMMENT>
+<COMMENT>            xbt_img[ri + c + 1*24] = img1;</COMMENT>
+<COMMENT>            xbt_img[ri + c + 2*24] = img2;</COMMENT>
+<COMMENT>            xbt_img[ri + c + 3*24] = img3;</COMMENT>
+<COMMENT>            xbt_img[ri + c + 4*24] = img4;</COMMENT>
+<COMMENT>            xbt_img[ri + c + 5*24] = img5;</COMMENT>
+<COMMENT>            xbt_img[ri + c + 6*24] = img6;</COMMENT>
+<COMMENT>            xbt_img[ri + c + 7*24] = img7;</COMMENT>
+<COMMENT>        }</COMMENT>
+<COMMENT>    }</COMMENT>
+<COMMENT>#endif</COMMENT>
 
     <COMMENT>/* -------------------------------------------------------------------- */</COMMENT>
     <COMMENT>/*  Retile the fg/bg bitmap too.                                        */</COMMENT>
