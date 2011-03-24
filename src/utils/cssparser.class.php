@@ -179,7 +179,7 @@ class LuminousCSSParser {
     $value = preg_replace('/\s*!important$/', '', $value);
     // expand 3-digit hex
     if (preg_match('/^#([a-fA-F0-9]{3})$/', $value, $m))
-      $value .= $m[0];
+      $value .= $m[1];
     // remove quotes
     $value = trim($value);
     if (preg_match('/^(["\'])(.*)\\1$/', $value, $m)) $value = $m[1];
