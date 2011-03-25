@@ -137,7 +137,7 @@ class LuminousPythonScanner extends LuminousScanner {
         if($tok === 'STRING')
           $tok = 'COMMENT';
       }
-      elseif ($tok === 'STRING') {
+      elseif ($tok === 'STRING') {      
         $i = count($this->tokens);
         $tok = 'COMMENT';
         while ($i--) {
@@ -148,6 +148,12 @@ class LuminousPythonScanner extends LuminousScanner {
             $tok = 'STRING';
           }
           break;
+        }
+        // finally, if we can look ahead to a binary operator, or so,
+        // we concede it probably is a string
+        if ($tok === 'COMMENT') {
+          if ($this->check('/\s*(?: [+:&.,] | (?:and|or|is|not)\\b)/x'))
+            $tok = 'STRING';
         }
       }
      
