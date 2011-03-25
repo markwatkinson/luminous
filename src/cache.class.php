@@ -43,7 +43,9 @@ class LuminousCache
   private $id;
 
   public $purge_older_than = 3600; /**< purges files which haven't been
-    accessed (atime) for the given number of seconds  */
+    modified (mtime) for the given number of seconds
+    NOTE: cache hits trigger a touch
+    */
 
   public $purge_interval = -1; /**< Interval between cache purges (i.e. deletion of
   everything) or -1 to disable */
@@ -123,6 +125,7 @@ class LuminousCache
     if (file_exists($path)) {
       $this->cache_hit = true;      
       $f = file_get_contents($path);
+      touch($path);
       if ($this->use_gz_compression)
         $f = @gzuncompress($f);
       return $f;
@@ -188,8 +191,8 @@ class LuminousCache
       fclose($fh);
       foreach(scandir($this->cache_dir) as $file) {
         if ($file[0] === '.') continue;
-        $atime = fileatime($this->cache_dir . '/' . $file);
-        if ($time - $atime > $this->purge_older_than)
+        $mtime = filemtime($this->cache_dir . '/' . $file);
+        if ($time - $mtime > $this->purge_older_than)
           unlink($this->cache_dir . '/' . $file);
       }
     }
