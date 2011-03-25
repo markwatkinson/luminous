@@ -13,7 +13,7 @@ class LuminousCSharpScanner extends LuminousSimpleScanner {
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
     $this->add_pattern('IDENT', '/[a-z_]\w+/i');
-    $this->add_pattern('OPERATOR', '/[¬!%^&*-=+~|?\\/]/i');
+    $this->add_pattern('OPERATOR', '/[¬!%^&*\-=+~|?\\/><;:.,]+/i');
     
 
     
