@@ -14,9 +14,9 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
   function __construct($src=null) {
    
 
-    $this->dirty_exit_recoveries = array(
-      'DSTRING' => '/(?: [^\\\\">]+ | \\\\[^>])*("|$|(?=>))/',
-      'SSTRING' => "/(?: [^\\\\'>]+ | \\\\[^>])*('|$|(?=>))/",
+    $this->dirty_exit_recovery = array(
+      'DSTRING' => '/[^">]*("|$|(?=[>]))/',
+      'SSTRING' => "/[^'>]*('|$|(?=[>]))/",
       'COMMENT1' => '/.*?(?:-->|$)/s',
       'COMMENT2' => '/.*?(?:>|$)/s',
       'CDATA' => '/.*?(?:\\]{2}>|$)/s'
@@ -108,13 +108,19 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
         if($next) {
           $skip = $next[1] - $this->pos();
           $this->record($this->get($skip), null);
-          if ($next[0] === 'TERM') {
-//             $this->interrupt = true;
+          if ($next[0] === 'TERM') { 
+            $this->interrupt = true;
             break;
           }
         }
       } else {
-        
+        if ($this->embedded_server && 
+          $this->check('/\s*' . preg_quote($this->server_tags, '/') . '/'))
+          {
+          $this->skip_whitespace();
+          $this->interrupt = true;
+          break;
+        }
       }
 
 
@@ -196,7 +202,7 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
         $get = true;
       }
       else $get = true;
-      if (!$get && $this->server_break($tok)) { echo '1'; break; }
+      if (!$get && $this->server_break($tok)) {break; }
 
       $this->record($get? $this->get(): $this->match(), $tok);
       assert ($index < $this->pos()) or die("Failed to consume for $tok");

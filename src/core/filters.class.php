@@ -137,7 +137,8 @@ class LuminousFilters {
     $s = $token[1];
     if (isset($s[3])
       && ($s[2] === $s[1] || $s[2] === '!')
-      && !ctype_space($s[2])
+      && !ctype_space($s[0])
+      && !ctype_space($s[1])
       && $s[3] !== $s[2]   
       )
     {
