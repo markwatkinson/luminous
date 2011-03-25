@@ -102,7 +102,7 @@
             <KEYWORD>const</KEYWORD> aiVector3D <OPERATOR>&amp;</OPERATOR> translation <OPERATOR>=</OPERATOR> data[i]<OPERATOR>.</OPERATOR><OO>translation</OO>;
             <KEYWORD>const</KEYWORD> aiQuaternion <OPERATOR>&amp;</OPERATOR> rotation <OPERATOR>=</OPERATOR> data[i]<OPERATOR>.</OPERATOR><OO>rotation</OO>;
             <KEYWORD>const</KEYWORD> aiVector3D <OPERATOR>&amp;</OPERATOR> scale <OPERATOR>=</OPERATOR> data[i]<OPERATOR>.</OPERATOR><OO>scale</OO>;
-            <TYPE>float</TYPE> w <OPERATOR>=</OPERATOR> <NUMERIC>1.0</NUMERIC>f <OPERATOR>-</OPERATOR> weighting;
+            <TYPE>float</TYPE> w <OPERATOR>=</OPERATOR> <NUMERIC>1.0f</NUMERIC> <OPERATOR>-</OPERATOR> weighting;
 
             interp_v(t, translation, t, w);
             interp_v(s, scale, s, w);
@@ -221,7 +221,7 @@
         }
 
         <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR>total)
-            total <OPERATOR>=</OPERATOR> <NUMERIC>1.0</NUMERIC>f;
+            total <OPERATOR>=</OPERATOR> <NUMERIC>1.0f</NUMERIC>;
 
         <COMMENT>// node_weightings_total.insert(std::pair&lt;std::string,</COMMENT>
         <COMMENT>// float&gt;(nodename, total));</COMMENT>
