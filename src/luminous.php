@@ -212,10 +212,10 @@ abstract class luminous {
     return self::highlight($scanner, file_get_contents($file), $cache);
   }
 
-  static function register_scanner($language_code, $classname, $readable_language, $path) {
+  static function register_scanner($language_code, $classname, $readable_language, $path, $dependencies=null) {
       global $luminous_;
       $luminous_->scanners->AddScanner($language_code, $classname,
-        $readable_language, $path);
+        $readable_language, $path, $dependencies);
   }
   
   /**
