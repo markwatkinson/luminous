@@ -293,9 +293,9 @@ uint_32 stic_ctrl_peek(periph_t <OPERATOR>*</OPERATOR>per, periph_t <OPERATOR>*<
     <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>fifo_ptr</OO>        <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>;
     <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>stic_accessible</OO> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>;
     <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>gmem_accessible</OO> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>;
-    <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>req_bus</OO><OPERATOR>-&gt;</OPERATOR><OO>intak</OO>  <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0</NUMERIC>ULL;
-    <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>req_bus</OO><OPERATOR>-&gt;</OPERATOR><OO>next_busrq</OO> <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0</NUMERIC>ULL;
-    <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>req_bus</OO><OPERATOR>-&gt;</OPERATOR><OO>next_intrq</OO> <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0</NUMERIC>ULL;
+    <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>req_bus</OO><OPERATOR>-&gt;</OPERATOR><OO>intak</OO>  <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0ULL</NUMERIC>;
+    <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>req_bus</OO><OPERATOR>-&gt;</OPERATOR><OO>next_busrq</OO> <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0ULL</NUMERIC>;
+    <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>req_bus</OO><OPERATOR>-&gt;</OPERATOR><OO>next_intrq</OO> <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0ULL</NUMERIC>;
     <COMMENT>/*</COMMENT>
 <COMMENT>    stic-&gt;stic_cr.min_tick = 1;</COMMENT>
 <COMMENT>    stic-&gt;stic_cr.max_tick = phase_len;</COMMENT>
@@ -564,8 +564,8 @@ uint_32 stic_gmem_peek(periph_t <OPERATOR>*</OPERATOR>per, periph_t <OPERATOR>*<
 
         <KEYWORD>for</KEYWORD> (j <OPERATOR>=</OPERATOR> <NUMERIC>7</NUMERIC>; j <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>; j<OPERATOR>--</OPERATOR>)
         {
-            bit_d  <OPERATOR>+=</OPERATOR> bit_d  <OPERATOR>&amp;</OPERATOR> (<OPERATOR>~</OPERATOR><NUMERIC>0</NUMERIC>U <OPERATOR>&lt;&lt;</OPERATOR> j);
-            bit_rd <OPERATOR>+=</OPERATOR> bit_rd <OPERATOR>&amp;</OPERATOR> (<OPERATOR>~</OPERATOR><NUMERIC>0</NUMERIC>U <OPERATOR>&lt;&lt;</OPERATOR> j);
+            bit_d  <OPERATOR>+=</OPERATOR> bit_d  <OPERATOR>&amp;</OPERATOR> (<OPERATOR>~</OPERATOR><NUMERIC>0U</NUMERIC> <OPERATOR>&lt;&lt;</OPERATOR> j);
+            bit_rd <OPERATOR>+=</OPERATOR> bit_rd <OPERATOR>&amp;</OPERATOR> (<OPERATOR>~</OPERATOR><NUMERIC>0U</NUMERIC> <OPERATOR>&lt;&lt;</OPERATOR> j);
         }
 
         stic_bit_d [i] <OPERATOR>=</OPERATOR> <NUMERIC>3</NUMERIC> <OPERATOR>*</OPERATOR> bit_d;
@@ -616,8 +616,8 @@ uint_32 stic_gmem_peek(periph_t <OPERATOR>*</OPERATOR>per, periph_t <OPERATOR>*<
     <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_btab</OO><OPERATOR>.</OPERATOR><OO>peek</OO>       <OPERATOR>=</OPERATOR> <KEYWORD>NULL</KEYWORD>;
     <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_btab</OO><OPERATOR>.</OPERATOR><OO>poke</OO>       <OPERATOR>=</OPERATOR> stic_btab_wr;
     <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_btab</OO><OPERATOR>.</OPERATOR><OO>tick</OO>       <OPERATOR>=</OPERATOR> <KEYWORD>NULL</KEYWORD>;
-    <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_btab</OO><OPERATOR>.</OPERATOR><OO>min_tick</OO>   <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0</NUMERIC>U;
-    <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_btab</OO><OPERATOR>.</OPERATOR><OO>max_tick</OO>   <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0</NUMERIC>U;
+    <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_btab</OO><OPERATOR>.</OPERATOR><OO>min_tick</OO>   <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0U</NUMERIC>;
+    <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_btab</OO><OPERATOR>.</OPERATOR><OO>max_tick</OO>   <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0U</NUMERIC>;
     <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_btab</OO><OPERATOR>.</OPERATOR><OO>addr_base</OO>  <OPERATOR>=</OPERATOR> <NUMERIC>0x00000200</NUMERIC>;
     <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_btab</OO><OPERATOR>.</OPERATOR><OO>addr_mask</OO>  <OPERATOR>=</OPERATOR> <NUMERIC>0x000000FF</NUMERIC>;
     <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_btab</OO><OPERATOR>.</OPERATOR><OO>parent</OO>     <OPERATOR>=</OPERATOR> (<TYPE>void</TYPE><OPERATOR>*</OPERATOR>) stic;
@@ -627,8 +627,8 @@ uint_32 stic_gmem_peek(periph_t <OPERATOR>*</OPERATOR>per, periph_t <OPERATOR>*<
     <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_gram</OO><OPERATOR>.</OPERATOR><OO>peek</OO>       <OPERATOR>=</OPERATOR> stic_gmem_peek;
     <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_gram</OO><OPERATOR>.</OPERATOR><OO>poke</OO>       <OPERATOR>=</OPERATOR> stic_gmem_poke;
     <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_gram</OO><OPERATOR>.</OPERATOR><OO>tick</OO>       <OPERATOR>=</OPERATOR> <KEYWORD>NULL</KEYWORD>;
-    <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_gram</OO><OPERATOR>.</OPERATOR><OO>min_tick</OO>   <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0</NUMERIC>U;
-    <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_gram</OO><OPERATOR>.</OPERATOR><OO>max_tick</OO>   <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0</NUMERIC>U;
+    <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_gram</OO><OPERATOR>.</OPERATOR><OO>min_tick</OO>   <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0U</NUMERIC>;
+    <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_gram</OO><OPERATOR>.</OPERATOR><OO>max_tick</OO>   <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0U</NUMERIC>;
     <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_gram</OO><OPERATOR>.</OPERATOR><OO>addr_base</OO>  <OPERATOR>=</OPERATOR> <NUMERIC>0x00003000</NUMERIC>;
     <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_gram</OO><OPERATOR>.</OPERATOR><OO>addr_mask</OO>  <OPERATOR>=</OPERATOR> <NUMERIC>0x0000FFFF</NUMERIC>;
     <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>snoop_gram</OO><OPERATOR>.</OPERATOR><OO>parent</OO>     <OPERATOR>=</OPERATOR> (<TYPE>void</TYPE><OPERATOR>*</OPERATOR>) stic;
@@ -785,7 +785,7 @@ uint_32 stic_gmem_peek(periph_t <OPERATOR>*</OPERATOR>per, periph_t <OPERATOR>*<
         uint_32 y_reg <OPERATOR>=</OPERATOR> <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>raw</OO>[i <OPERATOR>+</OPERATOR> <NUMERIC>0x08</NUMERIC>];
         uint_32 x_pos <OPERATOR>=</OPERATOR>  x_reg <OPERATOR>&amp;</OPERATOR> <NUMERIC>0xFF</NUMERIC>;
         uint_32 y_pos <OPERATOR>=</OPERATOR> (y_reg <OPERATOR>&amp;</OPERATOR> <NUMERIC>0x7F</NUMERIC>) <OPERATOR>*</OPERATOR> <NUMERIC>2</NUMERIC>;
-        uint_32 prio  <OPERATOR>=</OPERATOR> (<OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>raw</OO>[i <OPERATOR>+</OPERATOR> <NUMERIC>0x10</NUMERIC>] <OPERATOR>&amp;</OPERATOR> <NUMERIC>0x2000</NUMERIC>) <OPERATOR>?</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0</NUMERIC>U <OPERATOR>:</OPERATOR> <NUMERIC>0</NUMERIC>;
+        uint_32 prio  <OPERATOR>=</OPERATOR> (<OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>raw</OO>[i <OPERATOR>+</OPERATOR> <NUMERIC>0x10</NUMERIC>] <OPERATOR>&amp;</OPERATOR> <NUMERIC>0x2000</NUMERIC>) <OPERATOR>?</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0U</NUMERIC> <OPERATOR>:</OPERATOR> <NUMERIC>0</NUMERIC>;
         uint_32 visb  <OPERATOR>=</OPERATOR> x_reg <OPERATOR>&amp;</OPERATOR> <NUMERIC>0x200</NUMERIC>;
         uint_32 y_shf <OPERATOR>=</OPERATOR> (y_reg <OPERATOR>&gt;&gt;</OPERATOR> <NUMERIC>8</NUMERIC>) <OPERATOR>&amp;</OPERATOR> <NUMERIC>3</NUMERIC>;
         <TYPE>int</TYPE>     y_stp <OPERATOR>=</OPERATOR> <NUMERIC>1</NUMERIC> <OPERATOR>&lt;&lt;</OPERATOR> y_shf;
@@ -1982,7 +1982,7 @@ uint_32 stic_tick
 
                 <COMMENT>/* Require INTAK if previous frame enabled. */</COMMENT>
                 <KEYWORD>if</KEYWORD> (<OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>vid_enable</OO>)
-                    <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>req_bus</OO><OPERATOR>-&gt;</OPERATOR><OO>intak</OO> <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0</NUMERIC>ULL;
+                    <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>req_bus</OO><OPERATOR>-&gt;</OPERATOR><OO>intak</OO> <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0ULL</NUMERIC>;
 
 <COMMENT>//jzp_printf("asserted INTRQ(1), now = %d, soon = %d, len = %d, until = %d\n", (int)now, (int)soon, (int)len, (int)stic-&gt;req_bus-&gt;intrq_until);</COMMENT>
             }
@@ -2032,8 +2032,8 @@ uint_32 stic_tick
             <COMMENT>/* ------------------------------------------------------------ */</COMMENT> 
             <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>vid_enable</OO>) 
             {
-                <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>stic_accessible</OO> <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0</NUMERIC>ULL;
-                <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>gmem_accessible</OO> <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0</NUMERIC>ULL;
+                <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>stic_accessible</OO> <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0ULL</NUMERIC>;
+                <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>gmem_accessible</OO> <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0ULL</NUMERIC>;
             } <KEYWORD>else</KEYWORD>
                 <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>req_bus</OO><OPERATOR>-&gt;</OPERATOR><OO>next_busrq</OO> <OPERATOR>=</OPERATOR> soon <OPERATOR>+</OPERATOR> phase_len;
             <KEYWORD>break</KEYWORD>;
@@ -2132,7 +2132,7 @@ uint_32 stic_tick
             {
                 <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>req_bus</OO><OPERATOR>-&gt;</OPERATOR><OO>intrq</OO>       <OPERATOR>=</OPERATOR> <CONSTANT>ASSERT_BUSRQ</CONSTANT>;
                 <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>req_bus</OO><OPERATOR>-&gt;</OPERATOR><OO>busrq_until</OO> <OPERATOR>=</OPERATOR> soon <OPERATOR>+</OPERATOR> <CONSTANT>STIC_BUSRQ_HOLD_EXTRA</CONSTANT>;
-                <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>req_bus</OO><OPERATOR>-&gt;</OPERATOR><OO>next_busrq</OO>  <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0</NUMERIC>ULL;
+                <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>req_bus</OO><OPERATOR>-&gt;</OPERATOR><OO>next_busrq</OO>  <OPERATOR>=</OPERATOR> <OPERATOR>~</OPERATOR><NUMERIC>0ULL</NUMERIC>;
                 <OBJ>stic</OBJ><OPERATOR>-&gt;</OPERATOR><OO>req_bus</OO><OPERATOR>-&gt;</OPERATOR><OO>busak</OO>       <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>;
 <COMMENT>//jzp_printf("asserted BUSRQ(14), now = %d, soon = %d, len = %d, until = %d\n", (int)now, (int)soon, (int)len, (int)stic-&gt;req_bus-&gt;busrq_until);</COMMENT>
             }

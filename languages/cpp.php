@@ -19,11 +19,49 @@ class LuminousCppScanner extends LuminousScanner {
   }
 
   function init() {
+    
+    // http://www.lysator.liu.se/c/ANSI-C-grammar-l.html
+    //     D                       [0-9]
+    //     L                       [a-zA-Z_]
+    //     H                       [a-fA-F0-9]
+    //     E                       [Ee][+-]?{D}+
+    //     FS                      (f|F|l|L)
+    //     IS                      (u|U|l|L)*//     
+    //     {L}({L}|{D})*           ident
+    //     0[xX]{H}+{IS}?          hex
+    //     0{D}+{IS}?              octal 
+    //     {D}+{IS}?               int
+    //     L?'(\\.|[^\\'])+'       char 
+    //     {D}+{E}{FS}?            real/float
+    //     {D}*"."{D}+({E})?{FS}?  real/float
+    //     {D}+"."{D}*({E})?{FS}?  real/float
+    //     L?\"(\\.|[^\\"])*\"     string, but we should exclude nl
+    
     $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_ML);
     $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_SL);
-    $this->add_pattern('STRING', LuminousTokenPresets::$DOUBLE_STR);
-    $this->add_pattern('CHARACTER', LuminousTokenPresets::$SINGLE_STR);
+    $this->add_pattern('STRING', "/L?\"(?: [^\\\\\"\n]+ | \\\\.)*(?:$|\")/xms");
+    // if memory serves, a char looks like this:
+    $this->add_pattern('CHARACTER', 
+      "/L? ' (?: \\\\(?: x[A-F0-9]{1,2}| . ) | . ) (?: '|$)/ixm");
+    
     $this->add_pattern('OPERATOR', '@[!%^&*\-/+=~:?.|<>]+@');
+    
+    $this->add_pattern('NUMERIC', '/0[xX][A-F0-9]+[uUlL]*/i');
+    $this->add_pattern('NUMERIC',  '/
+    (?: 
+      (?: \d* \.\d+   |   \d+\.\d*) 
+      ([eE][+-]?\d+)?
+      ([fFlL]?)
+    )
+    /ix');
+    $this->add_pattern('NUMERIC', '/
+      \d+([uUlL]+ | ([eE][+-]?\d+)?[fFlL]? | ) #empty string on the end
+    /x'); //inc octal
+
+    
+    
+    
+    
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
     $this->add_pattern('PREPROCESSOR', '/^[ \t]*\#/m');
