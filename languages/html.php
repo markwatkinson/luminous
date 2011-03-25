@@ -92,6 +92,7 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
       
       if (!$this->clean_exit) {
         $tok = $this->resume();
+        if ($this->server_break($tok)) break;
         $this->record($this->match(), $tok);
         continue;
       }
@@ -195,7 +196,7 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
         $get = true;
       }
       else $get = true;
-      if (!$get && $this->server_break($tok)) break;
+      if (!$get && $this->server_break($tok)) { echo '1'; break; }
 
       $this->record($get? $this->get(): $this->match(), $tok);
       assert ($index < $this->pos()) or die("Failed to consume for $tok");
