@@ -29,7 +29,7 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
     );
     $this->dirty_exit_recovery = array(
       'COMMENT_SL' => '/.*/',
-      'COMMENT' => '%.*(\*/|$)%s',
+      'COMMENT' => '%.*?(\*/|$)%s',
       'SSTRING' => "/(?:[^\\\\']+|\\\\.)*('|$)/",
       'DSTRING' => '/(?:[^\\\\"]+|\\\\.)*("|$)/'
     );
