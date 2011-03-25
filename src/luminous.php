@@ -147,7 +147,8 @@ class _Luminous {
     $formatter->line_numbers = $this->settings['line-numbers'];
     $formatter->link = $this->settings['auto-link'];
     $formatter->height = $this->settings['max-height'];
-    $formatter->strict_standards =$this->settings['html-strict'];
+    $formatter->strict_standards = $this->settings['html-strict'];
+    $formatter->set_theme(luminous::theme($this->settings['theme']));
   }
 
   private function cache_id($scanner, $source) {
@@ -261,7 +262,7 @@ abstract class luminous {
    */
   static function theme($theme) {
     if (self::theme_exists($theme)) 
-      return file_get_contents(self::luminous_root() . "/style/" . $theme);
+      return file_get_contents(self::root() . "/style/" . $theme);
     else
       throw new Exception('No such theme file: ' . $theme);
   }

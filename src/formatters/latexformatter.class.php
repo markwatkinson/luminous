@@ -43,6 +43,7 @@ class LuminousFormatterLatex extends LuminousFormatter
   
   function DefineStyleCommands()
   {
+    if ($this->css === null) throw new Exception('LaTeX formatter has not been set a theme');
     $cmds = array();
     foreach($this->css->rules() as $name=>$properties)
     {
