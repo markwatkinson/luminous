@@ -15,7 +15,10 @@ class LuminousMATLABScanner extends LuminousSimpleScanner {
     $stack = 0;
     while (1) {
       $next = $this->get_next(array('/%\\{/', '/%\\}/'));
-      if ($next[0] === -1) $this->terminate();
+      if ($next[0] === -1) {
+        $this->terminate();
+        break;
+      }
       else {
         $this->pos($next[0] + strlen($next[1][0]));
         if ($next[1][0] === '%{') $stack++;
