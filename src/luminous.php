@@ -261,6 +261,7 @@ abstract class luminous {
    * checks against reading arbitrary files
    */
   static function theme($theme) {
+    if (!preg_match('/\.css$/i', $theme)) $theme .= '.css';
     if (self::theme_exists($theme)) 
       return file_get_contents(self::root() . "/style/" . $theme);
     else
