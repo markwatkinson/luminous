@@ -68,7 +68,7 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
         !== null) {
         $tok = 'NUMERIC';
       }
-      elseif(!$in_block && $this->scan('/(?<=[#\.:])[\w\-]+/'))
+      elseif(!$in_block && $this->scan('/(?<=[#\.:])[\w\-]+/') !== null)
         $tok = 'SELECTOR';      
       elseif(( ctype_alpha($c) || $c === '!' || $c === '@' || $c === '_' || $c === '-' )
         &&  $this->scan('/(!?)[\-\w@]+/')) {
