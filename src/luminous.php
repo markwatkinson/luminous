@@ -89,6 +89,9 @@ class _Luminous {
     $this->scanners->AddScanner('json',
       'LuminousJSONScanner', 'JSON', "$language_dir/json.php");
       
+    $this->scanners->AddScanner(array('lolcode', 'lolc', 'lol'),
+      'LuminousLOLCODEScanner', 'LOLCODE', "$language_dir/lolcode.php");
+      
     $this->scanners->AddScanner(array('m', 'matlab'),
       'LuminousMATLABScanner', 'MATLAB', "$language_dir/matlab.php");
 
