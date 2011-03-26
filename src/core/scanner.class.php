@@ -1,9 +1,9 @@
 <?php
 
-require_once(dirname(__FILE__) .  '/strsearch.class.php');
-
-require_once('utils.class.php');
-require_once('filters.class.php');
+require_once(dirname(__FILE__) . '/strsearch.class.php');
+require_once(dirname(__FILE__) . '/utils.class.php');
+require_once(dirname(__FILE__) . '/filters.class.php');
+require_once(dirname(__FILE__) . '/tokenpresets.class.php');
 
 
 /**
@@ -348,7 +348,7 @@ class Scanner {
    * Adds a predefined pattern which is visible to next_match.
    */  
   function add_pattern($name, $pattern) {
-    $this->patterns[] = array($name, $pattern, -1, null);
+    $this->patterns[] = array($name, $pattern . 'S', -1, null);
   }
   
   /**
@@ -369,24 +369,28 @@ class Scanner {
     $nearest_name = null;
     $nearest_match_data = null;
 
-    foreach($this->patterns as $k=>$p_data) {
-      list($name, $pattern, $index, $match_data) = $p_data;
+    foreach($this->patterns as &$p_data) {
+      $name = $p_data[0];
+      $pattern = $p_data[1];
+      $index = &$p_data[2];
+      $match_data = &$p_data[3];
+//       list($name, $pattern, $index, $match_data) = $p_data;
       
       if ($index !== false && $index < $target) {
         $index = $this->ss->match($pattern, $target, $match_data);
 
-        $this->patterns[$k][2] = $index;
-        $this->patterns[$k][3] = $match_data;
+//         $this->patterns[$k][2] = $index;
+//         $this->patterns[$k][3] = $match_data;
       }
       
       if ($index === false) {
-        unset($this->patterns[$k]);
+        unset($p_data);
         continue;
       }
       
       if ($nearest_index === -1 || $index < $nearest_index) {
         $nearest_index = $index;
-        $nearest_key = $k;
+//         $nearest_key = $k;
         $nearest_name = $name;
         $nearest_match_data = $match_data;
         if ($index === $target) break;
@@ -394,7 +398,7 @@ class Scanner {
     }
     
     if ($nearest_index !== -1) {
-      $nearest = $this->patterns[$nearest_key];
+//       $nearest = $this->patterns[$nearest_key];
       if ($consume_and_log) {
         $this->__log_match($nearest_index, $nearest_index, $nearest_match_data);
         $this->__consume($nearest_index, true, $nearest_match_data);
@@ -407,22 +411,7 @@ class Scanner {
 
 
 
-abstract class LuminousTokenPresets {
-  static $DOUBLE_STR = '/" (?: [^"\\\\]+ | \\\\.)* (?:"|$)/xs';
-  static $SINGLE_STR = "/' (?: [^'\\\\]+ | \\\\.)* (?:'|$)/xs";
-  static $NUM_HEX = '/0x[a-fA-F0-9]+/';
-  static $NUM_REAL = '/
-    (?: \d+ (?: \.\d+ )? | \.?\d+)     # int, fraction or significand 
-    (?:e[+-]?\d+)?                     # exponent
-    /ix';
-  static $C_COMMENT_SL = '% // .* %x';
-  static $C_COMMENT_ML = '% / \* .*? (?: \*/ | $) %sx';
-  static $PERL_COMMENT = '/#.*/';
-  static $SQL_SINGLE_STR = "/ ' (?: [^']+ | '' )* (?: '|$)/x";
-  static $SQL_SINGLE_STR_BSLASH = "/ ' (?: [^'\\\\]+ | '' | \\\\. )* (?: '|$)/x";
-  
-  
-}
+
 
 
 
