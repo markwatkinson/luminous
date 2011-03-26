@@ -1,0 +1,1193 @@
+<COMMENT>#                                vim:ts=4:sw=4:</COMMENT>
+<COMMENT># = RedCloth - Textile and Markdown Hybrid for Ruby</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># Homepage::  http://whytheluckystiff.net/ruby/redcloth/</COMMENT>
+<COMMENT># Author::    why the lucky stiff (http://whytheluckystiff.net/)</COMMENT>
+<COMMENT># Copyright:: (cc) 2004 why the lucky stiff (and his puppet organizations.)</COMMENT>
+<COMMENT># License::   BSD</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># (see http://hobix.com/textile/ for a Textile Reference.)</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># Based on (and also inspired by) both:</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># PyTextile: http://diveintomark.org/projects/textile/textile.py.txt</COMMENT>
+<COMMENT># Textism for PHP: http://www.textism.com/tools/textile/</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#</COMMENT>
+
+<COMMENT># = RedCloth</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># RedCloth is a Ruby library for converting Textile and/or Markdown</COMMENT>
+<COMMENT># into HTML.  You can use either format, intermingled or separately.</COMMENT>
+<COMMENT># You can also extend RedCloth to honor your own custom text stylings.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># RedCloth users are encouraged to use Textile if they are generating</COMMENT>
+<COMMENT># HTML and to use Markdown if others will be viewing the plain text.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># == What is Textile?</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># Textile is a simple formatting style for text</COMMENT>
+<COMMENT># documents, loosely based on some HTML conventions.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># == Sample Textile Text</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  h2. This is a title</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  h3. This is a subhead</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  This is a bit of paragraph.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  bq. This is a blockquote.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># = Writing Textile</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># A Textile document consists of paragraphs.  Paragraphs</COMMENT>
+<COMMENT># can be specially formatted by adding a small instruction</COMMENT>
+<COMMENT># to the beginning of the paragraph.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  h[n].   Header of size [n].</COMMENT>
+<COMMENT>#  bq.     Blockquote.</COMMENT>
+<COMMENT>#  #       Numeric list.</COMMENT>
+<COMMENT>#  *       Bulleted list.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># == Quick Phrase Modifiers</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># Quick phrase modifiers are also included, to allow formatting</COMMENT>
+<COMMENT># of small portions of text within a paragraph.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  \_emphasis\_</COMMENT>
+<COMMENT>#  \_\_italicized\_\_</COMMENT>
+<COMMENT>#  \*strong\*</COMMENT>
+<COMMENT>#  \*\*bold\*\*</COMMENT>
+<COMMENT>#  ??citation??</COMMENT>
+<COMMENT>#  -deleted text-</COMMENT>
+<COMMENT>#  +inserted text+</COMMENT>
+<COMMENT>#  ^superscript^</COMMENT>
+<COMMENT>#  ~subscript~</COMMENT>
+<COMMENT>#  @code@</COMMENT>
+<COMMENT>#  %(classname)span%</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  ==notextile== (leave text alone)</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># == Links</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># To make a hypertext link, put the link text in "quotation </COMMENT>
+<COMMENT># marks" followed immediately by a colon and the URL of the link.</COMMENT>
+<COMMENT># </COMMENT>
+<COMMENT># Optional: text in (parentheses) following the link text, </COMMENT>
+<COMMENT># but before the closing quotation mark, will become a Title </COMMENT>
+<COMMENT># attribute for the link, visible as a tool tip when a cursor is above it.</COMMENT>
+<COMMENT># </COMMENT>
+<COMMENT># Example:</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  "This is a link (This is a title) ":http://www.textism.com</COMMENT>
+<COMMENT># </COMMENT>
+<COMMENT># Will become:</COMMENT>
+<COMMENT># </COMMENT>
+<COMMENT>#  &lt;a href="http://www.textism.com" title="This is a title"&gt;This is a link&lt;/a&gt;</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># == Images</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># To insert an image, put the URL for the image inside exclamation marks.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># Optional: text that immediately follows the URL in (parentheses) will </COMMENT>
+<COMMENT># be used as the Alt text for the image. Images on the web should always </COMMENT>
+<COMMENT># have descriptive Alt text for the benefit of readers using non-graphical </COMMENT>
+<COMMENT># browsers.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># Optional: place a colon followed by a URL immediately after the </COMMENT>
+<COMMENT># closing ! to make the image into a link.</COMMENT>
+<COMMENT># </COMMENT>
+<COMMENT># Example:</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  !http://www.textism.com/common/textist.gif(Textist)!</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># Will become:</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  &lt;img src="http://www.textism.com/common/textist.gif" alt="Textist" /&gt;</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># With a link:</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  !/common/textist.gif(Textist)!:http://textism.com</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># Will become:</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  &lt;a href="http://textism.com"&gt;&lt;img src="/common/textist.gif" alt="Textist" /&gt;&lt;/a&gt;</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># == Defining Acronyms</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># HTML allows authors to define acronyms via the tag. The definition appears as a </COMMENT>
+<COMMENT># tool tip when a cursor hovers over the acronym. A crucial aid to clear writing, </COMMENT>
+<COMMENT># this should be used at least once for each acronym in documents where they appear.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># To quickly define an acronym in Textile, place the full text in (parentheses) </COMMENT>
+<COMMENT># immediately following the acronym.</COMMENT>
+<COMMENT># </COMMENT>
+<COMMENT># Example:</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  ACLU(American Civil Liberties Union)</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># Will become:</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  &lt;acronym title="American Civil Liberties Union"&gt;ACLU&lt;/acronym&gt;</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># == Adding Tables</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># In Textile, simple tables can be added by seperating each column by</COMMENT>
+<COMMENT># a pipe.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#     |a|simple|table|row|</COMMENT>
+<COMMENT>#     |And|Another|table|row|</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># Attributes are defined by style definitions in parentheses.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#     table(border:1px solid black).</COMMENT>
+<COMMENT>#     (background:#ddd;color:red). |{}| | | |</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># == Using RedCloth</COMMENT>
+<COMMENT># </COMMENT>
+<COMMENT># RedCloth is simply an extension of the String class, which can handle</COMMENT>
+<COMMENT># Textile formatting.  Use it like a String and output HTML with its</COMMENT>
+<COMMENT># RedCloth#to_html method.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  doc = RedCloth.new "</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  h2. Test document</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  Just a simple test."</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  puts doc.to_html</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># By default, RedCloth uses both Textile and Markdown formatting, with</COMMENT>
+<COMMENT># Textile formatting taking precedence.  If you want to turn off Markdown</COMMENT>
+<COMMENT># formatting, to boost speed and limit the processor:</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT>#  class RedCloth::Textile.new( str )</COMMENT>
+
+<KEYWORD>class</KEYWORD> RedCloth3 <OPERATOR>&lt;</OPERATOR> <FUNCTION>String</FUNCTION>
+
+    <CONSTANT>VERSION</CONSTANT> <OPERATOR>=</OPERATOR> <STRING>'3.0.4'</STRING>
+    <CONSTANT>DEFAULT_RULES</CONSTANT> <OPERATOR>=</OPERATOR> [<VALUE>:textile</VALUE>, <VALUE>:markdown</VALUE>]
+
+    <COMMENT>#</COMMENT>
+    <COMMENT># Two accessor for setting security restrictions.</COMMENT>
+    <COMMENT>#</COMMENT>
+    <COMMENT># This is a nice thing if you're using RedCloth for</COMMENT>
+    <COMMENT># formatting in public places (e.g. Wikis) where you</COMMENT>
+    <COMMENT># don't want users to abuse HTML for bad things.</COMMENT>
+    <COMMENT>#</COMMENT>
+    <COMMENT># If +:filter_html+ is set, HTML which wasn't</COMMENT>
+    <COMMENT># created by the Textile processor will be escaped.</COMMENT>
+    <COMMENT>#</COMMENT>
+    <COMMENT># If +:filter_styles+ is set, it will also disable</COMMENT>
+    <COMMENT># the style markup specifier. ('{color: red}')</COMMENT>
+    <COMMENT>#</COMMENT>
+    attr_accessor <VALUE>:filter_html</VALUE>, <VALUE>:filter_styles</VALUE>
+
+    <COMMENT>#</COMMENT>
+    <COMMENT># Accessor for toggling hard breaks.</COMMENT>
+    <COMMENT>#</COMMENT>
+    <COMMENT># If +:hard_breaks+ is set, single newlines will</COMMENT>
+    <COMMENT># be converted to HTML break tags.  This is the</COMMENT>
+    <COMMENT># default behavior for traditional RedCloth.</COMMENT>
+    <COMMENT>#</COMMENT>
+    attr_accessor <VALUE>:hard_breaks</VALUE>
+
+    <COMMENT># Accessor for toggling lite mode.</COMMENT>
+    <COMMENT>#</COMMENT>
+    <COMMENT># In lite mode, block-level rules are ignored.  This means</COMMENT>
+    <COMMENT># that tables, paragraphs, lists, and such aren't available.</COMMENT>
+    <COMMENT># Only the inline markup for bold, italics, entities and so on.</COMMENT>
+    <COMMENT>#</COMMENT>
+    <COMMENT>#   r = RedCloth.new( "And then? She *fell*!", [:lite_mode] )</COMMENT>
+    <COMMENT>#   r.to_html</COMMENT>
+    <COMMENT>#   #=&gt; "And then? She &lt;strong&gt;fell&lt;/strong&gt;!"</COMMENT>
+    <COMMENT>#</COMMENT>
+    attr_accessor <VALUE>:lite_mode</VALUE>
+
+    <COMMENT>#</COMMENT>
+    <COMMENT># Accessor for toggling span caps.</COMMENT>
+    <COMMENT>#</COMMENT>
+    <COMMENT># Textile places `span' tags around capitalized</COMMENT>
+    <COMMENT># words by default, but this wreaks havoc on Wikis.</COMMENT>
+    <COMMENT># If +:no_span_caps+ is set, this will be</COMMENT>
+    <COMMENT># suppressed.</COMMENT>
+    <COMMENT>#</COMMENT>
+    attr_accessor <VALUE>:no_span_caps</VALUE>
+
+    <COMMENT>#</COMMENT>
+    <COMMENT># Establishes the markup predence.  Available rules include:</COMMENT>
+    <COMMENT>#</COMMENT>
+    <COMMENT># == Textile Rules</COMMENT>
+    <COMMENT>#</COMMENT>
+    <COMMENT># The following textile rules can be set individually.  Or add the complete</COMMENT>
+    <COMMENT># set of rules with the single :textile rule, which supplies the rule set in</COMMENT>
+    <COMMENT># the following precedence:</COMMENT>
+    <COMMENT>#</COMMENT>
+    <COMMENT># refs_textile::          Textile references (i.e. [hobix]http://hobix.com/)</COMMENT>
+    <COMMENT># block_textile_table::   Textile table block structures</COMMENT>
+    <COMMENT># block_textile_lists::   Textile list structures</COMMENT>
+    <COMMENT># block_textile_prefix::  Textile blocks with prefixes (i.e. bq., h2., etc.)</COMMENT>
+    <COMMENT># inline_textile_image::  Textile inline images</COMMENT>
+    <COMMENT># inline_textile_link::   Textile inline links</COMMENT>
+    <COMMENT># inline_textile_span::   Textile inline spans</COMMENT>
+    <COMMENT># glyphs_textile:: Textile entities (such as em-dashes and smart quotes)</COMMENT>
+    <COMMENT>#</COMMENT>
+    <COMMENT># == Markdown</COMMENT>
+    <COMMENT>#</COMMENT>
+    <COMMENT># refs_markdown::         Markdown references (for example: [hobix]: http://hobix.com/)</COMMENT>
+    <COMMENT># block_markdown_setext:: Markdown setext headers</COMMENT>
+    <COMMENT># block_markdown_atx::    Markdown atx headers</COMMENT>
+    <COMMENT># block_markdown_rule::   Markdown horizontal rules</COMMENT>
+    <COMMENT># block_markdown_bq::     Markdown blockquotes</COMMENT>
+    <COMMENT># block_markdown_lists::  Markdown lists</COMMENT>
+    <COMMENT># inline_markdown_link::  Markdown links</COMMENT>
+    attr_accessor <VALUE>:rules</VALUE>
+
+    <COMMENT># Returns a new RedCloth object, based on _string_ and</COMMENT>
+    <COMMENT># enforcing all the included _restrictions_.</COMMENT>
+    <COMMENT>#</COMMENT>
+    <COMMENT>#   r = RedCloth.new( "h1. A &lt;b&gt;bold&lt;/b&gt; man", [:filter_html] )</COMMENT>
+    <COMMENT>#   r.to_html</COMMENT>
+    <COMMENT>#     #=&gt;"&lt;h1&gt;A &amp;lt;b&amp;gt;bold&amp;lt;/b&amp;gt; man&lt;/h1&gt;"</COMMENT>
+    <COMMENT>#</COMMENT>
+    <KEYWORD>def</KEYWORD> initialize( string, restrictions <OPERATOR>=</OPERATOR> [] )
+        <OBJ>restrictions</OBJ>.<OO>each</OO> { <OPERATOR>|</OPERATOR>r<OPERATOR>|</OPERATOR> method( <STRING>"</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> r </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>="</STRING> ).<OO>call</OO>( <KEYWORD>true</KEYWORD> ) }
+        <KEYWORD>super</KEYWORD>( string )
+    <KEYWORD>end</KEYWORD>
+
+    <COMMENT>#</COMMENT>
+    <COMMENT># Generates HTML from the Textile contents.</COMMENT>
+    <COMMENT>#</COMMENT>
+    <COMMENT>#   r = RedCloth.new( "And then? She *fell*!" )</COMMENT>
+    <COMMENT>#   r.to_html( true )</COMMENT>
+    <COMMENT>#     #=&gt;"And then? She &lt;strong&gt;fell&lt;/strong&gt;!"</COMMENT>
+    <COMMENT>#</COMMENT>
+    <KEYWORD>def</KEYWORD> to_html( <OPERATOR>*</OPERATOR>rules )
+        rules <OPERATOR>=</OPERATOR> <CONSTANT>DEFAULT_RULES</CONSTANT> <KEYWORD>if</KEYWORD> <OBJ>rules</OBJ>.<OO>empty?</OO>
+        <COMMENT># make our working copy</COMMENT>
+        text <OPERATOR>=</OPERATOR> <OBJ>self</OBJ>.<OO>dup</OO>
+        
+        <VARIABLE>@urlrefs</VARIABLE> <OPERATOR>=</OPERATOR> {}
+        <VARIABLE>@shelf</VARIABLE> <OPERATOR>=</OPERATOR> []
+        textile_rules <OPERATOR>=</OPERATOR> [<VALUE>:block_textile_table</VALUE>, <VALUE>:block_textile_lists</VALUE>,
+                         <VALUE>:block_textile_prefix</VALUE>, <VALUE>:inline_textile_image</VALUE>, <VALUE>:inline_textile_link</VALUE>,
+                         <VALUE>:inline_textile_code</VALUE>, <VALUE>:inline_textile_span</VALUE>, <VALUE>:glyphs_textile</VALUE>]
+        markdown_rules <OPERATOR>=</OPERATOR> [<VALUE>:refs_markdown</VALUE>, <VALUE>:block_markdown_setext</VALUE>, <VALUE>:block_markdown_atx</VALUE>, <VALUE>:block_markdown_rule</VALUE>,
+                          <VALUE>:block_markdown_bq</VALUE>, <VALUE>:block_markdown_lists</VALUE>, 
+                          <VALUE>:inline_markdown_reflink</VALUE>, <VALUE>:inline_markdown_link</VALUE>]
+        <VARIABLE>@rules</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>rules</OBJ>.<OO>collect</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>rule<OPERATOR>|</OPERATOR>
+            <KEYWORD>case</KEYWORD> rule
+            <KEYWORD>when</KEYWORD> <VALUE>:markdown</VALUE>
+                markdown_rules
+            <KEYWORD>when</KEYWORD> <VALUE>:textile</VALUE>
+                textile_rules
+            <KEYWORD>else</KEYWORD>
+                rule
+            <KEYWORD>end</KEYWORD>
+        <OBJ>end</OBJ>.<OO>flatten</OO>
+
+        <COMMENT># standard clean up</COMMENT>
+        incoming_entities text 
+        clean_white_space text 
+
+        <COMMENT># start processor</COMMENT>
+        <VARIABLE>@pre_list</VARIABLE> <OPERATOR>=</OPERATOR> []
+        rip_offtags text
+        no_textile text
+        escape_html_tags text
+        hard_break text 
+        <KEYWORD>unless</KEYWORD> <VARIABLE>@lite_mode</VARIABLE>
+            refs text
+            <COMMENT># need to do this before text is split by #blocks</COMMENT>
+            block_textile_quotes text
+            blocks text
+        <KEYWORD>end</KEYWORD>
+        inline text
+        smooth_offtags text
+
+        retrieve text
+
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <REGEX>/&lt;\/?notextile&gt;/</REGEX>, <STRING>''</STRING> )
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <REGEX>/x%x%/</REGEX>, <STRING>'&amp;#38;'</STRING> )
+        clean_html text <KEYWORD>if</KEYWORD> filter_html
+        <OBJ>text</OBJ>.<OO>strip!</OO>
+        text
+
+    <KEYWORD>end</KEYWORD>
+
+    <COMMENT>#######</COMMENT>
+    <KEYWORD>private</KEYWORD>
+    <COMMENT>#######</COMMENT>
+    <COMMENT>#</COMMENT>
+    <COMMENT># Mapping of 8-bit ASCII codes to HTML numerical entity equivalents.</COMMENT>
+    <COMMENT># (from PyTextile)</COMMENT>
+    <COMMENT>#</COMMENT>
+    <CONSTANT>TEXTILE_TAGS</CONSTANT> <OPERATOR>=</OPERATOR>
+
+        [[<NUMERIC>128</NUMERIC>, <NUMERIC>8364</NUMERIC>], [<NUMERIC>129</NUMERIC>, <NUMERIC>0</NUMERIC>], [<NUMERIC>130</NUMERIC>, <NUMERIC>8218</NUMERIC>], [<NUMERIC>131</NUMERIC>, <NUMERIC>402</NUMERIC>], [<NUMERIC>132</NUMERIC>, <NUMERIC>8222</NUMERIC>], [<NUMERIC>133</NUMERIC>, <NUMERIC>8230</NUMERIC>], 
+         [<NUMERIC>134</NUMERIC>, <NUMERIC>8224</NUMERIC>], [<NUMERIC>135</NUMERIC>, <NUMERIC>8225</NUMERIC>], [<NUMERIC>136</NUMERIC>, <NUMERIC>710</NUMERIC>], [<NUMERIC>137</NUMERIC>, <NUMERIC>8240</NUMERIC>], [<NUMERIC>138</NUMERIC>, <NUMERIC>352</NUMERIC>], [<NUMERIC>139</NUMERIC>, <NUMERIC>8249</NUMERIC>], 
+         [<NUMERIC>140</NUMERIC>, <NUMERIC>338</NUMERIC>], [<NUMERIC>141</NUMERIC>, <NUMERIC>0</NUMERIC>], [<NUMERIC>142</NUMERIC>, <NUMERIC>0</NUMERIC>], [<NUMERIC>143</NUMERIC>, <NUMERIC>0</NUMERIC>], [<NUMERIC>144</NUMERIC>, <NUMERIC>0</NUMERIC>], [<NUMERIC>145</NUMERIC>, <NUMERIC>8216</NUMERIC>], [<NUMERIC>146</NUMERIC>, <NUMERIC>8217</NUMERIC>], 
+         [<NUMERIC>147</NUMERIC>, <NUMERIC>8220</NUMERIC>], [<NUMERIC>148</NUMERIC>, <NUMERIC>8221</NUMERIC>], [<NUMERIC>149</NUMERIC>, <NUMERIC>8226</NUMERIC>], [<NUMERIC>150</NUMERIC>, <NUMERIC>8211</NUMERIC>], [<NUMERIC>151</NUMERIC>, <NUMERIC>8212</NUMERIC>], [<NUMERIC>152</NUMERIC>, <NUMERIC>732</NUMERIC>], 
+         [<NUMERIC>153</NUMERIC>, <NUMERIC>8482</NUMERIC>], [<NUMERIC>154</NUMERIC>, <NUMERIC>353</NUMERIC>], [<NUMERIC>155</NUMERIC>, <NUMERIC>8250</NUMERIC>], [<NUMERIC>156</NUMERIC>, <NUMERIC>339</NUMERIC>], [<NUMERIC>157</NUMERIC>, <NUMERIC>0</NUMERIC>], [<NUMERIC>158</NUMERIC>, <NUMERIC>0</NUMERIC>], [<NUMERIC>159</NUMERIC>, <NUMERIC>376</NUMERIC>]].
+
+        collect! <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>a, b<OPERATOR>|</OPERATOR>
+            [<OBJ>a</OBJ>.<OO>chr</OO>, ( <OBJ>b</OBJ>.<OO>zero?</OO> <KEYWORD>and</KEYWORD> <STRING>""</STRING> <KEYWORD>or</KEYWORD> <STRING>"&amp;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> b </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>;"</STRING> )]
+        <KEYWORD>end</KEYWORD>
+
+    <COMMENT>#</COMMENT>
+    <COMMENT># Regular expressions to convert to HTML.</COMMENT>
+    <COMMENT>#</COMMENT>
+    <CONSTANT>A_HLGN</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/(?:(?:&lt;&gt;|&lt;|&gt;|\=|[()]+)+)/</REGEX>
+    <CONSTANT>A_VLGN</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/[\-^~]/</REGEX>
+    <CONSTANT>C_CLAS</CONSTANT> <OPERATOR>=</OPERATOR> <STRING>'(?:<ESC>\(</ESC>[^)]+<ESC>\)</ESC>)'</STRING>
+    <CONSTANT>C_LNGE</CONSTANT> <OPERATOR>=</OPERATOR> <STRING>'(?:<ESC>\[</ESC>[^<ESC>\[</ESC><ESC>\]</ESC>]+<ESC>\]</ESC>)'</STRING>
+    <CONSTANT>C_STYL</CONSTANT> <OPERATOR>=</OPERATOR> <STRING>'(?:<ESC>\{</ESC>[^}]+<ESC>\}</ESC>)'</STRING>
+    <CONSTANT>S_CSPN</CONSTANT> <OPERATOR>=</OPERATOR> <STRING>'(?:<ESC>\\</ESC><ESC>\\</ESC><ESC>\d</ESC>+)'</STRING>
+    <CONSTANT>S_RSPN</CONSTANT> <OPERATOR>=</OPERATOR> <STRING>'(?:/<ESC>\d</ESC>+)'</STRING>
+    A <OPERATOR>=</OPERATOR> <STRING>"(?:</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>A_HLGN</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>?</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>A_VLGN</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>?|</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>A_VLGN</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>?</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>A_HLGN</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>?)"</STRING>
+    S <OPERATOR>=</OPERATOR> <STRING>"(?:</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>S_CSPN</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>?</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>S_RSPN</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>|</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>S_RSPN</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>?</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>S_CSPN</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>?)"</STRING>
+    C <OPERATOR>=</OPERATOR> <STRING>"(?:</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>C_CLAS</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>?</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>C_STYL</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>?</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>C_LNGE</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>?|</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>C_STYL</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>?</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>C_LNGE</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>?</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>C_CLAS</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>?|</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>C_LNGE</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>?</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>C_STYL</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>?</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>C_CLAS</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>?)"</STRING>
+    <COMMENT># PUNCT = Regexp::quote( '!"#$%&amp;\'()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~' )</COMMENT>
+    <CONSTANT>PUNCT</CONSTANT> <OPERATOR>=</OPERATOR> <OBJ>Regexp</OBJ><OPERATOR>::</OPERATOR><OO>quote</OO>( <STRING>'!"#$%&amp;<ESC>\'</ESC>*+,-./:;=?@<ESC>\\</ESC>^_`|~'</STRING> )
+    <CONSTANT>PUNCT_NOQ</CONSTANT> <OPERATOR>=</OPERATOR> <OBJ>Regexp</OBJ><OPERATOR>::</OPERATOR><OO>quote</OO>( <STRING>'!"#$&amp;<ESC>\'</ESC>,./:;=?@<ESC>\\</ESC>`|'</STRING> )
+    <CONSTANT>PUNCT_Q</CONSTANT> <OPERATOR>=</OPERATOR> <OBJ>Regexp</OBJ><OPERATOR>::</OPERATOR><OO>quote</OO>( <STRING>'*-_+^~%'</STRING> )
+    <CONSTANT>HYPERLINK</CONSTANT> <OPERATOR>=</OPERATOR> <STRING>'(<ESC>\S</ESC>+?)([^<ESC>\w</ESC><ESC>\s</ESC>/;=<ESC>\?</ESC>]*?)(?=<ESC>\s</ESC>|&lt;|$)'</STRING>
+
+    <COMMENT># Text markup tags, don't conflict with block tags</COMMENT>
+    <CONSTANT>SIMPLE_HTML_TAGS</CONSTANT> <OPERATOR>=</OPERATOR> [
+        <STRING>'tt'</STRING>, <STRING>'b'</STRING>, <STRING>'i'</STRING>, <STRING>'big'</STRING>, <STRING>'small'</STRING>, <STRING>'em'</STRING>, <STRING>'strong'</STRING>, <STRING>'dfn'</STRING>, <STRING>'code'</STRING>, 
+        <STRING>'samp'</STRING>, <STRING>'kbd'</STRING>, <STRING>'var'</STRING>, <STRING>'cite'</STRING>, <STRING>'abbr'</STRING>, <STRING>'acronym'</STRING>, <STRING>'a'</STRING>, <STRING>'img'</STRING>, <STRING>'br'</STRING>,
+        <STRING>'br'</STRING>, <STRING>'map'</STRING>, <STRING>'q'</STRING>, <STRING>'sub'</STRING>, <STRING>'sup'</STRING>, <STRING>'span'</STRING>, <STRING>'bdo'</STRING>
+    ]
+
+    <CONSTANT>QTAGS</CONSTANT> <OPERATOR>=</OPERATOR> [
+        [<STRING>'**'</STRING>, <STRING>'b'</STRING>, <VALUE>:limit</VALUE>],
+        [<STRING>'*'</STRING>, <STRING>'strong'</STRING>, <VALUE>:limit</VALUE>],
+        [<STRING>'??'</STRING>, <STRING>'cite'</STRING>, <VALUE>:limit</VALUE>],
+        [<STRING>'-'</STRING>, <STRING>'del'</STRING>, <VALUE>:limit</VALUE>],
+        [<STRING>'__'</STRING>, <STRING>'i'</STRING>, <VALUE>:limit</VALUE>],
+        [<STRING>'_'</STRING>, <STRING>'em'</STRING>, <VALUE>:limit</VALUE>],
+        [<STRING>'%'</STRING>, <STRING>'span'</STRING>, <VALUE>:limit</VALUE>],
+        [<STRING>'+'</STRING>, <STRING>'ins'</STRING>, <VALUE>:limit</VALUE>],
+        [<STRING>'^'</STRING>, <STRING>'sup'</STRING>, <VALUE>:limit</VALUE>],
+        [<STRING>'~'</STRING>, <STRING>'sub'</STRING>, <VALUE>:limit</VALUE>]
+    ] 
+    <CONSTANT>QTAGS_JOIN</CONSTANT> <OPERATOR>=</OPERATOR> <OBJ>QTAGS</OBJ>.<OO>map</OO> {<OPERATOR>|</OPERATOR>rc, ht, rtype<OPERATOR>|</OPERATOR> <OBJ>Regexp</OBJ><OPERATOR>::</OPERATOR><OO>quote</OO> rc}.<OO>join</OO>(<STRING>'|'</STRING>)
+    
+    <OBJ>QTAGS</OBJ>.<OO>collect!</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>rc, ht, rtype<OPERATOR>|</OPERATOR>
+        rcq <OPERATOR>=</OPERATOR> <OBJ>Regexp</OBJ><OPERATOR>::</OPERATOR><OO>quote</OO> rc
+        re <OPERATOR>=</OPERATOR>
+            <KEYWORD>case</KEYWORD> rtype
+            <KEYWORD>when</KEYWORD> <VALUE>:limit</VALUE>
+                <OPERATOR>/</OPERATOR>(<OPERATOR>^|</OPERATOR>[<OPERATOR>&gt;</OPERATOR>\s\(])          <COMMENT># sta</COMMENT>
+                (<OPERATOR>?!</OPERATOR>\<OPERATOR>-</OPERATOR>\<OPERATOR>-</OPERATOR>)
+                (<COMMENT>#{QTAGS_JOIN}|)      # oqs</COMMENT>
+                (<COMMENT>#{rcq})              # qtag</COMMENT>
+                (\w<OPERATOR>|</OPERATOR>[<OPERATOR>^</OPERATOR>\s].<OPERATOR>*?</OPERATOR>[<OPERATOR>^</OPERATOR>\s])    <COMMENT># content</COMMENT>
+                (<OPERATOR>?!</OPERATOR>\<OPERATOR>-</OPERATOR>\<OPERATOR>-</OPERATOR>)
+                <COMMENT>#{rcq}</COMMENT>
+                (<COMMENT>#{QTAGS_JOIN}|)      # oqa</COMMENT>
+                (<OPERATOR>?=</OPERATOR>[[<VALUE>:punct</VALUE><OPERATOR>:</OPERATOR>]]<OPERATOR>|&lt;|</OPERATOR>\s<OPERATOR>|</OPERATOR>\)<OPERATOR>|</OPERATOR>$)<REGEX>/x</REGEX>
+<REGEX>            else</REGEX>
+<REGEX>                /</REGEX>(<COMMENT>#{rcq})</COMMENT>
+                (<COMMENT>#{C})</COMMENT>
+                (<OPERATOR>?::</OPERATOR>(\S<OPERATOR>+</OPERATOR>))<OPERATOR>?</OPERATOR>
+                (\w<OPERATOR>|</OPERATOR>[<OPERATOR>^</OPERATOR>\s\<OPERATOR>-</OPERATOR>].<OPERATOR>*?</OPERATOR>[<OPERATOR>^</OPERATOR>\s\<OPERATOR>-</OPERATOR>])
+                <COMMENT>#{rcq}/xm </COMMENT>
+            <KEYWORD>end</KEYWORD>
+        [rc, ht, re, rtype]
+    <KEYWORD>end</KEYWORD>
+
+    <COMMENT># Elements to handle</COMMENT>
+    <CONSTANT>GLYPHS</CONSTANT> <OPERATOR>=</OPERATOR> [
+    <COMMENT>#   [ /([^\s\[{(&gt;])?\'([dmst]\b|ll\b|ve\b|\s|:|$)/, '\1&amp;#8217;\2' ], # single closing</COMMENT>
+    <COMMENT>#   [ /([^\s\[{(&gt;#{PUNCT_Q}][#{PUNCT_Q}]*)\'/, '\1&amp;#8217;' ], # single closing</COMMENT>
+    <COMMENT>#   [ /\'(?=[#{PUNCT_Q}]*(s\b|[\s#{PUNCT_NOQ}]))/, '&amp;#8217;' ], # single closing</COMMENT>
+    <COMMENT>#   [ /\'/, '&amp;#8216;' ], # single opening</COMMENT>
+    <COMMENT>#   [ /&lt;/, '&amp;lt;' ], # less-than</COMMENT>
+    <COMMENT>#   [ /&gt;/, '&amp;gt;' ], # greater-than</COMMENT>
+    <COMMENT>#   [ /([^\s\[{(])?"(\s|:|$)/, '\1&amp;#8221;\2' ], # double closing</COMMENT>
+    <COMMENT>#   [ /([^\s\[{(&gt;#{PUNCT_Q}][#{PUNCT_Q}]*)"/, '\1&amp;#8221;' ], # double closing</COMMENT>
+    <COMMENT>#   [ /"(?=[#{PUNCT_Q}]*[\s#{PUNCT_NOQ}])/, '&amp;#8221;' ], # double closing</COMMENT>
+    <COMMENT>#   [ /"/, '&amp;#8220;' ], # double opening</COMMENT>
+    <COMMENT>#   [ /\b( )?\.{3}/, '\1&amp;#8230;' ], # ellipsis</COMMENT>
+    <COMMENT>#   [ /\b([A-Z][A-Z0-9]{2,})\b(?:[(]([^)]*)[)])/, '&lt;acronym title="\2"&gt;\1&lt;/acronym&gt;' ], # 3+ uppercase acronym</COMMENT>
+    <COMMENT>#   [ /(^|[^"][&gt;\s])([A-Z][A-Z0-9 ]+[A-Z0-9])([^&lt;A-Za-z0-9]|$)/, '\1&lt;span class="caps"&gt;\2&lt;/span&gt;\3', :no_span_caps ], # 3+ uppercase caps</COMMENT>
+    <COMMENT>#   [ /(\.\s)?\s?--\s?/, '\1&amp;#8212;' ], # em dash</COMMENT>
+    <COMMENT>#   [ /\s-&gt;\s/, ' &amp;rarr; ' ], # right arrow</COMMENT>
+    <COMMENT>#   [ /\s-\s/, ' &amp;#8211; ' ], # en dash</COMMENT>
+    <COMMENT>#   [ /(\d+) ?x ?(\d+)/, '\1&amp;#215;\2' ], # dimension sign</COMMENT>
+    <COMMENT>#   [ /\b ?[(\[]TM[\])]/i, '&amp;#8482;' ], # trademark</COMMENT>
+    <COMMENT>#   [ /\b ?[(\[]R[\])]/i, '&amp;#174;' ], # registered</COMMENT>
+    <COMMENT>#   [ /\b ?[(\[]C[\])]/i, '&amp;#169;' ] # copyright</COMMENT>
+    ]
+
+    <CONSTANT>H_ALGN_VALS</CONSTANT> <OPERATOR>=</OPERATOR> {
+        <STRING>'&lt;'</STRING> <OPERATOR>=&gt;</OPERATOR> <STRING>'left'</STRING>,
+        <STRING>'='</STRING> <OPERATOR>=&gt;</OPERATOR> <STRING>'center'</STRING>,
+        <STRING>'&gt;'</STRING> <OPERATOR>=&gt;</OPERATOR> <STRING>'right'</STRING>,
+        <STRING>'&lt;&gt;'</STRING> <OPERATOR>=&gt;</OPERATOR> <STRING>'justify'</STRING>
+    }
+
+    <CONSTANT>V_ALGN_VALS</CONSTANT> <OPERATOR>=</OPERATOR> {
+        <STRING>'^'</STRING> <OPERATOR>=&gt;</OPERATOR> <STRING>'top'</STRING>,
+        <STRING>'-'</STRING> <OPERATOR>=&gt;</OPERATOR> <STRING>'middle'</STRING>,
+        <STRING>'~'</STRING> <OPERATOR>=&gt;</OPERATOR> <STRING>'bottom'</STRING>
+    }
+
+    <COMMENT>#</COMMENT>
+    <COMMENT># Flexible HTML escaping</COMMENT>
+    <COMMENT>#</COMMENT>
+    <KEYWORD>def</KEYWORD> htmlesc( str, mode<OPERATOR>=:</OPERATOR>Quotes )
+      <KEYWORD>if</KEYWORD> str
+        <OBJ>str</OBJ>.<OO>gsub!</OO>( <STRING>'&amp;'</STRING>, <STRING>'&amp;amp;'</STRING> )
+        <OBJ>str</OBJ>.<OO>gsub!</OO>( <STRING>'"'</STRING>, <STRING>'&amp;quot;'</STRING> ) <KEYWORD>if</KEYWORD> mode <OPERATOR>!=</OPERATOR> <VALUE>:NoQuotes</VALUE>
+        <OBJ>str</OBJ>.<OO>gsub!</OO>( <STRING>"'"</STRING>, <STRING>'&amp;#039;'</STRING> ) <KEYWORD>if</KEYWORD> mode <OPERATOR>==</OPERATOR> <VALUE>:Quotes</VALUE>
+        <OBJ>str</OBJ>.<OO>gsub!</OO>( <STRING>'&lt;'</STRING>, <STRING>'&amp;lt;'</STRING>)
+        <OBJ>str</OBJ>.<OO>gsub!</OO>( <STRING>'&gt;'</STRING>, <STRING>'&amp;gt;'</STRING>)
+      <KEYWORD>end</KEYWORD>
+      str
+    <KEYWORD>end</KEYWORD>
+
+    <COMMENT># Search and replace for Textile glyphs (quotes, dashes, other symbols)</COMMENT>
+    <KEYWORD>def</KEYWORD> pgl( text )
+        <COMMENT>#GLYPHS.each do |re, resub, tog|</COMMENT>
+        <COMMENT>#    next if tog and method( tog ).call</COMMENT>
+        <COMMENT>#    text.gsub! re, resub</COMMENT>
+        <COMMENT>#end</COMMENT>
+        <OBJ>text</OBJ>.<OO>gsub!</OO>(<REGEX>/\b([A-Z][A-Z0-9]{1,})\b(?:[(]([^)]*)[)])/</REGEX>) <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>m<OPERATOR>|</OPERATOR>
+          <STRING>"&lt;acronym title=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION>htmlesc <VARIABLE>$2</VARIABLE></INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><VARIABLE>$1</VARIABLE></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;/acronym&gt;"</STRING>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <COMMENT># Parses Textile attribute lists and builds an HTML attribute string</COMMENT>
+    <KEYWORD>def</KEYWORD> pba( text_in, element <OPERATOR>=</OPERATOR> <STRING>""</STRING> )
+        
+        <KEYWORD>return</KEYWORD> <STRING>''</STRING> <KEYWORD>unless</KEYWORD> text_in
+
+        style <OPERATOR>=</OPERATOR> []
+        text <OPERATOR>=</OPERATOR> <OBJ>text_in</OBJ>.<OO>dup</OO>
+        <KEYWORD>if</KEYWORD> element <OPERATOR>==</OPERATOR> <STRING>'td'</STRING>
+            colspan <OPERATOR>=</OPERATOR> <VARIABLE>$1</VARIABLE> <KEYWORD>if</KEYWORD> text <OPERATOR>=~</OPERATOR> <REGEX>/\\(\d+)/</REGEX>
+            rowspan <OPERATOR>=</OPERATOR> <VARIABLE>$1</VARIABLE> <KEYWORD>if</KEYWORD> text <OPERATOR>=~</OPERATOR> <REGEX>/\/(\d+)/</REGEX>
+            style <OPERATOR>&lt;&lt;</OPERATOR> <STRING>"vertical-align:</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> v_align( <VARIABLE>$&amp;</VARIABLE> ) </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>;"</STRING> <KEYWORD>if</KEYWORD> text <OPERATOR>=~</OPERATOR> <CONSTANT>A_VLGN</CONSTANT>
+        <KEYWORD>end</KEYWORD>
+
+        style <OPERATOR>&lt;&lt;</OPERATOR> <STRING>"</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> htmlesc <VARIABLE>$1</VARIABLE> </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>;"</STRING> <KEYWORD>if</KEYWORD> <OBJ>text</OBJ>.<OO>sub!</OO>( <REGEX>/\{([^}]*)\}/</REGEX>, <STRING>''</STRING> ) <OPERATOR>&amp;&amp;</OPERATOR> <OPERATOR>!</OPERATOR>filter_styles
+
+        lang <OPERATOR>=</OPERATOR> <VARIABLE>$1</VARIABLE> <KEYWORD>if</KEYWORD>
+            <OBJ>text</OBJ>.<OO>sub!</OO>( <REGEX>/\[([^)]+?)\]/</REGEX>, <STRING>''</STRING> )
+
+        cls <OPERATOR>=</OPERATOR> <VARIABLE>$1</VARIABLE> <KEYWORD>if</KEYWORD>
+            <OBJ>text</OBJ>.<OO>sub!</OO>( <REGEX>/\(([^()]+?)\)/</REGEX>, <STRING>''</STRING> )
+                        
+        style <OPERATOR>&lt;&lt;</OPERATOR> <STRING>"padding-left:</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> <VARIABLE>$1</VARIABLE>.<OO>length</OO> </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>em;"</STRING> <KEYWORD>if</KEYWORD>
+            <OBJ>text</OBJ>.<OO>sub!</OO>( <REGEX>/([(]+)/</REGEX>, <STRING>''</STRING> )
+
+        style <OPERATOR>&lt;&lt;</OPERATOR> <STRING>"padding-right:</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> <VARIABLE>$1</VARIABLE>.<OO>length</OO> </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>em;"</STRING> <KEYWORD>if</KEYWORD> <OBJ>text</OBJ>.<OO>sub!</OO>( <REGEX>/([)]+)/</REGEX>, <STRING>''</STRING> )
+
+        style <OPERATOR>&lt;&lt;</OPERATOR> <STRING>"text-align:</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> h_align( <VARIABLE>$&amp;</VARIABLE> ) </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>;"</STRING> <KEYWORD>if</KEYWORD> text <OPERATOR>=~</OPERATOR> <CONSTANT>A_HLGN</CONSTANT>
+
+        cls, id <OPERATOR>=</OPERATOR> <VARIABLE>$1</VARIABLE>, <VARIABLE>$2</VARIABLE> <KEYWORD>if</KEYWORD> cls <OPERATOR>=~</OPERATOR> <REGEX>/^(.*?)#(.*)$/</REGEX>
+        
+        atts <OPERATOR>=</OPERATOR> <STRING>''</STRING>
+        atts <OPERATOR>&lt;&lt;</OPERATOR> <STRING>" style=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> <OBJ>style</OBJ>.<OO>join</OO> </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>"</STRING> <KEYWORD>unless</KEYWORD> <OBJ>style</OBJ>.<OO>empty?</OO>
+        atts <OPERATOR>&lt;&lt;</OPERATOR> <STRING>" class=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> cls </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>"</STRING> <KEYWORD>unless</KEYWORD> <OBJ>cls</OBJ>.<OO>to_s</OO>.<OO>empty?</OO>
+        atts <OPERATOR>&lt;&lt;</OPERATOR> <STRING>" lang=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> lang </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>"</STRING> <KEYWORD>if</KEYWORD> lang
+        atts <OPERATOR>&lt;&lt;</OPERATOR> <STRING>" id=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> id </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>"</STRING> <KEYWORD>if</KEYWORD> id
+        atts <OPERATOR>&lt;&lt;</OPERATOR> <STRING>" colspan=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> colspan </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>"</STRING> <KEYWORD>if</KEYWORD> colspan
+        atts <OPERATOR>&lt;&lt;</OPERATOR> <STRING>" rowspan=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> rowspan </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>"</STRING> <KEYWORD>if</KEYWORD> rowspan
+        
+        atts
+    <KEYWORD>end</KEYWORD>
+
+    <CONSTANT>TABLE_RE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/^(?:table(_?</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>S</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX></REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>A</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX></REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>C</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>)\. ?\n)?^(</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>A</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX></REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>C</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>\.? ?\|.*?\|)(\n\n|\Z)/</REGEX>m
+    
+    <COMMENT># Parses a Textile table block, building HTML from the result.</COMMENT>
+    <KEYWORD>def</KEYWORD> block_textile_table( text ) 
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <CONSTANT>TABLE_RE</CONSTANT> ) <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>matches<OPERATOR>|</OPERATOR>
+
+            tatts, fullrow <OPERATOR>=</OPERATOR> <VARIABLE>$~</VARIABLE>[<NUMERIC>1.</NUMERIC><NUMERIC>.2</NUMERIC>]
+            tatts <OPERATOR>=</OPERATOR> pba( tatts, <STRING>'table'</STRING> )
+            tatts <OPERATOR>=</OPERATOR> shelve( tatts ) <KEYWORD>if</KEYWORD> tatts
+            rows <OPERATOR>=</OPERATOR> []
+
+            <OBJ>fullrow</OBJ>.<OO>each_line</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>row<OPERATOR>|</OPERATOR>
+                ratts, row <OPERATOR>=</OPERATOR> pba( <VARIABLE>$1</VARIABLE>, <STRING>'tr'</STRING> ), <VARIABLE>$2</VARIABLE> <KEYWORD>if</KEYWORD> row <OPERATOR>=~</OPERATOR> <REGEX>/^(</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>A</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX></REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>C</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>\. )(.*)/</REGEX>m
+                cells <OPERATOR>=</OPERATOR> []
+                <OBJ>row</OBJ>.<OO>split</OO>( <REGEX>/(\|)(?![^\[\|]*\]\])/</REGEX> )[<NUMERIC>1.</NUMERIC>.<OPERATOR>-</OPERATOR><NUMERIC>2</NUMERIC>].<OO>each</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>cell<OPERATOR>|</OPERATOR>
+                    <KEYWORD>next</KEYWORD> <KEYWORD>if</KEYWORD> cell <OPERATOR>==</OPERATOR> <STRING>'|'</STRING>
+                    ctyp <OPERATOR>=</OPERATOR> <STRING>'d'</STRING>
+                    ctyp <OPERATOR>=</OPERATOR> <STRING>'h'</STRING> <KEYWORD>if</KEYWORD> cell <OPERATOR>=~</OPERATOR> <REGEX>/^_/</REGEX>
+
+                    catts <OPERATOR>=</OPERATOR> <STRING>''</STRING>
+                    catts, cell <OPERATOR>=</OPERATOR> pba( <VARIABLE>$1</VARIABLE>, <STRING>'td'</STRING> ), <VARIABLE>$2</VARIABLE> <KEYWORD>if</KEYWORD> cell <OPERATOR>=~</OPERATOR> <REGEX>/^(_?</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>S</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX></REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>A</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX></REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>C</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>\. ?)(.*)/</REGEX>
+
+                    catts <OPERATOR>=</OPERATOR> shelve( catts ) <KEYWORD>if</KEYWORD> catts
+                    cells <OPERATOR>&lt;&lt;</OPERATOR> <STRING>"<ESC>\t</ESC><ESC>\t</ESC><ESC>\t</ESC>&lt;t</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> ctyp </INTERPOLATION><DELIMITER>}</DELIMITER><STRING></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> catts </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> cell </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;/t</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> ctyp </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;"</STRING> 
+                <KEYWORD>end</KEYWORD>
+                ratts <OPERATOR>=</OPERATOR> shelve( ratts ) <KEYWORD>if</KEYWORD> ratts
+                rows <OPERATOR>&lt;&lt;</OPERATOR> <STRING>"<ESC>\t</ESC><ESC>\t</ESC>&lt;tr</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> ratts </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;<ESC>\n</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> <OBJ>cells</OBJ>.<OO>join</OO>( <STRING>"<ESC>\n</ESC>"</STRING> ) </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\n</ESC><ESC>\t</ESC><ESC>\t</ESC>&lt;/tr&gt;"</STRING>
+            <KEYWORD>end</KEYWORD>
+            <STRING>"<ESC>\t</ESC>&lt;table</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> tatts </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;<ESC>\n</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> <OBJ>rows</OBJ>.<OO>join</OO>( <STRING>"<ESC>\n</ESC>"</STRING> ) </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\n</ESC><ESC>\t</ESC>&lt;/table&gt;<ESC>\n</ESC><ESC>\n</ESC>"</STRING>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <CONSTANT>LISTS_RE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/^([#*]+?</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>C</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX> .*?)$(?![^#*])/</REGEX>m
+    <CONSTANT>LISTS_CONTENT_RE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/^([#*]+)(</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>A</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX></REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>C</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>) (.*)$/</REGEX>m
+
+    <COMMENT># Parses Textile lists and generates HTML</COMMENT>
+    <KEYWORD>def</KEYWORD> block_textile_lists( text ) 
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <CONSTANT>LISTS_RE</CONSTANT> ) <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>match<OPERATOR>|</OPERATOR>
+            lines <OPERATOR>=</OPERATOR> <OBJ>match</OBJ>.<OO>split</OO>( <REGEX>/\n/</REGEX> )
+            last_line <OPERATOR>=</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>
+            depth <OPERATOR>=</OPERATOR> []
+            <OBJ>lines</OBJ>.<OO>each_with_index</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>line, line_id<OPERATOR>|</OPERATOR>
+                <KEYWORD>if</KEYWORD> line <OPERATOR>=~</OPERATOR> <CONSTANT>LISTS_CONTENT_RE</CONSTANT> 
+                    tl,atts,content <OPERATOR>=</OPERATOR> <VARIABLE>$~</VARIABLE>[<NUMERIC>1.</NUMERIC><NUMERIC>.3</NUMERIC>]
+                    <KEYWORD>if</KEYWORD> <OBJ>depth</OBJ>.<OO>last</OO>
+                        <KEYWORD>if</KEYWORD> <OBJ>depth</OBJ>.<OO>last</OO>.<OO>length</OO> <OPERATOR>&gt;</OPERATOR> <OBJ>tl</OBJ>.<OO>length</OO>
+                            (<OBJ>depth</OBJ>.<OO>length</OO> <OPERATOR>-</OPERATOR> <NUMERIC>1</NUMERIC>).<OO>downto</OO>(<NUMERIC>0</NUMERIC>) <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>i<OPERATOR>|</OPERATOR>
+                                <KEYWORD>break</KEYWORD> <KEYWORD>if</KEYWORD> depth[i].<OO>length</OO> <OPERATOR>==</OPERATOR> <OBJ>tl</OBJ>.<OO>length</OO>
+                                lines[line_id <OPERATOR>-</OPERATOR> <NUMERIC>1</NUMERIC>] <OPERATOR>&lt;&lt;</OPERATOR> <STRING>"&lt;/li&gt;<ESC>\n</ESC><ESC>\t</ESC>&lt;/</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> lT( depth[i] ) </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>l&gt;<ESC>\n</ESC><ESC>\t</ESC>"</STRING>
+                                <OBJ>depth</OBJ>.<OO>pop</OO>
+                            <KEYWORD>end</KEYWORD>
+                        <KEYWORD>end</KEYWORD>
+                        <KEYWORD>if</KEYWORD> <OBJ>depth</OBJ>.<OO>last</OO> <KEYWORD>and</KEYWORD> <OBJ>depth</OBJ>.<OO>last</OO>.<OO>length</OO> <OPERATOR>==</OPERATOR> <OBJ>tl</OBJ>.<OO>length</OO>
+                            lines[line_id <OPERATOR>-</OPERATOR> <NUMERIC>1</NUMERIC>] <OPERATOR>&lt;&lt;</OPERATOR> <STRING>'&lt;/li&gt;'</STRING>
+                        <KEYWORD>end</KEYWORD>
+                    <KEYWORD>end</KEYWORD>
+                    <KEYWORD>unless</KEYWORD> <OBJ>depth</OBJ>.<OO>last</OO> <OPERATOR>==</OPERATOR> tl
+                        depth <OPERATOR>&lt;&lt;</OPERATOR> tl
+                        atts <OPERATOR>=</OPERATOR> pba( atts )
+                        atts <OPERATOR>=</OPERATOR> shelve( atts ) <KEYWORD>if</KEYWORD> atts
+                        lines[line_id] <OPERATOR>=</OPERATOR> <STRING>"<ESC>\t</ESC>&lt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> lT(tl) </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>l</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> atts </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;<ESC>\n</ESC><ESC>\t</ESC>&lt;li&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> content </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>
+                    <KEYWORD>else</KEYWORD>
+                        lines[line_id] <OPERATOR>=</OPERATOR> <STRING>"<ESC>\t</ESC><ESC>\t</ESC>&lt;li&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> content </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>
+                    <KEYWORD>end</KEYWORD>
+                    last_line <OPERATOR>=</OPERATOR> line_id
+
+                <KEYWORD>else</KEYWORD>
+                    last_line <OPERATOR>=</OPERATOR> line_id
+                <KEYWORD>end</KEYWORD>
+                <KEYWORD>if</KEYWORD> line_id <OPERATOR>-</OPERATOR> last_line <OPERATOR>&gt;</OPERATOR> <NUMERIC>1</NUMERIC> <KEYWORD>or</KEYWORD> line_id <OPERATOR>==</OPERATOR> <OBJ>lines</OBJ>.<OO>length</OO> <OPERATOR>-</OPERATOR> <NUMERIC>1</NUMERIC>
+                    <OBJ>depth</OBJ>.<OO>delete_if</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>v<OPERATOR>|</OPERATOR>
+                        lines[last_line] <OPERATOR>&lt;&lt;</OPERATOR> <STRING>"&lt;/li&gt;<ESC>\n</ESC><ESC>\t</ESC>&lt;/</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> lT( v ) </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>l&gt;"</STRING>
+                    <KEYWORD>end</KEYWORD>
+                <KEYWORD>end</KEYWORD>
+            <KEYWORD>end</KEYWORD>
+            <OBJ>lines</OBJ>.<OO>join</OO>( <STRING>"<ESC>\n</ESC>"</STRING> )
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+    
+    <CONSTANT>QUOTES_RE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/(^&gt;+([^\n]*?)(\n|$))+/</REGEX>m
+    <CONSTANT>QUOTES_CONTENT_RE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/^([&gt; ]+)(.*)$/</REGEX>m
+    
+    <KEYWORD>def</KEYWORD> block_textile_quotes( text )
+      <OBJ>text</OBJ>.<OO>gsub!</OO>( <CONSTANT>QUOTES_RE</CONSTANT> ) <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>match<OPERATOR>|</OPERATOR>
+        lines <OPERATOR>=</OPERATOR> <OBJ>match</OBJ>.<OO>split</OO>( <REGEX>/\n/</REGEX> )
+        quotes <OPERATOR>=</OPERATOR> <STRING>''</STRING>
+        indent <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>
+        <OBJ>lines</OBJ>.<OO>each</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>line<OPERATOR>|</OPERATOR>
+          line <OPERATOR>=~</OPERATOR> <CONSTANT>QUOTES_CONTENT_RE</CONSTANT> 
+          bq,content <OPERATOR>=</OPERATOR> <VARIABLE>$1</VARIABLE>, <VARIABLE>$2</VARIABLE>
+          l <OPERATOR>=</OPERATOR> <OBJ>bq</OBJ>.<OO>count</OO>(<STRING>'&gt;'</STRING>)
+          <KEYWORD>if</KEYWORD> l <OPERATOR>!=</OPERATOR> indent
+            quotes <OPERATOR>&lt;&lt;</OPERATOR> (<STRING>"<ESC>\n</ESC><ESC>\n</ESC>"</STRING> <OPERATOR>+</OPERATOR> (l<OPERATOR>&gt;</OPERATOR>indent <OPERATOR>?</OPERATOR> <STRING>'&lt;blockquote&gt;'</STRING> <OPERATOR>*</OPERATOR> (l<OPERATOR>-</OPERATOR>indent) <OPERATOR>:</OPERATOR> <STRING>'&lt;/blockquote&gt;'</STRING> <OPERATOR>*</OPERATOR> (indent<OPERATOR>-</OPERATOR>l)) <OPERATOR>+</OPERATOR> <STRING>"<ESC>\n</ESC><ESC>\n</ESC>"</STRING>)
+            indent <OPERATOR>=</OPERATOR> l
+          <KEYWORD>end</KEYWORD>
+          quotes <OPERATOR>&lt;&lt;</OPERATOR> (content <OPERATOR>+</OPERATOR> <STRING>"<ESC>\n</ESC>"</STRING>)
+        <KEYWORD>end</KEYWORD>
+        quotes <OPERATOR>&lt;&lt;</OPERATOR> (<STRING>"<ESC>\n</ESC>"</STRING> <OPERATOR>+</OPERATOR> <STRING>'&lt;/blockquote&gt;'</STRING> <OPERATOR>*</OPERATOR> indent <OPERATOR>+</OPERATOR> <STRING>"<ESC>\n</ESC><ESC>\n</ESC>"</STRING>)
+        quotes
+      <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <CONSTANT>CODE_RE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/(\W)</REGEX>
+<REGEX>        @</REGEX>
+<REGEX>        (?:\|(\w+?)\|)?</REGEX>
+<REGEX>        (.+?)</REGEX>
+<REGEX>        @</REGEX>
+<REGEX>        (?=\W)/</REGEX>x
+
+    <KEYWORD>def</KEYWORD> inline_textile_code( text ) 
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <CONSTANT>CODE_RE</CONSTANT> ) <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>m<OPERATOR>|</OPERATOR>
+            before,lang,code,after <OPERATOR>=</OPERATOR> <VARIABLE>$~</VARIABLE>[<NUMERIC>1.</NUMERIC><NUMERIC>.4</NUMERIC>]
+            lang <OPERATOR>=</OPERATOR> <STRING>" lang=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> lang </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>"</STRING> <KEYWORD>if</KEYWORD> lang
+            rip_offtags( <STRING>"</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> before </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;code</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> lang </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> code </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;/code&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> after </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>, <KEYWORD>false</KEYWORD> )
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> lT( text ) 
+        text <OPERATOR>=~</OPERATOR> <REGEX>/\#$/</REGEX> <OPERATOR>?</OPERATOR> <STRING>'o'</STRING> <OPERATOR>:</OPERATOR> <STRING>'u'</STRING>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> hard_break( text )
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <REGEX>/(.)\n(?!\Z| *([#*=]+(\s|$)|[{|]))/</REGEX>, <STRING>"<ESC>\\</ESC>1&lt;br /&gt;"</STRING> ) <KEYWORD>if</KEYWORD> hard_breaks
+    <KEYWORD>end</KEYWORD>
+
+    <CONSTANT>BLOCKS_GROUP_RE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/\n{2,}(?! )/</REGEX>m
+
+    <KEYWORD>def</KEYWORD> blocks( text, deep_code <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD> )
+        <OBJ>text</OBJ>.<OO>replace</OO>( <OBJ>text</OBJ>.<OO>split</OO>( <CONSTANT>BLOCKS_GROUP_RE</CONSTANT> ).<OO>collect</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>blk<OPERATOR>|</OPERATOR>
+            plain <OPERATOR>=</OPERATOR> blk <OPERATOR>!~</OPERATOR> <REGEX>/\A[#*&gt; ]/</REGEX>
+
+            <COMMENT># skip blocks that are complex HTML</COMMENT>
+            <KEYWORD>if</KEYWORD> blk <OPERATOR>=~</OPERATOR> <REGEX>/^&lt;\/?(\w+).*&gt;/</REGEX> <KEYWORD>and</KEYWORD> <KEYWORD>not</KEYWORD> <OBJ>SIMPLE_HTML_TAGS</OBJ>.<OO>include?</OO> <VARIABLE>$1</VARIABLE>
+                blk
+            <KEYWORD>else</KEYWORD>
+                <COMMENT># search for indentation levels</COMMENT>
+                <OBJ>blk</OBJ>.<OO>strip!</OO>
+                <KEYWORD>if</KEYWORD> <OBJ>blk</OBJ>.<OO>empty?</OO>
+                    blk
+                <KEYWORD>else</KEYWORD>
+                    code_blk <OPERATOR>=</OPERATOR> <KEYWORD>nil</KEYWORD>
+                    <OBJ>blk</OBJ>.<OO>gsub!</OO>( <REGEX>/((?:\n(?:\n^ +[^\n]*)+)+)/</REGEX>m ) <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>iblk<OPERATOR>|</OPERATOR>
+                        flush_left iblk
+                        blocks iblk, plain
+                        <OBJ>iblk</OBJ>.<OO>gsub</OO>( <REGEX>/^(\S)/</REGEX>, <STRING>"<ESC>\t</ESC><ESC>\\</ESC>1"</STRING> )
+                        <KEYWORD>if</KEYWORD> plain
+                            code_blk <OPERATOR>=</OPERATOR> iblk<OPERATOR>;</OPERATOR> <STRING>""</STRING>
+                        <KEYWORD>else</KEYWORD>
+                            iblk
+                        <KEYWORD>end</KEYWORD>
+                    <KEYWORD>end</KEYWORD>
+
+                    block_applied <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC> 
+                    <VARIABLE>@rules</VARIABLE>.<OO>each</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>rule_name<OPERATOR>|</OPERATOR>
+                        block_applied <OPERATOR>+=</OPERATOR> <NUMERIC>1</NUMERIC> <KEYWORD>if</KEYWORD> ( <OBJ>rule_name</OBJ>.<OO>to_s</OO>.<OO>match</OO> <REGEX>/^block_/</REGEX> <KEYWORD>and</KEYWORD> method( rule_name ).<OO>call</OO>( blk ) )
+                    <KEYWORD>end</KEYWORD>
+                    <KEYWORD>if</KEYWORD> <OBJ>block_applied</OBJ>.<OO>zero?</OO>
+                        <KEYWORD>if</KEYWORD> deep_code
+                            blk <OPERATOR>=</OPERATOR> <STRING>"<ESC>\t</ESC>&lt;pre&gt;&lt;code&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> blk </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;/code&gt;&lt;/pre&gt;"</STRING>
+                        <KEYWORD>else</KEYWORD>
+                            blk <OPERATOR>=</OPERATOR> <STRING>"<ESC>\t</ESC>&lt;p&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> blk </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;/p&gt;"</STRING>
+                        <KEYWORD>end</KEYWORD>
+                    <KEYWORD>end</KEYWORD>
+                    <COMMENT># hard_break blk</COMMENT>
+                    blk <OPERATOR>+</OPERATOR> <STRING>"<ESC>\n</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> code_blk </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>
+                <KEYWORD>end</KEYWORD>
+            <KEYWORD>end</KEYWORD>
+
+        <OBJ>end</OBJ>.<OO>join</OO>( <STRING>"<ESC>\n</ESC><ESC>\n</ESC>"</STRING> ) )
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> textile_bq( tag, atts, cite, content )
+        cite, cite_title <OPERATOR>=</OPERATOR> check_refs( cite )
+        cite <OPERATOR>=</OPERATOR> <STRING>" cite=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> cite </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>"</STRING> <KEYWORD>if</KEYWORD> cite
+        atts <OPERATOR>=</OPERATOR> shelve( atts ) <KEYWORD>if</KEYWORD> atts
+        <STRING>"<ESC>\t</ESC>&lt;blockquote</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> cite </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;<ESC>\n</ESC><ESC>\t</ESC><ESC>\t</ESC>&lt;p</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> atts </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> content </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;/p&gt;<ESC>\n</ESC><ESC>\t</ESC>&lt;/blockquote&gt;"</STRING>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> textile_p( tag, atts, cite, content )
+        atts <OPERATOR>=</OPERATOR> shelve( atts ) <KEYWORD>if</KEYWORD> atts
+        <STRING>"<ESC>\t</ESC>&lt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> tag </INTERPOLATION><DELIMITER>}</DELIMITER><STRING></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> atts </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> content </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;/</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> tag </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;"</STRING>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>alias</KEYWORD> textile_h1 textile_p
+    <KEYWORD>alias</KEYWORD> textile_h2 textile_p
+    <KEYWORD>alias</KEYWORD> textile_h3 textile_p
+    <KEYWORD>alias</KEYWORD> textile_h4 textile_p
+    <KEYWORD>alias</KEYWORD> textile_h5 textile_p
+    <KEYWORD>alias</KEYWORD> textile_h6 textile_p
+
+    <KEYWORD>def</KEYWORD> textile_fn_( tag, num, atts, cite, content )
+        atts <OPERATOR>&lt;&lt;</OPERATOR> <STRING>" id=<ESC>\"</ESC>fn</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> num </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC> class=<ESC>\"</ESC>footnote<ESC>\"</ESC>"</STRING>
+        content <OPERATOR>=</OPERATOR> <STRING>"&lt;sup&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> num </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;/sup&gt; </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> content </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>
+        atts <OPERATOR>=</OPERATOR> shelve( atts ) <KEYWORD>if</KEYWORD> atts
+        <STRING>"<ESC>\t</ESC>&lt;p</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> atts </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> content </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;/p&gt;"</STRING>
+    <KEYWORD>end</KEYWORD>
+
+    <CONSTANT>BLOCK_RE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/^(([a-z]+)(\d*))(</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>A</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX></REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>C</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>)\.(?::(\S+))? (.*)$/</REGEX>m
+
+    <KEYWORD>def</KEYWORD> block_textile_prefix( text ) 
+        <KEYWORD>if</KEYWORD> text <OPERATOR>=~</OPERATOR> <CONSTANT>BLOCK_RE</CONSTANT>
+            tag,tagpre,num,atts,cite,content <OPERATOR>=</OPERATOR> <VARIABLE>$~</VARIABLE>[<NUMERIC>1.</NUMERIC><NUMERIC>.6</NUMERIC>]
+            atts <OPERATOR>=</OPERATOR> pba( atts )
+
+            <COMMENT># pass to prefix handler</COMMENT>
+            <KEYWORD>if</KEYWORD> respond_to? <STRING>"textile_</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> tag </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>, <KEYWORD>true</KEYWORD>
+                <OBJ>text</OBJ>.<OO>gsub!</OO>( <VARIABLE>$&amp;</VARIABLE>, method( <STRING>"textile_</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> tag </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING> ).<OO>call</OO>( tag, atts, cite, content ) )
+            <KEYWORD>elsif</KEYWORD> respond_to? <STRING>"textile_</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> tagpre </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>_"</STRING>, <KEYWORD>true</KEYWORD>
+                <OBJ>text</OBJ>.<OO>gsub!</OO>( <VARIABLE>$&amp;</VARIABLE>, method( <STRING>"textile_</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> tagpre </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>_"</STRING> ).<OO>call</OO>( tagpre, num, atts, cite, content ) )
+            <KEYWORD>end</KEYWORD>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+    
+    <CONSTANT>SETEXT_RE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/\A(.+?)\n([=-])[=-]* *$/</REGEX>m
+    <KEYWORD>def</KEYWORD> block_markdown_setext( text )
+        <KEYWORD>if</KEYWORD> text <OPERATOR>=~</OPERATOR> <CONSTANT>SETEXT_RE</CONSTANT>
+            tag <OPERATOR>=</OPERATOR> <KEYWORD>if</KEYWORD> <VARIABLE>$2</VARIABLE> <OPERATOR>==</OPERATOR> <STRING>"="</STRING><OPERATOR>;</OPERATOR> <STRING>"h1"</STRING><OPERATOR>;</OPERATOR> <KEYWORD>else</KEYWORD><OPERATOR>;</OPERATOR> <STRING>"h2"</STRING><OPERATOR>;</OPERATOR> <KEYWORD>end</KEYWORD>
+            blk, cont <OPERATOR>=</OPERATOR> <STRING>"&lt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> tag </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> <VARIABLE>$1</VARIABLE> </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;/</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> tag </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;"</STRING>, <VARIABLE>$'</VARIABLE>
+            blocks cont
+            <OBJ>text</OBJ>.<OO>replace</OO>( blk <OPERATOR>+</OPERATOR> cont )
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <CONSTANT>ATX_RE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/\A(\#{1,6})  # $1 = string of #'s</REGEX>
+<REGEX>              [ ]*</REGEX>
+<REGEX>              (.+?)       # $2 = Header text</REGEX>
+<REGEX>              [ ]*</REGEX>
+<REGEX>              \#*         # optional closing #'s (not counted)</REGEX>
+<REGEX>              $/</REGEX>x
+    <KEYWORD>def</KEYWORD> block_markdown_atx( text )
+        <KEYWORD>if</KEYWORD> text <OPERATOR>=~</OPERATOR> <CONSTANT>ATX_RE</CONSTANT>
+            tag <OPERATOR>=</OPERATOR> <STRING>"h</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> <VARIABLE>$1</VARIABLE>.<OO>length</OO> </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>
+            blk, cont <OPERATOR>=</OPERATOR> <STRING>"&lt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> tag </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> <VARIABLE>$2</VARIABLE> </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;/</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> tag </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;<ESC>\n</ESC><ESC>\n</ESC>"</STRING>, <VARIABLE>$'</VARIABLE>
+            blocks cont
+            <OBJ>text</OBJ>.<OO>replace</OO>( blk <OPERATOR>+</OPERATOR> cont )
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <CONSTANT>MARKDOWN_BQ_RE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/\A(^ *&gt; ?.+$(.+\n)*\n*)+/</REGEX>m
+
+    <KEYWORD>def</KEYWORD> block_markdown_bq( text )
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <CONSTANT>MARKDOWN_BQ_RE</CONSTANT> ) <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>blk<OPERATOR>|</OPERATOR>
+            <OBJ>blk</OBJ>.<OO>gsub!</OO>( <REGEX>/^ *&gt; ?/</REGEX>, <STRING>''</STRING> )
+            flush_left blk
+            blocks blk
+            <OBJ>blk</OBJ>.<OO>gsub!</OO>( <REGEX>/^(\S)/</REGEX>, <STRING>"<ESC>\t</ESC><ESC>\\</ESC>1"</STRING> )
+            <STRING>"&lt;blockquote&gt;<ESC>\n</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> blk </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\n</ESC>&lt;/blockquote&gt;<ESC>\n</ESC><ESC>\n</ESC>"</STRING>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <CONSTANT>MARKDOWN_RULE_RE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/^(</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION></INTERPOLATION>
+<INTERPOLATION>        [<STRING>'*'</STRING>, <STRING>'-'</STRING>, <STRING>'_'</STRING>].<OO>collect</OO> { <OPERATOR>|</OPERATOR>ch<OPERATOR>|</OPERATOR> <STRING>' ?('</STRING> <OPERATOR>+</OPERATOR> <OBJ>Regexp</OBJ><OPERATOR>::</OPERATOR><OO>quote</OO>( ch ) <OPERATOR>+</OPERATOR> <STRING>' ?){3,}'</STRING> </INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>.join( '|' )</REGEX>
+<REGEX>    })$/</REGEX>
+
+    <KEYWORD>def</KEYWORD> block_markdown_rule( text )
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <CONSTANT>MARKDOWN_RULE_RE</CONSTANT> ) <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>blk<OPERATOR>|</OPERATOR>
+            <STRING>"&lt;hr /&gt;"</STRING>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <COMMENT># <COMMENT_NOTE>XXX</COMMENT_NOTE> <COMMENT_NOTE>TODO</COMMENT_NOTE> <COMMENT_NOTE>XXX</COMMENT_NOTE></COMMENT>
+    <KEYWORD>def</KEYWORD> block_markdown_lists( text )
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> inline_textile_span( text ) 
+        <OBJ>QTAGS</OBJ>.<OO>each</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>qtag_rc, ht, qtag_re, rtype<OPERATOR>|</OPERATOR>
+            <OBJ>text</OBJ>.<OO>gsub!</OO>( qtag_re ) <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>m<OPERATOR>|</OPERATOR>
+             
+                <KEYWORD>case</KEYWORD> rtype
+                <KEYWORD>when</KEYWORD> <VALUE>:limit</VALUE>
+                    sta,oqs,qtag,content,oqa <OPERATOR>=</OPERATOR> <VARIABLE>$~</VARIABLE>[<NUMERIC>1.</NUMERIC><NUMERIC>.6</NUMERIC>]
+                    atts <OPERATOR>=</OPERATOR> <KEYWORD>nil</KEYWORD>
+                    <KEYWORD>if</KEYWORD> content <OPERATOR>=~</OPERATOR> <REGEX>/^(</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>C</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>)(.+)$/</REGEX>
+                      atts, content <OPERATOR>=</OPERATOR> <VARIABLE>$~</VARIABLE>[<NUMERIC>1.</NUMERIC><NUMERIC>.2</NUMERIC>]
+                    <KEYWORD>end</KEYWORD>
+                <KEYWORD>else</KEYWORD>
+                    qtag,atts,cite,content <OPERATOR>=</OPERATOR> <VARIABLE>$~</VARIABLE>[<NUMERIC>1.</NUMERIC><NUMERIC>.4</NUMERIC>]
+                    sta <OPERATOR>=</OPERATOR> <STRING>''</STRING>
+                <KEYWORD>end</KEYWORD>
+                atts <OPERATOR>=</OPERATOR> pba( atts )
+                atts <OPERATOR>=</OPERATOR> shelve( atts ) <KEYWORD>if</KEYWORD> atts
+
+                <STRING>"</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> sta </INTERPOLATION><DELIMITER>}</DELIMITER><STRING></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> oqs </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> ht </INTERPOLATION><DELIMITER>}</DELIMITER><STRING></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> atts </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> content </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;/</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> ht </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> oqa </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>
+
+            <KEYWORD>end</KEYWORD>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <CONSTANT>LINK_RE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/</REGEX>
+<REGEX>            (</REGEX>
+<REGEX>            ([\s\[{(]|[</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>PUNCT</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>])?     # $pre</REGEX>
+<REGEX>            "                          # start</REGEX>
+<REGEX>            (</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>C</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>)                     # $atts</REGEX>
+<REGEX>            ([^"\n]+?)                 # $text</REGEX>
+<REGEX>            \s?</REGEX>
+<REGEX>            (?:\(([^)]+?)\)(?="))?     # $title</REGEX>
+<REGEX>            ":</REGEX>
+<REGEX>            (                          # $url</REGEX>
+<REGEX>            (\/|[a-zA-Z]+:\/\/|www\.|mailto:)  # $proto</REGEX>
+<REGEX>            [\w\/]\S+?</REGEX>
+<REGEX>            )               </REGEX>
+<REGEX>            (\/)?                      # $slash</REGEX>
+<REGEX>            ([^\w\=\/;\(\)]*?)         # $post</REGEX>
+<REGEX>            )</REGEX>
+<REGEX>            (?=&lt;|\s|$)</REGEX>
+<REGEX>        /</REGEX>x 
+<COMMENT>#"</COMMENT>
+    <KEYWORD>def</KEYWORD> inline_textile_link( text ) 
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <CONSTANT>LINK_RE</CONSTANT> ) <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>m<OPERATOR>|</OPERATOR>
+          all,pre,atts,text,title,url,proto,slash,post <OPERATOR>=</OPERATOR> <VARIABLE>$~</VARIABLE>[<NUMERIC>1.</NUMERIC><NUMERIC>.9</NUMERIC>]
+          <KEYWORD>if</KEYWORD> <OBJ>text</OBJ>.<OO>include?</OO>(<STRING>'&lt;br /&gt;'</STRING>)
+            all
+          <KEYWORD>else</KEYWORD>
+            url, url_title <OPERATOR>=</OPERATOR> check_refs( url )
+            title <OPERATOR>||=</OPERATOR> url_title
+            
+            <COMMENT># Idea below : an URL with unbalanced parethesis and</COMMENT>
+            <COMMENT># ending by ')' is put into external parenthesis</COMMENT>
+            <KEYWORD>if</KEYWORD> ( url[<OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>]<OPERATOR>==?</OPERATOR>) <KEYWORD>and</KEYWORD> ((<OBJ>url</OBJ>.<OO>count</OO>(<STRING>"("</STRING>) <OPERATOR>-</OPERATOR> <OBJ>url</OBJ>.<OO>count</OO>(<STRING>")"</STRING>)) <OPERATOR>&lt;</OPERATOR> <NUMERIC>0</NUMERIC> ) )
+              url<OPERATOR>=</OPERATOR>url[<NUMERIC>0.</NUMERIC>.<OPERATOR>-</OPERATOR><NUMERIC>2</NUMERIC>] <COMMENT># discard closing parenth from url</COMMENT>
+              post <OPERATOR>=</OPERATOR> <STRING>")"</STRING><OPERATOR>+</OPERATOR>post <COMMENT># add closing parenth to post</COMMENT>
+            <KEYWORD>end</KEYWORD>
+            atts <OPERATOR>=</OPERATOR> pba( atts )
+            atts <OPERATOR>=</OPERATOR> <STRING>" href=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> htmlesc url </INTERPOLATION><DELIMITER>}</DELIMITER><STRING></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> slash </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> atts </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>
+            atts <OPERATOR>&lt;&lt;</OPERATOR> <STRING>" title=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> htmlesc title </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>"</STRING> <KEYWORD>if</KEYWORD> title
+            atts <OPERATOR>=</OPERATOR> shelve( atts ) <KEYWORD>if</KEYWORD> atts
+            
+            external <OPERATOR>=</OPERATOR> (url <OPERATOR>=~</OPERATOR> <REGEX>/^https?:\/\//</REGEX>) <OPERATOR>?</OPERATOR> <STRING>' class="external"'</STRING> <OPERATOR>:</OPERATOR> <STRING>''</STRING>
+            
+            <STRING>"</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> pre </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;a</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> atts </INTERPOLATION><DELIMITER>}</DELIMITER><STRING></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> external </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> text </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;/a&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> post </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>
+          <KEYWORD>end</KEYWORD>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <CONSTANT>MARKDOWN_REFLINK_RE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/</REGEX>
+<REGEX>            \[([^\[\]]+)\]      # $text</REGEX>
+<REGEX>            [ ]?                # opt. space</REGEX>
+<REGEX>            (?:\n[ ]*)?         # one optional newline followed by spaces</REGEX>
+<REGEX>            \[(.*?)\]           # $id</REGEX>
+<REGEX>        /</REGEX>x 
+
+    <KEYWORD>def</KEYWORD> inline_markdown_reflink( text ) 
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <CONSTANT>MARKDOWN_REFLINK_RE</CONSTANT> ) <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>m<OPERATOR>|</OPERATOR>
+            text, id <OPERATOR>=</OPERATOR> <VARIABLE>$~</VARIABLE>[<NUMERIC>1.</NUMERIC><NUMERIC>.2</NUMERIC>]
+
+            <KEYWORD>if</KEYWORD> <OBJ>id</OBJ>.<OO>empty?</OO>
+                url, title <OPERATOR>=</OPERATOR> check_refs( text )
+            <KEYWORD>else</KEYWORD>
+                url, title <OPERATOR>=</OPERATOR> check_refs( id )
+            <KEYWORD>end</KEYWORD>
+            
+            atts <OPERATOR>=</OPERATOR> <STRING>" href=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> url </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>"</STRING>
+            atts <OPERATOR>&lt;&lt;</OPERATOR> <STRING>" title=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> title </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>"</STRING> <KEYWORD>if</KEYWORD> title
+            atts <OPERATOR>=</OPERATOR> shelve( atts )
+            
+            <STRING>"&lt;a</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> atts </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> text </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;/a&gt;"</STRING>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <CONSTANT>MARKDOWN_LINK_RE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/</REGEX>
+<REGEX>            \[([^\[\]]+)\]      # $text</REGEX>
+<REGEX>            \(                  # open paren</REGEX>
+<REGEX>            [ \t]*              # opt space</REGEX>
+<REGEX>            &lt;?(.+?)&gt;?           # $href</REGEX>
+<REGEX>            [ \t]*              # opt space</REGEX>
+<REGEX>            (?:                 # whole title</REGEX>
+<REGEX>            (['"])              # $quote</REGEX>
+<REGEX>            (.*?)               # $title</REGEX>
+<REGEX>            \3                  # matching quote</REGEX>
+<REGEX>            )?                  # title is optional</REGEX>
+<REGEX>            \)</REGEX>
+<REGEX>        /</REGEX>x 
+
+    <KEYWORD>def</KEYWORD> inline_markdown_link( text ) 
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <CONSTANT>MARKDOWN_LINK_RE</CONSTANT> ) <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>m<OPERATOR>|</OPERATOR>
+            text, url, quote, title <OPERATOR>=</OPERATOR> <VARIABLE>$~</VARIABLE>[<NUMERIC>1.</NUMERIC><NUMERIC>.4</NUMERIC>]
+
+            atts <OPERATOR>=</OPERATOR> <STRING>" href=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> url </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>"</STRING>
+            atts <OPERATOR>&lt;&lt;</OPERATOR> <STRING>" title=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> title </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>"</STRING> <KEYWORD>if</KEYWORD> title
+            atts <OPERATOR>=</OPERATOR> shelve( atts )
+            
+            <STRING>"&lt;a</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> atts </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> text </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;/a&gt;"</STRING>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <CONSTANT>TEXTILE_REFS_RE</CONSTANT> <OPERATOR>=</OPERATOR>  <REGEX>/(^ *)\[([^\[\n]+?)\](</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>HYPERLINK</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>)(?=\s|$)/</REGEX>
+    <CONSTANT>MARKDOWN_REFS_RE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/(^ *)\[([^\n]+?)\]:\s+&lt;?(</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>HYPERLINK</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>)&gt;?(?:\s+"((?:[^"]|\\")+)")?(?=\s|$)/</REGEX>m
+
+    <KEYWORD>def</KEYWORD> refs( text )
+        <VARIABLE>@rules</VARIABLE>.<OO>each</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>rule_name<OPERATOR>|</OPERATOR>
+            method( rule_name ).<OO>call</OO>( text ) <KEYWORD>if</KEYWORD> <OBJ>rule_name</OBJ>.<OO>to_s</OO>.<OO>match</OO> <REGEX>/^refs_/</REGEX>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> refs_textile( text ) 
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <CONSTANT>TEXTILE_REFS_RE</CONSTANT> ) <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>m<OPERATOR>|</OPERATOR>
+            flag, url <OPERATOR>=</OPERATOR> <VARIABLE>$~</VARIABLE>[<NUMERIC>2.</NUMERIC><NUMERIC>.3</NUMERIC>]
+            <VARIABLE>@urlrefs</VARIABLE>[<OBJ>flag</OBJ>.<OO>downcase</OO>] <OPERATOR>=</OPERATOR> [url, <KEYWORD>nil</KEYWORD>]
+            <KEYWORD>nil</KEYWORD>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+    
+    <KEYWORD>def</KEYWORD> refs_markdown( text )
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <CONSTANT>MARKDOWN_REFS_RE</CONSTANT> ) <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>m<OPERATOR>|</OPERATOR>
+            flag, url <OPERATOR>=</OPERATOR> <VARIABLE>$~</VARIABLE>[<NUMERIC>2.</NUMERIC><NUMERIC>.3</NUMERIC>]
+            title <OPERATOR>=</OPERATOR> <VARIABLE>$~</VARIABLE>[<NUMERIC>6</NUMERIC>]
+            <VARIABLE>@urlrefs</VARIABLE>[<OBJ>flag</OBJ>.<OO>downcase</OO>] <OPERATOR>=</OPERATOR> [url, title]
+            <KEYWORD>nil</KEYWORD>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> check_refs( text ) 
+        ret <OPERATOR>=</OPERATOR> <VARIABLE>@urlrefs</VARIABLE>[<OBJ>text</OBJ>.<OO>downcase</OO>] <KEYWORD>if</KEYWORD> text
+        ret <OPERATOR>||</OPERATOR> [text, <KEYWORD>nil</KEYWORD>]
+    <KEYWORD>end</KEYWORD>
+
+    <CONSTANT>IMAGE_RE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/</REGEX>
+<REGEX>            (&gt;|\s|^)           # start of line?</REGEX>
+<REGEX>            \!                   # opening</REGEX>
+<REGEX>            (\&lt;|\=|\&gt;)?          # optional alignment atts</REGEX>
+<REGEX>            (</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>C</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>)               # optional style,class atts</REGEX>
+<REGEX>            (?:\. )?             # optional dot-space</REGEX>
+<REGEX>            ([^\s(!]+?)          # presume this is the src</REGEX>
+<REGEX>            \s?                  # optional space</REGEX>
+<REGEX>            (?:\(((?:[^\(\)]|\([^\)]+\))+?)\))?   # optional title</REGEX>
+<REGEX>            \!                   # closing</REGEX>
+<REGEX>            (?::</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION> <CONSTANT>HYPERLINK</CONSTANT> </INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>)? # optional href</REGEX>
+<REGEX>        /</REGEX>x 
+
+    <KEYWORD>def</KEYWORD> inline_textile_image( text ) 
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <CONSTANT>IMAGE_RE</CONSTANT> )  <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>m<OPERATOR>|</OPERATOR>
+            stln,algn,atts,url,title,href,href_a1,href_a2 <OPERATOR>=</OPERATOR> <VARIABLE>$~</VARIABLE>[<NUMERIC>1.</NUMERIC><NUMERIC>.8</NUMERIC>]
+            htmlesc title
+            atts <OPERATOR>=</OPERATOR> pba( atts )
+            atts <OPERATOR>=</OPERATOR> <STRING>" src=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> url </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> atts </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>
+            atts <OPERATOR>&lt;&lt;</OPERATOR> <STRING>" title=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> title </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>"</STRING> <KEYWORD>if</KEYWORD> title
+            atts <OPERATOR>&lt;&lt;</OPERATOR> <STRING>" alt=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> title </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>"</STRING> 
+            <COMMENT># size = @getimagesize($url);</COMMENT>
+            <COMMENT># if($size) $atts.= " $size[3]";</COMMENT>
+
+            href, alt_title <OPERATOR>=</OPERATOR> check_refs( href ) <KEYWORD>if</KEYWORD> href
+            url, url_title <OPERATOR>=</OPERATOR> check_refs( url )
+
+            out <OPERATOR>=</OPERATOR> <STRING>''</STRING>
+            out <OPERATOR>&lt;&lt;</OPERATOR> <STRING>"&lt;a</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> shelve( <STRING>" href=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> href </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>"</STRING> ) </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;"</STRING> <KEYWORD>if</KEYWORD> href
+            out <OPERATOR>&lt;&lt;</OPERATOR> <STRING>"&lt;img</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> shelve( atts ) </INTERPOLATION><DELIMITER>}</DELIMITER><STRING> /&gt;"</STRING>
+            out <OPERATOR>&lt;&lt;</OPERATOR> <STRING>"&lt;/a&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> href_a1 </INTERPOLATION><DELIMITER>}</DELIMITER><STRING></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> href_a2 </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING> <KEYWORD>if</KEYWORD> href
+            
+            <KEYWORD>if</KEYWORD> algn 
+                algn <OPERATOR>=</OPERATOR> h_align( algn )
+                <KEYWORD>if</KEYWORD> stln <OPERATOR>==</OPERATOR> <STRING>"&lt;p&gt;"</STRING>
+                    out <OPERATOR>=</OPERATOR> <STRING>"&lt;p style=<ESC>\"</ESC>float:</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> algn </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> out </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>
+                <KEYWORD>else</KEYWORD>
+                    out <OPERATOR>=</OPERATOR> <STRING>"</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> stln </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;div style=<ESC>\"</ESC>float:</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> algn </INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> out </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&lt;/div&gt;"</STRING>
+                <KEYWORD>end</KEYWORD>
+            <KEYWORD>else</KEYWORD>
+                out <OPERATOR>=</OPERATOR> stln <OPERATOR>+</OPERATOR> out
+            <KEYWORD>end</KEYWORD>
+
+            out
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> shelve( val ) 
+        <VARIABLE>@shelf</VARIABLE> <OPERATOR>&lt;&lt;</OPERATOR> val
+        <STRING>" :redsh#</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> <VARIABLE>@shelf</VARIABLE>.<OO>length</OO> </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>:"</STRING>
+    <KEYWORD>end</KEYWORD>
+    
+    <KEYWORD>def</KEYWORD> retrieve( text ) 
+        <VARIABLE>@shelf</VARIABLE>.<OO>each_with_index</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>r, i<OPERATOR>|</OPERATOR>
+            <OBJ>text</OBJ>.<OO>gsub!</OO>( <STRING>" :redsh#</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> i <OPERATOR>+</OPERATOR> <NUMERIC>1</NUMERIC> </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>:"</STRING>, r )
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> incoming_entities( text ) 
+        <COMMENT>## turn any incoming ampersands into a dummy character for now.</COMMENT>
+        <COMMENT>## This uses a negative lookahead for alphanumerics followed by a semicolon,</COMMENT>
+        <COMMENT>## implying an incoming html entity, to be skipped</COMMENT>
+
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <REGEX>/&amp;(?![#a-z0-9]+;)/</REGEX>i, <STRING>"x%x%"</STRING> )
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> no_textile( text ) 
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <REGEX>/(^|\s)==([^=]+.*?)==(\s|$)?/</REGEX>,
+            <STRING>'<ESC>\1</ESC>&lt;notextile&gt;<ESC>\2</ESC>&lt;/notextile&gt;<ESC>\3</ESC>'</STRING> )
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <REGEX>/^ *==([^=]+.*?)==/</REGEX>m,
+            <STRING>'<ESC>\1</ESC>&lt;notextile&gt;<ESC>\2</ESC>&lt;/notextile&gt;<ESC>\3</ESC>'</STRING> )
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> clean_white_space( text ) 
+        <COMMENT># normalize line breaks</COMMENT>
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <REGEX>/\r\n/</REGEX>, <STRING>"<ESC>\n</ESC>"</STRING> )
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <REGEX>/\r/</REGEX>, <STRING>"<ESC>\n</ESC>"</STRING> )
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <REGEX>/\t/</REGEX>, <STRING>'    '</STRING> )
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <REGEX>/^ +$/</REGEX>, <STRING>''</STRING> )
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <REGEX>/\n{3,}/</REGEX>, <STRING>"<ESC>\n</ESC><ESC>\n</ESC>"</STRING> )
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <REGEX>/"$/</REGEX>, <STRING>"<ESC>\"</ESC> "</STRING> )
+
+        <COMMENT># if entire document is indented, flush</COMMENT>
+        <COMMENT># to the left side</COMMENT>
+        flush_left text
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> flush_left( text )
+        indt <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>
+        <KEYWORD>if</KEYWORD> text <OPERATOR>=~</OPERATOR> <REGEX>/^ /</REGEX>
+            <KEYWORD>while</KEYWORD> text <OPERATOR>!~</OPERATOR> <REGEX>/^ {</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>indt</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>}\S/</REGEX>
+                indt <OPERATOR>+=</OPERATOR> <NUMERIC>1</NUMERIC>
+            <KEYWORD>end</KEYWORD> <KEYWORD>unless</KEYWORD> <OBJ>text</OBJ>.<OO>empty?</OO>
+            <KEYWORD>if</KEYWORD> <OBJ>indt</OBJ>.<OO>nonzero?</OO>
+                <OBJ>text</OBJ>.<OO>gsub!</OO>( <REGEX>/^ {</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>indt</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>}/</REGEX>, <STRING>''</STRING> )
+            <KEYWORD>end</KEYWORD>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> footnote_ref( text ) 
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <REGEX>/\b\[([0-9]+?)\](\s)?/</REGEX>,
+            <STRING>'&lt;sup&gt;&lt;a href="#fn<ESC>\1</ESC>"&gt;<ESC>\1</ESC>&lt;/a&gt;&lt;/sup&gt;<ESC>\2</ESC>'</STRING> )
+    <KEYWORD>end</KEYWORD>
+    
+    <CONSTANT>OFFTAGS</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/(code|pre|kbd|notextile)/</REGEX>
+    <CONSTANT>OFFTAG_MATCH</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/(?:(&lt;\/</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION> <CONSTANT>OFFTAGS</CONSTANT> </INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>&gt;)|(&lt;</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION> <CONSTANT>OFFTAGS</CONSTANT> </INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>[^&gt;]*&gt;))(.*?)(?=&lt;\/?</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION> <CONSTANT>OFFTAGS</CONSTANT> </INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>\W|\Z)/</REGEX>mi
+    <CONSTANT>OFFTAG_OPEN</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/&lt;</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION> <CONSTANT>OFFTAGS</CONSTANT> </INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>/</REGEX>
+    <CONSTANT>OFFTAG_CLOSE</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/&lt;\/?</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION> <CONSTANT>OFFTAGS</CONSTANT> </INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>/</REGEX>
+    <CONSTANT>HASTAG_MATCH</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/(&lt;\/?\w[^\n]*?&gt;)/</REGEX>m
+    <CONSTANT>ALLTAG_MATCH</CONSTANT> <OPERATOR>=</OPERATOR> <REGEX>/(&lt;\/?\w[^\n]*?&gt;)|.*?(?=&lt;\/?\w[^\n]*?&gt;|$)/</REGEX>m
+
+    <KEYWORD>def</KEYWORD> glyphs_textile( text, level <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC> )
+        <KEYWORD>if</KEYWORD> text <OPERATOR>!~</OPERATOR> <CONSTANT>HASTAG_MATCH</CONSTANT>
+            pgl text
+            footnote_ref text
+        <KEYWORD>else</KEYWORD>
+            codepre <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>
+            <OBJ>text</OBJ>.<OO>gsub!</OO>( <CONSTANT>ALLTAG_MATCH</CONSTANT> ) <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>line<OPERATOR>|</OPERATOR>
+                <COMMENT>## matches are off if we're between &lt;code&gt;, &lt;pre&gt; etc.</COMMENT>
+                <KEYWORD>if</KEYWORD> <VARIABLE>$1</VARIABLE>
+                    <KEYWORD>if</KEYWORD> line <OPERATOR>=~</OPERATOR> <CONSTANT>OFFTAG_OPEN</CONSTANT>
+                        codepre <OPERATOR>+=</OPERATOR> <NUMERIC>1</NUMERIC>
+                    <KEYWORD>elsif</KEYWORD> line <OPERATOR>=~</OPERATOR> <CONSTANT>OFFTAG_CLOSE</CONSTANT>
+                        codepre <OPERATOR>-=</OPERATOR> <NUMERIC>1</NUMERIC>
+                        codepre <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC> <KEYWORD>if</KEYWORD> codepre <OPERATOR>&lt;</OPERATOR> <NUMERIC>0</NUMERIC>
+                    <KEYWORD>end</KEYWORD> 
+                <KEYWORD>elsif</KEYWORD> <OBJ>codepre</OBJ>.<OO>zero?</OO>
+                    glyphs_textile( line, level <OPERATOR>+</OPERATOR> <NUMERIC>1</NUMERIC> )
+                <KEYWORD>else</KEYWORD>
+                    htmlesc( line, <VALUE>:NoQuotes</VALUE> )
+                <KEYWORD>end</KEYWORD>
+                <COMMENT># p [level, codepre, line]</COMMENT>
+
+                line
+            <KEYWORD>end</KEYWORD>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> rip_offtags( text, escape_aftertag<OPERATOR>=</OPERATOR><KEYWORD>true</KEYWORD> )
+        <KEYWORD>if</KEYWORD> text <OPERATOR>=~</OPERATOR> <REGEX>/&lt;.*&gt;/</REGEX>
+            <COMMENT>## strip and encode &lt;pre&gt; content</COMMENT>
+            codepre, used_offtags <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>, {}
+            <OBJ>text</OBJ>.<OO>gsub!</OO>( <CONSTANT>OFFTAG_MATCH</CONSTANT> ) <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>line<OPERATOR>|</OPERATOR>
+                <KEYWORD>if</KEYWORD> <VARIABLE>$3</VARIABLE>
+                    first, offtag, aftertag <OPERATOR>=</OPERATOR> <VARIABLE>$3</VARIABLE>, <VARIABLE>$4</VARIABLE>, <VARIABLE>$5</VARIABLE>
+                    codepre <OPERATOR>+=</OPERATOR> <NUMERIC>1</NUMERIC>
+                    used_offtags[offtag] <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD>
+                    <KEYWORD>if</KEYWORD> codepre <OPERATOR>-</OPERATOR> <OBJ>used_offtags</OBJ>.<OO>length</OO> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>
+                        htmlesc( line, <VALUE>:NoQuotes</VALUE> )
+                        <VARIABLE>@pre_list</VARIABLE>.<OO>last</OO> <OPERATOR>&lt;&lt;</OPERATOR> line
+                        line <OPERATOR>=</OPERATOR> <STRING>""</STRING>
+                    <KEYWORD>else</KEYWORD>
+                        <COMMENT>### htmlesc is disabled between CODE tags which will be parsed with highlighter</COMMENT>
+                        <COMMENT>### Regexp in formatter.rb is : /&lt;code\s+class="(\w+)"&gt;\s?(.+)/m</COMMENT>
+                        <COMMENT>### NB: some changes were made not to use $N variables, because we use "match"</COMMENT>
+                        <COMMENT>###   and it breaks following lines</COMMENT>
+                        htmlesc( aftertag, <VALUE>:NoQuotes</VALUE> ) <KEYWORD>if</KEYWORD> aftertag <OPERATOR>&amp;&amp;</OPERATOR> escape_aftertag <OPERATOR>&amp;&amp;</OPERATOR> <OPERATOR>!</OPERATOR><OBJ>first</OBJ>.<OO>match</OO>(<REGEX>/&lt;code\s+class="(\w+)"&gt;/</REGEX>)
+                        line <OPERATOR>=</OPERATOR> <STRING>"&lt;redpre#</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> <VARIABLE>@pre_list</VARIABLE>.<OO>length</OO> </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;"</STRING>
+                        <OBJ>first</OBJ>.<OO>match</OO>(<REGEX>/&lt;</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION> <CONSTANT>OFFTAGS</CONSTANT> </INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>([^&gt;]*)&gt;/</REGEX>)
+                        tag <OPERATOR>=</OPERATOR> <VARIABLE>$1</VARIABLE>
+                        <VARIABLE>$2</VARIABLE>.<OO>to_s</OO>.<OO>match</OO>(<REGEX>/(class\=("[^"]+"|'[^']+'))/</REGEX>i)
+                        tag <OPERATOR>&lt;&lt;</OPERATOR> <STRING>" </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><VARIABLE>$1</VARIABLE></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING> <KEYWORD>if</KEYWORD> <VARIABLE>$1</VARIABLE>
+                        <VARIABLE>@pre_list</VARIABLE> <OPERATOR>&lt;&lt;</OPERATOR> <STRING>"&lt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> tag </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION> aftertag </INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>
+                    <KEYWORD>end</KEYWORD>
+                <KEYWORD>elsif</KEYWORD> <VARIABLE>$1</VARIABLE> <KEYWORD>and</KEYWORD> codepre <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>
+                    <KEYWORD>if</KEYWORD> codepre <OPERATOR>-</OPERATOR> <OBJ>used_offtags</OBJ>.<OO>length</OO> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>
+                        htmlesc( line, <VALUE>:NoQuotes</VALUE> )
+                        <VARIABLE>@pre_list</VARIABLE>.<OO>last</OO> <OPERATOR>&lt;&lt;</OPERATOR> line
+                        line <OPERATOR>=</OPERATOR> <STRING>""</STRING>
+                    <KEYWORD>end</KEYWORD>
+                    codepre <OPERATOR>-=</OPERATOR> <NUMERIC>1</NUMERIC> <KEYWORD>unless</KEYWORD> <OBJ>codepre</OBJ>.<OO>zero?</OO>
+                    used_offtags <OPERATOR>=</OPERATOR> {} <KEYWORD>if</KEYWORD> <OBJ>codepre</OBJ>.<OO>zero?</OO>
+                <KEYWORD>end</KEYWORD> 
+                line
+            <KEYWORD>end</KEYWORD>
+        <KEYWORD>end</KEYWORD>
+        text
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> smooth_offtags( text )
+        <KEYWORD>unless</KEYWORD> <VARIABLE>@pre_list</VARIABLE>.<OO>empty?</OO>
+            <COMMENT>## replace &lt;pre&gt; content</COMMENT>
+            <OBJ>text</OBJ>.<OO>gsub!</OO>( <REGEX>/&lt;redpre#(\d+)&gt;/</REGEX> ) { <VARIABLE>@pre_list</VARIABLE>[<VARIABLE>$1</VARIABLE>.<OO>to_i</OO>] }
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> inline( text ) 
+        [<REGEX>/^inline_/</REGEX>, <REGEX>/^glyphs_/</REGEX>].<OO>each</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>meth_re<OPERATOR>|</OPERATOR>
+            <VARIABLE>@rules</VARIABLE>.<OO>each</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>rule_name<OPERATOR>|</OPERATOR>
+                method( rule_name ).<OO>call</OO>( text ) <KEYWORD>if</KEYWORD> <OBJ>rule_name</OBJ>.<OO>to_s</OO>.<OO>match</OO>( meth_re )
+            <KEYWORD>end</KEYWORD>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> h_align( text ) 
+        <CONSTANT>H_ALGN_VALS</CONSTANT>[text]
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> v_align( text ) 
+        <CONSTANT>V_ALGN_VALS</CONSTANT>[text]
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> textile_popup_help( name, windowW, windowH )
+        <STRING>' &lt;a target="_blank" href="http://hobix.com/textile/#'</STRING> <OPERATOR>+</OPERATOR> helpvar <OPERATOR>+</OPERATOR> <STRING>'" onclick="window.open(this.href, <ESC>\'</ESC>popupwindow<ESC>\'</ESC>, <ESC>\'</ESC>width='</STRING> <OPERATOR>+</OPERATOR> windowW <OPERATOR>+</OPERATOR> <STRING>',height='</STRING> <OPERATOR>+</OPERATOR> windowH <OPERATOR>+</OPERATOR> <STRING>',scrollbars,resizable<ESC>\'</ESC>); return false;"&gt;'</STRING> <OPERATOR>+</OPERATOR> name <OPERATOR>+</OPERATOR> <STRING>'&lt;/a&gt;&lt;br /&gt;'</STRING>
+    <KEYWORD>end</KEYWORD>
+
+    <COMMENT># HTML cleansing stuff</COMMENT>
+    <CONSTANT>BASIC_TAGS</CONSTANT> <OPERATOR>=</OPERATOR> {
+        <STRING>'a'</STRING> <OPERATOR>=&gt;</OPERATOR> [<STRING>'href'</STRING>, <STRING>'title'</STRING>],
+        <STRING>'img'</STRING> <OPERATOR>=&gt;</OPERATOR> [<STRING>'src'</STRING>, <STRING>'alt'</STRING>, <STRING>'title'</STRING>],
+        <STRING>'br'</STRING> <OPERATOR>=&gt;</OPERATOR> [],
+        <STRING>'i'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'u'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>, 
+        <STRING>'b'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'pre'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'kbd'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'code'</STRING> <OPERATOR>=&gt;</OPERATOR> [<STRING>'lang'</STRING>],
+        <STRING>'cite'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'strong'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'em'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'ins'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'sup'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'sub'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'del'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'table'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'tr'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'td'</STRING> <OPERATOR>=&gt;</OPERATOR> [<STRING>'colspan'</STRING>, <STRING>'rowspan'</STRING>],
+        <STRING>'th'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'ol'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'ul'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'li'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'p'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'h1'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'h2'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'h3'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'h4'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'h5'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>,
+        <STRING>'h6'</STRING> <OPERATOR>=&gt;</OPERATOR> <KEYWORD>nil</KEYWORD>, 
+        <STRING>'blockquote'</STRING> <OPERATOR>=&gt;</OPERATOR> [<STRING>'cite'</STRING>]
+    }
+
+    <KEYWORD>def</KEYWORD> clean_html( text, tags <OPERATOR>=</OPERATOR> <CONSTANT>BASIC_TAGS</CONSTANT> )
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <REGEX>/&lt;!\[CDATA\[/</REGEX>, <STRING>''</STRING> )
+        <OBJ>text</OBJ>.<OO>gsub!</OO>( <REGEX>/&lt;(\/*)(\w+)([^&gt;]*)&gt;/</REGEX> ) <KEYWORD>do</KEYWORD>
+            raw <OPERATOR>=</OPERATOR> <VARIABLE>$~</VARIABLE>
+            tag <OPERATOR>=</OPERATOR> raw[<NUMERIC>2</NUMERIC>].<OO>downcase</OO>
+            <KEYWORD>if</KEYWORD> <OBJ>tags</OBJ>.<OO>has_key?</OO> tag
+                pcs <OPERATOR>=</OPERATOR> [tag]
+                tags[tag].<OO>each</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>prop<OPERATOR>|</OPERATOR>
+                    [<STRING>'"'</STRING>, <STRING>"'"</STRING>, <STRING>''</STRING>].<OO>each</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>q<OPERATOR>|</OPERATOR>
+                        q2 <OPERATOR>=</OPERATOR> ( q <OPERATOR>!=</OPERATOR> <STRING>''</STRING> <OPERATOR>?</OPERATOR> q <OPERATOR>:</OPERATOR> <STRING>'<ESC>\s</ESC>'</STRING> )
+                        <KEYWORD>if</KEYWORD> raw[<NUMERIC>3</NUMERIC>] <OPERATOR>=~</OPERATOR> <REGEX>/</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>prop</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>\s*=\s*</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>q</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>([^</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>q2</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>]+)</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION>q</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>/</REGEX>i
+                            attrv <OPERATOR>=</OPERATOR> <VARIABLE>$1</VARIABLE>
+                            <KEYWORD>next</KEYWORD> <KEYWORD>if</KEYWORD> prop <OPERATOR>==</OPERATOR> <STRING>'src'</STRING> <KEYWORD>and</KEYWORD> attrv <OPERATOR>=~</OPERATOR> <DELIMITER>%r{</DELIMITER><REGEX>^(?!http)\w+:</REGEX><DELIMITER>}</DELIMITER>
+                            pcs <OPERATOR>&lt;&lt;</OPERATOR> <STRING>"</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION>prop</INTERPOLATION><DELIMITER>}</DELIMITER><STRING>=<ESC>\"</ESC></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><VARIABLE>$1</VARIABLE>.<OO>gsub</OO>(<STRING>'"'</STRING>, <STRING>'<ESC>\\</ESC>"'</STRING>)</INTERPOLATION><DELIMITER>}</DELIMITER><STRING><ESC>\"</ESC>"</STRING>
+                            <KEYWORD>break</KEYWORD>
+                        <KEYWORD>end</KEYWORD>
+                    <KEYWORD>end</KEYWORD>
+                <KEYWORD>end</KEYWORD> <KEYWORD>if</KEYWORD> tags[tag]
+                <STRING>"&lt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION>raw[<NUMERIC>1</NUMERIC>]</INTERPOLATION><DELIMITER>}</DELIMITER><STRING></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><OBJ>pcs</OBJ>.<OO>join</OO> <STRING>" "</STRING></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>&gt;"</STRING>
+            <KEYWORD>else</KEYWORD>
+                <STRING>" "</STRING>
+            <KEYWORD>end</KEYWORD>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+    
+    <CONSTANT>ALLOWED_TAGS</CONSTANT> <OPERATOR>=</OPERATOR> <DELIMITER>%w(</DELIMITER><STRING>redpre pre code notextile</STRING><DELIMITER>)</DELIMITER>
+    
+    <KEYWORD>def</KEYWORD> escape_html_tags(text)
+      <OBJ>text</OBJ>.<OO>gsub!</OO>(<DELIMITER>%r{</DELIMITER><REGEX>&lt;(\/?([!\w]+)[^&lt;&gt;\n]*)(&gt;?)</REGEX><DELIMITER>}</DELIMITER>) {<OPERATOR>|</OPERATOR>m<OPERATOR>|</OPERATOR> <OBJ>ALLOWED_TAGS</OBJ>.<OO>include?</OO>(<VARIABLE>$2</VARIABLE>) <OPERATOR>?</OPERATOR> <STRING>"&lt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><VARIABLE>$1</VARIABLE></INTERPOLATION><DELIMITER>}</DELIMITER><STRING></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><VARIABLE>$3</VARIABLE></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING> <OPERATOR>:</OPERATOR> <STRING>"&amp;lt;</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><VARIABLE>$1</VARIABLE></INTERPOLATION><DELIMITER>}</DELIMITER><STRING></STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><STRING>'&amp;gt;'</STRING> <KEYWORD>unless</KEYWORD> <VARIABLE>$3</VARIABLE>.<OO>blank?</OO></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING> }
+    <KEYWORD>end</KEYWORD>
+<KEYWORD>end</KEYWORD>
+
