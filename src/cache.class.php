@@ -177,26 +177,29 @@ class LuminousCache
     if (!$this->use_cache || $this->purge_older_than <= 0) return;
     $purge_file = $this->cache_dir . '/.purgedata';
     $last = 0;
-    $fh = fopen($purge_file, 'w+');
+    $fh = fopen($purge_file, 'r+');
     $time = time();
+    $t__ = microtime(true);
     if (flock($fh, LOCK_EX)) {
-      if (filesize($purge_file))        
+      if (filesize($purge_file))
         $last = (int)fread($fh, filesize($purge_file));
       else $last = 0;
-      rewind($fh);
-      ftruncate($fh, 0);
-      rewind($fh);
-      fwrite($fh, $time);
+      if ($time - $last > 60*60*24) {
+        rewind($fh);
+        ftruncate($fh, 0);
+        rewind($fh);
+        fwrite($fh, $time);
+        foreach(scandir($this->cache_dir) as $file) {
+          if ($file[0] === '.') continue;
+          $mtime = filemtime($this->cache_dir . '/' . $file);
+          if ($time - $mtime > $this->purge_older_than)
+            unlink($this->cache_dir . '/' . $file);
+        }
+      }
       flock($fh, LOCK_UN);
       fclose($fh);
-      foreach(scandir($this->cache_dir) as $file) {
-        if ($file[0] === '.') continue;
-        $mtime = filemtime($this->cache_dir . '/' . $file);
-        if ($time - $mtime > $this->purge_older_than)
-          unlink($this->cache_dir . '/' . $file);
-      }
     }
-    
+    $t1_ = microtime(true);
   }
 
 

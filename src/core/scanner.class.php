@@ -431,6 +431,9 @@ class Scanner {
  */
 
 class LuminousScanner extends Scanner {
+
+  public $version = 'master';
+
   protected $ident_map = array();
   protected $tokens = array();
   protected $out = '';

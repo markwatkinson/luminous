@@ -13,7 +13,7 @@ require_once(dirname(__FILE__) . '/core/scanner.class.php');
 class _Luminous {
   public $version = 'master';
   public $settings = array(
-    'cache-age' => -1,
+    'cache-age' => 777600, // 90 days
     'wrap-width' => -1,
     'line-numbers' => true,
     'auto-link' => true,
@@ -156,8 +156,20 @@ class _Luminous {
   }
 
   private function cache_id($scanner, $source) {
-    $settings = $this->settings;
-    ksort($settings);
+    // to figure out the cache id, we mash a load of stuff together and
+    // md5 it. This gives us a unique (assuming no collisions) handle to
+    // a cache file, which depends on the input source, the relevant formatter
+    // settings, the version, and scanner.
+    $settings = array($this->settings['wrap-width'],
+      $this->settings['line-numbers'],
+      $this->settings['auto-link'],
+      $this->settings['max-height'],
+      $this->settings['format'],
+      $this->settings['theme'],
+      $this->settings['html-strict'],
+      $this->version,
+    );
+
     $id = md5($source);
     $id = md5($id . serialize($scanner));
     $id = md5($id . serialize($settings));

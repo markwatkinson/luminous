@@ -93,8 +93,9 @@ As with php, setting an integer setting to 0 or -1 will disable it
 #### misc
 
 + cache-age(int): age (seconds) at which to remove cached files (age is 
-determined by mtime -- cache hits trigger a `touch'), 0 or -1 to disable.
-(default: -1)  
+determined by mtime -- cache hits trigger a `touch', so this setting removes
+cached files which have not been accessed for the given time.),
+0 or -1 to disable. (default: 777600 : 90 days)
 
 + include-javascript (bool): controls whether luminous::head_html() outputs
 the javascript 'extras'.
