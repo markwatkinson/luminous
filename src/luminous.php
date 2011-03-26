@@ -9,7 +9,7 @@ require_once(dirname(__FILE__) . '/core/scanner.class.php');
 
 
 // This is kind of a pseudo-UI class. It's a singleton which will be
-// manipulated by a few procudural functions, for ease of use.
+// manipulated by a few procedural functions, for ease of use.
 class _Luminous {
   public $version = 'master';
   public $settings = array(
@@ -20,7 +20,11 @@ class _Luminous {
     'max-height' => 500,
     'format' => 'html',
     'theme' => 'luminous_light',
-    'html-strict' => false
+    'html-strict' => false,
+    
+    'relative-root' => null,
+    'include-javascript' => true,
+    'include-jquery' => true,
   );
 
   public $scanners;
@@ -301,36 +305,16 @@ abstract class luminous {
 
 
 /**
-  *
   * Returns a string representing everything that needs to be printed in
   * the \<head\> section of a website.
-  *
-  * \param $javascript (boolean) whether or not to use JavaScript
-  * \param $jquery (boolean) whether or not to include jQuery: jQuery is
-  *    required for javascript to work, but you may include it yourself (if you
-  *    need a different version). If so, it must be included before this
-  *    function's output is echoed.
-  * \param relative_root Optionally, you may specify the path to luminous/
-  *    relative to the document root (remember to include the leading slash).
-  *    If you don't specify this, Luminous attempts to work it out. See
-  *    warning.
-  *
-  *
-  * \warning due to shortcomings in PHP, it's not really possible to figure
-  * out the include path if there are symbolic links involved. In this case,
-  * you \b must specify relative_root.
-  * http://bugs.php.net/46260  (note the workaround there dated December 2010
-  *     is inadequate: it only applies to the executing file, not included
-  *     files)
-  *
-  * \since 0.5.0
-  *
-  * \todo does this path manipulation work on Windows? if not, is there a php
-  *   solution?
   */
-  static function head_html($js=true, $jquery=false, $relative_root=null) {
+  static function head_html() {
     global $luminous_;
-    $theme = $luminous_->settings['theme'];
+    $theme = self::setting('theme');
+    $relative_root = self::setting('relative-root'); 
+    $js = self::setting('include-javascript');
+    $jquery = self::setting('include-jquery');
+    
     if (!preg_match('/\.css$/i', $theme)) $theme .= '.css';
     if (!self::theme_exists($theme)) $theme = 'luminous_light.css';
     
