@@ -87,7 +87,7 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
     }
     $op_pattern = "@$op_pattern@";
     
-    $this->add_pattern('IDENT', '/[a-zA-Z_$]+[_$\w]*/'); 
+    $this->add_pattern('IDENT', '/[a-zA-Z_$][_$\w]*/'); 
     // NOTE: slash is a special case, and </ may be a script close
     $this->add_pattern('OPERATOR', $op_pattern);
     // we care about openers for figuring out where regular expressions are
@@ -96,8 +96,8 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
     
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
-    $this->add_pattern('SSTRING', LuminousTokenPresets::$SINGLE_STR);
-    $this->add_pattern('DSTRING', LuminousTokenPresets::$DOUBLE_STR);    
+    $this->add_pattern('SSTRING', LuminousTokenPresets::$SINGLE_STR_SL);
+    $this->add_pattern('DSTRING', LuminousTokenPresets::$DOUBLE_STR_SL);    
     $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_ML);
     $this->add_pattern('COMMENT_SL', LuminousTokenPresets::$C_COMMENT_SL);
     // special case
