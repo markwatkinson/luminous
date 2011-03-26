@@ -115,7 +115,7 @@ luminous::head_html observes this.
 
 + auto-link(bool): if the formatter supports hyperlinking, URIs will be linked
 
-+ html-strict: Luminous uses the 'target' attribute of hyperlinks (`a' tags). 
++ html-strict(bool): Luminous uses the 'target' attribute of hyperlinks (`a' tags). 
 This is not valid for X/HTML4 strict, therefore it may be disabled. Note that
 this is purely academic: browsers don't care, and let's be honest, it was a 
 stupid idea by the W3C anyway. Luminous produces valid HTML5 and HTML4 
@@ -126,7 +126,7 @@ numbered. (default: true)
 
 + max-height(int): if the formatter can control its height, it will constrain 
 itself to this many pixels (you may specify this as a string with units)
-(default: -1)
+(default: 500)
 
 + wrap-width(int): if the formatter supports line wrapping, lines 
 will be wrapped at this number of characters (0 or -1 to disable) (default: 
