@@ -65,6 +65,10 @@ class Scanner {
     }
     return $this->index;
   }
+
+  function pos_shift($offset) {
+    $this->pos( $this->pos() + $offset );
+  }
   
   
   function bol() {
