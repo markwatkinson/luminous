@@ -1,6 +1,10 @@
 <?php
 
 /*
+ * Like ruby, I think it's impossible to fully tokenize Perl without
+ * executing some of the code to disambiguate some symbols. As such, we're
+ * going to settle for 'probably right' rather than 'definitely right'.
+ * 
  * TODO: I think this is mostly complete but it needs interpolation
  * highlighting in strings and heredoc, and a regex highlighting filter,
  * probably a stream filter
@@ -8,6 +12,8 @@
 
 class LuminousPerlScanner extends LuminousSimpleScanner {
 
+
+  // helper function:
   // consumes a string until the given delimiter (which may be balanced).
   // will handle nested balanced delimiters.
   // this is used as the general case for perl quote-operators like:
@@ -50,8 +56,10 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
     }
   }
 
-  function is_delimiter() {
 
+  // Helper function: guesses whether or not a slash is a regex delimiter
+  // by looking behind in the token stream.
+  function is_delimiter() {
     for($i = count($this->tokens) - 1; $i >= 0; $i--) {
       $t = $this->tokens[$i];
       if ($t[0] === null || $t[0] === 'COMMENT') continue;
@@ -69,12 +77,13 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
           case 'and':
           case 'or':
           case 'xor':
-          // ...
+          // other keywords/functions
           case 'if':
           case 'elsif':
           case 'while':
           case 'unless':
           case 'split':
+          case 'print':
             return true;
         }
       }
@@ -84,6 +93,9 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
   }
 
 
+
+  // override function for slashes, to disambiguate regexen from division
+  // operators.
   function slash_override($matches) {
     $this->pos( $this->pos() + strlen($matches[0]) );
     // this can catch '//', which I THINK is an operator but I could be wrong.
@@ -99,7 +111,8 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
   }
 
 
-  
+  // override function for 'quote-like operators'
+  // e.g.  m"hello", m'hello', m/hello/, m(hello), m(he()l()o())
   function str_override($matches) {
 
     $this->pos( $this->pos() + strlen($matches[0]) );
@@ -113,8 +126,10 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
 
     $this->consume_string($matches[3], $type);
     if ($f === 's' || $f === 'tr' || $f === 'y') {
-      // s/tr/y take two strings, e.g. s/something/somethingelse/
-      //
+      // s/tr/y take two strings, e.g. s/something/somethingelse/, so we
+      // have to consume the next delimiter (if it exists) and consume the
+      // string, again.
+  
       // if delims were balanced, there's a new delimiter right here, e.g.
       // s[something][somethingelse]
       $this->skip_whitespace();
@@ -137,6 +152,7 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
     }
   }
 
+  // figures out heredocs
   function heredoc_override($matches) {
     $this->record($matches[1], 'OPERATOR');
     $this->record($matches[2] . $matches[3] . $matches[4], 'DELIMITER');
@@ -156,7 +172,7 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
     }
   }
 
-
+  // halts highlighting on  __DATA__ and __END__
   function term_override($matches) {
     $this->record($matches[0], 'DELIMITER');
     $this->pos( $this->pos() + strlen($matches[0]) );
@@ -166,38 +182,55 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
   
   
   function init() {
+    
     $this->add_pattern('COMMENT', '/#.*/');
+    
+    // pod/cut documentation
     $this->add_pattern('DOCCOMMENT', 
     '/^=(?:pod|head\d*|over|item|back|begin|end|for|encoding)\\b .*? (^=cut$|\\z)/mxs');
+
+    // variables
     $this->add_pattern('VARIABLE', '/[\\$%@][a-z_]\w*/i');
-    // http://www.kichwa.com/quik_ref/spec_variables.html
-    $this->add_pattern('VARIABLE', '/\\$[\|%=\-~^\d&`\'+_\.\/\\\\,"#\\$\\?\\*O\\[\\];!@]/');    
+    // special variables http://www.kichwa.com/quik_ref/spec_variables.html
+    $this->add_pattern('VARIABLE', '/\\$[\|%=\-~^\d&`\'+_\.\/\\\\,"#\\$\\?\\*O\\[\\];!@]/');
+
+    // `backticks` (shell cmd)
     $this->add_pattern('CMD', '/`(?: [^`\\\\]+ | \\\\ . )(`|$)/x');
+    // straight strings
     $this->add_pattern('STRING', LuminousTokenPresets::$DOUBLE_STR);
     $this->add_pattern('STRING', LuminousTokenPresets::$SINGLE_STR);
+    // terminators
     $this->add_pattern('TERM', '/__(?:DATA|END)__/');
+    // heredoc (overriden)
     $this->add_pattern('HEREDOC', '/(<<)([\'"`]?)([a-zA-Z_]\w*)(\\2)/');
+    // operators, slash is a special case and is overridden
     $this->add_pattern('OPERATOR', '/[!%^&*\-=+;:|,\\.?<>~\\\\]+/');
     $this->add_pattern('SLASH', '%//?%');
+    // we care about 'openers' for regex-vs-division disambiguatation
     $this->add_pattern('OPENER', '%[\[\{\(]+%x');
+    
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
+
+    // quote-like operators. we override these.
     // I got these out of the old luminous tree, I don't know how accurate
-    // or complete they are.
+    // or complete they are. 
     $this->add_pattern('DELIMETERS', '/(q[rqxw]?|m|s|tr|y)([\s]*)([^a-zA-Z0-9])/');
     $this->add_pattern('IDENT', '/[a-zA-Z_]\w*/');
-
+    
+    
     $this->overrides['DELIMETERS'] = array($this, 'str_override');
     $this->overrides['SLASH'] = array($this, 'slash_override');
     $this->overrides['HEREDOC'] = array($this, 'heredoc_override');
     $this->overrides['TERM'] = array($this, 'term_override');
     
-
+    // map cmd to a 'function' and get rid of openers
     $this->rule_tag_map = array(
       'CMD' => 'FUNCTION',
       'OPENER' => null,
       );
 
+    // this sort of borks with the strange regex delimiters
     $this->remove_filter('pcre');
 
 
