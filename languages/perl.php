@@ -92,7 +92,7 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
     } else {
       $this->record($matches[0], 'DELIMITER');
       $this->consume_string($matches[0], 'REGEX');
-      if ($this->scan('/[cgimosx]*/')) {
+      if ($this->scan('/[cgimosx]+/')) {
         $this->record($this->match(), 'KEYWORD');
       }      
     }
@@ -132,7 +132,7 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
         $this->consume_string($matches[3], $type);
       }
     }
-    if ($type === 'REGEX' && $this->scan('/[cgimosx]*/')) {
+    if ($type === 'REGEX' && $this->scan('/[cgimosx]+/')) {
       $this->record($this->match(), 'KEYWORD');
     }
   }
