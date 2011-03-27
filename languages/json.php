@@ -56,7 +56,7 @@ class LuminousJSONScanner extends LuminousScanner {
         $this->stack[] = array('obj', 'key');
         $tok = 'OPERATOR';
       }
-      elseif($this->scan('/\}/')) {
+      elseif($state === 'obj' && $this->scan('/\}/')) {
         array_pop($this->stack);
         $tok = 'OPERATOR';
       }
@@ -64,9 +64,12 @@ class LuminousJSONScanner extends LuminousScanner {
         $this->expecting('value');
         $tok = 'OPERATOR';
       }
-      elseif($state === 'obj' && $this->scan('/,/')) {
-        $this->expecting('key');
-        $tok = 'OPERATOR';
+      elseif($this->scan('/,/')) {
+        if ($state === 'obj') {
+          $this->expecting('key');
+          $tok = 'OPERATOR';
+        }
+        elseif($state === 'array') $tok = 'OPERATOR';
       }
       else $this->scan('/./');
       
