@@ -2,6 +2,16 @@
 // Essentially a namespace
 class LuminousUtils {
 
+  static function balance_delimiter($delimiter) {
+    switch($delimiter) {
+    case '(' : return ')';
+    case '{' : return '}';
+    case '[' : return ']';
+    case '<' : return '>';
+    default: return $delimiter;
+    }
+  }
+
   static function escape_string($string) {
     return htmlspecialchars($string, ENT_NOQUOTES);
   }

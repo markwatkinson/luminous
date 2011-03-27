@@ -277,6 +277,11 @@ class Scanner {
   function scan_to($pattern) {
     return $this->__check($pattern, false, true, false, true);
   }
+
+  function scan_until($pattern) {
+    return $this->__check($pattern, false, true, false, true);
+  }
+
   
   /**
    * Looks for the given pattern at the current index and logs it
