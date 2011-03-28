@@ -31,6 +31,7 @@
 .luminous .comment_note{color:#DFDFDF !important; 
   font-style:normal !important; font-weight:bold !important;}
 .luminous .constant{color:#DCA3A3; font-weight:bold !important;}
+.luminous .delimiter{ font-weight:bold !important;}
 .luminous .esc{color:#478ca3  !important;}
 .luminous .function{color:#efef8f !important;}
 .luminous .heredoc{color:#cc9393 !important;}

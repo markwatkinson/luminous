@@ -33,6 +33,7 @@
 color:black !important; 
 font-style:normal !important;}
 .luminous .constant{color:#0073AD !important; font-weight:bold !important;}
+.luminous .delimiter{ font-weight:bold !important;} 
 .luminous .esc{color:#478CA3 !important;}
 .luminous .function{color:#99D1FF !important;}
 .luminous .heredoc{color:#FF6767 !important;}
