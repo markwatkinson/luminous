@@ -4,10 +4,11 @@ Luminous - a Syntax Highlighter for PHP
 Luminous is an accurate and style-able syntax highlighter for PHP which supports 
 a bunch of common languages and output to HTML and LaTeX.
 
-For a demo, see [here](http://luminous.asgaard.co.uk/) (this is a nightly)
-For documentation, see the [github wiki](https://github.com/markwatkinson/luminous/wiki)
-For a list of currently supported languages, see [here](http://luminous.asgaard.co.uk/supported.php)
+##Links:
 
++ [Demo](http://luminous.asgaard.co.uk/)
++ [Supported language list](http://luminous.asgaard.co.uk/luminous/supported.php)
++ [Documentation (on the github wiki)](https://github.com/markwatkinson/luminous/wiki)
 
 
 Installation
