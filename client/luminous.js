@@ -20,8 +20,8 @@
 
 
 // keep these 1 per line, it's updated automagically by updateversion.sh
-var luminous_version = '0.5.7';
-var luminous_date = '04/02/11';
+var luminous_version = 'git';
+var luminous_date = 'master';
 
 var luminous_initialised = false,
     luminous_fixed_bar = false,
@@ -555,9 +555,9 @@ function luminous_get_info_element(condensed)
     Luminous " + luminous_version + 
   " " + luminous_date + " </h1>\
   <p>This source was highlighted with <span class='keyword'>Luminous</span>. Visit \
-  <a class=link href='http://code.google.com/p/luminous/' target=_blank>\
-  http://code.google.com/p/luminous/</a> for the latest \
-  stable and development versions, and \
+  <a class=link href='http://github.com/markwatkinson/luminous/' target=_blank>\
+  http://github.com/markwatkinson/luminous/</a> for the latest \
+  development version, and \
   <a class=link \
   href=http://www.asgaard.co.uk/p/Luminous \
   target=_blank>\
