@@ -58,10 +58,7 @@ color:#FFFFFF !important;}
 .luminous .diff_header_new{background-color:#2F33AB !important;}
 .luminous .diff_header_old{background-color:#2F33AB !important;}
 .luminous .diff_range{background-color:#2F33AB !important;}
-.luminous .diff_old{background-color:#660000 !important;
-  color:#E6E1DC !important;}
-.luminous .diff_new{background-color:#144212 !important; 
-  color:#E6E1DC !important;}
+
 
 
 /* .luminous .lang_latex{color:#b1b1ff;} */
@@ -135,4 +132,23 @@ font-weight:bold !important;}
 .luminous .highlighted_line
 {
   background-color:#1F1611 !important;
+}
+
+  
+/* this stuff has to come after the other rules because it will probably
+ * override some of them
+ */
+.luminous .diff_old{
+  background-color:#660000 !important;
+  background-color: rgba(232, 87, 82, 0.35) !important;
+  color: #E6E1DC !important;
+}
+.luminous .diff_new{
+  background-color:#144212 !important;
+  background-color: rgba(0, 191, 0, 0.35) !important;
+  color: #E6E1DC !important;
+}
+.luminous .diff_unchanged, .luminous .diff_unchanged * {
+  color: #888A85 !important;
+  background-color: transparent !important;
 }

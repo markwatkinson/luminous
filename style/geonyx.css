@@ -7,16 +7,6 @@
 .luminous .diff_header_new{color: #008C00 !important;}
 .luminous .diff_header_old{color: #BF0303 !important;}
 .luminous .diff_range{color:#0000FF !important;}
-.luminous .diff_old{background-color:#FFBFBF !important; 
-  background-color: rgba(232, 87, 82, 0.15) !important;
-}
-.luminous .diff_new{background-color:#BFFFBF !important;
-  background-color: rgba(0, 191, 0, 0.15) !important;
-}
-.luminous .diff_unchanged, .luminous .diff_unchanged * {
-  color: #888A85 !important;
-  background-color: transparent !important;
-}
 .luminous .doccomment{color: #00734D !important;}
 .luminous .doctag {color: #00BF00  !important; font-weight: bold  !important;}
 .luminous .docproperty{font-weight: bold  !important;}
@@ -54,3 +44,23 @@
 .luminous .metabar_buttons_floating {
   background-color: #EEEEEC;
 }
+
+
+
+
+/* this stuff has to come after the other rules because it will probably
+ * override some of them 
+ */
+.luminous .diff_old{
+  background-color:#FFBFBF !important; 
+  background-color: rgba(232, 87, 82, 0.15) !important;
+}
+.luminous .diff_new{
+  background-color:#BFFFBF !important;
+  background-color: rgba(0, 191, 0, 0.15) !important;
+}
+.luminous .diff_unchanged, .luminous .diff_unchanged * {
+  color: #888A85 !important;
+  background-color: transparent !important;
+}
+

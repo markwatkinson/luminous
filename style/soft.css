@@ -66,8 +66,7 @@
 .luminous .diff_header_new{color:green !important;}
 .luminous .diff_header_old{color:red !important;}
 .luminous .diff_range{color:blue !important;}
-.luminous .diff_old{color:#AF0000 !important;}
-.luminous .diff_new{color:#00AF00 !important;}
+
 
 .luminous .lang_latex{color:blue !important;}
 .luminous .latex_function{color:red !important; font-weight:normal !important;}
@@ -135,4 +134,26 @@
   background-color:rgba(200, 200, 200, 0.50) !important;
   border-color: #BEBEEF !important;
   
+}
+
+
+
+
+
+/* this stuff has to come after the other rules because it will probably
+ * override some of them
+ */
+.luminous .diff_old{
+  background-color:#E2AEC1 !important;
+  background-color: rgba(226, 174, 193, 0.65) !important;
+  color: #666 !important;
+}
+.luminous .diff_new{
+  background-color:#B7E2C6 !important;
+  background-color: rgba(156, 226, 181, 0.65) !important;
+  color: #666 !important;
+}
+.luminous .diff_unchanged, .luminous .diff_unchanged * {
+  color: #888A85 !important;
+  background-color: transparent !important;
 }

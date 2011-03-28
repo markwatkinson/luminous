@@ -133,3 +133,19 @@
 {
   background-color:#6D6D6D !important;
 }
+
+/* this stuff has to come after the other rules because it will probably         
+ * override some of them                                                         
+ */                                                                              
+.luminous .diff_old{                                                             
+  background-color:#7C4543 !important;
+  background-color: rgba(232, 87, 82, 0.15) !important;
+}
+.luminous .diff_new{
+  background-color:#3F612C !important; 
+  background-color: rgba(128, 251, 120, 0.15) !important;  
+}                                                                                
+.luminous .diff_unchanged, .luminous .diff_unchanged * {                         
+  color: #888A85 !important;                                                     
+  background-color: transparent !important;                                      
+}   
