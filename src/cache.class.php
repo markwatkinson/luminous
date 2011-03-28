@@ -176,6 +176,7 @@ class LuminousCache
   public function purge() {
     if (!$this->use_cache || $this->purge_older_than <= 0) return;
     $purge_file = $this->cache_dir . '/.purgedata';
+    if (!file_exists($purge_file)) touch($purge_file);
     $last = 0;
     $fh = fopen($purge_file, 'r+');
     $time = time();
