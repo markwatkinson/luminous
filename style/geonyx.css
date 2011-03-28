@@ -50,3 +50,7 @@
   background-color: #EEEEEE !important;
   border-right: 1px dashed #BBBBBB !important;
 }
+
+.luminous .metabar_buttons_floating {
+  background-color: #EEEEEC;
+}
