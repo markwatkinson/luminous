@@ -75,8 +75,7 @@ class LuminousPythonScanner extends LuminousScanner {
     'class', 'continue', 'del', 'def', 'elif', 'else', 'except', 'exec',
     'finally', 'for', 'from', 'global', 'if', 'import', 'lambda', 
     'print', 'pass', 'raise', 'return', 'try', 'while', 'yield',
-    'and', 'not', 'in', 'is', 'or',
-    'print', 'True', 'False', 'None'));
+    'and', 'not', 'in', 'is', 'or', 'print'));
     
     $this->add_identifier_mapping('FUNCTION', array('all', 'abs', 'any', 
     'basestring', 'bin', 'callable', 'chr', 'classmethod', 'cmp', 'compile',
@@ -87,6 +86,9 @@ class LuminousPythonScanner extends LuminousScanner {
      'property', 'range', 'raw_input', 'reduce', 'reload', 'repr', 'reversed',
      'round', 'setattr', 'slice', 'sorted', 'staticmethod', 'sum', 'super',
      'type', 'unichr', 'vars', 'xrange', 'zip', '__import__'));
+
+    $this->add_identifier_mapping('VALUE', array('False', 'None', 'self', 
+      'True'));
      
 
 
