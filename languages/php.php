@@ -138,7 +138,8 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
             $this->record($this->match(), null);
           if ($this->scan_to("/^$delimiter|\z/m")) {
             $this->record($this->match(), ($nowdoc)? 'NOWDOC' : 'HEREDOC');
-            $this->record($this->scan('/\w+/'), 'KEYWORD');
+            if ($this->scan('/\w+/')) 
+              $this->record($this->match(), 'KEYWORD');
           }
           continue;
         }
