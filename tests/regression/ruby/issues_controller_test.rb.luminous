@@ -61,13 +61,13 @@
     assert_template <STRING>'index.rhtml'</STRING>
     assert_not_nil assigns(<VALUE>:issues</VALUE>)
     assert_nil assigns(<VALUE>:project</VALUE>)
-    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Can't print recipes/</REGEX>
-    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Subproject issue/</REGEX>
+    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Can't print recipes<DELIMITER>/</DELIMITER></REGEX>
+    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Subproject issue<DELIMITER>/</DELIMITER></REGEX>
     <COMMENT># private projects hidden</COMMENT>
-    assert_no_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Issue of a private subproject/</REGEX>
-    assert_no_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Issue on project 2/</REGEX>
+    assert_no_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Issue of a private subproject<DELIMITER>/</DELIMITER></REGEX>
+    assert_no_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Issue on project 2<DELIMITER>/</DELIMITER></REGEX>
     <COMMENT># project column</COMMENT>
-    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'th'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Project/</REGEX>
+    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'th'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Project<DELIMITER>/</DELIMITER></REGEX>
   <KEYWORD>end</KEYWORD>
   
   <KEYWORD>def</KEYWORD> test_index_should_not_list_issues_when_module_disabled
@@ -77,8 +77,8 @@
     assert_template <STRING>'index.rhtml'</STRING>
     assert_not_nil assigns(<VALUE>:issues</VALUE>)
     assert_nil assigns(<VALUE>:project</VALUE>)
-    assert_no_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Can't print recipes/</REGEX>
-    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Subproject issue/</REGEX>
+    assert_no_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Can't print recipes<DELIMITER>/</DELIMITER></REGEX>
+    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Subproject issue<DELIMITER>/</DELIMITER></REGEX>
   <KEYWORD>end</KEYWORD>
 
   <KEYWORD>def</KEYWORD> test_index_should_not_list_issues_when_module_disabled
@@ -88,8 +88,8 @@
     assert_template <STRING>'index.rhtml'</STRING>
     assert_not_nil assigns(<VALUE>:issues</VALUE>)
     assert_nil assigns(<VALUE>:project</VALUE>)
-    assert_no_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Can't print recipes/</REGEX>
-    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Subproject issue/</REGEX>
+    assert_no_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Can't print recipes<DELIMITER>/</DELIMITER></REGEX>
+    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Subproject issue<DELIMITER>/</DELIMITER></REGEX>
   <KEYWORD>end</KEYWORD>
   
   <KEYWORD>def</KEYWORD> test_index_with_project
@@ -98,8 +98,8 @@
     assert_response <VALUE>:success</VALUE>
     assert_template <STRING>'index.rhtml'</STRING>
     assert_not_nil assigns(<VALUE>:issues</VALUE>)
-    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Can't print recipes/</REGEX>
-    assert_no_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Subproject issue/</REGEX>
+    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Can't print recipes<DELIMITER>/</DELIMITER></REGEX>
+    assert_no_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Subproject issue<DELIMITER>/</DELIMITER></REGEX>
   <KEYWORD>end</KEYWORD>
   
   <KEYWORD>def</KEYWORD> test_index_with_project_and_subprojects
@@ -108,9 +108,9 @@
     assert_response <VALUE>:success</VALUE>
     assert_template <STRING>'index.rhtml'</STRING>
     assert_not_nil assigns(<VALUE>:issues</VALUE>)
-    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Can't print recipes/</REGEX>
-    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Subproject issue/</REGEX>
-    assert_no_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Issue of a private subproject/</REGEX>
+    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Can't print recipes<DELIMITER>/</DELIMITER></REGEX>
+    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Subproject issue<DELIMITER>/</DELIMITER></REGEX>
+    assert_no_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Issue of a private subproject<DELIMITER>/</DELIMITER></REGEX>
   <KEYWORD>end</KEYWORD>
   
   <KEYWORD>def</KEYWORD> test_index_with_project_and_subprojects_should_show_private_subprojects
@@ -120,9 +120,9 @@
     assert_response <VALUE>:success</VALUE>
     assert_template <STRING>'index.rhtml'</STRING>
     assert_not_nil assigns(<VALUE>:issues</VALUE>)
-    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Can't print recipes/</REGEX>
-    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Subproject issue/</REGEX>
-    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Issue of a private subproject/</REGEX>
+    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Can't print recipes<DELIMITER>/</DELIMITER></REGEX>
+    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Subproject issue<DELIMITER>/</DELIMITER></REGEX>
+    assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Issue of a private subproject<DELIMITER>/</DELIMITER></REGEX>
   <KEYWORD>end</KEYWORD>
   
   <KEYWORD>def</KEYWORD> test_index_with_project_and_default_filter
@@ -273,7 +273,7 @@
     assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'form'</STRING>,
                <VALUE>:descendant</VALUE> <OPERATOR>=&gt;</OPERATOR> { <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'fieldset'</STRING>,
                                 <VALUE>:child</VALUE> <OPERATOR>=&gt;</OPERATOR> { <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'legend'</STRING>, 
-                                            <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Notes/</REGEX> } }
+                                            <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Notes<DELIMITER>/</DELIMITER></REGEX> } }
   <KEYWORD>end</KEYWORD>
   
   <KEYWORD>def</KEYWORD> test_show_by_manager
@@ -282,18 +282,18 @@
     assert_response <VALUE>:success</VALUE>
     
     assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>,
-      <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Quote/</REGEX>
+      <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Quote<DELIMITER>/</DELIMITER></REGEX>
     
     assert_tag <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'form'</STRING>,
                <VALUE>:descendant</VALUE> <OPERATOR>=&gt;</OPERATOR> { <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'fieldset'</STRING>,
                                 <VALUE>:child</VALUE> <OPERATOR>=&gt;</OPERATOR> { <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'legend'</STRING>, 
-                                            <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Change properties/</REGEX> } },
+                                            <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Change properties<DELIMITER>/</DELIMITER></REGEX> } },
                <VALUE>:descendant</VALUE> <OPERATOR>=&gt;</OPERATOR> { <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'fieldset'</STRING>,
                                 <VALUE>:child</VALUE> <OPERATOR>=&gt;</OPERATOR> { <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'legend'</STRING>, 
-                                            <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Log time/</REGEX> } },
+                                            <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Log time<DELIMITER>/</DELIMITER></REGEX> } },
                <VALUE>:descendant</VALUE> <OPERATOR>=&gt;</OPERATOR> { <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'fieldset'</STRING>,
                                 <VALUE>:child</VALUE> <OPERATOR>=&gt;</OPERATOR> { <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'legend'</STRING>, 
-                                            <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/Notes/</REGEX> } }
+                                            <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>Notes<DELIMITER>/</DELIMITER></REGEX> } }
   <KEYWORD>end</KEYWORD>
   
   <KEYWORD>def</KEYWORD> test_show_should_deny_anonymous_access_without_permission
@@ -326,9 +326,9 @@
     assert_response <VALUE>:success</VALUE>
     
     assert_tag <VALUE>:div</VALUE>, <VALUE>:attributes</VALUE> <OPERATOR>=&gt;</OPERATOR> { <VALUE>:id</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'relations'</STRING> },
-                     <VALUE>:descendant</VALUE> <OPERATOR>=&gt;</OPERATOR> { <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/#2$/</REGEX> }
+                     <VALUE>:descendant</VALUE> <OPERATOR>=&gt;</OPERATOR> { <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>#2$<DELIMITER>/</DELIMITER></REGEX> }
     assert_no_tag <VALUE>:div</VALUE>, <VALUE>:attributes</VALUE> <OPERATOR>=&gt;</OPERATOR> { <VALUE>:id</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'relations'</STRING> },
-                        <VALUE>:descendant</VALUE> <OPERATOR>=&gt;</OPERATOR> { <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/#4$/</REGEX> }
+                        <VALUE>:descendant</VALUE> <OPERATOR>=&gt;</OPERATOR> { <VALUE>:tag</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'a'</STRING>, <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>#4$<DELIMITER>/</DELIMITER></REGEX> }
   <KEYWORD>end</KEYWORD>
   
   <KEYWORD>def</KEYWORD> test_show_atom
@@ -374,7 +374,7 @@
     
     get <VALUE>:new</VALUE>, <VALUE>:project_id</VALUE> <OPERATOR>=&gt;</OPERATOR> <NUMERIC>1</NUMERIC>
     assert_response <NUMERIC>500</NUMERIC>
-    assert_error_tag <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/No default issue/</REGEX>
+    assert_error_tag <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>No default issue<DELIMITER>/</DELIMITER></REGEX>
   <KEYWORD>end</KEYWORD>
   
   <KEYWORD>def</KEYWORD> test_get_new_with_no_tracker_should_display_an_error
@@ -383,7 +383,7 @@
     
     get <VALUE>:new</VALUE>, <VALUE>:project_id</VALUE> <OPERATOR>=&gt;</OPERATOR> <NUMERIC>1</NUMERIC>
     assert_response <NUMERIC>500</NUMERIC>
-    assert_error_tag <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX>/No tracker/</REGEX>
+    assert_error_tag <VALUE>:content</VALUE> <OPERATOR>=&gt;</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>No tracker<DELIMITER>/</DELIMITER></REGEX>
   <KEYWORD>end</KEYWORD>
   
   <KEYWORD>def</KEYWORD> test_update_new_form

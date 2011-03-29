@@ -117,6 +117,8 @@ class LuminousRubyScanner extends LuminousScanner {
     // don't want this.
     $this->remove_filter('comment-to-doc');
 
+    $this->add_filter('REGEX', create_function('$tok',
+      'return LuminousFilters::pcre($tok, (isset($tok[1][0]) && $tok[1][0] === "/"));'));
   }
 
   protected function is_regex() {
@@ -257,9 +259,15 @@ class LuminousRubyScanner extends LuminousScanner {
             }
           }
           $pos = $next[0] + strlen($next[1][0]);
+          $this->pos($pos);
+          if (empty($this->state_) && $pop[0] === 'REGEX' &&
+            $this->scan('/[iomx]+/')) {
+            $this->record($this->match(), 'KEYWORD');
+          }
+          // urrrgh
+          continue;
         }
         $this->pos($pos);
-        
         continue;
       }
 

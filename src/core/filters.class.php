@@ -180,16 +180,22 @@ class LuminousFilters {
   /**
    * Tries to highlight PCRE syntax
    */
-  static function pcre($token) {
+  static function pcre($token, $delimited=true) {
     $token = self::string($token);
     $token = LuminousUtils::escape_token($token);
     $str = &$token[1];
     $flags = array();
-    if (preg_match("/[[:alpha:]]+$/", $str, $matches)){
-      $m = $matches[0];
-      $flags = str_split($m);
-      $str = preg_replace("/(?<![[:alnum:]\s])[[:alpha:]]+$/", 
-        "<KEYWORD>$0</KEYWORD>", $str);
+    if ($delimited) {
+      $str = preg_replace('/^[^[:alnum:]]/', '<DELIMITER>$0</DELIMITER>', $str);
+      
+      if (preg_match("/[[:alpha:]]+$/", $str, $matches)){
+        $m = $matches[0];
+        $flags = str_split($m);
+        $str = preg_replace("/([^[:alnum:]\s])([[:alpha:]]+)$/",
+          "<DELIMITER>$1</DELIMITER><KEYWORD>$2</KEYWORD>", $str);
+      } else 
+        $str = preg_replace('/[^[:alnum:]]$/', '<DELIMITER>$0</DELIMITER>', $str);
+
     }
     $str = preg_replace("/((?<!\\\)[\*\+\.|])|((?<![\(\\\])\?)/",
                           "<REGEX_OPERATOR>$0</REGEX_OPERATOR>", $str);  
