@@ -71,8 +71,8 @@ class _Luminous {
     $this->scanners->AddScanner(array('diff', 'patch'),
       'LuminousDiffScanner', 'Diff', "$language_dir/diff.php");
       
-    $this->scanners->AddScanner(array('html', 'htm', 'xml'),
-      'LuminousHTMLScanner', 'HTML/XML', "$language_dir/html.php",
+    $this->scanners->AddScanner(array('html', 'htm'),
+      'LuminousHTMLScanner', 'HTML', "$language_dir/html.php",
       array('js', 'css'));
       
     $this->scanners->AddScanner(array('ecma', 'ecmascript'),
@@ -124,6 +124,8 @@ class _Luminous {
       
     $this->scanners->AddScanner(array('vim', 'vimscript'),
       'LuminousVimScriptScanner', 'Vim Script', "$language_dir/vim.php");
+    $this->scanners->AddScanner('xml', 'LuminousXMLScanner', 
+      'XML', "$language_dir/xml.php", 'html');
   }
 
   function get_formatter() {
