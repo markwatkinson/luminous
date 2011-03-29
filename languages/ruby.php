@@ -409,8 +409,8 @@ class LuminousRubyScanner extends LuminousScanner {
           $pos, $interpolation, $fancy_delim);
       }
       elseif( (ctype_alpha($c) || $c === '_') &&
-        ($m = $this->scan('/[_a-zA-Z]\w*[!?]?/')) !== null) {
-        $this->record($m, 'IDENT');
+        ($m = $this->scan('/[_a-zA-Z]\w*[!?]?/')) !== null) {          
+        $this->record($m, ctype_upper($m[0])? 'CONSTANT' : 'IDENT');
         if ($m === '__END__') {
           if (!$this->interpolation) {
             $this->record($this->rest(), null);
