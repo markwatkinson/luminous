@@ -339,8 +339,10 @@ class LuminousRubyScanner extends LuminousScanner {
           }
           assert($matches !== null);
           if ($matches[0] === '#{') { // interpolation, break heredoc and do that.
-            $this->pos($next + strlen($matches[0]));
+            $this->pos($next);
             $this->record(substr($this->string(), $start, $this->pos()-$start), 'HEREDOC');
+            $this->record($matches[0], 'DELIMITER');
+            $this->pos_shift(strlen($matches[0]));
             // c+p alert
             $interpolation_scanner = new LuminousRubyScanner();
             $interpolation_scanner->string($this->string());
@@ -350,6 +352,8 @@ class LuminousRubyScanner extends LuminousScanner {
             $interpolation_scanner->main();
             $this->record($interpolation_scanner->tagged(), 'INTERPOLATION', true);
             $this->pos($interpolation_scanner->pos());
+            if ($this->peek() === '}')
+              $this->record($this->get(), 'DELIMITER');
             $start = $this->pos();
           }
           else {
