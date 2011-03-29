@@ -32,7 +32,7 @@
 <KEYWORD>begin</KEYWORD>
     <FUNCTION>require</FUNCTION> <STRING>'rubygems'</STRING>
     gem <STRING>'dbi'</STRING>
-<KEYWORD>rescue</KEYWORD> LoadError <OPERATOR>=&gt;</OPERATOR> e
+<KEYWORD>rescue</KEYWORD> <CONSTANT>LoadError</CONSTANT> <OPERATOR>=&gt;</OPERATOR> e
 <KEYWORD>end</KEYWORD>
 
 <FUNCTION>require</FUNCTION> <STRING>"dbi"</STRING>
@@ -40,7 +40,7 @@
 <KEYWORD>begin</KEYWORD>
     <FUNCTION>require</FUNCTION> <STRING>"readline"</STRING>
     <VARIABLE>$use_readline</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD>
-<KEYWORD>rescue</KEYWORD> LoadError
+<KEYWORD>rescue</KEYWORD> <CONSTANT>LoadError</CONSTANT>
     <VARIABLE>$use_readline</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD>
 <KEYWORD>end</KEYWORD>
 
@@ -48,11 +48,11 @@
 <FUNCTION>require</FUNCTION> <STRING>"irb/completion"</STRING>
 
 <VARIABLE>$paging</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD>
-<VARIABLE>$irb_completion</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Readline</OBJ>.<OO>completion_proc</OO>
+<VARIABLE>$irb_completion</VARIABLE> <OPERATOR>=</OPERATOR> <CONSTANT>Readline</CONSTANT>.<OO>completion_proc</OO>
 
 <FUNCTION>require</FUNCTION> <STRING>"getoptlong"</STRING>
 
-<KEYWORD>class</KEYWORD> ReadlineControl
+<KEYWORD>class</KEYWORD> <CONSTANT>ReadlineControl</CONSTANT>
 
     attr_accessor <VALUE>:keywords</VALUE>
 
@@ -64,12 +64,12 @@
 
     <KEYWORD>def</KEYWORD> initCompletion
         <KEYWORD>if</KEYWORD> <VARIABLE>$use_readline</VARIABLE>
-            <OBJ>Readline</OBJ>.<OO>completion_proc</OO> <OPERATOR>=</OPERATOR> <FUNCTION>proc</FUNCTION> {<OPERATOR>|</OPERATOR>str<OPERATOR>|</OPERATOR> complete(str) }
+            <CONSTANT>Readline</CONSTANT>.<OO>completion_proc</OO> <OPERATOR>=</OPERATOR> <FUNCTION>proc</FUNCTION> {<OPERATOR>|</OPERATOR>str<OPERATOR>|</OPERATOR> complete(str) }
         <KEYWORD>end</KEYWORD>
     <KEYWORD>end</KEYWORD>
 
     <KEYWORD>def</KEYWORD> complete(str)
-        <VARIABLE>@keywords</VARIABLE>.<OO>grep</OO>(<REGEX>/^</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION><OBJ>Regexp</OBJ>.<OO>escape</OO>(str)</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>/</REGEX>i)
+        <VARIABLE>@keywords</VARIABLE>.<OO>grep</OO>(<REGEX>/^</REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>Regexp</CONSTANT>.<OO>escape</OO>(str)</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX>/</REGEX>i)
     <KEYWORD>end</KEYWORD>
 
     <KEYWORD>def</KEYWORD> set_prompt(prompt<OPERATOR>=</OPERATOR><STRING>"&gt; "</STRING>)
@@ -78,7 +78,7 @@
 
     <KEYWORD>def</KEYWORD> readline
         <KEYWORD>if</KEYWORD> <VARIABLE>$use_readline</VARIABLE>
-            <OBJ>Readline</OBJ>.<OO>readline</OO>(<VARIABLE>@prompt</VARIABLE>, <KEYWORD>true</KEYWORD>)
+            <CONSTANT>Readline</CONSTANT>.<OO>readline</OO>(<VARIABLE>@prompt</VARIABLE>, <KEYWORD>true</KEYWORD>)
         <KEYWORD>else</KEYWORD>
             <FUNCTION>print</FUNCTION> <VARIABLE>@prompt</VARIABLE>
             <VARIABLE>$stdin</VARIABLE>.<OO>readline</OO>
@@ -87,10 +87,10 @@
 
 <KEYWORD>end</KEYWORD>
 
-<KEYWORD>class</KEYWORD> Command
+<KEYWORD>class</KEYWORD> <CONSTANT>Command</CONSTANT>
 
     <KEYWORD>def</KEYWORD> tokens(sql)
-        <OBJ>DBI</OBJ><OPERATOR>::</OPERATOR><OO>SQL</OO><OPERATOR>::</OPERATOR><OO>PreparedStatement</OO>.<OO>tokens</OO>(sql)
+        <CONSTANT>DBI</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>SQL</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>PreparedStatement</CONSTANT>.<OO>tokens</OO>(sql)
     <KEYWORD>end</KEYWORD>
 
     <KEYWORD>def</KEYWORD> readCommand
@@ -128,7 +128,7 @@
     <KEYWORD>end</KEYWORD>
 <KEYWORD>end</KEYWORD>
 
-<KEYWORD>class</KEYWORD> Actions
+<KEYWORD>class</KEYWORD> <CONSTANT>Actions</CONSTANT>
     <CONSTANT>ACTIONS</CONSTANT> <OPERATOR>=</OPERATOR> [
         [ <REGEX>/^\\q(uit)?\s*$/</REGEX>i,     <VALUE>:quit</VALUE> ],
         [ <REGEX>/^\\h(elp)?\s*$/</REGEX>i,     <VALUE>:help</VALUE> ],
@@ -151,7 +151,7 @@
     ]
 
     <KEYWORD>def</KEYWORD> dispatchCommand(line)
-        <OBJ>ACTIONS</OBJ>.<OO>each</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>regexp, action<OPERATOR>|</OPERATOR>
+        <CONSTANT>ACTIONS</CONSTANT>.<OO>each</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>regexp, action<OPERATOR>|</OPERATOR>
             <KEYWORD>if</KEYWORD> line <OPERATOR>=~</OPERATOR> regexp <KEYWORD>then</KEYWORD>
                 send(action, <VARIABLE>$~</VARIABLE>)
                 <KEYWORD>return</KEYWORD>
@@ -165,8 +165,8 @@
         <FUNCTION>puts</FUNCTION>
 
         <KEYWORD>begin</KEYWORD>
-            <OBJ>Conn</OBJ>.<OO>disconnect</OO>
-        <KEYWORD>rescue</KEYWORD> <OBJ>DBI</OBJ><OPERATOR>::</OPERATOR><OO>Error</OO> <OPERATOR>=&gt;</OPERATOR> err
+            <CONSTANT>Conn</CONSTANT>.<OO>disconnect</OO>
+        <KEYWORD>rescue</KEYWORD> <CONSTANT>DBI</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>Error</CONSTANT> <OPERATOR>=&gt;</OPERATOR> err
             <FUNCTION>puts</FUNCTION>
             <FUNCTION>puts</FUNCTION> <OBJ>err</OBJ>.<OO>message</OO>
             <FUNCTION>p</FUNCTION> <OBJ>err</OBJ>.<OO>backtrace</OO> <KEYWORD>if</KEYWORD> <VARIABLE>$DEBUG</VARIABLE>
@@ -217,7 +217,7 @@
 
     <KEYWORD>def</KEYWORD> tables(match)
         head <OPERATOR>=</OPERATOR> [<STRING>"Table name"</STRING>]
-        rows <OPERATOR>=</OPERATOR> <OBJ>Conn</OBJ>.<OO>tables</OO>.<OO>collect</OO> {<OPERATOR>|</OPERATOR>name<OPERATOR>|</OPERATOR> [name]}
+        rows <OPERATOR>=</OPERATOR> <CONSTANT>Conn</CONSTANT>.<OO>tables</OO>.<OO>collect</OO> {<OPERATOR>|</OPERATOR>name<OPERATOR>|</OPERATOR> [name]}
 
         <FUNCTION>puts</FUNCTION>
         <FUNCTION>puts</FUNCTION> <STRING>"Tables: "</STRING>
@@ -230,7 +230,7 @@
 
         head <OPERATOR>=</OPERATOR> <DELIMITER>%w(</DELIMITER><STRING>name type_name precision scale default nullable indexed primary unique</STRING><DELIMITER>)</DELIMITER>
 
-        rows <OPERATOR>=</OPERATOR> <OBJ>Conn</OBJ>.<OO>columns</OO>(table).<OO>collect</OO> {<OPERATOR>|</OPERATOR>col<OPERATOR>|</OPERATOR> <OBJ>head</OBJ>.<OO>collect</OO>{<OPERATOR>|</OPERATOR>a<OPERATOR>|</OPERATOR> col[a]} }
+        rows <OPERATOR>=</OPERATOR> <CONSTANT>Conn</CONSTANT>.<OO>columns</OO>(table).<OO>collect</OO> {<OPERATOR>|</OPERATOR>col<OPERATOR>|</OPERATOR> <OBJ>head</OBJ>.<OO>collect</OO>{<OPERATOR>|</OPERATOR>a<OPERATOR>|</OPERATOR> col[a]} }
 
         <FUNCTION>puts</FUNCTION>
         <FUNCTION>puts</FUNCTION> <STRING>"Table '</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION>table</INTERPOLATION><DELIMITER>}</DELIMITER><STRING>': "</STRING>
@@ -243,14 +243,14 @@
     <KEYWORD>end</KEYWORD>
 
     <KEYWORD>def</KEYWORD> commit(match)
-        <OBJ>Conn</OBJ>.<OO>commit</OO>
+        <CONSTANT>Conn</CONSTANT>.<OO>commit</OO>
         <FUNCTION>puts</FUNCTION>
         <FUNCTION>puts</FUNCTION> <STRING>"COMMIT"</STRING>
         <FUNCTION>puts</FUNCTION>
     <KEYWORD>end</KEYWORD>
 
     <KEYWORD>def</KEYWORD> rollback(match)
-        <OBJ>Conn</OBJ>.<OO>rollback</OO>
+        <CONSTANT>Conn</CONSTANT>.<OO>rollback</OO>
         <FUNCTION>puts</FUNCTION>
         <FUNCTION>puts</FUNCTION> <STRING>"ROLLBACK"</STRING>
         <FUNCTION>puts</FUNCTION>
@@ -259,20 +259,20 @@
     <KEYWORD>def</KEYWORD> autocommit(match)
         mode <OPERATOR>=</OPERATOR> match[<NUMERIC>3</NUMERIC>]
         <KEYWORD>if</KEYWORD> mode <OPERATOR>=~</OPERATOR> <REGEX>/on/</REGEX>i
-            Conn[<STRING>'AutoCommit'</STRING>] <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD>
+            <CONSTANT>Conn</CONSTANT>[<STRING>'AutoCommit'</STRING>] <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD>
             <FUNCTION>puts</FUNCTION>
             <FUNCTION>puts</FUNCTION> <STRING>"AUTOCOMMIT IS NOW ON"</STRING>
             <FUNCTION>puts</FUNCTION>
         <KEYWORD>elsif</KEYWORD> mode <OPERATOR>=~</OPERATOR> <REGEX>/off/</REGEX>i
-            Conn[<STRING>'AutoCommit'</STRING>] <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD>
+            <CONSTANT>Conn</CONSTANT>[<STRING>'AutoCommit'</STRING>] <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD>
             <FUNCTION>puts</FUNCTION>
             <FUNCTION>puts</FUNCTION> <STRING>"AUTOCOMMIT IS NOW OFF"</STRING>
             <FUNCTION>puts</FUNCTION>
         <KEYWORD>else</KEYWORD>
             <FUNCTION>puts</FUNCTION>
-            <KEYWORD>if</KEYWORD> Conn[<STRING>'AutoCommit'</STRING>] <OPERATOR>==</OPERATOR> <KEYWORD>true</KEYWORD>
+            <KEYWORD>if</KEYWORD> <CONSTANT>Conn</CONSTANT>[<STRING>'AutoCommit'</STRING>] <OPERATOR>==</OPERATOR> <KEYWORD>true</KEYWORD>
                 <FUNCTION>puts</FUNCTION> <STRING>"AUTOCOMMIT is currently switched ON"</STRING>
-            <KEYWORD>elsif</KEYWORD> Conn[<STRING>'AutoCommit'</STRING>] <OPERATOR>==</OPERATOR> <KEYWORD>false</KEYWORD>
+            <KEYWORD>elsif</KEYWORD> <CONSTANT>Conn</CONSTANT>[<STRING>'AutoCommit'</STRING>] <OPERATOR>==</OPERATOR> <KEYWORD>false</KEYWORD>
                 <FUNCTION>puts</FUNCTION> <STRING>"AUTOCOMMIT is currently switched OFF"</STRING>
             <KEYWORD>else</KEYWORD>
                 <FUNCTION>puts</FUNCTION> <STRING>"AUTOCOMMIT is in unknown state"</STRING>
@@ -286,7 +286,7 @@
         <VARIABLE>$file</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>match</OBJ>.<OO>post_match</OO>.<OO>strip</OO>
 
         <KEYWORD>begin</KEYWORD>
-            <VARIABLE>$input</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>File</OBJ>.<OO>open</OO>(<VARIABLE>$file</VARIABLE>)
+            <VARIABLE>$input</VARIABLE> <OPERATOR>=</OPERATOR> <CONSTANT>File</CONSTANT>.<OO>open</OO>(<VARIABLE>$file</VARIABLE>)
             <FUNCTION>puts</FUNCTION> <STRING>"EXECUTE file </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><VARIABLE>$file</VARIABLE></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>
             <FUNCTION>puts</FUNCTION>
         <KEYWORD>rescue</KEYWORD>
@@ -306,7 +306,7 @@
             <FUNCTION>puts</FUNCTION>
         <KEYWORD>else</KEYWORD>
             <KEYWORD>begin</KEYWORD>
-                <VARIABLE>$output</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>File</OBJ>.<OO>new</OO>(file, <STRING>"w+"</STRING>)
+                <VARIABLE>$output</VARIABLE> <OPERATOR>=</OPERATOR> <CONSTANT>File</CONSTANT>.<OO>new</OO>(file, <STRING>"w+"</STRING>)
                 <FUNCTION>puts</FUNCTION> <STRING>"Set OUTPUT to file </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION>file</INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>
                 <FUNCTION>puts</FUNCTION>
             <KEYWORD>rescue</KEYWORD>
@@ -332,12 +332,12 @@
     <KEYWORD>end</KEYWORD>
 
     <KEYWORD>def</KEYWORD> irb(match)
-        <OBJ>Readline</OBJ>.<OO>completion_proc</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$irb_completion</VARIABLE>
+        <CONSTANT>Readline</CONSTANT>.<OO>completion_proc</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$irb_completion</VARIABLE>
         <FUNCTION>puts</FUNCTION>
         <FUNCTION>puts</FUNCTION> <STRING>"================================== IRB ==============================="</STRING>
         <KEYWORD>begin</KEYWORD>
-            <OBJ>IRB</OBJ>.<OO>start</OO>
-        <KEYWORD>rescue</KEYWORD> SystemExit
+            <CONSTANT>IRB</CONSTANT>.<OO>start</OO>
+        <KEYWORD>rescue</KEYWORD> <CONSTANT>SystemExit</CONSTANT>
         <KEYWORD>end</KEYWORD>
         <FUNCTION>puts</FUNCTION> <STRING>"======================================================================"</STRING>
         <VARIABLE>$rd</VARIABLE>.<OO>initCompletion</OO>
@@ -358,7 +358,7 @@
 <KEYWORD>end</KEYWORD>
 
 <KEYWORD>def</KEYWORD> output_table(header, rows)
-    <OBJ>DBI</OBJ><OPERATOR>::</OPERATOR><OO>Utils</OO><OPERATOR>::</OPERATOR><OO>TableFormatter</OO>.<OO>ascii</OO>(header, rows, <KEYWORD>nil</KEYWORD>, <KEYWORD>nil</KEYWORD>, <KEYWORD>nil</KEYWORD>, <KEYWORD>nil</KEYWORD>, <VARIABLE>$page_len</VARIABLE>) <KEYWORD>do</KEYWORD>
+    <CONSTANT>DBI</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>Utils</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>TableFormatter</CONSTANT>.<OO>ascii</OO>(header, rows, <KEYWORD>nil</KEYWORD>, <KEYWORD>nil</KEYWORD>, <KEYWORD>nil</KEYWORD>, <KEYWORD>nil</KEYWORD>, <VARIABLE>$page_len</VARIABLE>) <KEYWORD>do</KEYWORD>
         <KEYWORD>if</KEYWORD> <VARIABLE>$paging</VARIABLE>
             <FUNCTION>print</FUNCTION> <STRING>"[enter to continue, a to abort]"</STRING>
             <KEYWORD>break</KEYWORD> <KEYWORD>if</KEYWORD> <VARIABLE>$stdin</VARIABLE>.<OO>readline</OO>.<OO>chomp</OO>.<OO>downcase</OO> <OPERATOR>==</OPERATOR> <STRING>"a"</STRING>
@@ -369,8 +369,8 @@
 <KEYWORD>def</KEYWORD> executeSQL(sql)
     sql <OPERATOR>=</OPERATOR> <VARIABLE>$`</VARIABLE> <KEYWORD>if</KEYWORD> sql <OPERATOR>=~</OPERATOR> <REGEX>/;\s*$/</REGEX>
 
-        start <OPERATOR>=</OPERATOR> <OPERATOR>::</OPERATOR><OO>Time</OO>.<OO>now</OO>
-    stmt <OPERATOR>=</OPERATOR> <OBJ>Conn</OBJ>.<OO>execute</OO>(sql)
+        start <OPERATOR>=</OPERATOR> <OPERATOR>::</OPERATOR><CONSTANT>Time</CONSTANT>.<OO>now</OO>
+    stmt <OPERATOR>=</OPERATOR> <CONSTANT>Conn</CONSTANT>.<OO>execute</OO>(sql)
 
     head <OPERATOR>=</OPERATOR> <OBJ>stmt</OBJ>.<OO>column_names</OO>
 
@@ -388,7 +388,7 @@
         <FUNCTION>puts</FUNCTION>
     <KEYWORD>else</KEYWORD>
         rows <OPERATOR>=</OPERATOR> <OBJ>stmt</OBJ>.<OO>fetch_all</OO>
-        tm <OPERATOR>=</OPERATOR> <OPERATOR>::</OPERATOR><OO>Time</OO>.<OO>now</OO> <OPERATOR>-</OPERATOR> start
+        tm <OPERATOR>=</OPERATOR> <OPERATOR>::</OPERATOR><CONSTANT>Time</CONSTANT>.<OO>now</OO> <OPERATOR>-</OPERATOR> start
 
         <FUNCTION>puts</FUNCTION>
         output_table(head, rows <OPERATOR>||</OPERATOR> [])
@@ -405,7 +405,7 @@
         <FUNCTION>puts</FUNCTION>
     <KEYWORD>end</KEYWORD>
 
-    <VARIABLE>$rd</VARIABLE>.<OO>keywords</OO> <OPERATOR>=</OPERATOR> <CONSTANT>SQL_KEYWORDS</CONSTANT> <OPERATOR>+</OPERATOR> <OBJ>Conn</OBJ>.<OO>tables</OO>
+    <VARIABLE>$rd</VARIABLE>.<OO>keywords</OO> <OPERATOR>=</OPERATOR> <CONSTANT>SQL_KEYWORDS</CONSTANT> <OPERATOR>+</OPERATOR> <CONSTANT>Conn</CONSTANT>.<OO>tables</OO>
 <KEYWORD>end</KEYWORD>
 
 <CONSTANT>DEFAULT_PAGE_LENGTH</CONSTANT> <OPERATOR>=</OPERATOR> <NUMERIC>37</NUMERIC>
@@ -427,8 +427,8 @@
 
 <COMMENT># ---------------------------------------------------------------------------</COMMENT>
 
-opts <OPERATOR>=</OPERATOR> <OBJ>GetoptLong</OBJ>.<OO>new</OO>(
-    [<STRING>"--file"</STRING>, <STRING>"-f"</STRING>, <OBJ>GetoptLong</OBJ><OPERATOR>::</OPERATOR><OO>REQUIRED_ARGUMENT</OO> ]
+opts <OPERATOR>=</OPERATOR> <CONSTANT>GetoptLong</CONSTANT>.<OO>new</OO>(
+    [<STRING>"--file"</STRING>, <STRING>"-f"</STRING>, <CONSTANT>GetoptLong</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>REQUIRED_ARGUMENT</CONSTANT> ]
 )
 <OBJ>opts</OBJ>.<OO>each</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>opt, arg<OPERATOR>|</OPERATOR>
     <KEYWORD>case</KEYWORD> opt
@@ -437,17 +437,17 @@ opts <OPERATOR>=</OPERATOR> <OBJ>GetoptLong</OBJ>.<OO>new</OO>(
     <KEYWORD>end</KEYWORD>
 <KEYWORD>end</KEYWORD>
 
-<KEYWORD>if</KEYWORD> <OBJ>ARGV</OBJ>.<OO>size</OO> <OPERATOR>&lt;</OPERATOR> <NUMERIC>1</NUMERIC> <KEYWORD>or</KEYWORD> <OBJ>ARGV</OBJ>.<OO>size</OO> <OPERATOR>&gt;</OPERATOR> <NUMERIC>3</NUMERIC>
+<KEYWORD>if</KEYWORD> <CONSTANT>ARGV</CONSTANT>.<OO>size</OO> <OPERATOR>&lt;</OPERATOR> <NUMERIC>1</NUMERIC> <KEYWORD>or</KEYWORD> <CONSTANT>ARGV</CONSTANT>.<OO>size</OO> <OPERATOR>&gt;</OPERATOR> <NUMERIC>3</NUMERIC>
     <FUNCTION>puts</FUNCTION>
     <FUNCTION>puts</FUNCTION> <STRING>"USAGE: </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><VARIABLE>$0</VARIABLE></INTERPOLATION><DELIMITER>}</DELIMITER><STRING> [--file file] driver_url [user [password] ]"</STRING>
     <FUNCTION>puts</FUNCTION>
 
     <FUNCTION>puts</FUNCTION> <STRING>"Available driver and datasources:"</STRING>
     <FUNCTION>puts</FUNCTION>
-    <KEYWORD>for</KEYWORD> driver <KEYWORD>in</KEYWORD> <OBJ>DBI</OBJ>.<OO>available_drivers</OO> <KEYWORD>do</KEYWORD>
+    <KEYWORD>for</KEYWORD> driver <KEYWORD>in</KEYWORD> <CONSTANT>DBI</CONSTANT>.<OO>available_drivers</OO> <KEYWORD>do</KEYWORD>
         <FUNCTION>puts</FUNCTION> driver
         <KEYWORD>begin</KEYWORD>
-            ds <OPERATOR>=</OPERATOR> <OBJ>DBI</OBJ>.<OO>data_sources</OO>(driver)
+            ds <OPERATOR>=</OPERATOR> <CONSTANT>DBI</CONSTANT>.<OO>data_sources</OO>(driver)
             <KEYWORD>for</KEYWORD> datasource <KEYWORD>in</KEYWORD> ds
                 <FUNCTION>puts</FUNCTION> <STRING>"  "</STRING> <OPERATOR>+</OPERATOR> datasource
             <KEYWORD>end</KEYWORD>
@@ -459,31 +459,31 @@ opts <OPERATOR>=</OPERATOR> <OBJ>GetoptLong</OBJ>.<OO>new</OO>(
 
     <FUNCTION>exit</FUNCTION> <NUMERIC>1</NUMERIC>
 <KEYWORD>else</KEYWORD>
-    <CONSTANT>DRIVER_URL</CONSTANT> <OPERATOR>=</OPERATOR> <OBJ>ARGV</OBJ>.<OO>shift</OO>
-    <CONSTANT>USER</CONSTANT>       <OPERATOR>=</OPERATOR> <OBJ>ARGV</OBJ>.<OO>shift</OO>
-    <CONSTANT>PASS</CONSTANT>       <OPERATOR>=</OPERATOR> <OBJ>ARGV</OBJ>.<OO>shift</OO>
+    <CONSTANT>DRIVER_URL</CONSTANT> <OPERATOR>=</OPERATOR> <CONSTANT>ARGV</CONSTANT>.<OO>shift</OO>
+    <CONSTANT>USER</CONSTANT>       <OPERATOR>=</OPERATOR> <CONSTANT>ARGV</CONSTANT>.<OO>shift</OO>
+    <CONSTANT>PASS</CONSTANT>       <OPERATOR>=</OPERATOR> <CONSTANT>ARGV</CONSTANT>.<OO>shift</OO>
 <KEYWORD>end</KEYWORD>
 
 <FUNCTION>puts</FUNCTION>
 <KEYWORD>begin</KEYWORD>
-    Conn <OPERATOR>=</OPERATOR> <OBJ>DBI</OBJ>.<OO>connect</OO>(<CONSTANT>DRIVER_URL</CONSTANT>, <CONSTANT>USER</CONSTANT>, <CONSTANT>PASS</CONSTANT>)
+    <CONSTANT>Conn</CONSTANT> <OPERATOR>=</OPERATOR> <CONSTANT>DBI</CONSTANT>.<OO>connect</OO>(<CONSTANT>DRIVER_URL</CONSTANT>, <CONSTANT>USER</CONSTANT>, <CONSTANT>PASS</CONSTANT>)
     <FUNCTION>print</FUNCTION> <STRING>"CONNECT TO </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>DRIVER_URL</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING> "</STRING>
-    <FUNCTION>print</FUNCTION> <STRING>"USER </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>USER</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING> "</STRING> <KEYWORD>unless</KEYWORD> <OBJ>USER</OBJ>.<OO>nil?</OO>
-    <FUNCTION>print</FUNCTION> <STRING>"PASS </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>PASS</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING> "</STRING> <KEYWORD>unless</KEYWORD> <OBJ>PASS</OBJ>.<OO>nil?</OO>
+    <FUNCTION>print</FUNCTION> <STRING>"USER </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>USER</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING> "</STRING> <KEYWORD>unless</KEYWORD> <CONSTANT>USER</CONSTANT>.<OO>nil?</OO>
+    <FUNCTION>print</FUNCTION> <STRING>"PASS </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>PASS</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING> "</STRING> <KEYWORD>unless</KEYWORD> <CONSTANT>PASS</CONSTANT>.<OO>nil?</OO>
     <FUNCTION>print</FUNCTION> <STRING>"<ESC>\n</ESC>"</STRING>
 
-<KEYWORD>rescue</KEYWORD> <OBJ>DBI</OBJ><OPERATOR>::</OPERATOR><OO>Error</OO>, <OBJ>DBI</OBJ><OPERATOR>::</OPERATOR><OO>Warning</OO> <OPERATOR>=&gt;</OPERATOR> err
+<KEYWORD>rescue</KEYWORD> <CONSTANT>DBI</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>Error</CONSTANT>, <CONSTANT>DBI</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>Warning</CONSTANT> <OPERATOR>=&gt;</OPERATOR> err
     <FUNCTION>p</FUNCTION> err
     <FUNCTION>exit</FUNCTION>
 <KEYWORD>end</KEYWORD>
 
 <FUNCTION>puts</FUNCTION>
 
-<VARIABLE>$rd</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>ReadlineControl</OBJ>.<OO>new</OO>
-<VARIABLE>$rd</VARIABLE>.<OO>keywords</OO> <OPERATOR>=</OPERATOR> <CONSTANT>SQL_KEYWORDS</CONSTANT> <OPERATOR>+</OPERATOR> <OBJ>Conn</OBJ>.<OO>tables</OO>
+<VARIABLE>$rd</VARIABLE> <OPERATOR>=</OPERATOR> <CONSTANT>ReadlineControl</CONSTANT>.<OO>new</OO>
+<VARIABLE>$rd</VARIABLE>.<OO>keywords</OO> <OPERATOR>=</OPERATOR> <CONSTANT>SQL_KEYWORDS</CONSTANT> <OPERATOR>+</OPERATOR> <CONSTANT>Conn</CONSTANT>.<OO>tables</OO>
 
-cmd <OPERATOR>=</OPERATOR> <OBJ>Command</OBJ>.<OO>new</OO>
-act <OPERATOR>=</OPERATOR> <OBJ>Actions</OBJ>.<OO>new</OO>
+cmd <OPERATOR>=</OPERATOR> <CONSTANT>Command</CONSTANT>.<OO>new</OO>
+act <OPERATOR>=</OPERATOR> <CONSTANT>Actions</CONSTANT>.<OO>new</OO>
 
 <COMMENT># --file option</COMMENT>
 <KEYWORD>if</KEYWORD> <VARIABLE>$input_file_name</VARIABLE>
@@ -508,7 +508,7 @@ act <OPERATOR>=</OPERATOR> <OBJ>Actions</OBJ>.<OO>new</OO>
             <COMMENT># SQL Command</COMMENT>
             executeSQL(line)
         <KEYWORD>end</KEYWORD>
-    <KEYWORD>rescue</KEYWORD> <OBJ>DBI</OBJ><OPERATOR>::</OPERATOR><OO>Error</OO> <OPERATOR>=&gt;</OPERATOR> err
+    <KEYWORD>rescue</KEYWORD> <CONSTANT>DBI</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>Error</CONSTANT> <OPERATOR>=&gt;</OPERATOR> err
         <FUNCTION>puts</FUNCTION>
         <FUNCTION>puts</FUNCTION> <OBJ>err</OBJ>.<OO>message</OO>
         <FUNCTION>p</FUNCTION> <OBJ>err</OBJ>.<OO>backtrace</OO> <KEYWORD>if</KEYWORD> <VARIABLE>$DEBUG</VARIABLE>

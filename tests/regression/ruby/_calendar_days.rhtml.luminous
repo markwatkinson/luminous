@@ -1,13 +1,13 @@
 <DELIMITER>&lt;%</DELIMITER>
-  earliest <OPERATOR>=</OPERATOR> <OBJ>Time</OBJ>.<OO>at</OO>(<VARIABLE>@min_time</VARIABLE>)
-  latest <OPERATOR>=</OPERATOR> <OBJ>Time</OBJ>.<OO>at</OO>(<VARIABLE>@max_time</VARIABLE>)
+  earliest <OPERATOR>=</OPERATOR> <CONSTANT>Time</CONSTANT>.<OO>at</OO>(<VARIABLE>@min_time</VARIABLE>)
+  latest <OPERATOR>=</OPERATOR> <CONSTANT>Time</CONSTANT>.<OO>at</OO>(<VARIABLE>@max_time</VARIABLE>)
 
   <COMMENT># adjust to fall on day boundaries</COMMENT>
-  earliest <OPERATOR>=</OPERATOR> <OBJ>Time</OBJ>.<OO>mktime</OO>(<OBJ>earliest</OBJ>.<OO>year</OO>, <OBJ>earliest</OBJ>.<OO>month</OO>, <OBJ>earliest</OBJ>.<OO>day</OO>)
-  latest <OPERATOR>=</OPERATOR> <OBJ>Time</OBJ>.<OO>mktime</OO>(<OBJ>latest</OBJ>.<OO>year</OO>, <OBJ>latest</OBJ>.<OO>month</OO>, <OBJ>latest</OBJ>.<OO>day</OO>)
+  earliest <OPERATOR>=</OPERATOR> <CONSTANT>Time</CONSTANT>.<OO>mktime</OO>(<OBJ>earliest</OBJ>.<OO>year</OO>, <OBJ>earliest</OBJ>.<OO>month</OO>, <OBJ>earliest</OBJ>.<OO>day</OO>)
+  latest <OPERATOR>=</OPERATOR> <CONSTANT>Time</CONSTANT>.<OO>mktime</OO>(<OBJ>latest</OBJ>.<OO>year</OO>, <OBJ>latest</OBJ>.<OO>month</OO>, <OBJ>latest</OBJ>.<OO>day</OO>)
 
-  today <OPERATOR>=</OPERATOR> <OBJ>Time</OBJ>.<OO>mktime</OO>(<OBJ>Time</OBJ>.<OO>now</OO>.<OO>year</OO>, <OBJ>Time</OBJ>.<OO>now</OO>.<OO>month</OO>, <OBJ>Time</OBJ>.<OO>now</OO>.<OO>day</OO>)
-  first_of_month <OPERATOR>=</OPERATOR> <OBJ>Time</OBJ>.<OO>mktime</OO>(<VARIABLE>@year</VARIABLE> <OPERATOR>||</OPERATOR> <OBJ>Time</OBJ>.<OO>now</OO>.<OO>year</OO>, <VARIABLE>@month</VARIABLE> <OPERATOR>||</OPERATOR> <OBJ>Time</OBJ>.<OO>now</OO>.<OO>month</OO>, <NUMERIC>1</NUMERIC>) <KEYWORD>rescue</KEYWORD> today
+  today <OPERATOR>=</OPERATOR> <CONSTANT>Time</CONSTANT>.<OO>mktime</OO>(<CONSTANT>Time</CONSTANT>.<OO>now</OO>.<OO>year</OO>, <CONSTANT>Time</CONSTANT>.<OO>now</OO>.<OO>month</OO>, <CONSTANT>Time</CONSTANT>.<OO>now</OO>.<OO>day</OO>)
+  first_of_month <OPERATOR>=</OPERATOR> <CONSTANT>Time</CONSTANT>.<OO>mktime</OO>(<VARIABLE>@year</VARIABLE> <OPERATOR>||</OPERATOR> <CONSTANT>Time</CONSTANT>.<OO>now</OO>.<OO>year</OO>, <VARIABLE>@month</VARIABLE> <OPERATOR>||</OPERATOR> <CONSTANT>Time</CONSTANT>.<OO>now</OO>.<OO>month</OO>, <NUMERIC>1</NUMERIC>) <KEYWORD>rescue</KEYWORD> today
   last_of_month <OPERATOR>=</OPERATOR> <OBJ>first_of_month</OBJ>.<OO>end_of_month</OO>
 
   first_day <OPERATOR>=</OPERATOR> first_of_month <OPERATOR>-</OPERATOR> <OBJ>first_of_month</OBJ>.<OO>wday</OO>.<OO>days</OO>

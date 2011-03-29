@@ -19,7 +19,7 @@
 <HEREDOC>    ' "</HEREDOC>
 <HEREDOC></HEREDOC><DELIMITER>eos</DELIMITER>
 <COMMENT>#Both options support the following syntax when passed as a parameter.</COMMENT>
-  <OBJ>Content</OBJ>.<OO>new</OO>(<VALUE>:value</VALUE> <OPERATOR>=&gt;</OPERATOR> <DELIMITER>&lt;&lt;eos</DELIMITER>)<HEREDOC></HEREDOC>
+  <CONSTANT>Content</CONSTANT>.<OO>new</OO>(<VALUE>:value</VALUE> <OPERATOR>=&gt;</OPERATOR> <DELIMITER>&lt;&lt;eos</DELIMITER>)<HEREDOC></HEREDOC>
 <HEREDOC>    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor </HEREDOC>
 <HEREDOC>    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud </HEREDOC>
 <HEREDOC>    exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute </HEREDOC>
@@ -28,7 +28,7 @@
 <HEREDOC>    ' "</HEREDOC>
 <HEREDOC></HEREDOC><DELIMITER>eos</DELIMITER>
 
- <OBJ>Content</OBJ>.<OO>new</OO>(<VALUE>:value</VALUE> <OPERATOR>=&gt;</OPERATOR> <DELIMITER>&lt;&lt;eos</DELIMITER><HEREDOC></HEREDOC>
+ <CONSTANT>Content</CONSTANT>.<OO>new</OO>(<VALUE>:value</VALUE> <OPERATOR>=&gt;</OPERATOR> <DELIMITER>&lt;&lt;eos</DELIMITER><HEREDOC></HEREDOC>
 <HEREDOC>    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor </HEREDOC>
 <HEREDOC>    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud </HEREDOC>
 <HEREDOC>    exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute </HEREDOC>
@@ -38,7 +38,7 @@
 <HEREDOC></HEREDOC><DELIMITER>eos</DELIMITER>
 )
 <COMMENT>#As an alternative, you could also pass the parameter using quotes.</COMMENT>
-  <OBJ>Content</OBJ>.<OO>new</OO>(<VALUE>:value</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor </STRING>
+  <CONSTANT>Content</CONSTANT>.<OO>new</OO>(<VALUE>:value</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor </STRING>
 <STRING>    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud </STRING>
 <STRING>    exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute </STRING>
 <STRING>    irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla </STRING>

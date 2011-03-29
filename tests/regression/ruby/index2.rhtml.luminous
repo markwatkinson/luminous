@@ -29,7 +29,7 @@
         &lt;<HTMLTAG>p</HTMLTAG>&gt;This is the API documentation for '<DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> <VARIABLE>@options</VARIABLE>.<OO>title</OO> </INTERPOLATION><DELIMITER>%&gt;</DELIMITER>'.&lt;<HTMLTAG>/p</HTMLTAG>&gt;
         <DELIMITER>&lt;%</DELIMITER> <KEYWORD>end</KEYWORD> <DELIMITER>%&gt;</DELIMITER>
 
-        <DELIMITER>&lt;%</DELIMITER> simple_files <OPERATOR>=</OPERATOR> <VARIABLE>@files</VARIABLE>.<OO>select</OO> {<OPERATOR>|</OPERATOR>tl<OPERATOR>|</OPERATOR> <OBJ>tl</OBJ>.<OO>parser</OO> <OPERATOR>==</OPERATOR> <OBJ>RDoc</OBJ><OPERATOR>::</OPERATOR><OO>Parser</OO><OPERATOR>::</OPERATOR><OO>Simple</OO> } <DELIMITER>%&gt;</DELIMITER>
+        <DELIMITER>&lt;%</DELIMITER> simple_files <OPERATOR>=</OPERATOR> <VARIABLE>@files</VARIABLE>.<OO>select</OO> {<OPERATOR>|</OPERATOR>tl<OPERATOR>|</OPERATOR> <OBJ>tl</OBJ>.<OO>parser</OO> <OPERATOR>==</OPERATOR> <CONSTANT>RDoc</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>Parser</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>Simple</CONSTANT> } <DELIMITER>%&gt;</DELIMITER>
         <DELIMITER>&lt;%</DELIMITER> <KEYWORD>unless</KEYWORD> <OBJ>simple_files</OBJ>.<OO>empty?</OO> <KEYWORD>then</KEYWORD> <DELIMITER>%&gt;</DELIMITER>
         &lt;<HTMLTAG>h2</HTMLTAG>&gt;Files&lt;<HTMLTAG>/h2</HTMLTAG>&gt;
         &lt;<HTMLTAG>ul</HTMLTAG>&gt;
@@ -48,7 +48,7 @@
 
         &lt;<HTMLTAG>h2</HTMLTAG> <TYPE>id</TYPE>=<STRING>"methods"</STRING>&gt;Methods&lt;<HTMLTAG>/h2</HTMLTAG>&gt;
         &lt;<HTMLTAG>ul</HTMLTAG>&gt;
-                <DELIMITER>&lt;%</DELIMITER> <OBJ>RDoc</OBJ><OPERATOR>::</OPERATOR><OO>TopLevel</OO>.<OO>all_classes_and_modules</OO>.<OO>map</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>mod<OPERATOR>|</OPERATOR>
+                <DELIMITER>&lt;%</DELIMITER> <CONSTANT>RDoc</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>TopLevel</CONSTANT>.<OO>all_classes_and_modules</OO>.<OO>map</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>mod<OPERATOR>|</OPERATOR>
                                  <OBJ>mod</OBJ>.<OO>method_list</OO>
                          <OBJ>end</OBJ>.<OO>flatten</OO>.<OO>sort</OO>.<OO>each</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>method<OPERATOR>|</OPERATOR> <DELIMITER>%&gt;</DELIMITER>
                         &lt;<HTMLTAG>li</HTMLTAG>&gt;&lt;<HTMLTAG>a</HTMLTAG> <TYPE>href</TYPE>=<STRING>"</STRING><DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> <OBJ>method</OBJ>.<OO>path</OO> </INTERPOLATION><DELIMITER>%&gt;</DELIMITER><STRING>"</STRING>&gt;<DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> <OBJ>method</OBJ>.<OO>pretty_name</OO> </INTERPOLATION><DELIMITER>%&gt;</DELIMITER> <ESC>&amp;mdash;</ESC> <DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> <OBJ>method</OBJ>.<OO>parent</OO>.<OO>full_name</OO> </INTERPOLATION><DELIMITER>%&gt;</DELIMITER>&lt;<HTMLTAG>/a</HTMLTAG>&gt;&lt;<HTMLTAG>/li</HTMLTAG>&gt;
@@ -58,7 +58,7 @@
         &lt;<HTMLTAG>div</HTMLTAG> <TYPE>id</TYPE>=<STRING>"validator-badges"</STRING>&gt;
                 &lt;<HTMLTAG>p</HTMLTAG>&gt;&lt;<HTMLTAG>small</HTMLTAG>&gt;&lt;<HTMLTAG>a</HTMLTAG> <TYPE>href</TYPE>=<STRING>"http://validator.w3.org/check/referer"</STRING>&gt;[Validate]&lt;<HTMLTAG>/a</HTMLTAG>&gt;&lt;<HTMLTAG>/small</HTMLTAG>&gt;&lt;<HTMLTAG>/p</HTMLTAG>&gt;
                 &lt;<HTMLTAG>p</HTMLTAG>&gt;&lt;<HTMLTAG>small</HTMLTAG>&gt;Generated with the &lt;<HTMLTAG>a</HTMLTAG> <TYPE>href</TYPE>=<STRING>"http://deveiate.org/projects/Darkfish-Rdoc/"</STRING>&gt;Darkfish
-                        Rdoc Generator&lt;<HTMLTAG>/a</HTMLTAG>&gt; <DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> <OBJ>RDoc</OBJ><OPERATOR>::</OPERATOR><OO>Generator</OO><OPERATOR>::</OPERATOR><OO>Darkfish</OO><OPERATOR>::</OPERATOR><OO>VERSION</OO> </INTERPOLATION><DELIMITER>%&gt;</DELIMITER>&lt;<HTMLTAG>/small</HTMLTAG>&gt;.&lt;<HTMLTAG>/p</HTMLTAG>&gt;
+                        Rdoc Generator&lt;<HTMLTAG>/a</HTMLTAG>&gt; <DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> <CONSTANT>RDoc</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>Generator</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>Darkfish</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>VERSION</CONSTANT> </INTERPOLATION><DELIMITER>%&gt;</DELIMITER>&lt;<HTMLTAG>/small</HTMLTAG>&gt;.&lt;<HTMLTAG>/p</HTMLTAG>&gt;
         &lt;<HTMLTAG>/div</HTMLTAG>&gt;
 &lt;<HTMLTAG>/body</HTMLTAG>&gt;
 &lt;<HTMLTAG>/html</HTMLTAG>&gt;
