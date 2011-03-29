@@ -133,7 +133,7 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
      if ($this->server_break($tok)) break;
       
       $this->record($get? $this->get() : $this->match(), $tok);
-      assert($this->pos() > $pos || $this->eos()) or die();
+      assert($this->pos() > $pos || $this->eos());
       
     }
     

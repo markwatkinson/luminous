@@ -75,7 +75,7 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
         if ($this->peek(2) !== '<?') {
           $this->scan_child();
         }
-        assert ($this->peek(2) === '<?' || $this->eos()) or die($this->rest());
+        assert ($this->peek(2) === '<?' || $this->eos());
         if ($this->eos()) break;
       }      
       $index = $this->pos();
@@ -145,7 +145,7 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
         }
       }
 
-      assert($this->pos() > $index) or die("$tok didn't consume anything");
+      assert($this->pos() > $index);
       $this->record($this->match(), $tok);
     }
   }

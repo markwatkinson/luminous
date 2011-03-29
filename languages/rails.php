@@ -51,7 +51,7 @@ class LuminousRailsScanner extends LuminousScanner {
       else {
         $this->scan_html();
       }
-      assert($p < $this->pos()) or die($this->pos());
+      assert($p < $this->pos());
     }
   }
 

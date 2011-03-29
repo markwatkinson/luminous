@@ -318,7 +318,7 @@ class LuminousRubyScanner extends LuminousScanner {
         }
         
 
-        assert (!empty($heredoc_queue)) or die($m);
+        assert (!empty($heredoc_queue));
         
         $start = $this->pos();
         

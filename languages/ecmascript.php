@@ -125,7 +125,7 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
   
   // c+p from HTML scanner
   function scan_child($lang) {
-    assert (isset($this->child_scanners[$lang])) or die("No such child scanner: $lang");
+    assert (isset($this->child_scanners[$lang]));
     $scanner = $this->child_scanners[$lang];
     $scanner->pos($this->pos());
     $substr = $scanner->main();
@@ -175,7 +175,7 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
         assert ($this->peek() === '/');
         $tok = 'REGEX';
         $m = $this->scan('% / (?: [^/\\\\]+ | \\\\.)* (?:/[ioxgm]*|$)%sx');
-        assert ($m !== null) or die();
+        assert ($m !== null);
         } else {
           $tok = 'OPERATOR';
         }
@@ -208,7 +208,7 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
         && $this->script_break($tok)
       ) 
         break;
-      assert($this->pos() > $index) or die("'$tok' didn't consume anything");
+      assert($this->pos() > $index);
       $this->tokens_[] = $tok;
       
       $tag = $tok;

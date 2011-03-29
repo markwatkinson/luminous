@@ -783,7 +783,7 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
    * Returns null if no recovery is known.
    */
   function resume() {
-    assert (!$this->clean_exit) or die();
+    assert (!$this->clean_exit);
     $this->clean_exit = true;
     $this->interrupt = false;
     if (!isset($this->dirty_exit_recovery[$this->exit_state])) {

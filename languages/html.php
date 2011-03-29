@@ -36,7 +36,7 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
   
   
   function scan_child($lang) {
-    assert (isset($this->child_scanners[$lang])) or die("No such child scanner: $lang");
+    assert (isset($this->child_scanners[$lang]));
     $scanner = $this->child_scanners[$lang];   
     $scanner->pos($this->pos());
     $substr = $scanner->main();
@@ -205,7 +205,7 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
       if (!$get && $this->server_break($tok)) {break; }
 
       $this->record($get? $this->get(): $this->match(), $tok);
-      assert ($index < $this->pos()) or die("Failed to consume for $tok");
+      assert ($index < $this->pos());
       if ($this->xml_literal && $this->state_ !== 'tag' && empty($this->tag_stack)) {
         return;
       }
