@@ -46,8 +46,24 @@ test_regex(LuminousTokenPresets::$DOUBLE_STR,
 // no match
 test_regex(LuminousTokenPresets::$DOUBLE_STR,
   '12345', false);
-  
-  
+
+test_regex(LuminousTokenPresets::$DOUBLE_STR, 
+  '"1
+2
+3"', '"1
+2
+3"');
+
+
+/// single line
+test_regex(LuminousTokenPresets::$DOUBLE_STR_SL, 
+  '"1
+2
+3"', '"1');
+
+
+
+
 ///////////////////////////////////////////
 // single quoted string
 
@@ -73,7 +89,22 @@ test_regex(LuminousTokenPresets::$SINGLE_STR,
 test_regex(LuminousTokenPresets::$SINGLE_STR,
   "12345", false);  
   
-  
+test_regex(LuminousTokenPresets::$SINGLE_STR,
+  "'1
+2
+3'", "'1
+2
+3'");
+
+
+/// single line
+test_regex(LuminousTokenPresets::$SINGLE_STR_SL, 
+  "'1
+2
+3'", "'1");
+
+
+
   
 ///////////////////////////////////////////////
 // Hex numbers
@@ -83,10 +114,10 @@ test_regex(LuminousTokenPresets::$NUM_HEX,  '0123456789', false);
 test_regex(LuminousTokenPresets::$NUM_HEX,'0xHELLO', false);
 test_regex(LuminousTokenPresets::$NUM_HEX,'0x', false);
 test_regex(LuminousTokenPresets::$NUM_HEX,'Ox1', false);
-test_regex(LuminousTokenPresets::$NUM_HEX,'0X1', false);
 
 
 // yes hex
+test_regex(LuminousTokenPresets::$NUM_HEX,'0X1', '0X1');
 test_regex(LuminousTokenPresets::$NUM_HEX, '0xE110', '0xE110');
 test_regex(LuminousTokenPresets::$NUM_HEX, '0x0123456789ABCDEFG', '0x0123456789ABCDEF');
 test_regex(LuminousTokenPresets::$NUM_HEX, '0xcafe', '0xcafe');
