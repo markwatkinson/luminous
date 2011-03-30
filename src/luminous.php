@@ -144,9 +144,9 @@ class _Luminous {
       case null:
       case 'none':
         require_once($fmt_path . 'identityformatter.class.php');
-         return new LuminousIdentityFormatter();
+        return new LuminousIdentityFormatter();
       default:
-        throw new Exception('Unknown formatter: ' . $LUMINOUS_OUTPUT_FORMAT);
+        throw new Exception('Unknown formatter: ' . $this->settings['format']);
         return null;
     }
   }
