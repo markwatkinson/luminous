@@ -204,7 +204,7 @@ class LuminousFilters {
     $str = preg_replace("/(?<!\\\)[\(\)]/", 
       "<REGEX_SUBPATTERN_MARKER>$0</REGEX_SUBPATTERN_MARKER>", $str);
     $str = preg_replace("/(?<!\\\)[\[\]]/", 
-      "<REGEX_CLASS_MARKER>$0</REGEX_CLASS_MARKER>",  $str);    
+      "<REGEX_CLASS_MARKER>$0</REGEX_CLASS_MARKER>",  $str);
     $str = preg_replace("/(?<!\\\)
       \{
         (

@@ -58,15 +58,11 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
       'undefined', 'window'));
   }
   
-  static function is_operand($tokens) {
-    $i = count($tokens);
-    while ($i--) {
-      $t = $tokens[$i];
-      if ($t === 'COMMENT' || $t === 'COMMENT_SL') continue;
-      elseif ($t === 'OPENER' || $t === 'OPERATOR') {
-        return true;
-      }
-      return false;
+  function is_operand() {
+    for ($i = count($this->tokens) -1 ; $i>= 0; $i--) {
+      $tok = $this->tokens[$i][0];
+      if ($tok === null || $tok === 'COMMENT' || $tok === 'COMMENT_SL') continue;
+      return ($tok === 'OPERATOR' || $tok === 'OPENER');
     }
     return true;
   }
@@ -92,12 +88,12 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
     $this->add_pattern('OPERATOR', $op_pattern);
     // we care about openers for figuring out where regular expressions are
     $this->add_pattern('OPENER', '/[\[\{\(]+/');
-    $this->add_pattern('CLOSER', '/[\)\}\]]+/');
+    $this->add_pattern('CLOSER', '/[\]\}\)]+/');
     
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
     $this->add_pattern('SSTRING', LuminousTokenPresets::$SINGLE_STR_SL);
-    $this->add_pattern('DSTRING', LuminousTokenPresets::$DOUBLE_STR_SL);    
+    $this->add_pattern('DSTRING', LuminousTokenPresets::$DOUBLE_STR_SL);
     $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_ML);
     $this->add_pattern('COMMENT_SL', LuminousTokenPresets::$C_COMMENT_SL);
     // special case
@@ -147,8 +143,7 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
       $tok = null;
       $m = null;
       $escaped = false;
-      
-        
+
       if (!$this->clean_exit) {
         $tok = $this->resume();
       }
@@ -170,9 +165,8 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
       }
       
       if ($tok === 'SLASH') {
-        if (self::is_operand($this->tokens_)) {
+        if ($this->is_operand()) {
         $this->unscan();
-        assert ($this->peek() === '/');
         $tok = 'REGEX';
         $m = $this->scan('% / (?: [^/\\\\]+ | \\\\.)* (?:/[ioxgm]*|$)%sx');
         assert ($m !== null);
@@ -180,17 +174,10 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
           $tok = 'OPERATOR';
         }
       }
-      elseif ($this->match() === '<') {
-        // confusing function name, actually checks operator/operand position
-        if (self::is_operand($this->tokens_)) {
-          // XML literal. TODO, we need a dedicated XML scanner which will
-          // terminate when it it runs out of tags.
+      elseif ($tok === 'OPERATOR' && $this->match() === '<') {
+        if ($this->is_operand()) {
           $this->unscan();
           $this->scan_child('xml');
-          if ($this->embedded_server && $this->peek(2) === '<?') {
-            $this->interrupt = true;
-            break;
-          }
           continue;
         }
       }
@@ -200,20 +187,19 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
         $this->unscan();
         break;
       }
-      if ($m === null) $m = $this->match();
+      if ($m === null)
+        $m = $this->match();
       
-      if ($this->server_break($tok)) { break; }
+      if ($this->server_break($tok))
+        break; 
       
-      if (($tok === 'COMMENT_SL')
-        && $this->script_break($tok)
-      ) 
+      if ($tok === 'COMMENT_SL' && $this->script_break($tok)
+      )
         break;
       assert($this->pos() > $index);
-      $this->tokens_[] = $tok;
       
       $tag = $tok;
-      if ($tok === 'OPENER')
-        $tag = null;
+
       $this->record($m, $tag, $escaped);
 
     }

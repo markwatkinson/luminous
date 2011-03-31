@@ -493,7 +493,7 @@ class LuminousScanner extends Scanner {
 
   protected function rule_mapper_filter($tokens) {
     foreach($tokens as &$t) {
-      if (isset($this->rule_tag_map[$t[0]]))
+      if (array_key_exists($t[0], $this->rule_tag_map))
         $t[0] = $this->rule_tag_map[$t[0]];
     }
     return $tokens;
@@ -501,23 +501,23 @@ class LuminousScanner extends Scanner {
 
 
   protected function oo_stream_filter($tokens) {
-    $last;
-    $next;
     $c = count($tokens);
-    
     for($i=0; $i<$c; $i++) {
       if ($tokens[$i][0] !== 'IDENT') continue;
       if ($i > 0) {
         $s = $tokens[$i-1][1];
         if ($s === '.' || $s === '->' || $s === '::') {
           $tokens[$i][0] = 'OO';
+          $i++;
           continue;
         }
       }
       if ($i < $c-1) {
         $s = $tokens[$i+1][1];
-        if ($s === '.' || $s === '->' || $s === '::')
+        if ($s === '.' || $s === '->' || $s === '::') {
           $tokens[$i][0] = 'OBJ';
+          $i++;
+        }
       }
     }
     return $tokens;
@@ -604,43 +604,26 @@ class LuminousScanner extends Scanner {
     $this->tokens[] = array($type, $string, $pre_escaped);
   }
   
-  
-  // TODO safety check: this should only be called once. Probably.
-  // TODO this would be faster (probably) if we could once-generate a compose 
-  // function instead of the inner loop
-  
-  // edit: due to php's stupid object model, I don't think it's actually 
-  // possible to create a function composition in this context.
-  function process_filters() {
-    
+  function tagged() {
+    $out = '';
+
+    // call stream filters.
     foreach($this->stream_filters as $f) {
       $this->tokens = call_user_func($f[1], $this->tokens);
     }
-    if (empty($this->filters))
-      return;
-    
-    // XXX: taking the reference here is WAY faster than reinserting it, we're
-    // talking 20% reduction in runtime here
-    //  but I don't know how it gets passed through call_user_func?
-    foreach($this->tokens as $k=>&$t) {
-      $tok = $t[0];
-      if (isset($this->filters[$tok])) {
-        foreach($this->filters[$tok] as $filter) {          
-          $t = call_user_func($filter[1], $t);
-        }        
-      }
-    }
-  }
-  
-  
-  
-  function tagged() {
-    $out = '';
-    $this->process_filters();
-    
     foreach($this->tokens as $t) {
-      $t = LuminousUtils::escape_token($t);
-      list($type, $string, ) = $t;
+      $type = $t[0];
+      
+      // speed is roughly 10% faster if we process the filters inside this
+      // loop instead of separately.
+      if (isset($this->filters[$type])) {
+        foreach($this->filters[$type] as $filter) {
+          $t = call_user_func($filter[1], $t);
+        }
+      }
+      list($type, $string, $esc) = $t;
+
+      if (!$esc) $string = LuminousUtils::escape_string($string);
       if ($type !== null) 
         $out .= LuminousUtils::tag_block($type, $string);
       else $out .= $string;
