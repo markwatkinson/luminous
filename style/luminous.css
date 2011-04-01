@@ -143,7 +143,7 @@ div.luminous
   text-align:left !important;
   min-width:100% !important;
   max-width:100% !important; 
-  line-height: 120% !important; /*normal !important; */
+ /* line-height: 120% !important; /*normal !important; */
 }
 div.luminous_inline {
   min-width: 1px !important;
