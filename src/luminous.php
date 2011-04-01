@@ -131,7 +131,11 @@ class _Luminous {
   function get_formatter() {
     $fmt_path = dirname(__FILE__) . '/formatters/';
 
-    switch(strtolower($this->settings['format'])) {
+    $fmt = $this->settings['format'];
+    if (!is_string($fmt) && is_subclass_of($fmt, 'LuminousFormatter'))
+      return clone $fmt;
+
+    switch(strtolower($fmt)) {
       case 'html' :
         require_once($fmt_path . 'htmlformatter.class.php');
         return new LuminousFormatterHTML();
