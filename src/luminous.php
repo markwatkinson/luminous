@@ -3,7 +3,6 @@
 require_once(dirname(__FILE__) . '/cache.class.php');
 require_once(dirname(__FILE__) . '/scanners.class.php');
 require_once(dirname(__FILE__) . '/formatters/formatter.class.php');
-
 require_once(dirname(__FILE__) . '/core/scanner.class.php');
 
 
@@ -23,7 +22,7 @@ class _Luminous {
     'html-strict' => false,
     
     'relative-root' => null,
-    'include-javascript' => true,
+    'include-javascript' => false,
     'include-jquery' => true,
   );
 
