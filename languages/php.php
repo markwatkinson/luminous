@@ -21,7 +21,7 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
     $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_ML); 
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
-    $this->add_pattern('OPERATOR', '@[!%^&*\-=+~:<>?/]+@');
+    $this->add_pattern('OPERATOR', '@[!%^&*\-=+~:<>/]+|\\?(?!>)@');
     $this->add_pattern('VARIABLE', '/\\$\\$?[a-zA-Z_]\w*/');
     $this->add_pattern('IDENT', '/[a-zA-Z_]\w*/');
     $this->add_pattern('STRING', LuminousTokenPresets::$DOUBLE_STR);
