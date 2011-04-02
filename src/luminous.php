@@ -110,7 +110,9 @@ class _Luminous {
 
     $this->scanners->AddScanner(array('plain', 'text', 'txt'),
       'LuminousIdentityScanner', 'Plain', "$language_dir/identity.php");
-      
+
+    $this->scanners->AddScanner('php_snippet', 'LuminousPHPSnippetScanner',
+      'PHP Snippet', "$language_dir/php.php", array('html'));  
     $this->scanners->AddScanner('php',
       'LuminousPHPScanner', 'PHP', "$language_dir/php.php",
       array('html'));

@@ -5,6 +5,7 @@ require_once( dirname(__FILE__) . '/include/php_func_list.php');
 class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
   
   protected $case_sensitive = false;
+  public $snippet = false;
   
   function __construct($src=null) {
     $h = new LuminousHTMLScanner($src);
@@ -66,7 +67,7 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
 
   
   function main() {
-    $inphp = false;
+    $inphp = $this->snippet;
     $this->start();
     $expecting = false;
     while (!$this->eos()) {
@@ -151,3 +152,7 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
   }
 }
 
+
+class LuminousPHPSnippetScanner extends LuminousPHPScanner {
+  public $snippet = true;
+}
