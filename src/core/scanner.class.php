@@ -475,7 +475,7 @@ class LuminousScanner extends Scanner {
     
 
     $this->add_stream_filter('rule-map', array($this, 'rule_mapper_filter'));
-    $this->add_stream_filter('oo-syntax', array($this, 'oo_stream_filter'));
+    $this->add_stream_filter('oo-syntax', array('LuminousFilters', 'oo_stream_filter'));
 }
   
   
@@ -500,28 +500,7 @@ class LuminousScanner extends Scanner {
   }
 
 
-  protected function oo_stream_filter($tokens) {
-    $c = count($tokens);
-    for($i=0; $i<$c; $i++) {
-      if ($tokens[$i][0] !== 'IDENT') continue;
-      if ($i > 0) {
-        $s = $tokens[$i-1][1];
-        if ($s === '.' || $s === '->' || $s === '::') {
-          $tokens[$i][0] = 'OO';
-          $i++;
-          continue;
-        }
-      }
-      if ($i < $c-1) {
-        $s = $tokens[$i+1][1];
-        if ($s === '.' || $s === '->' || $s === '::') {
-          $tokens[$i][0] = 'OBJ';
-          $i++;
-        }
-      }
-    }
-    return $tokens;
-  }
+
 
   /**
    * Alias for:

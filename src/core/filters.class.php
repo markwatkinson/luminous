@@ -1,24 +1,14 @@
 <?php
 
-/*
- * Quick note on filters:
+/**
+ * @cond CORE
+ * A collection of useful common filters.
+ *
+ * Filters are either stream filters or individual filters.
+ * Stream filters operate on the entire token stream, and return the new
+ * token stream. Individual filters operate on individual tokens (bound by type),
+ * and return the new token.
  * 
- * Filters are things which are supposed to manipulate individual matched tokens
- * They take in a token and are epxected to either manipulate the text or the
- * token type. 
- * 
- * If they wish to insert embedded tokens, currently the way to do this is to
- * actually not inject anything into the token stream (which is flat), but to
- * tag the nested tokens with XML tags (this is the end result anyway). In this
- * case they will need to call LuminousUtils::escape_token($token); to escape 
- * the text. If $token[2] is true, that means the text is already escaped. It's
- * safe to call escape_token again, but it may affect your search logic (
- * angle brackets and ampersands are escaped to HTML entitiy codes, i.e. 
- * &lt;, &gt; and &amp;).
- * 
- * All filters take in a token and return the new token.
- * 
- * TODO: filters which can manipulate the whole token stream.
  */
 
 // Poor man's namespace.
@@ -27,6 +17,7 @@ class LuminousFilters {
   /**
    * returns the expected number of arguments to a doxygen command
    * This is either 0 or 1 at the moment
+   * @internal
    */
   private static function doxygen_arg_length($command) {
     switch(strtolower($command)) {
@@ -73,8 +64,9 @@ class LuminousFilters {
   /**
    * Highlights Doxygen-esque doc-comment syntax.
    * This is a callback to doxygenize.
+   * @internal
    */
-  static function doxygenize_cb($matches) {
+  private static function doxygenize_cb($matches) {
     $lead = $matches[1];
     $tag_char = $matches[2];
     $tag = $matches[3];
@@ -84,7 +76,7 @@ class LuminousFilters {
       $line = $matches[4];
     
     $len = -1;
-    // JSDoc-like  
+    // JSDoc-like
     $l_ = ltrim($line);
     if (isset($l_[0]) && $l_[0] === '{') {
       $line = preg_replace('/({[^}]*})/', "<DOCPROPERTY>$1</DOCPROPERTY>", $line);
@@ -116,18 +108,29 @@ class LuminousFilters {
   }
   
   /**
-   * Highlights Doxygen-esque doc-comment syntax.
-   * see also doxygenize_cb
+   * Highlights doc-comment tags inside a comment block.
+   * 
+   * @see generic_doc_comment
+   * @internal
    */
   static function doxygenize($token) {
-    $token = LuminousUtils::escape_token($token);    
+    $token = LuminousUtils::escape_token($token);
     $token[1] = preg_replace_callback("/(^(?>[\/\*#\s]*))([\@\\\])([^\s]*)([ \t]+.*?)?$/m",
         array('LuminousFilters', 'doxygenize_cb'),   $token[1]);    
     return $token;
     
   }
   /**
-   * Tries to turn a comment into a doc-comment, if applicable
+   * Generic filter to highlight JavaDoc, PHPDoc, Doxygen, JSdoc, and similar
+   * doc comment syntax.
+   *
+   * A cursory chceck will be performed to try to validate that the token
+   * really is a doc-comment, it does this by checking for common formats.
+   * If it fails on your particular language, write your own check and
+   * use LuminousFilters::doxygenize()
+   *
+   * If the check is successful, the token will be switched to type
+   * 'DOCCOMMENT' and its doc-tags will be highlighted
    */
   static function generic_doc_comment($token) {
     // checks if a comment is in the form:
@@ -149,7 +152,8 @@ class LuminousFilters {
   }
   
   /**
-   * Highlights keywords in comments, i.e. NOTE, XXX, FIXME, TODO, HACK, BUG
+   * Highlights keywords in comments, i.e. "NOTE", "XXX", "FIXME", "TODO",
+   * "HACK", "BUG"
    */
   static function comment_note($token) {
       $token = LuminousUtils::escape_token($token);
@@ -159,7 +163,10 @@ class LuminousFilters {
   }
   
   /**
-   * Highlights escape sequences in strings.
+   * Highlights escape sequences in strings. There is no checking on which
+   * sequences are legal, this is simply a generic function which checks for
+   * \u...  unicode, \d... octal, \x... hex and finally just any character
+   * following a backslash.
    */
   static function string($token) {
     if (strpos($token[1], '\\') === false) return $token;
@@ -178,7 +185,7 @@ class LuminousFilters {
   }
   
   /**
-   * Tries to highlight PCRE syntax
+   * Tries to highlight PCRE style regular expression syntax
    */
   static function pcre($token, $delimited=true) {
     $token = self::string($token);
@@ -221,7 +228,9 @@ class LuminousFilters {
     return $token;
   }
 
-
+  /**
+   * Translates any token type of an uppercase/numeric IDENT to 'CONSTANT'
+   */
   static function upper_to_constant($token) {
     // check for this because it may have been mapped to a function or something
     if ($token[0] === 'IDENT' && preg_match('/^[A-Z_][A-Z_0-9]{3,}$/', $token[1]))
@@ -229,9 +238,44 @@ class LuminousFilters {
     return $token;
   }
 
+  /**
+   * Translates anything of type 'IDENT' to the null type
+   */
   static function clean_ident($token) {
     if ($token[0] === 'IDENT') $token[0] = null;
     return $token;
+  }
+
+
+
+  /**
+   * Tries to apply OO syntax highlighting. Any identifer immediately preceding
+   * a '.', '::' or '->' token is mapped to an 'OO'
+   * Any identifer token immediatel following any of those tokens is mapped to
+   * an 'OBJ'.
+   * This is a stream filter.
+   */
+  static function oo_stream_filter($tokens) {
+    $c = count($tokens);
+    for($i=0; $i<$c; $i++) {
+      if ($tokens[$i][0] !== 'IDENT') continue;
+      if ($i > 0) {
+        $s = $tokens[$i-1][1];
+        if ($s === '.' || $s === '->' || $s === '::') {
+          $tokens[$i][0] = 'OO';
+          $i++;
+          continue;
+        }
+      }
+      if ($i < $c-1) {
+        $s = $tokens[$i+1][1];
+        if ($s === '.' || $s === '->' || $s === '::') {
+          $tokens[$i][0] = 'OBJ';
+          $i++;
+        }
+      }
+    }
+    return $tokens;
   }
 
 }
