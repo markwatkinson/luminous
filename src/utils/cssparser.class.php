@@ -1,6 +1,6 @@
 <?php
 
-
+/// \cond ALL
 /*
  * This is a simple CSS parser, which we use to make CSS themes portable.
  * The basic idea is we're going to use the CSS scanner to tokenize the
@@ -168,12 +168,32 @@ $luminous_col2hex = array(
 
 
 
-
+/**
+ * @brief Simple CSS parser to make theme files portable across output formats.
+ * 
+ * This is CSS parser for making Luminous themes portable. This is not
+ * a general CSS parser, but could be with a bit of work!
+ * 
+ * Parses CSS strings into a map of rules and values. The resulting map is
+ * a somewhat simplified version of CSS.
+ * For simplificity we re-map the following properties:
+ *
+ * background-color => bgcolor 
+ * font-weight =>  bold? (bool)
+ * font-style => italic? (bool)
+ * text-decoration => underline? OR strikethrough? (bool)
+ *
+ * We also drop things like '!important'.
+ *
+ * Colours are stored as 6-digit hexadecimal strings with leading #. 3-digit
+ * hex strings are expanded to their 6-digit equivalents. Named colour aliases
+ * are replaced with their hex equivalents.
+ */
 class LuminousCSSParser {
 
   private $data = array();
 
-  static function format_property_value($prop, $value) {
+  private static function format_property_value($prop, $value) {
     global $luminous_col2hex;
     // drop !important      
     $value = preg_replace('/\s*!important$/', '', $value);
@@ -217,7 +237,7 @@ class LuminousCSSParser {
   }
 
 
-  static function format_css_array($css) {
+  private static function format_css_array($css) {
     $css_ = array();
 
     // now cleanup the array, drop !important
@@ -248,11 +268,28 @@ class LuminousCSSParser {
   
   }
 
-
+  /**
+   * Returns the parsed rules. The rules are an array in the format:
+   *
+   * array(
+   *    $rule_name => array($property => $value)
+   * )
+   *
+   * So, $rules['.comment']['color'] would return the color property of comment
+   * classes.
+   */
   function rules() {
     return $this->data;
   }
 
+  /**
+   * Returns the value for the given property of the given rule name, or
+   * returns $default.
+   * @param $rule_name the CSS rule name, e.g. 'a', '.luminous', etc
+   * @param $property the property to access, e.g. 'color'
+   * @param $default the value to return in the case that the rule/proeprty
+   *     was not set. Default: null
+   */
   function value($rule_name, $property, $default=null) {
     if (isset($this->data[$rule_name][$property]))
       return $this->data[$rule_name][$property];
@@ -260,6 +297,12 @@ class LuminousCSSParser {
   }
 
 
+  /**
+   * Converts a CSS string into a nested map of values.
+   * See LuminousCSSParser::rules() for the structure.
+   * @param $string the CSS string
+   * @returns the rule map
+   */
   function convert($string) {
     $css = self::parse($string);
     $data = self::format_css_array($css);
@@ -267,7 +310,7 @@ class LuminousCSSParser {
     return $data;
   }
 
-  static function parse($string) {
+  private static function parse($string) {
     global $luminous_col2hex;
     // singleton from usage API
     global $luminous_;
@@ -340,3 +383,4 @@ class LuminousCSSParser {
     return $css;
   }
 }
+/// \endcond
