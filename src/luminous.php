@@ -5,12 +5,30 @@ require_once(dirname(__FILE__) . '/scanners.class.php');
 require_once(dirname(__FILE__) . '/formatters/formatter.class.php');
 require_once(dirname(__FILE__) . '/core/scanner.class.php');
 
+/*
+ * This file contains the public calling interface for Luminous. It's split
+ * into two classes: one is basically the user-interface, the other is a
+ * wrapper around it. The wrapper allows a single-line function call, and is
+ * procedural. It's wrapped in an abstract class for a namespace.
+ * The real class is instantiated into a singleton which is manipulated by
+ * the abstract class methods.
+ */
 
-
-// This is kind of a pseudo-UI class. It's a singleton which will be
-// manipulated by a few procedural functions, for ease of use.
+/**
+ *  This is kind of a pseudo-UI class. It's a singleton which will be
+ * manipulated by a few procedural functions, for ease of use.
+ * It's technically supposed to be private to this class, but this is a sort
+ * of 'agreed' privateness, and we expose an instance of it globally.
+ *
+ * In fact, it is used by (at least) the diff scanner, which uses its
+ * scanner table.
+ * 
+ * @internal
+ */
 class _Luminous {
   public $version = 'master';
+
+  /// Settings array
   public $settings = array(
     'cache-age' => 777600, // 90 days
     'wrap-width' => -1,
@@ -20,24 +38,19 @@ class _Luminous {
     'format' => 'html',
     'theme' => 'luminous_light',
     'html-strict' => false,
-    
     'relative-root' => null,
     'include-javascript' => false,
     'include-jquery' => true,
   );
 
-  public $scanners;
 
+  public $scanners; /// the scanner table
   
 
   public function __construct() {
     $this->scanners = new LuminousScanners();
-
     $this->register_default_scanners();
-    
-
   }
-
 
   private function register_default_scanners() {
     // we should probably hide this in an include for neatness
@@ -111,8 +124,10 @@ class _Luminous {
     $this->scanners->AddScanner(array('plain', 'text', 'txt'),
       'LuminousIdentityScanner', 'Plain', "$language_dir/identity.php");
 
+    // PHP Snippet does not require an initial <?php tag to begin highlighting
     $this->scanners->AddScanner('php_snippet', 'LuminousPHPSnippetScanner',
-      'PHP Snippet', "$language_dir/php.php", array('html'));  
+      'PHP Snippet', "$language_dir/php.php", array('html'));
+      
     $this->scanners->AddScanner('php',
       'LuminousPHPScanner', 'PHP', "$language_dir/php.php",
       array('html'));
@@ -125,10 +140,15 @@ class _Luminous {
       
     $this->scanners->AddScanner(array('vim', 'vimscript'),
       'LuminousVimScriptScanner', 'Vim Script', "$language_dir/vim.php");
+      
     $this->scanners->AddScanner('xml', 'LuminousXMLScanner', 
       'XML', "$language_dir/xml.php", 'html');
   }
 
+
+  /**
+   * Returns an instance of the current formatter
+   */
   function get_formatter() {
     $fmt_path = dirname(__FILE__) . '/formatters/';
 
@@ -156,6 +176,9 @@ class _Luminous {
     }
   }
 
+  /**
+   * Sets up a formatter instance according to our current options/settings
+   */
   private function set_formatter_options(&$formatter) {
     $formatter->wrap_length = $this->settings['wrap-width'];
     $formatter->line_numbers = $this->settings['line-numbers'];
@@ -165,6 +188,11 @@ class _Luminous {
     $formatter->set_theme(luminous::theme($this->settings['theme']));
   }
 
+  /**
+   * calculates a 'cache_id' for the input. This is dependent upon the
+   * source code and the settings. This should be (near-as-feasible) unique
+   * for any cobmination of source, language and settings
+   */
   private function cache_id($scanner, $source) {
     // to figure out the cache id, we mash a load of stuff together and
     // md5 it. This gives us a unique (assuming no collisions) handle to
@@ -186,8 +214,11 @@ class _Luminous {
     return $id;
   }
 
-  
 
+  
+  /**
+   * The real highlighting function
+   */
   function highlight($scanner, $source, $use_cache=true) {
     
     if (!($scanner instanceof LuminousScanner)) {
@@ -229,17 +260,56 @@ $luminous_ = new _Luminous();
 // class as a namespace.
 abstract class luminous {
 
-
+  /**
+   * Highlights a source code string according to the current settings.
+   * 
+   * @param $scanner the scanner to use, this can either be a langauge code,
+   *    or it can be an instance of LuminousScanner.
+   * @param $source the source string
+   * @param $cache whether or not to use the cache
+   * @return the highlighted source code.
+   *
+   * To specify different output formats or other options, see set().
+   */
   static function highlight($scanner, $source, $cache=true) {
     global $luminous_;
     return $luminous_->highlight($scanner, $source, $cache);
   }
 
+  /**
+   * Highlights a source code file according to the current setings.
+   * 
+   * @param $scanner the scanner to use, this can either be a langauge code,
+   *    or it can be an instance of LuminousScanner.
+   * @param $source the source string
+   * @param $cache whether or not to use the cache
+   * @return the highlighted source code.
+   * 
+   * To specify different output formats or other options, see set().
+   */
   static function highlight_file($scanner, $file, $cache=true) {
     return self::highlight($scanner, file_get_contents($file), $cache);
   }
 
-  static function register_scanner($language_code, $classname, $readable_language, $path, $dependencies=null) {
+  /**
+   * Registers a scanner with Luminous's scanner table. Utilising this
+   * function means that Luminous will handle instantiation and inclusion of
+   * the scanner's source file in a lazy-manner.
+   * 
+   * @param $language_code A string or array of strings designating the
+   *    aliases by which this scanner may be accessed
+   * @param $classname The class name of the scanner, as string. If you
+   *    leave this as 'null', it will be treated as a dummy file (you can use
+   *    this to handle a set of non-circular include rules, if you run into
+   *    problems).
+   * @param $readable_language  A human readable language name
+   * @param $path The path to the source file containing your scanner
+   * @param dependencies An array of other scanners which this scanner
+   *    depends on (as sub-scanners, or superclasses). Each item in the
+   *    array should be a $language_code for another scanner.
+   */
+  static function register_scanner($language_code, $classname,
+    $readable_language, $path, $dependencies=null) {
       global $luminous_;
       $luminous_->scanners->AddScanner($language_code, $classname,
         $readable_language, $path, $dependencies);
@@ -247,6 +317,7 @@ abstract class luminous {
   
   /**
    * returns what Luminous thinks its location is on the filesystem
+   * @internal
    */
   static function root() {
     return realpath(dirname(__FILE__) . '/../');
@@ -254,12 +325,13 @@ abstract class luminous {
 
   /**
    * returns the list of theme files present in style/.
-   * Each theme will be a filename, and will end in .css
+   * Each theme will simply be a filename, and will end in .css, and will not
+   * have any directory prefix.
    */
   static function themes() {
-    $themes_uri = self::root() . "/style/";
+    $themes_uri = self::root() . '/style/';
     $themes = array();
-    foreach(glob($themes_uri . "/*.css") as $css) {
+    foreach(glob($themes_uri . '/*.css') as $css) {
       $fn = trim(preg_replace("%.*/%", '', $css));
       switch($fn) {
         // these are special, exclude these
@@ -276,6 +348,7 @@ abstract class luminous {
 
   /**
    * returns true if a theme exists in style/, else false
+   * The theme name should be suffixed with .css.
    */
   static function theme_exists($theme) {
     return in_array($theme, self::themes());
@@ -296,7 +369,10 @@ abstract class luminous {
 
 
   
-
+  /**
+   * Returns the value of the given setting
+   * @throws Exception if the option is unrecognised
+   */
   static function setting($option) {
     global $luminous_;
     if (!array_key_exists($option, $luminous_->settings))
@@ -304,6 +380,10 @@ abstract class luminous {
     return $luminous_->settings[$option];
   }
 
+  /**
+   * Sets the given option to the given value
+   * @throws Exception if the option is unrecognised.
+   */
   static function set($option, $value) {
     global $luminous_;
     if (!array_key_exists($option, $luminous_->settings))
@@ -311,6 +391,12 @@ abstract class luminous {
     else $luminous_->settings[$option] = $value;
   }
 
+  /**
+   * Returns a list of scanners currently registered. The list is in the
+   * format:
+   *    language_name => codes,
+   * where language_name is a string, and codes is an array of strings
+   */
   static function scanners() {
     global $luminous_;
     return $luminous_->scanners->ListScanners();
@@ -329,6 +415,12 @@ abstract class luminous {
 /**
   * Returns a string representing everything that needs to be printed in
   * the \<head\> section of a website.
+  *
+  * This is influenced by the following settings:
+  *     relative-root,
+  *     include-javascript,
+  *     include-jquery
+  *     theme
   */
   static function head_html() {
     global $luminous_;
@@ -365,11 +457,3 @@ abstract class luminous {
     return $out;
   }
 }
-
-
-
-
-
-
-
-
