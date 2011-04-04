@@ -33,6 +33,12 @@ class LuminousRubyScanner extends LuminousScanner {
 
   public $rails = false;
 
+  // operators depend somewhat on whether or not rails is active, else we
+  // don't want to consume a '%' if it comes right before a '>', we want
+  // to leave that for the rails close-tag detection
+  private $operator_regex = null;
+  private $string_regex = null;
+
   // gaaah
   private $numeric = '/
   (?:
@@ -82,6 +88,11 @@ class LuminousRubyScanner extends LuminousScanner {
 
 
   public function init() {
+    $this->operator_regex = '/(?: [~!^&*\-+=:;|<>\/?';
+    if ($this->rails) $this->operator_regex .= ']+|%(?!>))+';
+    else $this->operator_regex .= '%]+)';
+    $this->operator_regex .= '/x';
+      
     $this->add_identifier_mapping('KEYWORD', array('BEGIN', 'END', 'alias',
       'begin', 'break', 'case', 'class', 'def', 'defined?', 'do',
       'else', 'elsif', 'end', 'ensure', 'for', 'if', 'module', 'next',
@@ -432,7 +443,7 @@ class LuminousRubyScanner extends LuminousScanner {
         }
         
       }
-      elseif($this->scan('/[~!%^&*\-+=:;|<>\/?]+/'))
+      elseif($this->scan($this->operator_regex))
         $this->record($this->match(), 'OPERATOR');
       else {
         $this->record($this->get(), null);
