@@ -1,5 +1,7 @@
 <?php
 
+/// @cond CORE
+
 require_once(dirname(__FILE__) . '/strsearch.class.php');
 require_once(dirname(__FILE__) . '/utils.class.php');
 require_once(dirname(__FILE__) . '/filters.class.php');
@@ -7,9 +9,14 @@ require_once(dirname(__FILE__) . '/tokenpresets.class.php');
 
 
 /**
+ * @brief Base string scanning class
+ * 
  * The Scanner class is a base class which handles traversing a string while
  * searching for various different tokens.
  * It is loosely based on Ruby's StringScanner.
+ *
+ * The rough idea is we keep track of the position (a string pointer) and
+ * use scan() to see what matches at the current position.
  */
 class Scanner {
   /// Input string
@@ -43,7 +50,7 @@ class Scanner {
   }
     
   /**
-   * \return the rest of the string which has not yet been consumed
+   * @return the rest of the string which has not yet been consumed
    */
   function rest() {
     static $pos = -1;
@@ -57,6 +64,7 @@ class Scanner {
   
   /**   
    * Optionally sets and returns the current string position (index)
+   * @return the current string pointer
    */
   function pos($new_pos=null) {
     if ($new_pos !== null) {
@@ -66,21 +74,25 @@ class Scanner {
     return $this->index;
   }
 
+  /// moves the string pointer by the given offset
+  /// \see pos
   function pos_shift($offset) {
     $this->pos( $this->pos() + $offset );
   }
   
-  
+  /// @return true if the scan pointer is at the beginning of a line, or
+  /// the beginning of a string, else false
   function bol() {
     return $this->index === 0 || $this->src[$this->index-1] === "\n";
   }
-  
+  /// @return true if the scan pointer is immediately before the end of a line
+  /// or at the end of the string
   function eol() {
     return ($this->eos() || $this->src[$this->index] === "\n");
   }
   
   /**
-   * Returns true if Scanner has reached the end of the string, else false
+   * @return true if Scanner has reached the end of the string, else false
    */
   function eos() {
     return $this->index >= $this->src_len;
@@ -121,10 +133,10 @@ class Scanner {
   }
   
   /**
-   * Returns the given number of characters from the string from the 
+   * @return the given number of characters from the string from the
    * current scan pointer onwards, and does not consume them.
    * 
-   * Note neither get nor peek logs its matches into the match history.
+   * @note neither get nor peek logs its matches into the match history.
 
    */
   function peek($n=1) {
@@ -134,10 +146,10 @@ class Scanner {
   }
   
   /**
-   * Returns the given number of characters from the string from the 
+   * @return the given number of characters from the string from the
    * current scan pointer onwards, and consumes them.
    * 
-   * Note neither get nor peek logs its matches into the match history.
+   * @note neither get nor peek logs its matches into the match history.
    */  
   function get($n=1) {
     $p = $this->peek($n);
@@ -146,7 +158,7 @@ class Scanner {
   }
   
   /**
-   * Returns the most recent matched string, or throws an exception if 
+   * @return the most recent matched string, or throws an exception if
    * no matches have been recorded.
    */
   function match() {
@@ -158,10 +170,10 @@ class Scanner {
   }
   
   /**
-   * Returns the most recent match groups as an associative array of 
+   * @return the most recent match groups as an associative array of
    * group => string. This is in the same format as returned by preg_match. 
    * 
-   * Throws Exception if no matches have been recorded.
+   * @throw Exception if no matches have been recorded.
    */  
   function match_groups() {
     if (isset($this->match_history[0])) 
@@ -170,11 +182,11 @@ class Scanner {
   }  
   
   /**
-   * Returns the given group from the most recent match (as string).
+   * @return the given group from the most recent match (as string).
    * The group may be either an integer or a string in the case of named 
    * subpatterns
    * 
-   * Throws Exception if no matches have been recorded.
+   * @throw Exception if no matches have been recorded.
    */   
   function match_group($g=0) {
     if (isset($this->match_history[0])) {
@@ -188,9 +200,9 @@ class Scanner {
   }
   
   /**
-   * Returns the position (offset) of the most recent match
+   * @return the position (offset) of the most recent match
    * 
-   * Throws Exception if no matches have been recorded.
+   * @throw Exception if no matches have been recorded.
    */     
   function match_pos() {
     if (isset($this->match_history[0])) 
@@ -214,6 +226,8 @@ class Scanner {
    * 
    * Calls to get(), and peek() are not logged and are therefore not 
    * unscannable.
+   *
+   * @warning Do not call unscan more than once before calling a scan function
    */
   function unscan() {
     if (isset($this->match_history[0])) {
@@ -268,13 +282,15 @@ class Scanner {
   /**
    * Looks for the given pattern at the current index and consumes and logs it
    * if it is found.
-   * Returns null if not found, else the full match.
+   * @param $pattern the pattern to search for
+   * @return null if not found, else the full match.
    */
   function scan($pattern) {
     return $this->__check($pattern);
   }
   /**
-   * Returns the substring between here and the given pattern. The
+   * @param $pattern the pattern to search for
+   * @return the substring between here and the given pattern. The
    * substring is logged as the match and consumed. The actual pattern
    * is not consumed
    */
@@ -290,7 +306,8 @@ class Scanner {
   /**
    * Looks for the given pattern at the current index and logs it
    * if it is found, but does not consume it. This is a look-ahead.
-   * Returns null if not found, else the full match.
+   * @param $pattern the pattern to search for
+   * @return null if not found, else the full match.
    */  
   function check($pattern) {
     return $this->__check($pattern, true, false, false, true);
@@ -299,7 +316,7 @@ class Scanner {
   /**
    * Looks for the given pattern at the current index and consumes it if it 
    * is found, but does not log it (skips over it).
-   * Returns the number of charaters consumed.
+   * @return the number of characters consumed.
    */    
   function skip($pattern) {
     $p = $this->index;
@@ -322,6 +339,14 @@ class Scanner {
 #    return $this->__check($pattern, false, true, true, true);
 #  }
 
+  /**
+   * Finds the next match of the given patterns and returns it. The
+   * string is not consumed.
+   * Convenience function.
+   * @param $patterns an array of regular expressions
+   * @return an array of (0=>index, 1=>match_groups). The index may be -1 if
+   * no pattern is found.
+   */
   function get_next($patterns) {
     $next = -1;
     $matches = null;
@@ -363,7 +388,7 @@ class Scanner {
   /**
    * Iterates over the predefiend patterns array (add_pattern) and consumes/logs
    * the nearest match, skipping unrecognised segments of string.
-   * returns an array: 
+   * @return an array:
    *    0 => pattern name  (as given to add_pattern)
    *    1 => match index (although the scan pointer will have progressed to the 
    *            end of the match if the pattern is consumed)
@@ -383,23 +408,18 @@ class Scanner {
       $pattern = $p_data[1];
       $index = &$p_data[2];
       $match_data = &$p_data[3];
-//       list($name, $pattern, $index, $match_data) = $p_data;
-      
+
       if ($index !== false && $index < $target) {
         $index = $this->ss->match($pattern, $target, $match_data);
-
-//         $this->patterns[$k][2] = $index;
-//         $this->patterns[$k][3] = $match_data;
       }
-      
+
       if ($index === false) {
         unset($p_data);
         continue;
       }
-      
+
       if ($nearest_index === -1 || $index < $nearest_index) {
         $nearest_index = $index;
-//         $nearest_key = $k;
         $nearest_name = $name;
         $nearest_match_data = $match_data;
         if ($index === $target) break;
@@ -407,7 +427,6 @@ class Scanner {
     }
     
     if ($nearest_index !== -1) {
-//       $nearest = $this->patterns[$nearest_key];
       if ($consume_and_log) {
         $this->__log_match($nearest_index, $nearest_index, $nearest_match_data);
         $this->__consume($nearest_index, true, $nearest_match_data);
@@ -423,14 +442,9 @@ class Scanner {
 
 
 
-
-
-
-
-
-
-
 /**
+ * @brief the base class for all scanners
+ * 
  * A note on tokens: Tokens are stored as an array with the following indices:
  *      0:   Token name   (e.g. 'COMMENT'
  *      1:   Token string (e.g. '// foo')
@@ -441,21 +455,39 @@ class Scanner {
 
 class LuminousScanner extends Scanner {
 
+  /// scanner version. 
   public $version = 'master';
 
+  /// A map of recognised identifiers, in the form
+  /// identifier_string => TOKEN_NAME
   protected $ident_map = array();
+
+  /// The token stream, as it is recorded
   protected $tokens = array();
-  protected $out = '';
-  
+
+  /// A stack of the scanner's state, should the scanner wish to use
+  /// stack-based state
   protected $state_ = array();
-  protected $stop_at = array();
-  
+
+  /// Individual filters, as a list of lists:
+  /// (name, token_name, callback)
   protected $filters = array();
+  
+  /// Stream filters as a list of lists:
+  /// (name, callback)
   protected $stream_filters = array();
-  
+
+  /// A map to handle re-mapping of rules, in the form:
+  /// OLD_TOKEN_NAME => NEW_TOKEN_NAME
   protected $rule_tag_map = array();
-  
+
+  /// A map of remappings of user-defined types/functions. This is a map of
+  /// identifier_string => TOKEN_NAME
   protected $user_defs;
+
+  /// Whether or not the scanner is dealing with a case sensitive language.
+  protected $case_sensitive = true;
+  
   
   function __construct($src=null) {
     parent::__construct($src);
@@ -473,17 +505,14 @@ class LuminousScanner extends Scanner {
 
     $this->add_filter('clean-ident', 'IDENT', array('LuminousFilters', 'clean_ident'));
     
-
     $this->add_stream_filter('rule-map', array($this, 'rule_mapper_filter'));
     $this->add_stream_filter('oo-syntax', array('LuminousFilters', 'oo_stream_filter'));
 }
-  
-  
-  
-  
-  protected $case_sensitive = true;
-  
-  
+
+  /**
+   * maps anything recorded in LuminousScanner::user_defs to the recorded type.
+   * This is called as the filter 'user-defs'
+   */
   protected function user_def_filter($token) {
     if (isset($this->user_defs[$token[1]])) {
       $token[0] = $this->user_defs[$token[1]];
@@ -491,6 +520,11 @@ class LuminousScanner extends Scanner {
     return $token;
   }
 
+  /**
+   * Re-maps token rules according to the LuminousScanner::rule_tag_map
+   * map.
+   * This is called as the filter 'rule-map'
+   */
   protected function rule_mapper_filter($tokens) {
     foreach($tokens as &$t) {
       if (array_key_exists($t[0], $this->rule_tag_map))
@@ -515,16 +549,22 @@ class LuminousScanner extends Scanner {
     $this->main();
     return $this->tagged();
   }
-  
-  
+
+  /**
+   * The init method is always called prior to highlighting. At this stage, all
+   * configuration variables are assumed to have been set, and it's now time
+   * for the scanner tod o any last setup information. This may include
+   * actually finalizing its rule patterns.
+   */
   function init() {}
   
-  /*
-   * args are;  ([name], token, filter)
+  /**
+   * Adds an indivdual filter. The filter is bound to the given token_name
+   *
+   * The filter is a callback which should take a token and return a token.
    * 
+   * args are;  ([name], token_name, filter)
    * poor man's method overloading.
-   * 
-   * TODO: allow unbinding of the filter if a name is passed.
    */
   public function add_filter($arg1, $arg2, $arg3=null) {
     $filter = null;
@@ -542,6 +582,9 @@ class LuminousScanner extends Scanner {
     $this->filters[$token][] = array($name, $filter);
   }
 
+  /**
+   * Removes the individual filter(s) with the given name
+   */
   public function remove_filter($name) {
     foreach($this->filters as $token=>$filters) {
       foreach($filters as $k=>$f) {
@@ -549,14 +592,22 @@ class LuminousScanner extends Scanner {
       }
     }
   }
-  
+
+  /**
+   * Removes the stream filter(s) with the given name
+   */
   public function remove_stream_filter($name) {
     foreach($this->stream_filters as $k=>$f) {
       if ($f[0] === $name) unset($this->stream_filters[$k]);
     }
   }
 
-
+  /**
+   * Adds a stream filter. A stream filter receives the entire token stream and
+   * should return it.
+   *
+   * Args are: [name], callback.
+   */
   public function add_stream_filter($arg1, $arg2=null) {
     $filter = null;
     $name = null;
@@ -568,6 +619,7 @@ class LuminousScanner extends Scanner {
     }
     $this->stream_filters[] = array($name, $filter);
   }
+
   
   function state() {
     if (!isset($this->state_[0])) return null;
@@ -609,24 +661,38 @@ class LuminousScanner extends Scanner {
     }
     return $out;
   }
-  
+
+  /// returns the token array
   function token_array() {
     return $this->tokens;
   }
 
-
-  function map_identifier($ident, $default='IDENT') {
+  /**
+   * Tries to maps any 'IDENT' token to a TOKEN_NAME in
+   * LuminousScanner::$ident_map
+   * This is implemented as the filter 'map-ident'
+   */
+  function map_identifier_filter($token) {
+    $ident = $token[1];
     if (!$this->case_sensitive) $ident = strtolower($ident);
     foreach($this->ident_map as $n=>$hits) {
-      if (isset($hits[$ident])) return $n;
+      if (isset($hits[$ident])) {
+        $token[0] = $n;
+        break;
+      }
     }
-    return $default;
-  }
-  function map_identifier_filter($token) {
-    $token[0] = $this->map_identifier($token[1], 'IDENT');
     return $token;
   }
-  
+
+  /**
+   * Adds an identifier mapping which is later analysed by
+   * map_identifier_filter
+   * @param $name The token name
+   * @param $matches an array of identifiers which correspond to this token
+   * name, i.e. add_identifier_mapping('KEYWORD', array('if', 'else', ...));
+   *
+   * This method observes LuminousScanner::$case_sensitive
+   */
   function add_identifier_mapping($name, $matches) {
     $array = array();
     foreach($matches as $m) {
@@ -637,7 +703,11 @@ class LuminousScanner extends Scanner {
       $this->ident_map[$name] = array();
     $this->ident_map[$name] = array_merge($this->ident_map[$name], $array);
   }
-  
+
+  /**
+   * Convenience function:
+   * Skips whitespace, and records it as a null token.
+   */
   function skip_whitespace() {
     if (ctype_space($this->peek())) {
       $this->record($this->scan('/\s+/'), null);
@@ -650,6 +720,8 @@ class LuminousScanner extends Scanner {
 
 
 /**
+ * @brief Superclass for languages which may nest, i.e. web languages
+ * 
  * Web languages get their own special class because they have to deal with
  * server-script code embedded inside them and the potential for languages
  * nested under them (PHP has HTML, HTML has CSS and JavaScript)
@@ -672,12 +744,13 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
   /// Embedded in HTML? i.e. does it need to observe tag terminators
   public $embedded_html = false;
   
-  /// Embedded in a server side language? I.e. does it need break at
+  /// Embedded in a server side language? i.e. does it need break at
   /// server language tags
   public $embedded_server = false;
   
-  // don't think these are actually observed at the moment
+  /// Opening tag for server-side code, which the scanner has to break at
   public $server_tags = '<?';
+  /// Closing tag for script code, which a script scanner has to break at
   public $script_tags;
   
   
@@ -688,15 +761,23 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
   /** 
    * Signifies whether the program exited due to inconvenient interruption by 
    * a parent language (i.e. a server-side langauge), or whether it reached 
-   * a legitimate break.
+   * a legitimate break. A server-side language isn't necessarily a dirty exit,
+   * but if it comes in the middle of a token it is, because we need to resume
+   * from it later. e.g.:
+   *
+   * var x = "this is <?php echo 'a' ?> string";
    */
   public $clean_exit = true;
   
   
   
-  
+  /// Map of child scanners, name => scanner (instance)
   protected $child_scanners = array();
-  
+
+  /**
+   * exit state logs our exit state in the case of a dirty exit: this is the
+   * rule that was interrupted.
+   */
   protected $exit_state;
   
   
@@ -707,7 +788,8 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
    * This is a map of rule => pattern
    */
   protected $dirty_exit_recovery = array();
-  
+
+  /// Adds a child scanner, convenience function
   public function add_child_scanner($name, $scanner) {
     $this->child_scanners[$name] = $scanner;
   }
@@ -742,7 +824,8 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
    * Attempts to resume from a dirty exit 
    * Consumes the remaining segment of string for the rule that was exited on
    * and returns the rule name. The match will be in $this->match(). 
-   * Returns null if no recovery is known.
+   * Returns null if no recovery is known, but this is an implementation error
+   * so an assertion is also failed.
    */
   function resume() {
     assert (!$this->clean_exit);
@@ -798,13 +881,22 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
 }
 
 
-
+/**
+ * @brief A largely automated scanner
+ *
+ * LuminousSimpleScanner implements a main() method and observes the
+ * patterns added with Scanner::add_pattern()
+ *
+ * An overrides array allows the caller to override the handling of any token.
+ * If an override is set for a token, the override is called when that token is
+ * reached and the caller should consume it. If the callback fails to advance
+ * the string pointer, an Exception is thrown.
+ */
 class LuminousSimpleScanner extends LuminousScanner {
 
-
+  /// A map of TOKEN_NAME => callback
   protected $overrides = array();
   
-
   function main() {
     while (!$this->eos()) {
       $index = $this->pos();
@@ -831,3 +923,4 @@ class LuminousSimpleScanner extends LuminousScanner {
   }
 }
 
+/// @endcond

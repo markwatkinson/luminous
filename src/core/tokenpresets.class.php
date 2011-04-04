@@ -1,6 +1,9 @@
 <?php
 
-
+/**
+ * @cond CORE
+ * @brief A set of pre-defined patterns to match various common tokens
+ */
 abstract class LuminousTokenPresets {
   
   /// multi-line double quoted string using backslash escapes
@@ -43,3 +46,4 @@ abstract class LuminousTokenPresets {
   static $SQL_SINGLE_STR_BSLASH = "/ ' (?: [^'\\\\]+ | '' | \\\\. )* (?: '|$)/x";
   
 }
+/// @endcond

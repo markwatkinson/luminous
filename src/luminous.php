@@ -15,6 +15,7 @@ require_once(dirname(__FILE__) . '/core/scanner.class.php');
  */
 
 /**
+ * @cond ALL
  *  This is kind of a pseudo-UI class. It's a singleton which will be
  * manipulated by a few procedural functions, for ease of use.
  * It's technically supposed to be private to this class, but this is a sort
@@ -24,6 +25,7 @@ require_once(dirname(__FILE__) . '/core/scanner.class.php');
  * scanner table.
  * 
  * @internal
+ * 
  */
 class _Luminous {
   public $version = 'master';
@@ -44,7 +46,7 @@ class _Luminous {
   );
 
 
-  public $scanners; /// the scanner table
+  public $scanners; ///< the scanner table
   
 
   public function __construct() {
@@ -52,6 +54,7 @@ class _Luminous {
     $this->register_default_scanners();
   }
 
+  /// registers builtin scanners
   private function register_default_scanners() {
     // we should probably hide this in an include for neatness
     // when it starts growing.
@@ -249,6 +252,9 @@ class _Luminous {
   }
 }
 
+/// @endcond
+// ends ALL
+
 
 // Here's our singleton.
 global $luminous_; // sometimes need this or the object seems to disappear
@@ -258,6 +264,9 @@ $luminous_ = new _Luminous();
 // here's our 'real' UI class, which uses the above singleton. This is all
 // static because these are actually procudural functions, we're using the
 // class as a namespace.
+/**
+ * @brief Users' API
+ */
 abstract class luminous {
 
   /**
@@ -281,7 +290,7 @@ abstract class luminous {
    * 
    * @param $scanner the scanner to use, this can either be a langauge code,
    *    or it can be an instance of LuminousScanner.
-   * @param $source the source string
+   * @param $file the source string
    * @param $cache whether or not to use the cache
    * @return the highlighted source code.
    * 

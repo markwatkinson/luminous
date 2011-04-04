@@ -1,4 +1,5 @@
 <?php
+/// @cond ALL
 
 /*
   Copyright 2010 Mark Watkinson
@@ -45,10 +46,8 @@ class LuminousCache
   public $purge_older_than = 3600; /**< purges files which haven't been
     modified (mtime) for the given number of seconds
     NOTE: cache hits trigger a touch
+    NOTE: this is set in the Luminous caller API according to user settings.
     */
-
-  public $purge_interval = -1; /**< Interval between cache purges (i.e. deletion of
-  everything) or -1 to disable */
   
   private $cache_dir = null; /**< Cache directory relative to the CWD. Defaults 
     to "./cache" (set in constructor). Dir must have rwx permissions */
@@ -202,6 +201,7 @@ class LuminousCache
     }
     $t1_ = microtime(true);
   }
-
-
 }
+
+/// @endcond
+// ends 'ALL'

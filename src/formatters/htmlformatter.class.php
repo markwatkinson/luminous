@@ -1,5 +1,5 @@
 <?php
-
+/// @cond ALL
 class LuminousFormatterHTML extends LuminousFormatter
 {   
   public $height = 0;
@@ -210,3 +210,4 @@ class LuminousFormatterHTMLInline extends LuminousFormatterHTML
   }
   
 }
+/// @endcond

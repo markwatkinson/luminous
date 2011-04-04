@@ -1,5 +1,5 @@
 <?php
-
+/// @cond ALL
 /*
  * Copyright 2010 Mark Watkinson
  * 
@@ -63,52 +63,34 @@ abstract class LuminousFormatter
   
   /**
    * The main method for interacting with formatter objects. 
-   * \param src the input string, which is of the form output by an instance of
+   * @param src the input string, which is of the form output by an instance of
    * Luminous.
-   * \return The input string reformatted to some other specification.
+   * @return The input string reformatted to some other specification.
    */ 
   public abstract function format($src);
   
-  
+  /**
+   * If relevant, the formatter should implement this and use LuminousCSSParser
+   * to port the theme.
+   * @param $theme A CSS string representing the theme
+   */
   public function set_theme($theme)
   {
   }
   
-  protected static function GetIndenter($width)
-  {
-    switch($width)
-    {
-      case 1: return " ";
-      case 2: return "  ";
-      case 3: return "   ";
-      case 4: return "    ";
-      case 5: return "     ";
-      case 6: return "      ";
-      case 7: return "       ";
-      case 8: return "        ";
-      case 9: return "         ";
-      case 10: return "          ";
-    }
-    $indent = "          ";
-    for ($i=10; $i<$width; $i++)
-      $indent .= " ";
-    return $indent;
-    
-  }
-  
   /**
-   * \internal
+   * @internal
    * Handles line wrapping. 
-   * \param line the line which needs to be broken. This is a reference, which 
+   * @param line the line which needs to be broken. This is a reference, which
    * will be operated upon. After calling, $line will have appropriate line 
    * breaks to wrap to the given width, and will contain at least one line break
    * at the end.
-   * \param wrap_length the width to wrap to. 
+   * @param wrap_length the width to wrap to.
    * 
-   * \return the number of lines it was broken up into (1 obviously means no 
+   * @return the number of lines it was broken up into (1 obviously means no
    *    wrapping occurred.).
    * 
-   * \todo wrap to indent? or not? hm.
+   * @todo wrap to indent? or not? hm.
    * 
    */ 
   protected static function WrapLine(&$line, $wrap_length)
@@ -205,3 +187,4 @@ abstract class LuminousFormatter
 }
 
 
+/// @endcond

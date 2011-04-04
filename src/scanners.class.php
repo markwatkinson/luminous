@@ -1,5 +1,6 @@
 <?php
 
+/// \cond ALL
 
 /**
  * \file scanners.class.php
@@ -16,8 +17,12 @@
  *
  */
 
+
+
+
 class LuminousScanners
 {
+
   private $lookup_table = array(); /**< 
     The language=>scanner lookup table. Scanner is an array with keys:
     scanner (the string of the scanner's class name),
@@ -25,6 +30,7 @@ class LuminousScanners
     dependencies (the language name for any scanners it this scanner
       either depends on or needs to instantiate itself)
   */
+
   private $default_scanner = null; /**<
     Language name of the default scanner to use if none is found
     for a particular language */
@@ -199,3 +205,5 @@ class LuminousScanners
   }
   
 }
+
+/// \endcond

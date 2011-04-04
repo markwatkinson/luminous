@@ -2,7 +2,7 @@
 
 /**
  * @cond CORE
- * A collection of useful common filters.
+ * @brief A collection of useful common filters.
  *
  * Filters are either stream filters or individual filters.
  * Stream filters operate on the entire token stream, and return the new
@@ -165,7 +165,7 @@ class LuminousFilters {
   /**
    * Highlights escape sequences in strings. There is no checking on which
    * sequences are legal, this is simply a generic function which checks for
-   * \u...  unicode, \d... octal, \x... hex and finally just any character
+   * \\u...  unicode, \\d... octal, \\x... hex and finally just any character
    * following a backslash.
    */
   static function string($token) {
@@ -249,8 +249,8 @@ class LuminousFilters {
 
 
   /**
-   * Tries to apply OO syntax highlighting. Any identifer immediately preceding
-   * a '.', '::' or '->' token is mapped to an 'OO'
+   * Tries to apply generic OO syntax highlighting. Any identifer immediately
+   * preceding a '.', '::' or '->' token is mapped to an 'OO'.
    * Any identifer token immediatel following any of those tokens is mapped to
    * an 'OBJ'.
    * This is a stream filter.
@@ -280,5 +280,5 @@ class LuminousFilters {
 
 }
   
-  
- 
+/// @endcond
+// end CORE

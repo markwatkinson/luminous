@@ -1,5 +1,5 @@
 <?php
-
+/// @cond ALL
 require_once(dirname(__FILE__) . '/../utils/cssparser.class.php');
 
 /**
@@ -13,12 +13,12 @@ class LuminousFormatterLatex extends LuminousFormatter
   private $css = null;
   function __construct() { }
   
-  function set_theme($theme)
-  {
+  function set_theme($theme) {
     $this->css = new LuminousCSSParser();
     $this->css->convert($theme);
   }
-  
+  /// Converts a hexadecimal string in the form #ABCDEF to an RGB array
+  /// where each element is normalised to the range 0-1
   static function hex2rgb($hex)
   {
     $x = hexdec(substr($hex, 1));
@@ -40,13 +40,12 @@ class LuminousFormatterLatex extends LuminousFormatter
   protected function Linkify($src){
     return $src;
   }
-  
+  /// Defines all the styling commands, these are obtained from the css parser
   function DefineStyleCommands()
   {
     if ($this->css === null) throw new Exception('LaTeX formatter has not been set a theme');
     $cmds = array();
-    foreach($this->css->rules() as $name=>$properties)
-    {
+    foreach($this->css->rules() as $name=>$properties) {
       if (!preg_match('/^\w+$/', $name))
         continue;
       $cmd = "{#1}" ;
@@ -54,10 +53,8 @@ class LuminousFormatterLatex extends LuminousFormatter
         $cmd = "{\\textbf$cmd}";
       if ($this->css->value($name, 'italic', false) === true)
         $cmd = "{\\emph$cmd}";
-      if (($col = $this->css->value($name, 'color', null)) !== null)
-      {
-        if (preg_match('/^#[a-f0-9]{6}$/i', $col))
-        {
+      if (($col = $this->css->value($name, 'color', null)) !== null) {
+        if (preg_match('/^#[a-f0-9]{6}$/i', $col))  {
           $rgb = $this::hex2rgb($col);
           $col_str = "{$rgb[0]}, {$rgb[1]}, $rgb[2]";
           $cmd = "{\\textcolor[rgb]{{$col_str}}$cmd}";
@@ -72,8 +69,7 @@ class LuminousFormatterLatex extends LuminousFormatter
       $this->line_numbers && 
       ($col = $this->css->value('code', 'color', null)) !== null)
     {
-      if (preg_match('/^#[a-f0-9]{6}$/i', $col))
-      {
+      if (preg_match('/^#[a-f0-9]{6}$/i', $col))   {
         $rgb = $this::hex2rgb($col);
         $col_str = "{$rgb[0]}, {$rgb[1]}, $rgb[2]";
         $cmd = "\\renewcommand{\\theFancyVerbLine}{%
@@ -87,28 +83,23 @@ class LuminousFormatterLatex extends LuminousFormatter
   
   function GetBackgroundColor()
   {
-    if (($col = $this->css->value('code', 'bgcolor', null)) !== null)
-    {
+    if (($col = $this->css->value('code', 'bgcolor', null)) !== null) {
       if (preg_match('/^#[a-f0-9]{6}$/i', $col))
         $rgb = $this::hex2rgb($col);
         $col_str = "{$rgb[0]}, {$rgb[1]}, $rgb[2]";
         return "\\pagecolor[rgb]{{$col_str}}";
     }
     return "";
-  }
+  }  
   
-  
-  
-  
-  
-  function format($str)
-  {
+  function format($str)  {
     $out = '';
     
     $verbcmd = "\\begin{Verbatim}[commandchars=\\\\\\{\}";
     if ($this->line_numbers)
       $verbcmd .= ",numbers=left,firstnumber=1,stepnumber=1";
     $verbcmd .= ']';
+    // define the preamble
     $out .= <<<EOF
 \documentclass{article}
 \usepackage{fullpage}
@@ -221,3 +212,4 @@ EOF;
   }
   
 }
+/// @endcond
