@@ -3,6 +3,15 @@
 // Haskell scanner.
 // We do not yet support TemplateHaskell because it looks INSANE.
 
+/*
+ * TODO: Some contextual awareness would be great, Kate seems to highlight
+ * things differently depending on whether they're in [..] or (...) blocks,
+ * but I don't understand Haskell enough to embark on that right now.
+ * 
+ * It would also be nice to distinguish between some different classes of
+ * operator.
+ */
+
 require_once(dirname(__FILE__) . '/include/haskell.php');
 
 class LuminousHaskellScanner extends LuminousSimpleScanner {
@@ -24,6 +33,7 @@ class LuminousHaskellScanner extends LuminousSimpleScanner {
       else $stack--;
       $this->pos($next[0] + 2);
     } while ($stack > 0);
+    
     $this->record(
       substr($this->string(),
              $start,
@@ -42,6 +52,10 @@ class LuminousHaskellScanner extends LuminousSimpleScanner {
     $this->add_identifier_mapping('FUNCTION', $luminous_haskell_functions);
     $this->add_identifier_mapping('VALUE', $luminous_haskell_values);
 
+
+    // shebang
+    $this->add_pattern('COMMENT', '/^#!.*/');
+
     // Refer to the sections in
     // http://www.haskell.org/onlinereport/lexemes.html
     // for the rules implemented here.
@@ -50,7 +64,12 @@ class LuminousHaskellScanner extends LuminousSimpleScanner {
     $this->add_pattern('TYPE', '/[A-Z][\'\w]*/');
     $this->add_pattern('IDENT', '/[_a-z][\'\w]*/');
 
-    $op_chars = '\\+%^\\/\\*\\?#<>:;=@\\[\\]\\|\\\\~\\-!$@';
+    // http://www.haskell.org/onlinereport/prelude-index.html
+    $this->add_pattern('FUNCTION', '/
+(?: !!|\\$!?|&&|\\|{1,2}|\\*{1,2}|\\+{1,2}|-(?!-)|\\.|\\/=?|<=?|==|=<<|>>?=?|\\^\\^? )
+/x');
+
+    $op_chars = '\\+%^\\/\\*\\?#<>:;=@\\[\\]\\|\\\\~\\-!$@%&\\|=';
 
     // ` is used to make a function call into an infix operator
     // CRAZY OR WHAT.
