@@ -98,6 +98,9 @@ class _Luminous {
       'LuminousGroovyScanner', 'Groovy',
       "$language_dir/groovy.php");
 
+    $this->scanners->AddScanner(array('haskell', 'hs'),
+      'LuminousHaskellScanner', 'Haskell', "$language_dir/haskell.php");
+
     $this->scanners->AddScanner('java',
       'LuminousJavaScanner', 'Java', "$language_dir/java.php");
       
@@ -333,7 +336,7 @@ abstract class luminous {
   }
 
   /**
-   * returns the list of theme files present in style/.
+   * @return the list of theme files present in style/.
    * Each theme will simply be a filename, and will end in .css, and will not
    * have any directory prefix.
    */
@@ -356,17 +359,21 @@ abstract class luminous {
   }
 
   /**
-   * returns true if a theme exists in style/, else false
-   * The theme name should be suffixed with .css.
+   * @param $theme the name of a theme, which should be suffixed with .css
+   * @return true if a theme exists in style/, else false
    */
   static function theme_exists($theme) {
     return in_array($theme, self::themes());
   }
   
   /**
-   * Returns the content of a theme; this is the actual CSS text. 
+   * Gets the CSS-string content of a theme file.
    * Use this function for reading themes as it involves security
    * checks against reading arbitrary files
+   * 
+   * @param $theme the name of the theme to retrieve, which may or may not
+   *    include the .css suffix.
+   * @return the content of a theme; this is the actual CSS text.
    */
   static function theme($theme) {
     if (!preg_match('/\.css$/i', $theme)) $theme .= '.css';
@@ -379,7 +386,9 @@ abstract class luminous {
 
   
   /**
-   * Returns the value of the given setting
+   * Gets a setting's value
+   * @param $option the name of the setting
+   * @return the value of the given setting
    * @throws Exception if the option is unrecognised
    */
   static function setting($option) {
@@ -391,6 +400,8 @@ abstract class luminous {
 
   /**
    * Sets the given option to the given value
+   * @param $option the name of the setting
+   * @param $value the new value of the setting
    * @throws Exception if the option is unrecognised.
    */
   static function set($option, $value) {
@@ -401,7 +412,7 @@ abstract class luminous {
   }
 
   /**
-   * Returns a list of scanners currently registered. The list is in the
+   * @return a list of scanners currently registered. The list is in the
    * format:
    *    language_name => codes,
    * where language_name is a string, and codes is an array of strings
@@ -412,8 +423,12 @@ abstract class luminous {
   }
 
   /**
-   * Returns an instance of a LuminousFormatter according to the current
+   * @return an instance of a LuminousFormatter according to the current
    * format setting
+   *
+   * This shouldn't be necessary for general usage, it is only implemented
+   * for testing.
+   * @internal
    */
   static function formatter() {
     global $luminous_;
@@ -422,7 +437,7 @@ abstract class luminous {
 
 
 /**
-  * Returns a string representing everything that needs to be printed in
+  * @return a string representing everything that needs to be printed in
   * the \<head\> section of a website.
   *
   * This is influenced by the following settings:
