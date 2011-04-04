@@ -136,7 +136,5 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
       assert($this->pos() > $pos || $this->eos());
       
     }
-    
-    return $this->out;
   }
 }
