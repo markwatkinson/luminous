@@ -11,6 +11,36 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
   // TODO clean up redunancy here and in constructor
   public $server_tags = '<?';
   public $script_tags = '</script>';
+  
+  
+  // regular expressions in JavaScript are delimtied by '/', BUT, the slash
+  // character may appear unescaped within character classes
+  // we can handle this fairly easily with a single regex because the classes 
+  // do not nest
+  // TODO:
+  // I do not know if this is specific to Javascript or ECMAScript derivatives 
+  // as a whole, I also don't know if multi-line regexen are legal (i.e. when
+  // the definition spans multiple lines)  
+  protected $regex_regex  = <<<EOS
+  %
+    /
+    (?: 
+      [^\\[\\\\/]+                    # not slash, backslash, or [
+      | \\\\.                           # escape char 
+      | 
+      (?:                             # char class [..]
+        \\[
+          (?: 
+            [^\\]\\\\]+               # not slash or ]
+            | \\\\.                     # escape
+          )*
+        (?: \\] | $)
+      )                             # close char class  
+    )*
+    (?: /[iogmx]* | $)                           #delimiter or eof
+  %sx
+EOS;
+    
     
   // logs a persistent token stream so that we can lookbehind to figure out
   // operators vs regexes.
@@ -166,10 +196,16 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
       
       if ($tok === 'SLASH') {
         if ($this->is_operand()) {
-        $this->unscan();
-        $tok = 'REGEX';
-        $m = $this->scan('% / (?: [^/\\\\]+ | \\\\.)* (?:/[ioxgm]*|$)%sx');
-        assert ($m !== null);
+          $tok = 'REGEX';
+          $this->unscan();
+          assert($this->peek() === '/');
+          $m = $this->scan($this->regex_regex);
+          if ($m === null) {
+            assert(0);
+            $m = $this->rest();
+            $this->terminate();
+          }
+          
         } else {
           $tok = 'OPERATOR';
         }

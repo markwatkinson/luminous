@@ -3,7 +3,11 @@
 
 var x = /xyz/g;
 var x /xyz/ ; // snytax error, but technically division with a missing operand.
-
+// slashes don't need escaping in char classes
+var x = /123[45/6]a/ig
+// not a char class
+var x = /123\[123/];
+avar x = /123[/abc/\]aa]b\.\/]/g;
 g = 12;
 // vim gets this wrong
 4/2/g       
@@ -34,8 +38,11 @@ var x = 1<i> am not xml;
 
 { 'key': /regex/,
   'another':
-    // xyz
+    // xyz,
     /regex/,
+    1
+    // xyz,
+    /2/i,
   'key2': <xml/>,
   'another': /*  this shouldn't confuse    */ // us
     <xml>,
