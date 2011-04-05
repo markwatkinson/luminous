@@ -25,40 +25,39 @@ class LuminousFilters {
     switch(strtolower($command)) {
       case "addtogroup":
       case "category":
-      case "class":        
+      case "class":
+      case "cond":
       case "def":
       case "defgroup":
       case "dir":
+      case "elseif":
       case "enum":
+      case "exception":
       case "example":
       case "extends":
+      case "if":
+      case "ifnot":
       case "file":
       case "headerfile":
       case "implements":
       case "ingroup":
       case "interface":
-      case "namespace":
       case "memberof":
+      case "namespace":
       case "package":
       case "page":
-      case "relates":
-      case "relatesalso":
-      case "weakgroup":
-      case "cond":
-      case "elseif":
-      case "exception":
-      case "if":
-      case "ifnot":
       case "par":
       case "param":
-      case "tparam":
+      case "relates":
+      case "relatesalso":
       case "retval":
-      case "throw":
-      case "throws":
       case 'see':
       case 'since':
+      case "tparam":
+      case "throw":
+      case "throws":
+      case "weakgroup":
       case "xrefitem":
-        
         return 1;
       default: return 0;
     }
