@@ -724,11 +724,27 @@ class LuminousScanner extends Scanner {
     $this->tokens = array();
   }
   
+  /**
+   * @brief Records a string as a given token type.
+   * @param $string The string to record
+   * @param $type The name of the token the string represents
+   * @param $pre_escaped Luminous works towards getting this in XML and 
+   * therefore at some point, the $string has to be escaped. If you have 
+   * already escaped it for some reason (or if you got it from another scanner),
+   * then you want to set this to @c TRUE
+   * @see LuminousUtils::escape_string
+   * @throw Exception if $string is @c NULL
+   */
   function record($string, $type, $pre_escaped=false) {
     if ($string === null) throw new Exception('Tagging null string');
     $this->tokens[] = array($type, $string, $pre_escaped);
   }
   
+  /**
+   * @brief Returns the XML representation of the token stream
+   * This function triggers the generation of the XML output. 
+   * @return An XML-string which represents the tokens recorded by the scanner.
+   */
   function tagged() {
     $out = '';
 
@@ -875,7 +891,8 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
   protected $exit_state;
   
   
-  /** If we reach a dirty exit, when we resume we need to figure out how to 
+  /** 
+   * If we reach a dirty exit, when we resume we need to figure out how to 
    * continue consuming the rule that was interrupted. So essentially, this 
    * will be a regex which matches the rule without start delimiters.
    *  
@@ -900,26 +917,38 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
   
   /**
    * Sets the exit data to signify it was a dirty exit
+   * 
+   * @throw Exception if no recovery data is associated with the given token.
    */
-  function dirty_exit($state) {
-    // if we don't know how to recover from it, there's no point tagging 
-    // this as a dirty exit.
-    // XXX is this okay?
-    if (!isset($this->dirty_exit_recovery[$state])) {
+  function dirty_exit($token_name) {    
+    if (!isset($this->dirty_exit_recovery[$token_name])) {
+      throw new Exception('No dirty exit recovery data for '. $token_name);
       $this->clean_exit = true;
       return;
     }
-    $this->exit_state = $state;
+    $this->exit_state = $token_name;
     $this->interrupt = true;
     $this->clean_exit = false;
   }
   
   /**
-   * Attempts to resume from a dirty exit 
-   * Consumes the remaining segment of string for the rule that was exited on
-   * and returns the rule name. The match will be in $this->match(). 
-   * Returns null if no recovery is known, but this is an implementation error
-   * so an assertion is also failed.
+   * @brief Attempts to recover from a dirty exit.
+   * 
+   * This method should be called on @b every iteration of the main loop when
+   * LuminousEmbeddedWebScript::$clean_exit is @b FALSE. It will attempt to 
+   * recover from an interruption which left the scanner in the middle of a 
+   * token. The remainder of the token will be in Scanner::match() as usual.
+   * 
+   * @return the name of the token which was interrupted
+   * 
+   * @note there is no reason why a scanner should fail to recover from this,
+   * and failing is classed as an implementation error, therefore assertions 
+   * will be failed and errors will be spewed forth. A failure can either be 
+   * because no recovery regex is set, or that the recovery regex did not 
+   * match. The former should never have been tagged as a dirty exit and the
+   * latter should be rewritten so it must definitely match, even if the match
+   * is zero-length or the remainder of the string.
+   * 
    */
   function resume() {
     assert (!$this->clean_exit);
@@ -937,36 +966,73 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
   
   
   /**
-   * Breaks current scanning due to server-side language interruption, 
-   * which it is expected will be recovered from
+   * @brief Checks for a server-side script inside a matched token
+   * 
+   * @param $token_name The token name of the matched text
+   * @param $match The string from the last match. If this is left @c NULL then
+   * Scanner::match() is assumed to hold the match.
+   * @param $pos The position of the last match. If this is left @c NULL then
+   * Scanner::match_pos() is assumed to hold the offset.
+   * @return @c TRUE if the scanner should break, else @c FALSE
+   * 
+   * 
+   * This method checks whether an interruption by a server-side script tag,
+   * LuminousEmbeddedWebScript::server_tags, occurs within a matched token. 
+   * If it does, this method records the substring up until that point as 
+   * the provided $token_name, and also sets up a 'dirty exit'. This means that 
+   * some type was interrupted and we expect to have to recover from it when
+   * the server-side language's scanner has ended.
+   * 
+   * Returning @c TRUE is a signal that the scanner should break immediately 
+   * and let its parent scanner take over.
+   * 
    */  
-  function server_break($state, $match=null, $offset=null) {
+  function server_break($token_name, $match=null, $pos=null) {
     if (!$this->embedded_server) {
       return false;
     }
     if ($match === null) $match = $this->match();
-    if (($pos = stripos($match, $this->server_tags)) !== false) {
-      $this->record(substr($match, 0, $pos), $state);
-      if ($offset === null) $offset = $this->match_pos();
-      $this->pos($offset + $pos);
-      $this->dirty_exit($state);
+    if ($match === null) return false;
+    
+    if (($pos_ = stripos($match, $this->server_tags)) !== false) {
+      $this->record(substr($match, 0, $pos_), $token_name);
+      if ($pos === null) $pos = $this->match_pos();
+      $this->pos($pos + $pos_);
+      $this->dirty_exit($token_name);
       return true;
     }
     else return false;
   }
   
   /**
-   * Breaks current scanning due to a terminator tag, i.e. a real exit.
+   * @brief Checks for a script terminator tag inside a matched token
+   * 
+   * @param $token_name The token name of the matched text
+   * @param $match The string from the last match. If this is left @c NULL then
+   * Scanner::match() is assumed to hold the match.
+   * @param $pos The position of the last match. If this is left @c NULL then
+   * Scanner::match_pos() is assumed to hold the offset.
+   * @return @c TRUE if the scanner should break, else @c FALSE
+   * 
+   * This method checks whether the string provided as match contains the 
+   * string in LuminousEmbeddedWebScript::script_tags. If yes, then it records
+   * the substring as $token_name, advances the scan pointer to immediately 
+   * before the script tags, and returns @c TRUE. Returning @c TRUE is a 
+   * signal that the scanner should break immediately and let its parent 
+   * scanner take over.
+   * 
+   * This condition is a 'clean_exit'.
    */
-  function script_break($state, $match=null, $offset=null) {
+  function script_break($token_name, $match=null, $pos=null) {
     if (!$this->embedded_html) return false;
     if ($match === null) $match = $this->match();
-    if (($pos = stripos($this->match(), $this->script_tags)) !== false) {
-      $this->record(substr($match, 0, $pos), $state);
-      if ($offset === null) $offset = $this->match_pos();
-      $this->pos($offset + $pos);
-      $this->clean_exit = true;
-      
+    if ($match === null) return false;
+    
+    if (($pos_ = stripos($this->match(), $this->script_tags)) !== false) {
+      $this->record(substr($match, 0, $pos_), $token_name);
+      if ($pos === null) $pos = $this->match_pos();
+      $this->pos($pos + $pos_);
+      $this->clean_exit = true;      
       return true;
     }
     else return false;
@@ -991,6 +1057,11 @@ class LuminousSimpleScanner extends LuminousScanner {
   /// A map of TOKEN_NAME => callback
   protected $overrides = array();
   
+  /**
+   * A generic main method which scans over the string using next_match and 
+   * fires override handlers when appropriate.
+   * @internal
+   */
   function main() {
     while (!$this->eos()) {
       $index = $this->pos();
