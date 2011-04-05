@@ -429,10 +429,14 @@ abstract class luminous {
    *    language_name => codes,
    * 
    * where language_name is a string, and codes is an array of strings. 
+   * 
+   * The array is sorted alphabetically by key.
    */
   static function scanners() {
     global $luminous_;
-    return $luminous_->scanners->ListScanners();
+    $scanners = $luminous_->scanners->ListScanners();
+    ksort($scanners);
+    return $scanners;
   }
 
   /**
