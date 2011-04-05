@@ -7,6 +7,8 @@
 class LuminousUtils {
 
   /**
+   * @brief Tries to balance a delimiter
+   * 
    * Tries to 'balance' a single character delimiter, i.e:
    *     '(' is mapped to ')'
    *     '{' is mapped to '}',
@@ -29,6 +31,8 @@ class LuminousUtils {
   }
 
   /**
+   * @brief Escapes a string suitable for use in XML
+   * 
    * Escapes a string according to the Luminous internal escaping format
    * (this is currently htmlspecialchars with ENT_NOQUOTES.)
    * @param $string the string to escape
@@ -39,6 +43,8 @@ class LuminousUtils {
   }
 
   /**
+   * @brief Escapes a token so its string is suitable for use in XML
+   * 
    * Escapes a token. If the token is already escaped, nothing changes.
    * If the token is not escaped, the escaped flag is set (index 2) and the
    * token text (index 1) is escaped according to the internal escaping format
@@ -56,6 +62,8 @@ class LuminousUtils {
   }
 
   /**
+   * @brief Wraps a block of text in an XML tag
+   * 
    * Tags a block of text. The block is assumed to have been escaped correctly
    * with LuminousUtils::escape_string.
    * @param $type the type to tag the string as, this is the token name
@@ -78,6 +86,8 @@ class LuminousUtils {
   }
 
   /**
+   * @brief Decodes PCRE error codes to human readable strings
+   * 
    * Decodes a PCRE error code, which was returned by preg_last_error(), to
    * something readable
    * @param $errcode the error code

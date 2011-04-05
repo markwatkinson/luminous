@@ -2,13 +2,18 @@
 
 /**
  * @cond CORE
- * @brief A very basic PCRE-wrapper which caches its results
+ * @brief A basic preg_match wrapper which caches its results
+ * 
+ * @note This class is used by Scanner and should not need to be used by
+ * anything else.
  * 
  * A class encapsulating the process of searching for a substring efficiently
- * it handles caching of results.
+ * it handles caching of results. 
  * 
- * One instance should be used only incrementally along a string.
+ * @warning One instance should be used only incrementally along a string.
  * i.e. do not call it with index = 5 then index = 1.
+ * 
+ * @internal
  * 
  */
 class LuminousStringSearch
@@ -29,7 +34,7 @@ class LuminousStringSearch
   }
   
   /**
-   * Performs a search for the given pattern past the given index.
+   * @brief Performs a search for the given pattern past the given index.
    * @param $search the pattern to search for
    * @param $index the minimum string index (offset) of a result
    * @param $matches a reference to the return location of the match groups

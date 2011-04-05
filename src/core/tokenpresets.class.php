@@ -24,7 +24,7 @@ abstract class LuminousTokenPresets {
   /// hexadecimal literal
   static $NUM_HEX = '/0[Xx][a-fA-F0-9]+/';
   
-  /// Real number 
+  /// Real number, i.e. an integer or a float, optionally with an exponent
   static $NUM_REAL = '/
   (?: \d+ (?: \.\d+ )? | \.?\d+)     # int, fraction or significand 
   (?:e[+-]?\d+)?                     # exponent

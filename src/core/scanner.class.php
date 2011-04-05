@@ -28,16 +28,18 @@ require_once(dirname(__FILE__) . '/tokenpresets.class.php');
  * @see LuminousScanner
  */
 class Scanner {
-  /// Input string
+  /// @brief Our local copy of the input string to be scanned.
   private $src;
   
-  /// length of input string (cached for performance)
+  /// @brief Length of input string (cached for performance)
   private $src_len;
   
-  /// Current index
+  /// @brief The current scan pointer (AKA the offset or index)
   private $index;
   
   /**
+   * @brief Match history
+   * 
    * History of matches. This is an array (queue), which should have at most 
    * two elements. Each element consists of an array: 
    * 
@@ -49,19 +51,20 @@ class Scanner {
    */
   private $match_history = array(null, null);
   
-  /// LuminousStringSearch instance (caches preg_* results)
+  /// @brief LuminousStringSearch instance (caches preg_* results)
   private $ss;
   
-  /// Preset patterns, used by next_match()
-  private $patterns = array();
+  /// @brief Caller defined patterns used by next_match()
+  private $patterns = array(); 
 
-  
+  /// constructor
   function __construct($src=null) {
     $this->string($src);
   }
     
   /**
    * @brief Gets the remaining string
+   * 
    * @return The rest of the string, which has not yet been consumed
    */
   function rest() {
@@ -76,6 +79,7 @@ class Scanner {
   
   /** 
    * @brief Getter and setter for the current position (string pointer).
+   * 
    * @param $new_pos The new position (leave \c NULL to use as a getter), note 
    * that this will be clipped to a legal string index if you specify a 
    * negative number or an index greater than the string's length.
@@ -91,6 +95,7 @@ class Scanner {
 
   /**
    * @brief Moves the string pointer by a given offset
+   * 
    * @param $offset the offset by which to move the pointer. This can be positve
    * or negative, but using a negative offset is currently generally unsafe.
    * You should use unscan() to revert the last operation.
@@ -102,6 +107,7 @@ class Scanner {
   }
   /**
    * @brief Beginning of line?
+   * 
    * @return @c TRUE if the scan pointer is at the beginning of a line (i.e. 
    * immediately following a newline character), or at the beginning of the 
    * string, else @c FALSE
@@ -112,6 +118,7 @@ class Scanner {
   
   /**
    * @brief End of line?
+   * 
    * @return @c TRUE if the scan pointer is at the end of a line (i.e. 
    * immediately preceding a newline character), or at the end of the 
    * string, else @c FALSE
@@ -122,6 +129,7 @@ class Scanner {
   
   /**
    * @brief End of string?
+   * 
    * @return @c TRUE if the scan pointer at the end of the string, else 
    * @c FALSE.
    */
@@ -131,6 +139,7 @@ class Scanner {
   
   /**
    * @brief Reset the scanner
+   * 
    * Resets the scanner: sets the scan pointer to 0 and clears the match
    * history.
    */
@@ -142,6 +151,7 @@ class Scanner {
   
   /**
    * @brief Getter and setter for the source string
+   * 
    * @param $s The new source string (leave as @c NULL to use this method as a
    * getter)
    * @return The current source string
@@ -174,6 +184,7 @@ class Scanner {
   
   /**
    * @brief Lookahead into the string a given number of bytes
+   * 
    * @param $n The number of bytes.
    * @return The given number of bytes from the string from the current scan 
    * pointer onwards. The returned string will be at most n bytes long, it may
@@ -192,6 +203,7 @@ class Scanner {
   
   /**
    * @brief Consume a given number of bytes
+   * 
    * @param $n The number of bytes.
    * @return The given number of bytes from the string from the current scan 
    * pointer onwards. The returned string will be at most n bytes long, it may
@@ -244,6 +256,7 @@ class Scanner {
   /**
    * 
    * @brief Get a group from the most recent match operation
+   * 
    * @param $g the group's numerical index or name, in the case of named 
    * subpatterns.
    * @return A string represeting the group's contents.
@@ -281,6 +294,7 @@ class Scanner {
   }
   /**
    * @brief Helper function to log a match into the history
+   * 
    * @internal
    */
   private function __log_match($index, $match_pos, $match_data) {
@@ -320,6 +334,7 @@ class Scanner {
   
   /**
    * @brief Helper function to consume a match
+   * 
    * @param $pos (int) The match position
    * @param $consume_match (bool) Whether or not to consume the actual matched
    * text
@@ -333,6 +348,7 @@ class Scanner {
   
   /**
    * @brief The real scanning function
+   * 
    * @internal
    * @param $pattern The pattern to scan for
    * @param $instant Whether or not the only legal match is at the 
@@ -377,6 +393,7 @@ class Scanner {
   
   /**
    * @brief Scans at the current pointer
+   * 
    * Looks for the given pattern at the current index and consumes and logs it
    * if it is found.
    * @param $pattern the pattern to search for
@@ -405,6 +422,7 @@ class Scanner {
   
   /**
    * @brief Non-consuming lookahead
+   * 
    * Looks for the given pattern at the current index and logs it
    * if it is found, but does not consume it. This is a look-ahead.
    * @param $pattern the pattern to search for
@@ -416,6 +434,7 @@ class Scanner {
   
   /**
    * @brief Find the index of the next occurrence of a pattern
+   * 
    * @param $pattern the pattern to search for
    * @return The next index of the pattern, or -1 if it is not found
    */
@@ -426,6 +445,7 @@ class Scanner {
 
   /**
    * @brief Look for the next occurrence of a set of patterns
+   * 
    * Finds the next match of the given patterns and returns it. The
    * string is not consumed or logged.
    * Convenience function.
@@ -451,6 +471,7 @@ class Scanner {
 
   /**
    * @brief Look for the next occurrence of a set of substrings
+   * 
    * Like get_next() but uses strpos instead of preg_*
    * @see get_next()
    */
@@ -470,7 +491,10 @@ class Scanner {
 
 
   /**
+   * @brief Allows the caller to add a predefined named pattern
+   * 
    * Adds a predefined pattern which is visible to next_match.
+   * 
    * @param $name A name for the pattern. This does not have to be unique.
    * @param $pattern A regular expression pattern.
    */  
@@ -479,6 +503,8 @@ class Scanner {
   }
   
   /**
+   * @brief Automation function: returns the next occurrence of any known patterns.
+   * 
    * Iterates over the predefiend patterns array (add_pattern) and consumes/logs
    * the nearest match, skipping unrecognised segments of string.
    * @return an array:
@@ -539,12 +565,30 @@ class Scanner {
 /**
  * @brief the base class for all scanners
  * 
+ * LuminousScanner is the base class for all language scanners. Here we 
+ * provide a set of methods comprising a highlighting layer. This includes
+ * recording a token stream, and ultimately being responsible for 
+ * producing some XML representing the token stream.
+ * 
+ * We also define here some filters which rely on state information expected
+ * to be recorded into the instance variables.
+ * 
+ * Highlighting a string at this level is a four-stage process:
+ * 
+ *      @li string() - set the string
+ *      @li init() - set up the scanner
+ *      @li main() - perform tokenization
+ *      @li tagged() - build the XML
+ * 
+ * 
+ * 
  * A note on tokens: Tokens are stored as an array with the following indices:
- *      0:   Token name   (e.g. 'COMMENT'
- *      1:   Token string (e.g. '// foo')
- *      2:   escaped?      Because it's often more convenient to embed nested
+ *    @li 0:   Token name   (e.g. 'COMMENT'
+ *    @li 1:   Token string (e.g. '// foo')
+ *    @li 2:   escaped? (bool) Because it's often more convenient to embed nested
  *              tokens by tagging token string, we need to escape it. This 
  *              index stores whether or nto it has been escaped.
+ * 
  */
 
 class LuminousScanner extends Scanner {
@@ -552,37 +596,85 @@ class LuminousScanner extends Scanner {
   /// scanner version. 
   public $version = 'master';
 
-  /// A map of recognised identifiers, in the form
-  /// identifier_string => TOKEN_NAME
-  protected $ident_map = array();
 
-  /// The token stream, as it is recorded
+
+  /**
+   * @brief The token stream
+   * 
+   * The token stream is recorded as a flat array of tokens. A token is 
+   * made up of 3 parts, and stored as an array:
+   *  @li 0 => Token name 
+   *  @li 1 => Token string (from input source code)
+   *  @li 2 => XML-Escaped?
+   */
   protected $tokens = array();
 
-  /// A stack of the scanner's state, should the scanner wish to use
-  /// stack-based state
+  /**
+   * @brief State stack
+   *
+   * A stack of the scanner's state, should the scanner wish to use a stack
+   * based state mechanism.
+   * 
+   * The top element can be retrieved (but not popped) with stack()
+   * 
+   * TODO More useful functions for manipulating the stack
+   */  
   protected $state_ = array();
 
-  /// Individual filters, as a list of lists:
-  /// (name, token_name, callback)
+  /**
+   * @brief Individual token filters
+   * 
+   * A list of lists, each filter is an array: (name, token_name, callback)
+   */
   protected $filters = array();
   
-  /// Stream filters as a list of lists:
-  /// (name, callback)
+  /**
+   * @brief Token stream filters
+   * 
+   * A list of lists, each filter is an array: (name, callback)
+   */
   protected $stream_filters = array();
 
-  /// A map to handle re-mapping of rules, in the form:
-  /// OLD_TOKEN_NAME => NEW_TOKEN_NAME
+  /**
+   * @brief Rule remappings
+   * 
+   * A map to handle re-mapping of rules, in the form:
+   * OLD_TOKEN_NAME => NEW_TOKEN_NAME
+   * 
+   * This is used by rule_mapper_filter()
+   */
   protected $rule_tag_map = array();
 
-  /// A map of remappings of user-defined types/functions. This is a map of
-  /// identifier_string => TOKEN_NAME
+  /**
+   * @brief Identifier remappings based on definitions identified in the source code
+   * 
+   * A map of remappings of user-defined types/functions. This is a map of
+   * identifier_string => TOKEN_NAME
+   * 
+   * This is used by user_def_filter()
+   */
   protected $user_defs;
+  
+  
+  /**
+   * @brief A map of identifiers and their corresponding token names
+   * 
+   * A map of recognised identifiers, in the form 
+   * identifier_string => TOKEN_NAME
+   * 
+   * This is currently used by map_identifier_filter
+   */
+  protected $ident_map = array();  
 
-  /// Whether or not the scanner is dealing with a case sensitive language.
+  /**
+   * @brief Whether or not the language is case sensitive
+   * 
+   * Whether or not the scanner is dealing with a case sensitive language.
+   * This currently affects map_identifier_filter
+   */
   protected $case_sensitive = true;
   
-  
+  /// constructor
   function __construct($src=null) {
     parent::__construct($src);
 
@@ -601,11 +693,14 @@ class LuminousScanner extends Scanner {
     
     $this->add_stream_filter('rule-map', array($this, 'rule_mapper_filter'));
     $this->add_stream_filter('oo-syntax', array('LuminousFilters', 'oo_stream_filter'));
-}
+  }
 
   /**
+   * @brief Filter to highlight identifiers whose definitions are in the source
+   * 
    * maps anything recorded in LuminousScanner::user_defs to the recorded type.
    * This is called as the filter 'user-defs'
+   * @internal
    */
   protected function user_def_filter($token) {
     if (isset($this->user_defs[$token[1]])) {
@@ -615,9 +710,12 @@ class LuminousScanner extends Scanner {
   }
 
   /**
+   * @brief Rule re-mapper filter
+   * 
    * Re-maps token rules according to the LuminousScanner::rule_tag_map
    * map.
    * This is called as the filter 'rule-map'
+   * @internal
    */
   protected function rule_mapper_filter($tokens) {
     foreach($tokens as &$t) {
@@ -631,11 +729,15 @@ class LuminousScanner extends Scanner {
 
 
   /**
+   * @brief Public convenience function for setting the string and highlighting it
+   * 
    * Alias for:
    *   $s->string($src)
    *   $s->init();
    *   $s->main();
    *   return $s->tagged();
+   * 
+   * @returns the highlighted string, as an XML string
    */
   function highlight($src) {
     $this->string($src);
@@ -645,20 +747,37 @@ class LuminousScanner extends Scanner {
   }
 
   /**
-   * The init method is always called prior to highlighting. At this stage, all
+   * @brief Set up the scanner immediately prior to tokenization.
+   * 
+   * The init method is always called prior to main(). At this stage, all
    * configuration variables are assumed to have been set, and it's now time
-   * for the scanner tod o any last setup information. This may include
-   * actually finalizing its rule patterns.
+   * for the scanner to perform any last set-up information. This may include
+   * actually finalizing its rule patterns. Some scanners may not need to
+   * override this if they are in no way dynamic.
    */
   function init() {}
   
+  
   /**
-   * Adds an indivdual filter. The filter is bound to the given token_name
-   *
-   * The filter is a callback which should take a token and return a token.
+   * @brief the method responsible for tokenization
    * 
-   * args are;  ([name], token_name, filter)
-   * poor man's method overloading.
+   * The main method is fully responsible for tokenizing the string stored
+   * in string() at the time of its call. By the time main returns, it should
+   * have consumed the whole of the string and populated the token array.
+   * 
+   */  
+  function main() {}
+  
+  /**
+   * @brief Add an individual token filter
+   * 
+   * Adds an indivdual token filter. The filter is bound to the given 
+   * token_name. The filter is a callback which should take a token and return 
+   * a token.
+   * 
+   * The arguments are: [name], token_name, filter
+   * 
+   * Name is an optional argument.
    */
   public function add_filter($arg1, $arg2, $arg3=null) {
     $filter = null;
@@ -677,7 +796,7 @@ class LuminousScanner extends Scanner {
   }
 
   /**
-   * Removes the individual filter(s) with the given name
+   * @brief Removes the individual filter(s) with the given name
    */
   public function remove_filter($name) {
     foreach($this->filters as $token=>$filters) {
@@ -688,7 +807,7 @@ class LuminousScanner extends Scanner {
   }
 
   /**
-   * Removes the stream filter(s) with the given name
+   * @brief Removes the stream filter(s) with the given name
    */
   public function remove_stream_filter($name) {
     foreach($this->stream_filters as $k=>$f) {
@@ -697,10 +816,12 @@ class LuminousScanner extends Scanner {
   }
 
   /**
-   * Adds a stream filter. A stream filter receives the entire token stream and
-   * should return it.
+   * @brief Adds a stream filter
+   * 
+   * A stream filter receives the entire token stream and should return it.
    *
-   * Args are: [name], callback.
+   * The parameters are: ([name], filter). Name is an optional argument.
+   * 
    */
   public function add_stream_filter($arg1, $arg2=null) {
     $filter = null;
@@ -714,12 +835,17 @@ class LuminousScanner extends Scanner {
     $this->stream_filters[] = array($name, $filter);
   }
 
-  
+  /**
+   * @brief Gets the top element on $state_ or null if it is empty
+   */
   function state() {
     if (!isset($this->state_[0])) return null;
     return $this->state_[count($this->state_)-1];
   }
   
+  /**
+   * @brief Flushes the token stream
+   */
   function start() {
     $this->tokens = array();
   }
@@ -742,6 +868,7 @@ class LuminousScanner extends Scanner {
   
   /**
    * @brief Returns the XML representation of the token stream
+   * 
    * This function triggers the generation of the XML output. 
    * @return An XML-string which represents the tokens recorded by the scanner.
    */
@@ -772,13 +899,18 @@ class LuminousScanner extends Scanner {
     return $out;
   }
 
-  /// returns the token array
+  /**
+   * @brief Gets the token array
+   * @return The token array
+   */
   function token_array() {
     return $this->tokens;
   }
 
   /**
-   * Tries to maps any 'IDENT' token to a TOKEN_NAME in
+   * @brief Identifier mapping filter
+   * 
+   * Tries to map any 'IDENT' token to a TOKEN_NAME in
    * LuminousScanner::$ident_map
    * This is implemented as the filter 'map-ident'
    */
@@ -795,8 +927,7 @@ class LuminousScanner extends Scanner {
   }
 
   /**
-   * Adds an identifier mapping which is later analysed by
-   * map_identifier_filter
+   * @brief Adds an identifier mapping which is later analysed by map_identifier_filter
    * @param $name The token name
    * @param $matches an array of identifiers which correspond to this token
    * name, i.e. add_identifier_mapping('KEYWORD', array('if', 'else', ...));
@@ -815,8 +946,8 @@ class LuminousScanner extends Scanner {
   }
 
   /**
-   * Convenience function:
-   * Skips whitespace, and records it as a null token.
+   * Convenience function
+   * @brief Skips whitespace, and records it as a null token.
    */
   function skip_whitespace() {
     if (ctype_space($this->peek())) {
@@ -837,13 +968,18 @@ class LuminousScanner extends Scanner {
  * nested under them (PHP has HTML, HTML has CSS and JavaScript)
  * 
  * The relationship is strictly hierarchical, not recursive descent
- * Meeting a '<?' in CSS bubbles up to HTML and then up to PHP (or whatever)
+ * Meeting a '\<?' in CSS bubbles up to HTML and then up to PHP (or whatever).
+ * The top-level scanner is ultimately what should have sub-scanner code 
+ * embedded in its own token stream.
  * 
  * The scanners should be persistent, so only one JavaScript scanner exists
  * even if there are 20 javascript tags. This is so they can keep persistent 
- * state, which might be necessary if they are interrupted by server-side. In
- * the case that they are interrupted in the middle of a rule which has to be 
- * resumed when the scanner is next called, it is said to be a 'dirty exit'.
+ * state, which might be necessary if they are interrupted by server-side tags. 
+ * For this reason, the main() method might be called multiple times, therefore
+ * each web sub-scanner should 
+ *     \li Not rely on keeping state related data in main()'s function scope,
+ *              make it a class variable 
+ *      \li flush its token stream every time main() is called
  * 
  * The init method of the class should be used to set relevant rules based
  * on whether or not the embedded flags are set; and therefore the embedded
@@ -851,47 +987,67 @@ class LuminousScanner extends Scanner {
  */
 abstract class LuminousEmbeddedWebScript extends LuminousScanner {
   
-  /// Embedded in HTML? i.e. does it need to observe tag terminators
+  /**
+   * @brief Is the source embedded in HTML?
+   * 
+   * Embedded in HTML? i.e. do we need to observe tag terminators like \</script\>
+   */
   public $embedded_html = false;
   
-  /// Embedded in a server side language? i.e. does it need break at
-  /// server language tags
+  /**
+   * @brief Is the source embedded in a server-side script (e.g. PHP)?
+   * 
+   * Embedded in a server side language? i.e. do we need to break at
+   * (for example) \<? tags?
+   */
   public $embedded_server = false;
   
-  /// Opening tag for server-side code, which the scanner has to break at
+  /**
+   * @brief Opening tag for server-side code
+   */
   public $server_tags = '<?';
-  /// Closing tag for script code, which a script scanner has to break at
+  
+  /// @brief closing HTML tag for our code, e.g \</script\>
   public $script_tags;
   
   
-  /** specifies whether or not we reached an interrupt by a server-side 
-    * script block */    
+  /** @brief I think this is ignored and obsolete */
   public $interrupt = false;
   
   /** 
+   * @brief Clean exit or inconvenient, mid-token forced exit
+   * 
    * Signifies whether the program exited due to inconvenient interruption by 
    * a parent language (i.e. a server-side langauge), or whether it reached 
    * a legitimate break. A server-side language isn't necessarily a dirty exit,
    * but if it comes in the middle of a token it is, because we need to resume
    * from it later. e.g.:
    *
-   * var x = "this is <?php echo 'a' ?> string";
+   * var x = "this is \<?php echo 'a' ?\> string";
    */
   public $clean_exit = true;
   
   
   
-  /// Map of child scanners, name => scanner (instance)
+  /**
+   * @brief Child scanners
+   * 
+   * Persistent storage of child scanners, name => scanner (instance)
+   */
   protected $child_scanners = array();
 
   /**
+   * @brief Name of interrupted token, in case of a dirty exit
+   * 
    * exit state logs our exit state in the case of a dirty exit: this is the
    * rule that was interrupted.
    */
-  protected $exit_state;
+  protected $exit_state = null;
   
   
   /** 
+   * @brief Recovery patterns for when we reach an untimely interrupt
+   * 
    * If we reach a dirty exit, when we resume we need to figure out how to 
    * continue consuming the rule that was interrupted. So essentially, this 
    * will be a regex which matches the rule without start delimiters.
@@ -900,7 +1056,10 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
    */
   protected $dirty_exit_recovery = array();
 
-  /// Adds a child scanner, convenience function
+  /**
+   * @brief adds a child scanner
+   * Adds a child scanner and indexes it against a name, convenience function
+   */
   public function add_child_scanner($name, $scanner) {
     $this->child_scanners[$name] = $scanner;
   }
@@ -916,7 +1075,9 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
   }
   
   /**
-   * Sets the exit data to signify it was a dirty exit
+   * @brief Sets the exit data to signify the exit is dirty and will need recovering from
+   * 
+   * @param $token_name the name of the token which is being interrupted
    * 
    * @throw Exception if no recovery data is associated with the given token.
    */
@@ -1054,11 +1215,21 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
  */
 class LuminousSimpleScanner extends LuminousScanner {
 
-  /// A map of TOKEN_NAME => callback
+  /**
+   * @brief Overrides array.  
+   * 
+   * A map of TOKEN_NAME => callback.
+   * 
+   * The callbacks are fired by main() when the TOKEN_NAME rule matches.
+   * The callback receives the match_groups array, but the scanner is 
+   * unscan()ed before the callback is fired, so that the pos() is directly 
+   * in front of the match. The callback is responsible for consuming the 
+   * token appropriately.
+   */
   protected $overrides = array();
   
   /**
-   * A generic main method which scans over the string using next_match and 
+   * A generic main() method which scans over the string using next_match and 
    * fires override handlers when appropriate.
    * @internal
    */

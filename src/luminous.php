@@ -263,6 +263,7 @@ class _Luminous {
 global $luminous_; // sometimes need this or the object seems to disappear
 $luminous_ = new _Luminous();
 
+/// @cond USER
 
 // here's our 'real' UI class, which uses the above singleton. This is all
 // static because these are actually procudural functions, we're using the
@@ -273,12 +274,12 @@ $luminous_ = new _Luminous();
 abstract class luminous {
 
   /**
-   * Highlights a source code string according to the current settings.
+   * @brief Highlights a string according to the current settings
    * 
-   * @param $scanner the scanner to use, this can either be a langauge code,
+   * @param $scanner The scanner to use, this can either be a langauge code,
    *    or it can be an instance of LuminousScanner.
-   * @param $source the source string
-   * @param $cache whether or not to use the cache
+   * @param $source The source string
+   * @param $cache Whether or not to use the cache
    * @return the highlighted source code.
    *
    * To specify different output formats or other options, see set().
@@ -289,12 +290,12 @@ abstract class luminous {
   }
 
   /**
-   * Highlights a source code file according to the current setings.
+   * @brief Highlights a file according to the current setings.
    * 
-   * @param $scanner the scanner to use, this can either be a langauge code,
+   * @param $scanner The scanner to use, this can either be a langauge code,
    *    or it can be an instance of LuminousScanner.
    * @param $file the source string
-   * @param $cache whether or not to use the cache
+   * @param $cache Whether or not to use the cache
    * @return the highlighted source code.
    * 
    * To specify different output formats or other options, see set().
@@ -304,6 +305,8 @@ abstract class luminous {
   }
 
   /**
+   * @brief Registers a scanner
+   * 
    * Registers a scanner with Luminous's scanner table. Utilising this
    * function means that Luminous will handle instantiation and inclusion of
    * the scanner's source file in a lazy-manner.
@@ -328,7 +331,8 @@ abstract class luminous {
   }
   
   /**
-   * returns what Luminous thinks its location is on the filesystem
+   * @brief Get the full filesystem path to Luminous
+   * @return what Luminous thinks its location is on the filesystem
    * @internal
    */
   static function root() {
@@ -336,6 +340,8 @@ abstract class luminous {
   }
 
   /**
+   * @brief Gets a list of installed themes
+   * 
    * @return the list of theme files present in style/.
    * Each theme will simply be a filename, and will end in .css, and will not
    * have any directory prefix.
@@ -359,21 +365,24 @@ abstract class luminous {
   }
 
   /**
+   * @brief Checks whether a theme exists
    * @param $theme the name of a theme, which should be suffixed with .css
-   * @return true if a theme exists in style/, else false
+   * @return @c TRUE if a theme exists in style/, else @c FALSE
    */
   static function theme_exists($theme) {
     return in_array($theme, self::themes());
   }
   
   /**
+   * @brief Reads a CSS theme file
    * Gets the CSS-string content of a theme file.
    * Use this function for reading themes as it involves security
    * checks against reading arbitrary files
    * 
-   * @param $theme the name of the theme to retrieve, which may or may not
+   * @param $theme The name of the theme to retrieve, which may or may not
    *    include the .css suffix.
    * @return the content of a theme; this is the actual CSS text.
+   * @internal
    */
   static function theme($theme) {
     if (!preg_match('/\.css$/i', $theme)) $theme .= '.css';
@@ -386,9 +395,9 @@ abstract class luminous {
 
   
   /**
-   * Gets a setting's value
-   * @param $option the name of the setting
-   * @return the value of the given setting
+   * @brief Gets a setting's value
+   * @param $option The name of the setting
+   * @return The value of the given setting
    * @throws Exception if the option is unrecognised
    */
   static function setting($option) {
@@ -399,9 +408,9 @@ abstract class luminous {
   }
 
   /**
-   * Sets the given option to the given value
-   * @param $option the name of the setting
-   * @param $value the new value of the setting
+   * @brief Sets the given option to the given value
+   * @param $option The name of the setting
+   * @param $value The new value of the setting
    * @throws Exception if the option is unrecognised.
    */
   static function set($option, $value) {
@@ -412,10 +421,14 @@ abstract class luminous {
   }
 
   /**
+   * @brief Gets a list of registered scanners
+   * 
    * @return a list of scanners currently registered. The list is in the
    * format:
+   * 
    *    language_name => codes,
-   * where language_name is a string, and codes is an array of strings
+   * 
+   * where language_name is a string, and codes is an array of strings. 
    */
   static function scanners() {
     global $luminous_;
@@ -423,6 +436,8 @@ abstract class luminous {
   }
 
   /**
+   * @brief Gets a formatter instance
+   * 
    * @return an instance of a LuminousFormatter according to the current
    * format setting
    *
@@ -437,6 +452,7 @@ abstract class luminous {
 
 
 /**
+  * @brief Gets the markup you need to include in your web page
   * @return a string representing everything that needs to be printed in
   * the \<head\> section of a website.
   *
@@ -481,3 +497,6 @@ abstract class luminous {
     return $out;
   }
 }
+
+/// @endcond 
+// ends user
