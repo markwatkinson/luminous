@@ -13,7 +13,7 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
   public $script_tags = '</script>';
   
   
-  // regular expressions in JavaScript are delimtied by '/', BUT, the slash
+  // regular expressions in JavaScript are delimited by '/', BUT, the slash
   // character may appear unescaped within character classes
   // we can handle this fairly easily with a single regex because the classes 
   // do not nest
