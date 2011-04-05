@@ -7,23 +7,25 @@
  * Filters are either stream filters or individual filters.
  * Stream filters operate on the entire token stream, and return the new
  * token stream. Individual filters operate on individual tokens (bound by type),
- * and return the new token.
+ * and return the new token. Any publicly available member here is one of those,
+ * therefore the return and param documents are omitted.
  * 
  */
-
 // Poor man's namespace.
 class LuminousFilters {
   
   /**
-   * returns the expected number of arguments to a doxygen command
-   * This is either 0 or 1 at the moment
+   * @brief Gets the expected number of arguments to a doc-comment command/tag
+   * @param $command the name of the command
+   * @returns The expected number of arguments for a command, this is either 
+   * 0 or 1 at the moment
    * @internal
    */
   private static function doxygen_arg_length($command) {
     switch(strtolower($command)) {
       case "addtogroup":
       case "category":
-      case "class":
+      case "class":        
       case "def":
       case "defgroup":
       case "dir":
@@ -53,18 +55,21 @@ class LuminousFilters {
       case "retval":
       case "throw":
       case "throws":
-      case "xrefitem":
       case 'see':
       case 'since':
+      case "xrefitem":
+        
         return 1;
       default: return 0;
     }
   }
   
   /**
-   * Highlights Doxygen-esque doc-comment syntax.
-   * This is a callback to doxygenize.
-   * @internal
+   * @brief callback to doxygenize
+   * Highlights Doxygen-esque doc-comment syntax. 
+   * This is a callback to doxygenize().
+   * @return the highlighted string
+   * @internal   
    */
   private static function doxygenize_cb($matches) {
     $lead = $matches[1];
@@ -108,7 +113,7 @@ class LuminousFilters {
   }
   
   /**
-   * Highlights doc-comment tags inside a comment block.
+   * @brief Highlights doc-comment tags inside a comment block.
    * 
    * @see generic_doc_comment
    * @internal
@@ -121,16 +126,17 @@ class LuminousFilters {
     
   }
   /**
-   * Generic filter to highlight JavaDoc, PHPDoc, Doxygen, JSdoc, and similar
-   * doc comment syntax.
+   * @brief Generic filter to highlight JavaDoc, PHPDoc, Doxygen, JSdoc, and similar doc comment syntax.
    *
-   * A cursory chceck will be performed to try to validate that the token
+   * A cursory check will be performed to try to validate that the token
    * really is a doc-comment, it does this by checking for common formats.
-   * If it fails on your particular language, write your own check and
-   * use LuminousFilters::doxygenize()
    *
    * If the check is successful, the token will be switched to type
    * 'DOCCOMMENT' and its doc-tags will be highlighted
+   * 
+   * This is a wrapper around doxygenize(). If the checks are not necessary, 
+   * or incorrect for your situation, you may instead choose to use 
+   * doxygenize() directly.
    */
   static function generic_doc_comment($token) {
     // checks if a comment is in the form:
@@ -152,6 +158,7 @@ class LuminousFilters {
   }
   
   /**
+   * @brief Highlights comment notes
    * Highlights keywords in comments, i.e. "NOTE", "XXX", "FIXME", "TODO",
    * "HACK", "BUG"
    */
@@ -163,6 +170,7 @@ class LuminousFilters {
   }
   
   /**
+   * @brief Highlights generic escape sequences in strings
    * Highlights escape sequences in strings. There is no checking on which
    * sequences are legal, this is simply a generic function which checks for
    * \\u...  unicode, \\d... octal, \\x... hex and finally just any character
@@ -185,7 +193,7 @@ class LuminousFilters {
   }
   
   /**
-   * Tries to highlight PCRE style regular expression syntax
+   * @brief Tries to highlight PCRE style regular expression syntax
    */
   static function pcre($token, $delimited=true) {
     $token = self::string($token);
@@ -229,7 +237,7 @@ class LuminousFilters {
   }
 
   /**
-   * Translates any token type of an uppercase/numeric IDENT to 'CONSTANT'
+   * @brief Translates any token type of an uppercase/numeric IDENT to 'CONSTANT'
    */
   static function upper_to_constant($token) {
     // check for this because it may have been mapped to a function or something
@@ -239,7 +247,7 @@ class LuminousFilters {
   }
 
   /**
-   * Translates anything of type 'IDENT' to the null type
+   * @brief Translates anything of type 'IDENT' to the null type
    */
   static function clean_ident($token) {
     if ($token[0] === 'IDENT') $token[0] = null;
@@ -249,6 +257,8 @@ class LuminousFilters {
 
 
   /**
+   * @brief Attempts to apply OO syntax highlighting
+   * 
    * Tries to apply generic OO syntax highlighting. Any identifer immediately
    * preceding a '.', '::' or '->' token is mapped to an 'OO'.
    * Any identifer token immediatel following any of those tokens is mapped to
