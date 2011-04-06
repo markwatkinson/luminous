@@ -21,7 +21,7 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
   // I do not know if this is specific to Javascript or ECMAScript derivatives 
   // as a whole, I also don't know if multi-line regexen are legal (i.e. when
   // the definition spans multiple lines)  
-  protected $regex_regex  = <<<EOS
+  protected $regex_regex  = "
   %
     /
     (?: 
@@ -39,7 +39,7 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
     )*
     (?: /[iogmx]* | $)                           #delimiter or eof
   %sx
-EOS;
+";
     
     
   // logs a persistent token stream so that we can lookbehind to figure out
