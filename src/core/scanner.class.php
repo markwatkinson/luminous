@@ -441,7 +441,8 @@ class Scanner {
    * @return The next index of the pattern, or -1 if it is not found
    */
   function index($pattern) {
-    return $this->ss->match($pattern, $this->index, $dontcare_ref);
+    $ret = $this->ss->match($pattern, $this->index, $dontcare_ref);
+    return ($ret !== false)? $ret : -1;
   }
 
 
