@@ -1,6 +1,5 @@
 <?php 
-require_once (dirname(__FILE__) . '/../src/core/scanner.class.php');
-
+include 'helper.inc';
 
 /**
  * Unit tests for the preset token regexp patterns. 
@@ -8,18 +7,7 @@ require_once (dirname(__FILE__) . '/../src/core/scanner.class.php');
 
 function test_regex($regex, $string, $expected_match) {
   $c = preg_match($regex, $string, $matches);
-  
-  if (($c === 0 && !$expected_match) || ($c && $matches[0] === $expected_match)) {}
-  else {
-    echo '<h1>Test Failed!</h1>';
-    if ($c) echo "matched: '{$matches[0]}'";
-    else echo 'no match';
-    
-    echo '<pre>';
-    debug_print_backtrace();
-    echo '</pre>';
-//     die();
-  }
+  assert (($c === 0 && !$expected_match) || ($c && $matches[0] === $expected_match));
 }
 
 ////////////////////////////////////////////
@@ -30,7 +18,7 @@ test_regex(LuminousTokenPresets::$DOUBLE_STR,
   '""', '""'); 
 // simple cases
 test_regex(LuminousTokenPresets::$DOUBLE_STR,
-  '"a string"', '"a string"');  
+  '"a string"', '"a string"');
 test_regex(LuminousTokenPresets::$DOUBLE_STR,
   '"a string" not a string', '"a string"');  
 // ugly escape sequences

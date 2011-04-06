@@ -27,10 +27,11 @@ if ($action == 'clean')
 for($i=0; $i<79; $i++)
   echo '-';
 echo "\n";
-
+$exit = 0;
 foreach($missing_output as $m)
 {
   echo "WARNING: Missing expected output for $m\n";
+  $exit = 2;
 }
 
 if (empty($diff_output))
@@ -39,8 +40,8 @@ if (empty($diff_output))
 foreach($diff_output as $path=>$path1)
 {
   echo "FAILURE: $path failed, diff output written to $path1\n";
+  $exit = 1;
 }
 
 
-
-exit((int)!empty($diff_output));
+exit($exit);
