@@ -19,10 +19,10 @@
   <COMMENT>"prints 1"</COMMENT>
   <KEYWORD>print</KEYWORD> <NUMERIC>1</NUMERIC>
 
-<STRING>","</STRING>.<OO>join</OO><OPERATOR>([</OPERATOR><STRING>'this line probably is a real string'</STRING><OPERATOR>])</OPERATOR>
-<STRING>','</STRING>.<OO>join</OO><OPERATOR>([</OPERATOR><STRING>'this line probably is a real string'</STRING><OPERATOR>])</OPERATOR>
-<STRING>""","""</STRING>.<OO>join</OO><OPERATOR>([</OPERATOR><STRING>'this line probably is a real string'</STRING><OPERATOR>])</OPERATOR>
-<STRING>''','''</STRING>.<OO>join</OO><OPERATOR>([</OPERATOR><STRING>'this line probably is a real string'</STRING><OPERATOR>])</OPERATOR>
+<STRING>","</STRING><OPERATOR>.</OPERATOR><OO>join</OO><OPERATOR>([</OPERATOR><STRING>'this line probably is a real string'</STRING><OPERATOR>])</OPERATOR>
+<STRING>','</STRING><OPERATOR>.</OPERATOR><OO>join</OO><OPERATOR>([</OPERATOR><STRING>'this line probably is a real string'</STRING><OPERATOR>])</OPERATOR>
+<STRING>""","""</STRING><OPERATOR>.</OPERATOR><OO>join</OO><OPERATOR>([</OPERATOR><STRING>'this line probably is a real string'</STRING><OPERATOR>])</OPERATOR>
+<STRING>''','''</STRING><OPERATOR>.</OPERATOR><OO>join</OO><OPERATOR>([</OPERATOR><STRING>'this line probably is a real string'</STRING><OPERATOR>])</OPERATOR>
 
 
   

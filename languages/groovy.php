@@ -60,8 +60,8 @@ class LuminousGroovyScanner extends LuminousSimpleScanner {
     $this->add_pattern('COMMENT', '/^#!.*/');
     $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_ML);
     $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_SL);
-    $this->add_pattern('STRING', "/$triple_dstr/x");
-    $this->add_pattern('STRING', "/$triple_sstr/x");
+    $this->add_pattern('STRING', "/$triple_dstr/sx");
+    $this->add_pattern('STRING', "/$triple_sstr/xs");
     $this->add_pattern('STRING', LuminousTokenPresets::$DOUBLE_STR);
     // differs from java:
     $this->add_pattern('STRING', LuminousTokenPresets::$SINGLE_STR);

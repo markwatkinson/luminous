@@ -4,8 +4,8 @@ class LuminousPythonScanner extends LuminousScanner {
   
   
   
+  
   public function init() {
-    
     
     $this->remove_filter('comment-to-doc');
     
@@ -24,7 +24,7 @@ class LuminousPythonScanner extends LuminousScanner {
     
     // catch the colon separately so we can use $match === ':' in figuring out
     // where docstrs occur
-    $this->add_pattern('OPERATOR', '/[!%^*\-=+;<>\\\\(){}\[\],]+|:/');
+    $this->add_pattern('OPERATOR', '/[!%^*\-=+;<>\\\\(){}\[\],\\.]+|:/');
     
     // decorator
     $this->add_pattern('TYPE', '/@(\w+\.?)+/');
@@ -32,10 +32,10 @@ class LuminousPythonScanner extends LuminousScanner {
     // Python strings may be prefixed with r (raw) or u (unicode).
     // This affects how it handles backslashes, but I don't *think* it
     // affects escaping of quotes.... 
-    $this->add_pattern('STRING', "/[RUru]?$triple_dstr/x");
-    $this->add_pattern('STRING', "/[RUru]?$triple_sstr/x");
-    $this->add_pattern('STRING', "/[RUru]?" . sprintf($str_template, '"') . '/x');
-    $this->add_pattern('STRING', "/[RUru]?" . sprintf($str_template, "'") . '/x');
+    $this->add_pattern('STRING', "/[RUru]?$triple_dstr/xs");
+    $this->add_pattern('STRING', "/[RUru]?$triple_sstr/xs");
+    $this->add_pattern('STRING', "/[RUru]?" . sprintf($str_template, '"') . '/sx');
+    $this->add_pattern('STRING', "/[RUru]?" . sprintf($str_template, "'") . '/xs');
     
     // EPIC.
     $this->add_pattern('NUMERIC', '/
@@ -89,9 +89,40 @@ class LuminousPythonScanner extends LuminousScanner {
 
     $this->add_identifier_mapping('VALUE', array('False', 'None', 'self', 
       'True'));
-     
-
-
+  }
+  
+  
+  // mini-scanner to handle highlighting module names in import lines
+  private function import_line() {
+    $import = false;
+    $from = false;    
+    while(!$this->eol()) {
+      $c = $this->peek();
+      $tok = null;
+      $m = null;
+      
+      if ($c === '\\') $m = $this->get(2);
+      elseif($this->scan('/[,\\.;\\*]+/')) $tok = 'OPERATOR';
+      elseif($this->scan("/[ \t]+/")){}
+      elseif(($m = $this->scan('/import\\b|from\\b/'))){
+        if ($m === 'import') $import = true;
+        elseif($m === 'from') $from = true;
+        else assert(0);
+        $tok = 'IDENT';
+      }
+      elseif($this->scan('/[_a-zA-Z]\w*/')) {
+        assert($from || $import);
+        // from module import *item*, or just import *item*
+        if ($import) {
+          $tok = 'USER_FUNCTION';
+          $this->user_defs[$this->match()] = 'TYPE';
+        }
+        // from *module* ...[import item], the module is not imported
+        else $tok = 'IDENT';
+      }
+      else break;
+      $this->record(($m !== null)? $m : $this->match(), $tok);
+    }
   }
   
   
@@ -114,7 +145,7 @@ class LuminousPythonScanner extends LuminousScanner {
       }
       $m = $this->match();
       
-      /* python doc strs are a pain because they're actually strings. 
+      /* python doc strs are a pain because they're actually just strings. 
        * Also, I'm pretty sure a string in a non-interesting place just counts
        * as a no-op and is also used as a comment sometimes
        * So we've got something a bit complicated going on here: if we meet
@@ -164,20 +195,30 @@ class LuminousPythonScanner extends LuminousScanner {
         $definition = false;
         $doccstr = false;
       }
-            
-      if ($tok === 'IDENT') {
-        
+      
+      if ($tok === 'IDENT') {        
+        if ($m === 'import' || $m === 'from') {
+          $this->unscan();
+          $this->import_line();
+          continue;
+        }
+        // these are definition keywords, the next token should be an 
+        // identifier, which is a user-defined type or function
         if ($m === 'class' || $m === 'def') {
           $definition = true;
           $expect = 'user_def';
-        }        
+        }
+        // this is caught on the next iteration
         elseif($expect === 'user_def') {
           $tok = 'USER_FUNCTION';
           $expect = false;
           $this->user_defs[$m] = 'FUNCTION';
         }
       }
-      else { $expect = false; }
+      else { 
+        // if this hasn't caught, it's not valid
+        $expect = false; 
+      }
       
       if ($definition && $m === ':') {
         $doccstr = true;
@@ -186,6 +227,4 @@ class LuminousPythonScanner extends LuminousScanner {
       $this->record($m, $tok);
     }
   }
-  
-  
 }
