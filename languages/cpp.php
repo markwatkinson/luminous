@@ -3,7 +3,7 @@
 require_once(dirname(__FILE__) . '/include/c_func_list.php');
 // TODO: trigraph... does anyone use these?
 
-class LuminousCppScanner extends LuminousScanner {
+class LuminousCppScanner extends LuminousSimpleScanner {
 
   function __construct($src=null) {
     parent::__construct($src);
@@ -58,21 +58,37 @@ class LuminousCppScanner extends LuminousScanner {
       \d+([uUlL]+ | ([eE][+-]?\d+)?[fFlL]? | ) #empty string on the end
     /x'); //inc octal
 
-    
-    
-    
-    
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
     $this->add_pattern('PREPROCESSOR', '/^[ \t]*\#/m');
     $this->add_pattern('IDENT', '/[a-zA-Z_]+\w*/');
+
+    $this->overrides['PREPROCESSOR'] = array($this, 'preprocessor_override');
   }
 
-  // FIXME: for some reason <...> isn't being picked up by this
-  // TEST: don't know if comments are yet.
-  // Strings work though.
+
+  function preprocessor_override() {
+    $this->skip_whitespace();
+    // TODO: I think if 0s nest
+    if($this->scan("/\#\s*if\s+0\\b.*?(?:^\s*#endif|\\z)/ms"))
+      $this->record($this->match(), 'COMMENT');
+    else {
+      // a preprocessor statement may have nested comments and strings. We
+      // go the lazy route and just zap the whole thing with a regex and let a
+      // filter figure out any nested highlighting
+      $this->scan("@ \#
+        (?: [^/\n\\\\]+
+          | /\* (?s:.*?) (?: $|\*/)    # nested ML comment
+          | //.*   # nested SL comment
+          | /
+          | \\\\(?s:.) # escape, and newline
+        )* @x");
+     $this->record($this->match(), 'PREPROCESSOR');
+    }
+  }
+
   static function preprocessor_filter_cb($matches) {
-    if (isset($matches['STR']))
+    if (isset($matches['STR']) && $matches['STR'] !== '')
       return LuminousUtils::tag_block('STRING', $matches[0]);
     else
       return LuminousUtils::tag_block('COMMENT', $matches[0]);
@@ -81,52 +97,13 @@ class LuminousCppScanner extends LuminousScanner {
   static function preprocessor_filter($token) {
     $token = LuminousUtils::escape_token($token);
     $token[1] = preg_replace_callback("@
-    (?P<STR>  \" (?: [^\\\\\n\"]+ | \\\\. )* (?: \"|$) | (?<=&lt;) .*? (?=&gt;))
+      (?P<STR>  \" (?> [^\\\\\n\"]+ | \\\\. )* (?: \"|$) | (?<=&lt;) .*? (?=&gt;))
       | // .*
-      | /\* (?s:.*?) \*/
+      | /\* (?s:.*?) (\*/ | $)
     @x",
       array('LuminousCppScanner', 'preprocessor_filter_cb'),
       $token[1]);
     return $token;
-  }
-
-
-  function main() {
-    while (!$this->eos()) {
-      $tok = null;
-      $index = $this->pos();
-      if (($rule = $this->next_match()) !== null) {
-        $tok = $rule[0];
-        if ($rule[1] > $index) {
-          $this->record(substr($this->string(), $index, $rule[1] - $index), null);
-        }
-      } else {
-        $this->record(substr($this->string(), $index), null);
-        break;
-      }
-
-      // we employ some trickery to deal with comments inside
-      // processor statements
-      // http://gcc.gnu.org/onlinedocs/gcc-2.95.3/cpp_1.html
-      if ($tok === 'PREPROCESSOR') {
-        $this->unscan();
-        $this->skip_whitespace();
-        // special case: #if 0
-        // pretty sure nulls everything inside it and doesn't nest?
-        if ($this->scan("/\#\s*if\s+0\\b.*?^\s*\#endif/ms"))
-          $tok = 'COMMENT';
-        else  {
-          // fortunately comments don't nest so we can zap this with a, errr,
-          // fairly simple regex :-\
-          // well it beats a loop and a stack anyway.
-          $m = $this->scan("@ \# (?: [^/\n\\\\]+ | /\* (?s:.*?) \*/ | //.* | / | \\\\(?s:.) )* @x");
-          assert($m !== null);
-          // we'll leave highlighting the nested tokens as a task for a filter
-        }
-      }
-      assert($this->pos() > $index);
-      $this->record($this->match(), $tok);
-    }
   }
 
 }
