@@ -73,6 +73,8 @@ class Scanner {
     if ($pos !== $this->index) {
       $pos = $this->index;
       $rest = substr($this->src, $pos);
+      // this returns false sometimes, I think when in the eos position
+      if ($rest === false) $rest = '';
     }
     return $rest;
   }
