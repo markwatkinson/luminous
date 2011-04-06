@@ -476,6 +476,8 @@ class Scanner {
    * @brief Look for the next occurrence of a set of substrings
    * 
    * Like get_next() but uses strpos instead of preg_*
+   * @return An array: 0 => index 1 => substring. If the substring is not found,
+   *    index is -1 and substring is null
    * @see get_next()
    */
   function get_next_strpos($patterns) {
@@ -483,7 +485,7 @@ class Scanner {
     $match = null;
     foreach($patterns as $p) {
       $index = strpos($this->src, $p, $this->index);
-      if ($index === false) continue;      
+      if ($index === false) continue;
       if ($next === -1 || $index < $next) {
         $next = $index;
         $match = $p;
@@ -508,15 +510,22 @@ class Scanner {
   /**
    * @brief Automation function: returns the next occurrence of any known patterns.
    * 
-   * Iterates over the predefiend patterns array (add_pattern) and consumes/logs
+   * Iterates over the predefined patterns array (add_pattern) and consumes/logs
    * the nearest match, skipping unrecognised segments of string.
-   * @return an array:
+   * @return An array:
    *    0 => pattern name  (as given to add_pattern)
    *    1 => match index (although the scan pointer will have progressed to the 
-   *            end of the match if the pattern is consumed)
-   * 
+   *            end of the match if the pattern is consumed).
+   * When no more matches are found, return value is @c NULL and nothing is
+   * logged.
+   *
+   *  
    * @param $consume_and_log If this is @c FALSE, the pattern is not consumed 
-   * or logged. 
+   * or logged.
+   *
+   * @warning this method is not the same as get_next. This does not return
+   * the match groups, instead it returns a name. The ordering of the return
+   * array is also different, but the array does in fact hold different data.
    */
   function next_match($consume_and_log=true) {
     $target = $this->index;
