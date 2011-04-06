@@ -19,7 +19,9 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
       'SSTRING' => "/[^'>]*('|$|(?=[>]))/",
       'COMMENT1' => '/.*?(?:-->|$)/s',
       'COMMENT2' => '/.*?(?:>|$)/s',
-      'CDATA' => '/.*?(?:\\]{2}>|$)/s'
+      'CDATA' => '/.*?(?:\\]{2}>|$)/s',
+      'ESC' => '/[^;]*(?:;|$)/'
+
     );
     
     $this->rule_tag_map = array(
