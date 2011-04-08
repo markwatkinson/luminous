@@ -223,3 +223,21 @@ assert($out ===array(0=> 5, 1=> ';'));
 $s->pos(6);
 $out = $s->get_next_strpos(array('1', ';'));
 assert($out === array(-1, null));
+
+
+$s->reset();
+$s->string('0123');
+$rules = array('one'=>'/1/', 'zero'=>'/0/', 'digit' => '/\d+/');
+$out = $s->get_next_named($rules);
+assert($out === array('zero', 0, array('0')));
+$s->pos_shift(1);
+
+$out = $s->get_next_named($rules);
+assert($out === array('one', 1, array('1')));
+$s->pos_shift(1);
+$out = $s->get_next_named($rules);
+assert($out === array('digit', 2, array('23')));
+
+
+
+

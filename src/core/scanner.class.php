@@ -445,6 +445,33 @@ class Scanner {
     return ($ret !== false)? $ret : -1;
   }
 
+  /**
+   * @brief Find the index of the next occurrence of a named pattern
+   * @param $patterns A map of $name=>$pattern
+   * @return An array: ($name, $index, $matches). If there is no next match,
+   * name will be null, index will be -1 and matches will be null.
+   *
+   * @note consider using this method to build a transition table
+   * 
+   */
+
+  function get_next_named($patterns) {
+    $next = -1;
+    $matches = null;
+    $name = null;
+    foreach($patterns as $name_=>$p) {
+      $m;
+      $index = $this->ss->match($p, $this->index, $m);
+      if ($index === false) continue;
+      if ($next === -1 || $index < $next) {
+        $next = $index;
+        $matches = $m;
+        assert($m !== null);
+        $name = $name_;
+      }
+    }
+    return array($name, $next, $matches);
+  }
 
   /**
    * @brief Look for the next occurrence of a set of patterns
@@ -853,6 +880,13 @@ class LuminousScanner extends Scanner {
   function state() {
     if (!isset($this->state_[0])) return null;
     return $this->state_[count($this->state_)-1];
+  }
+
+  function push($state) {
+    $this->state_[] = $state;
+  }
+  function pop($state) {
+    return array_pop($this->state_);
   }
   
   /**
