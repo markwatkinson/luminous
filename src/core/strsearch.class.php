@@ -56,8 +56,12 @@ class LuminousStringSearch
         return $r;
     }
     // cache not set, or out of date, we have to perform the match
-    if (!preg_match($search, $this->string, $matches_, PREG_OFFSET_CAPTURE, 
-      $index))  {
+    if (!($ret = preg_match($search, $this->string, $matches_, 
+      PREG_OFFSET_CAPTURE,  $index)))  {
+      if ($ret === false) {
+        throw new Exception('preg_match returned false for pattern: "' 
+          . $search . '"');
+      }
       $this->cache[$search] = false;
       return false;
     }
