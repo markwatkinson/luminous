@@ -1313,8 +1313,13 @@ class LuminousSimpleScanner extends LuminousScanner {
  *         'children' => '....')
  * children is an array. Its elements can either be tokens (of the same form as
  * just given), or simply a string.
- * TODO we need to override tagged() to convert the tree. We also need to
- * figure out how to apply filters and how to drop dummy states.
+ * TODO we need to override tagged() to convert the tree [done].
+ * We also need to figure out how to apply filters and how to drop dummy states.
+ *
+ *
+ * @note 'state_data' is a tuple of: ($name, $open_pattern, $teminate_pattern).
+ * The termination pattern may be null, in which case open_pattern is a regex
+ * which encapsulates the entire state.
  *
  * 
  */
@@ -1325,11 +1330,24 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
 
   protected $patterns = array();
 
+  /**
+   * The tokens we end up with are a tree which we build as we go along. The
+   * easiest way to build it is to keep track of the currently active node on
+   * top of a stack. When the node is completed, we pop it and insert it as
+   * a child of the element which is now at the top of the stack.
+   *
+   * At the end of the process we end up with one element in here which is
+   * the root node.
+   */
   private $token_tree_stack = array();
 
   private $setup = false;
 
 
+  /**
+   * Pushes a new token onto the stack as a child of the currently active
+   * token
+   */
   function push_child($child) {
     assert(!empty($this->token_tree_stack));
     $this->token_tree_stack[] = $child;
@@ -1346,13 +1364,11 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
 
 
   function pop_state() {
-    
     $s = array_pop($this->token_tree_stack);
     assert(!empty($this->token_tree_stack));
     $this->token_tree_stack[count($this->token_tree_stack)-1]['children'][] = $s;
     echo "popping {$s['token_name']}\n";
     $this->pop();
-//     $this->push_child($s);
   }
 
   function add_transition($from, $to) {
@@ -1434,7 +1450,12 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
 
   function record($str) {
     echo 'recording: ' . $str . "\n";
-    $this->token_tree_stack[count($this->token_tree_stack)-1]['children'][] = $str;
+    
+    $c = & $this->token_tree_stack[count($this->token_tree_stack)-1]['children'];
+    if (!empty($c) && is_string($c[count($c)-1]))
+      $c[count($c)-1] .= $str;
+    else 
+      $c[] = $str;
   }
 
   function record_range($from, $to) {
@@ -1488,8 +1509,23 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
     return $this->token_tree_stack[0];
   }
 
+  /**
+   * Recursive function to collapse the token tree into XML
+   * @internal
+   */
+  private function collapse_token_tree($node) {
+    $out = '';
+    foreach($node['children'] as $c) {
+      if (is_string($c)) $out .= $c;
+      else $out .= $this->collapse_token_tree($c);
+    }
+    // TODO apply filters here.
+    return LuminousUtils::tag_block($node['token_name'], $out);
+  }
+
   function tagged() {
-    
+    $stream = $this->collapse_token_tree($this->token_tree_stack[0]);
+    return $stream;
   }
 }
 

@@ -19,7 +19,16 @@ class tester extends LuminousStatefulScanner {
 }
 
 $t = new tester();
-$s = '1{[2}](3)(...';
+$s = 'outside
+[square]
+(round)
+{curly}
+
+[sq(round)are]
+[sq [u] [a] [r[e]] ]
+out
+';
 $t->string($s);
 $out = $t->main();
 print_r($out);
+echo $t->tagged();
