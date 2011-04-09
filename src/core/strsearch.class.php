@@ -45,13 +45,13 @@ class LuminousStringSearch
     $r = false; // return value
     
     if (isset($this->cache[$search])) {
-      $a = $this->cache[$search]; 
+      $a = $this->cache[$search];
       if ($a === false) return false; // no more results
-      
+
       $r = $a[0];
       $matches = $a[1];
       assert($matches !== null);
-      
+
       if ($r >= $index) // cache is good!
         return $r;
     }

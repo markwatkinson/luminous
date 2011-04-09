@@ -885,7 +885,7 @@ class LuminousScanner extends Scanner {
   function push($state) {
     $this->state_[] = $state;
   }
-  function pop($state) {
+  function pop() {
     return array_pop($this->state_);
   }
   
@@ -1244,8 +1244,10 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
     }
     else return false;
   }
-  
 }
+
+
+
 
 
 /**
@@ -1262,23 +1264,19 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
 class LuminousSimpleScanner extends LuminousScanner {
 
   /**
-   * @brief Overrides array.  
-   * 
+   * @brief Overrides array.
+   *
    * A map of TOKEN_NAME => callback.
-   * 
+   *
    * The callbacks are fired by main() when the TOKEN_NAME rule matches.
-   * The callback receives the match_groups array, but the scanner is 
-   * unscan()ed before the callback is fired, so that the pos() is directly 
-   * in front of the match. The callback is responsible for consuming the 
+   * The callback receives the match_groups array, but the scanner is
+   * unscan()ed before the callback is fired, so that the pos() is directly
+   * in front of the match. The callback is responsible for consuming the
    * token appropriately.
    */
   protected $overrides = array();
-  
-  /**
-   * A generic main() method which scans over the string using next_match and 
-   * fires override handlers when appropriate.
-   * @internal
-   */
+
+
   function main() {
     while (!$this->eos()) {
       $index = $this->pos();
@@ -1302,6 +1300,196 @@ class LuminousSimpleScanner extends LuminousScanner {
         break;
       }
     }
+  }
+}
+
+
+/**
+ * Experimental and incomplete right now.
+ *
+ *
+ * main() generates a token tree, which looks like this:
+ *      array ( 'token_name' => ... ,
+ *         'children' => '....')
+ * children is an array. Its elements can either be tokens (of the same form as
+ * just given), or simply a string.
+ * TODO we need to override tagged() to convert the tree. We also need to
+ * figure out how to apply filters and how to drop dummy states.
+ *
+ * 
+ */
+class LuminousStatefulScanner extends LuminousSimpleScanner {
+
+  protected $transitions = array();
+  protected $legal_transitions = array();
+
+  protected $patterns = array();
+
+  private $token_tree_stack = array();
+
+  private $setup = false;
+
+
+  function push_child($child) {
+    assert(!empty($this->token_tree_stack));
+    $this->token_tree_stack[] = $child;
+  }
+
+  function push_state($state_data) {
+    echo "pushing $state_data[0]\n";
+    $token_node = array('token_name' => $state_data[0], 'children'=>array());
+    $this->push_child($token_node);
+    $tok = array($state_data, $token_node);
+    $this->push($tok);
+  }
+
+
+
+  function pop_state() {
+    
+    $s = array_pop($this->token_tree_stack);
+    assert(!empty($this->token_tree_stack));
+    $this->token_tree_stack[count($this->token_tree_stack)-1]['children'][] = $s;
+    echo "popping {$s['token_name']}\n";
+    $this->pop();
+//     $this->push_child($s);
+  }
+
+  function add_transition($from, $to) {
+    if (!isset($this->transitions[$from])) $this->transitions[$from] = array();
+    $this->transitions[$from][] = $this->patterns[$to];
+  }
+
+  function state_name() {
+    $state_data = $this->state();
+    if ($state_data === null) return 'initial';
+    $state_name = $state_data[0][0];
+    return $state_name;
+  }
+
+  function add_pattern($name, $pattern, $end=null, $consume=true) {
+    $this->patterns[] = array($name, $pattern, $end, $consume);
+  }
+
+  function load_transitions() {
+    if (isset($this->transitions[$this->state_name()]))
+      $this->legal_transitions = $this->transitions[$this->state_name()];
+    else $this->legal_transitions = array();
+  }
+
+  /**
+   * @returns Data in the same format as get_next: a tuple of (next, matches).
+   * If no match is found, next is -1 and matches is null
+   */
+  function next_end_data() {
+    $state_data = $this->state();
+    if ($state_data === null) {
+      echo 'in root';
+      return array(-1, null); // init/root state
+    }
+    $term_pattern = $state_data[0][2];
+    echo 'looking for ' . $term_pattern . "\n";
+    echo $this->rest();
+    assert($term_pattern !== null);
+    $data = $this->get_next(array($term_pattern));
+    print_r($data);
+    return $data;
+  }
+
+  /**
+   * @returns A tuple of (pattern_data, next, matches).
+   * If no match is found, next is -1 and pattern_data and matches is null
+   */
+  function next_start_data() {
+    $patterns = array();
+    $states = array();
+    foreach($this->legal_transitions as $t) {
+      foreach($this->patterns as $p) {
+        if ($p[0] === $t) {
+          $patterns[] = $p[1];
+          $states[] = $p;
+        }
+      }
+    }
+    $next = $this->get_next_named($patterns);
+    if ($next[1] !== -1) {
+      $next[0] = $states[$next[0]];
+    }
+    return $next;
+  }
+
+  /**
+   * @brief Sets up the FSM
+   */
+  protected function setup() {
+    if ($this->setup) return;
+    $this->setup = true;
+    if (!isset($this->transitions['initial'])) {
+      $initial = array();
+      foreach($this->patterns as $p) $initial[] = $p[0];
+      $this->transitions['initial'] = $initial;
+    }
+    $this->token_tree_stack[] = array('token_name' => 'initial', 'children'=>array());
+  }
+
+  function record($str) {
+    echo 'recording: ' . $str . "\n";
+    $this->token_tree_stack[count($this->token_tree_stack)-1]['children'][] = $str;
+  }
+
+  function record_range($from, $to) {
+    if ($to > $from) 
+      $this->record(substr($this->string(), $from, $to-$from));
+  }  
+
+
+
+  function main() {
+    $this->setup();
+    while (!$this->eos()) {
+      $p = $this->pos();
+
+      $this->load_transitions();
+      list($next_pattern_data,
+           $next_pattern_index,
+           $next_pattern_matches) = $this->next_start_data();
+      list($end_index, $end_matches) = $this->next_end_data();
+
+
+      if( ($next_pattern_index <= $end_index || $end_index === -1) && $next_pattern_index !== -1) {
+        $this->record_range($this->pos(), $next_pattern_index);
+        $new_pos = $next_pattern_index + strlen($next_pattern_matches[0]);
+        $this->pos($new_pos);
+        if ($next_pattern_data[2] === null) {
+          $this->record($next_pattern_matches[0]);
+        } else {
+          // pattern is not complete, push the state and carry on
+          $this->push_state($next_pattern_data);
+          $this->record($next_pattern_matches[0]);
+        }
+      } elseif($end_index !== -1) {
+        // we're at the end of a state, record what's left and pop it
+        $to = $end_index + strlen($end_matches[0]);
+        $this->record_range($this->pos(), $to);
+        $this->pos($to);
+        $this->pop_state();
+      }
+      else {
+        // no more matches
+        $this->record($this->rest());
+        while(count($this->token_tree_stack) > 1)
+          $this->pop_state();
+        $this->terminate();
+        break;
+      }
+      assert($this->pos() > $p);
+    }
+    assert(count($this->token_tree_stack) === 1);
+    return $this->token_tree_stack[0];
+  }
+
+  function tagged() {
+    
   }
 }
 
