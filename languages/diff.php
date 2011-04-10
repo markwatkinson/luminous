@@ -143,7 +143,11 @@ class LuminousDiffScanner extends LuminousScanner {
         assert(count($exp) === count($prefixes));
         foreach($exp as $i=>$v) {
           $t = $types[$i];
-          $text = $prefixes[$i] . $v;
+          // if the sub-scanner escaped the line, we also need to escape the 
+          // prefix for consistency
+          $prefix = $prefixes[$i];
+          if ($escaped) $prefix = LuminousUtils::escape_string($prefix);
+          $text = $prefix . $v;
           $this->record(
             $text,
             $t, 
