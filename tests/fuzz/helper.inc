@@ -1,5 +1,8 @@
 <?php
 require_once(dirname(__FILE__) . '/../../luminous.php');
+require_once(dirname(__FILE__) . '/../extern/php-diff/lib/Diff.php');
+require_once(dirname(__FILE__) . '/../extern/php-diff/lib/Diff/Renderer/Text/Unified.php');
+
 
 set_time_limit(60*15);
 register_shutdown_function('timeout');
@@ -20,7 +23,11 @@ End
 EOF;
   exit(1);
 }
-  
+
+function diff($a, $b) {
+  $d = new Diff(explode("\n", $a), explode("\n", $b));
+  return $d->Render(new Diff_Renderer_Text_Unified());
+}
 
 /// Generates a totally random source
 function random_source($size=102400) {
@@ -77,14 +84,18 @@ function error($language, $exception, $input, $output) {
   echo 'Fuzz failed for language: ' . $language . "\n";
   if ($exception) echo 'Exception thrown: ' . $exception . "\n";
   else if (strlen($input) !== strlen($output)) {
-    echo sprintf("diff strlen: scanner has %s data\n",
-      ($input > $output)? 'lost' : 'gained');
+    $diff = strlen($input) - strlen($output);
+    echo sprintf("diff strlen: scanner has %s %d bytes of data\n",
+      ($diff > 0)? 'lost' : 'gained', abs($diff));
   }
-  echo 'Data dump follows' . "\n";
-  echo "IN : $input\n";
-  if (!$exception) echo "OUT: $output\n";
-  echo "\n\n";
-  echo 'End fuzz dump' . "\n";
+  echo 'Data dump follows, delimited by three brackets' . "\n";
+  echo "IN : ((($input)))\n";
+  if (!$exception) {
+    echo "OUT: ((($output)))\n";
+    echo "\nDiff:\n";
+    echo diff($input, $output);
+  }
+  echo "\nEnd fuzz dump\n";
   exit(1);
 }
 
