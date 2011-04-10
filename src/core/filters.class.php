@@ -200,17 +200,17 @@ class LuminousFilters {
     $str = &$token[1];
     $flags = array();
     if ($delimited) {
-      $str = preg_replace('/^[^[:alnum:]]/', '<DELIMITER>$0</DELIMITER>', $str);
-      
+      $str = preg_replace('/^[^[:alnum:]<>\s]/', '<DELIMITER>$0</DELIMITER>', $str);      
       if (preg_match("/[[:alpha:]]+$/", $str, $matches)){
         $m = $matches[0];
         $flags = str_split($m);
-        $str = preg_replace("/([^[:alnum:]\s])([[:alpha:]]+)$/",
+        $str = preg_replace("/((?<!\A)[^[:alnum:]\s<>])([[:alpha:]]+)$/",
           "<DELIMITER>$1</DELIMITER><KEYWORD>$2</KEYWORD>", $str);
       } else 
-        $str = preg_replace('/[^[:alnum:]]$/', '<DELIMITER>$0</DELIMITER>', $str);
+        $str = preg_replace('/[^[:alnum:]<>]$/', '<DELIMITER>$0</DELIMITER>', $str);
 
     }
+    
     $str = preg_replace("/((?<!\\\)[\*\+\.|])|((?<![\(\\\])\?)/",
                           "<REGEX_OPERATOR>$0</REGEX_OPERATOR>", $str);  
     $str = preg_replace("/(?<=\()\?(?:(?:[a-zA-Z:!|=])|(?:(?:&lt;)[=!]))/", 
@@ -231,7 +231,7 @@ class LuminousFilters {
     // extended regex: # signifies a comment
     if (in_array('x', $flags))
       $str = preg_replace('/(?<!\\\)#.*$/m', '<COMMENT>$0</COMMENT>',
-        $str); 
+        $str);
     return $token;
   }
 
