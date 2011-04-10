@@ -117,7 +117,7 @@ class _Luminous {
     $this->scanners->AddScanner(array('m', 'matlab'),
       'LuminousMATLABScanner', 'MATLAB', "$language_dir/matlab.php");
 
-    $this->scanners->AddScanner(array('perl', 'pl'),
+    $this->scanners->AddScanner(array('perl', 'pl', 'pm'),
       'LuminousPerlScanner', 'Perl', "$language_dir/perl.php");
 
     $this->scanners->AddScanner(array('rails','rhtml', 'ror'),

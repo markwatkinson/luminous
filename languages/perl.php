@@ -34,25 +34,44 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
 
     $stack = 1; // we're already inside the string
     $start = $this->pos();
-    while(1) {
+    $close_delimiter_match = null;
+    while($stack) {
       $next = $this->get_next($patterns);
       if ($next[0] === -1) {
-        $this->record(substr($this->string(), $start), $type);
         $this->terminate();
+        $finish = $this->pos();
         break;
       }
-      elseif($balanced && $next[1][2] === $delimiter) $stack++;
-      elseif($next[1][2] === $close)  $stack--; 
+      elseif($balanced && $next[1][2] === $delimiter) {
+        $stack++;
+        $finish = $next[0] + strlen($next[1][0]);
+      }
+      elseif($next[1][2] === $close)  {
+        $close_delimiter_match = $next[1][2];
+        $stack--; 
+        $finish = $next[0];
+      }
       else assert(0);
       $this->pos($next[0] + strlen($next[1][0]));
-      
-      if ($stack <= 0) {
-        $this->record(substr($this->string(),
-          $start, $next[0] + strlen($next[1][1]) - $start),
-          $type);
-        $this->record($next[1][2], 'DELIMITER');
-        break;
+    }
+    $substr = substr($this->string(), $start, $finish-$start);
+    // special case for qw, the string is not a 'STRING', it is actually
+    // a whitespace separated list of strings. So we need to split it and
+    // record them separately
+    if ($type === 'SPLIT_STRING') {
+      foreach(preg_split('/(\s+)/', 
+        $substr, -1, PREG_SPLIT_DELIM_CAPTURE) as $token) {
+        if (preg_match('/^\s/', $token)) {
+          $this->record($token, null);
+        } else {
+          $this->record($token, 'STRING');
+        }
       }
+    } else {
+      $this->record($substr, $type);
+    }
+    if ($close_delimiter_match !== null) {
+      $this->record($close_delimiter_match, 'DELIMITER');
     }
   }
 
@@ -121,8 +140,10 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
     
     $f = $matches[1];
     
-    $type = ($f === 'm' || $f === 'qr' || $f === 's' || $f === 'tr'
-      || $f === 'y')? 'REGEX' : 'STRING';
+    $type = 'STRING';
+    if ($f === 'm' || $f === 'qr' || $f === 's' || $f === 'tr'
+      || $f === 'y') $type = 'REGEX';
+    elseif($f === 'qw') $type = 'SPLIT_STRING';
 
     $this->consume_string($matches[3], $type);
     if ($f === 's' || $f === 'tr' || $f === 'y') {
@@ -138,16 +159,16 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
         $delim2 = $this->scan('/[^a-zA-Z0-9]/');
         if ($delim2 !== null) {
           $this->record($delim2, 'DELIMITER');
-          $this->consume_string($delim2, $type);
+          $this->consume_string($delim2, 'STRING');
         }
       }
       // if they weren't balanced then the delimiter is the same, and has
       // already been consumed as the end-delim to the first pattern
       else {
-        $this->consume_string($matches[3], $type);
+        $this->consume_string($matches[3], 'STRING');
       }
     }
-    if ($type === 'REGEX' && $this->scan('/[cgimosx]+/')) {
+    if ($type === 'REGEX' && $this->scan('/[cgimosxpe]+/')) {
       $this->record($this->match(), 'KEYWORD');
     }
   }
