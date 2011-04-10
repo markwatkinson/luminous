@@ -61,7 +61,12 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
       'COMMENT_SL' => '/.*/',
       'COMMENT' => '%.*?(\*/|$)%s',
       'SSTRING' => "/(?:[^\\\\']+|\\\\.)*('|$)/",
-      'DSTRING' => '/(?:[^\\\\"]+|\\\\.)*("|$)/'
+      'DSTRING' => '/(?:[^\\\\"]+|\\\\.)*("|$)/',
+      // FIXME: Anyone using a server-side interruption to build a regex is
+      // frankly insane, but we are wrong in the case that they were in a
+      // character class when the server language interrupted, and we may
+      // exit the regex prematurely with this
+      'REGEX' => '% (?:[^\\\\/]+|\\\\.)*(?:/[iogmx]*|$)%',
     );
     
     parent::__construct($src);
