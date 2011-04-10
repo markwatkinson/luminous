@@ -66,7 +66,7 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
       // frankly insane, but we are wrong in the case that they were in a
       // character class when the server language interrupted, and we may
       // exit the regex prematurely with this
-      'REGEX' => '% (?:[^\\\\/]+|\\\\.)*(?:/[iogmx]*|$)%',
+      'REGEX' => '%(?:[^\\\\/]+|\\\\.)*(?:/[iogmx]*|$)%',
     );
     
     parent::__construct($src);
