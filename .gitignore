@@ -2,3 +2,4 @@
 *.swp
 cache/
 tests/formatters/filedump/
+.directory
