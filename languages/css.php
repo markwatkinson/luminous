@@ -18,10 +18,10 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
     );
     
     $this->dirty_exit_recovery = array(
-      'COMMENT' => '%.*?\*/%s',
-      'SSTRING' => "/(?:[^\\\\']+|\\\\.)*'/",
-      'DSTRING' => '/(?:[^\\\\"]+|\\\\.)*"/',
-      'ATTR_SELECTOR' => '/(?: [^\\]\\\\]+ | \\\\.)* \]/xs'
+      'COMMENT' => '%.*?(?:\*/|$)%s',
+      'SSTRING' => "/(?:[^\\\\']+|\\\\.)*(?:'|$)/",
+      'DSTRING' => '/(?:[^\\\\"]+|\\\\.)*(?:"|$)/',
+      'ATTR_SELECTOR' => '/(?: [^\\]\\\\]+ | \\\\.)* (?:\]|$)/xs'
     );
     $this->state_ [] = 'global';
   }
