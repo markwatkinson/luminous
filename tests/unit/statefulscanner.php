@@ -6,6 +6,7 @@ include 'helper.inc';
 class tester extends LuminousStatefulScanner {
 
   public function __construct() {
+    parent::__construct();
     $this->add_pattern('SQUARE', '/\\[/', '/\\]/');
     $this->add_pattern('ROUND', '/\\(/', '/\\)/');
     $this->add_pattern('CURLY', '/\\{/', '/\\}/');

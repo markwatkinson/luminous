@@ -459,8 +459,8 @@ class Scanner {
     $next = -1;
     $matches = null;
     $name = null;
+    $m;
     foreach($patterns as $name_=>$p) {
-      $m;
       $index = $this->ss->match($p, $this->index, $m);
       if ($index === false) continue;
       if ($next === -1 || $index < $next) {
@@ -1305,32 +1305,59 @@ class LuminousSimpleScanner extends LuminousScanner {
 
 
 /**
- * Experimental and incomplete right now.
+ *
+ * @brief Experimental transition table driven scanner
+ *
+ * The stateful scanner follows a transition table and generates a hierarchical
+ * token tree. As such, the states follow a hierarchical parent->child
+ * relationship rather than a strict from->to
+ * 
+ * A node in the token tree looks like this:
+ *
+ * @code array('token_name' => 'name','children' => array(...)) @endcode
+ *
+ * Children is an ordered list and its elements may be either other token
+ * nodes or just strings. We override tagged to try to collapse this into XML
+ * while still applying filters.
  *
  *
- * main() generates a token tree, which looks like this:
- *      array ( 'token_name' => ... ,
- *         'children' => '....')
- * children is an array. Its elements can either be tokens (of the same form as
- * just given), or simply a string.
- * TODO we need to override tagged() to convert the tree [done].
- * We also need to figure out how to apply filters and how to drop dummy states.
+ * We now store patterns as the following tuple:
+ * @code ($name, $open_pattern, $teminate_pattern). @endcode
+ * The termination pattern may be null, in which case the $open_pattern
+ * is complete. No transitions can occur within a complete state because
+ * the patterns' match is fixed.
  *
- *
- * @note 'state_data' is a tuple of: ($name, $open_pattern, $teminate_pattern).
- * The termination pattern may be null, in which case open_pattern is a regex
- * which encapsulates the entire state.
+ * We have two stacks. One is LuminousStatefulScanner::$token_tree_stack,
+ * which stores the token tree, and the other is a standard state stack which
+ * stores the current state data. State data is currently a pattern, as the
+ * above tuple.
  *
  * 
  */
 class LuminousStatefulScanner extends LuminousSimpleScanner {
 
+
+  /// @brief Transition table
   protected $transitions = array();
+  
+  /**
+   * @brief Legal transitions for the current state
+   * 
+   * @see LuminousStatefulScanner::load_transitions()
+   */
   protected $legal_transitions = array();
 
+  /**
+   * @brief Pattern list
+   * 
+   * Pattern array. Each pattern is a tuple of
+   * @code ($name, $open_pattern, $teminate_pattern) @endcode
+   */
   protected $patterns = array();
 
   /**
+   * @brief The token tree
+   * 
    * The tokens we end up with are a tree which we build as we go along. The
    * easiest way to build it is to keep track of the currently active node on
    * top of a stack. When the node is completed, we pop it and insert it as
@@ -1342,92 +1369,160 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
   private $token_tree_stack = array();
 
   private $setup = false;
+  /// remembers the state on the last iteration so we know whether or not
+  /// to load in a new transition-set
+  private $last_state = null;
+
+  private $transition_rule_cache = array();
 
 
   /**
    * Pushes a new token onto the stack as a child of the currently active
    * token
+   *
+   * @see push_state
+   * @internal
    */
   function push_child($child) {
     assert(!empty($this->token_tree_stack));
     $this->token_tree_stack[] = $child;
   }
 
+  /**
+   * @brief Pushes a state
+   * 
+   * @param $state_data A tuple of ($name, $open_pattern, $teminate_pattern).
+   * This should be as it is stored in LuminousStatefulScanner::patterns
+   *
+   * This actually causes two push operations. One is onto the token_tree_stack,
+   * and the other is onto the actual stack. The former creates a new token,
+   * the latter is used for state information
+   */
   function push_state($state_data) {
-    echo "pushing $state_data[0]\n";
     $token_node = array('token_name' => $state_data[0], 'children'=>array());
     $this->push_child($token_node);
-    $tok = array($state_data, $token_node);
-    $this->push($tok);
+    $this->push($state_data);
   }
 
 
-
+  /**
+   * @brief Pops a state from the stack.
+   *
+   * The top token on the token_tree_stack is popped and appended as a child to
+   * the new top token.
+   *
+   * The top state on the state stack is popped and discarded.
+   */
   function pop_state() {
     $s = array_pop($this->token_tree_stack);
     assert(!empty($this->token_tree_stack));
     $this->token_tree_stack[count($this->token_tree_stack)-1]['children'][] = $s;
-    echo "popping {$s['token_name']}\n";
     $this->pop();
   }
 
+  /**
+   * @brief Adds a state transition
+   * 
+   * This is a helper function for LuminousStatefulScanner::transitions, you
+   * can specify it directly instead
+   * @param $from The parent state
+   * @param $to The child state
+   */
   function add_transition($from, $to) {
     if (!isset($this->transitions[$from])) $this->transitions[$from] = array();
-    $this->transitions[$from][] = $this->patterns[$to];
+    $this->transitions[$from][] = $to;
   }
 
+  /**
+   * @brief Gets the name of the current state
+   * 
+   * @returns The name of the current state
+   */
   function state_name() {
     $state_data = $this->state();
     if ($state_data === null) return 'initial';
-    $state_name = $state_data[0][0];
+    $state_name = $state_data[0];
     return $state_name;
   }
 
+  /**
+   * @brief Adds a pattern
+   * 
+   * @param $name the name of the pattern/state
+   * @param $pattern Either the entire pattern, or just its opening delimiter
+   * @param $end If $pattern was just the opening delimiter, $end is the closing
+   * delimiter. Separating the two delimiters like this makes the state flexible
+   * length, as state transitions can occur inside it.
+   * @param $consume Not currently observed. Might never be. Don't specify this yet.
+   */
   function add_pattern($name, $pattern, $end=null, $consume=true) {
     $this->patterns[] = array($name, $pattern, $end, $consume);
   }
 
+  
+  /**
+   * @brief Loads legal state transitions for the current state
+   * 
+   * Loads in legal state transitions into the legal_transitions array
+   * according to the current state
+   */
   function load_transitions() {
-    if (isset($this->transitions[$this->state_name()]))
+    $state_name = $this->state_name();
+    if ($this->last_state === $state_name) return;
+    $this->last_state = $state_name;
+    if (isset($this->transitions[$state_name]))
       $this->legal_transitions = $this->transitions[$this->state_name()];
     else $this->legal_transitions = array();
   }
 
   /**
+   * @brief Looks for the next state-pop sequence (close/end) for the current state
+   * 
    * @returns Data in the same format as get_next: a tuple of (next, matches).
    * If no match is found, next is -1 and matches is null
    */
   function next_end_data() {
     $state_data = $this->state();
     if ($state_data === null) {
-      echo 'in root';
       return array(-1, null); // init/root state
     }
-    $term_pattern = $state_data[0][2];
-    echo 'looking for ' . $term_pattern . "\n";
-    echo $this->rest();
+    $term_pattern = $state_data[2];
     assert($term_pattern !== null);
     $data = $this->get_next(array($term_pattern));
-    print_r($data);
     return $data;
   }
 
   /**
+   * @brief Looks for the next legal state transition
+   * 
    * @returns A tuple of (pattern_data, next, matches).
    * If no match is found, next is -1 and pattern_data and matches is null
    */
   function next_start_data() {
     $patterns = array();
     $states = array();
-    foreach($this->legal_transitions as $t) {
-      foreach($this->patterns as $p) {
-        if ($p[0] === $t) {
-          $patterns[] = $p[1];
-          $states[] = $p;
+    $sn = $this->state_name();
+    // at the moment we are using get_next_named, so we have to convert
+    // our patterns into key=>pattern so it can return to us a key. We use
+    // numerical indices which also correspond with 'states' for full pattern
+    // data. We are caching this.
+    // TODO turns out get_next_named is pretty slow and we'd be better off
+    // caching some results inside the pattern data
+    if (isset($this->transition_rule_cache[$sn]))
+      list($patterns,$states) = $this->transition_rule_cache[$sn];
+    else {
+      foreach($this->legal_transitions as $t) {
+        foreach($this->patterns as $p) {
+          if ($p[0] === $t) {
+            $patterns[] = $p[1];
+            $states[] = $p;
+          }
         }
       }
+      $this->transition_rule_cache[$sn] = array($patterns, $states);
     }
     $next = $this->get_next_named($patterns);
+    // map to real state data
     if ($next[1] !== -1) {
       $next[0] = $states[$next[0]];
     }
@@ -1436,6 +1531,11 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
 
   /**
    * @brief Sets up the FSM
+   *
+   * If the caller has omitted to specify an initial state then one is created,
+   * with valid transitions to all other known states. We also push the
+   * initial state onto the tree stack, and add a type mapping from the initial
+   * type to @c NULL.
    */
   protected function setup() {
     if ($this->setup) return;
@@ -1446,10 +1546,13 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
       $this->transitions['initial'] = $initial;
     }
     $this->token_tree_stack[] = array('token_name' => 'initial', 'children'=>array());
+    $this->rule_tag_map['initial'] = null;
   }
 
-  function record($str) {
-    echo 'recording: ' . $str . "\n";
+  /**
+   * Records a string as a child of the currently active token
+   */
+  function record($str, $dummy1=null, $dummy2=null) {
     
     $c = & $this->token_tree_stack[count($this->token_tree_stack)-1]['children'];
     if (!empty($c) && is_string($c[count($c)-1]))
@@ -1458,13 +1561,16 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
       $c[] = $str;
   }
 
+  
   function record_range($from, $to) {
     if ($to > $from) 
       $this->record(substr($this->string(), $from, $to-$from));
-  }  
+  }
 
 
-
+  /**
+   * Generic main function which observes the transition table
+   */
   function main() {
     $this->setup();
     while (!$this->eos()) {
@@ -1478,15 +1584,15 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
 
 
       if( ($next_pattern_index <= $end_index || $end_index === -1) && $next_pattern_index !== -1) {
+        // we're pushing a new state
         $this->record_range($this->pos(), $next_pattern_index);
         $new_pos = $next_pattern_index + strlen($next_pattern_matches[0]);
         $this->pos($new_pos);
+        $this->push_state($next_pattern_data);
+        $this->record($next_pattern_matches[0]);
         if ($next_pattern_data[2] === null) {
-          $this->record($next_pattern_matches[0]);
-        } else {
-          // pattern is not complete, push the state and carry on
-          $this->push_state($next_pattern_data);
-          $this->record($next_pattern_matches[0]);
+          // state was a full pattern, so pop now
+          $this->pop_state();
         }
       } elseif($end_index !== -1) {
         // we're at the end of a state, record what's left and pop it
@@ -1496,13 +1602,16 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
         $this->pop_state();
       }
       else {
-        // no more matches
+        // no more matches, if we have any unterminated states then
+        // pop them and then break
         $this->record($this->rest());
         while(count($this->token_tree_stack) > 1)
           $this->pop_state();
         $this->terminate();
         break;
       }
+      // this assertion needs to be removed in future, or at least changed...
+      // if the state changes then pos may equal p
       assert($this->pos() > $p);
     }
     assert(count($this->token_tree_stack) === 1);
@@ -1513,14 +1622,25 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
    * Recursive function to collapse the token tree into XML
    * @internal
    */
-  private function collapse_token_tree($node) {
-    $out = '';
+  protected function collapse_token_tree($node) {
+    $text = '';
     foreach($node['children'] as $c) {
-      if (is_string($c)) $out .= $c;
-      else $out .= $this->collapse_token_tree($c);
+      if (is_string($c)) $text .= LuminousUtils::escape_string($c);
+      else $text .= $this->collapse_token_tree($c);
     }
-    // TODO apply filters here.
-    return LuminousUtils::tag_block($node['token_name'], $out);
+    $token_name = $node['token_name'];
+    $token = array($node['token_name'], $text, true);
+
+    $token_ = $this->rule_mapper_filter(array($token));
+    $token = $token_[0];
+
+    if (isset($this->filters[$token_name])) {
+      foreach($this->filters[$token_name] as $filter) {
+        $token = call_user_func($filter[1], $token);
+      }
+    }
+    list($token_name, $text,) = $token;
+    return LuminousUtils::tag_block($token_name, $text);
   }
 
   function tagged() {
