@@ -1167,7 +1167,9 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
       return null;
     }
     $pattern = $this->dirty_exit_recovery[$this->exit_state];
-    assert($this->scan($pattern) !== null);
+    $m = $this->scan($pattern);
+    if ($m === null) throw new Exception('Recovery pattern for '
+      . $this->exit_state . ' failed to match');
     return $this->exit_state;
   }
   
