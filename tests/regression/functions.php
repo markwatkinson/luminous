@@ -111,7 +111,7 @@ function recurse($path, $action)
   
   foreach($files as $f)
   {
-    if (empty($f) || $f[0] == '.')
+    if (empty($f) || $f[0] == '.' || preg_match('/~$/', $f))
       continue;
     
     $f = preg_replace('%//+%', '/', $path . '/' . $f);

@@ -1,0 +1,411 @@
+<COMMENT>{-# OPTIONS_GHC -XDeriveDataTypeable #-}</COMMENT>
+<KEYWORD>module</KEYWORD> <TYPE>ChangeListService</TYPE> <KEYWORD>where</KEYWORD>
+<KEYWORD>import</KEYWORD> <TYPE>Data</TYPE><FUNCTION>.</FUNCTION><TYPE>List</TYPE>
+<KEYWORD>import</KEYWORD> <TYPE>Data</TYPE><FUNCTION>.</FUNCTION><TYPE>Maybe</TYPE>
+<KEYWORD>import</KEYWORD> <TYPE>Data</TYPE><FUNCTION>.</FUNCTION><TYPE>Typeable</TYPE>
+<KEYWORD>import</KEYWORD> <TYPE>Data</TYPE><FUNCTION>.</FUNCTION><TYPE>Time</TYPE><FUNCTION>.</FUNCTION><TYPE>LocalTime</TYPE>
+<KEYWORD>import</KEYWORD> <TYPE>XI</TYPE><FUNCTION>.</FUNCTION><TYPE>Directory</TYPE><FUNCTION>.</FUNCTION><TYPE>WS</TYPE><FUNCTION>.</FUNCTION><TYPE>Xmlable</TYPE>
+<KEYWORD>import</KEYWORD> <TYPE>XI</TYPE><FUNCTION>.</FUNCTION><TYPE>Directory</TYPE><FUNCTION>.</FUNCTION><TYPE>WS</TYPE><FUNCTION>.</FUNCTION><TYPE>Main</TYPE>
+
+ws <OPERATOR>=</OPERATOR> <STRING>"ChangeListService"</STRING>
+nss <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>(<STRING>"urn0"</STRING>,<STRING>"urn:com.sap.aii.ibdir.server.api.types"</STRING>),(<STRING>"urn1"</STRING>,<STRING>"urn:com.sap.aii.ib.server.api.types"</STRING>),(<STRING>"urn2"</STRING>,<STRING>"urn:ChangeListServiceVi"</STRING>)<OPERATOR>]</OPERATOR>
+
+<COMMENT>-- operations</COMMENT>
+
+activate <OPERATOR>::</OPERATOR> <TYPE>WsParams</TYPE> <FUNCTION>-</FUNCTION><FUNCTION>&gt;</FUNCTION> <TYPE>ActivateInput</TYPE> <FUNCTION>-</FUNCTION><FUNCTION>&gt;</FUNCTION> <TYPE>IO</TYPE> <TYPE>ActivateOutput</TYPE>
+activate <OPERATOR>=</OPERATOR> runService ws nss <STRING>"urn2:activate"</STRING>
+checkContent <OPERATOR>::</OPERATOR> <TYPE>WsParams</TYPE> <FUNCTION>-</FUNCTION><FUNCTION>&gt;</FUNCTION> <TYPE>CheckContentInput</TYPE> <FUNCTION>-</FUNCTION><FUNCTION>&gt;</FUNCTION> <TYPE>IO</TYPE> <TYPE>CheckContentOutput</TYPE>
+checkContent <OPERATOR>=</OPERATOR> runService ws nss <STRING>"urn2:checkContent"</STRING>
+create <OPERATOR>::</OPERATOR> <TYPE>WsParams</TYPE> <FUNCTION>-</FUNCTION><FUNCTION>&gt;</FUNCTION> <TYPE>CreateInput</TYPE> <FUNCTION>-</FUNCTION><FUNCTION>&gt;</FUNCTION> <TYPE>IO</TYPE> <TYPE>CreateOutput</TYPE>
+create <OPERATOR>=</OPERATOR> runService ws nss <STRING>"urn2:create"</STRING>
+getCacheState <OPERATOR>::</OPERATOR> <TYPE>WsParams</TYPE> <FUNCTION>-</FUNCTION><FUNCTION>&gt;</FUNCTION> <TYPE>GetCacheStateInput</TYPE> <FUNCTION>-</FUNCTION><FUNCTION>&gt;</FUNCTION> <TYPE>IO</TYPE> <TYPE>GetCacheStateOutput</TYPE>
+getCacheState <OPERATOR>=</OPERATOR> runService ws nss <STRING>"urn2:getCacheState"</STRING>
+getObjectIdentifiers <OPERATOR>::</OPERATOR> <TYPE>WsParams</TYPE> <FUNCTION>-</FUNCTION><FUNCTION>&gt;</FUNCTION> <TYPE>GetObjectIdentifiersInput</TYPE> <FUNCTION>-</FUNCTION><FUNCTION>&gt;</FUNCTION> <TYPE>IO</TYPE> <TYPE>GetObjectIdentifiersOutput</TYPE>
+getObjectIdentifiers <OPERATOR>=</OPERATOR> runService ws nss <STRING>"urn2:getObjectIdentifiers"</STRING>
+getState <OPERATOR>::</OPERATOR> <TYPE>WsParams</TYPE> <FUNCTION>-</FUNCTION><FUNCTION>&gt;</FUNCTION> <TYPE>GetStateInput</TYPE> <FUNCTION>-</FUNCTION><FUNCTION>&gt;</FUNCTION> <TYPE>IO</TYPE> <TYPE>GetStateOutput</TYPE>
+getState <OPERATOR>=</OPERATOR> runService ws nss <STRING>"urn2:getState"</STRING>
+revert <OPERATOR>::</OPERATOR> <TYPE>WsParams</TYPE> <FUNCTION>-</FUNCTION><FUNCTION>&gt;</FUNCTION> <TYPE>RevertInput</TYPE> <FUNCTION>-</FUNCTION><FUNCTION>&gt;</FUNCTION> <TYPE>IO</TYPE> <TYPE>RevertOutput</TYPE>
+revert <OPERATOR>=</OPERATOR> runService ws nss <STRING>"urn2:revert"</STRING>
+
+
+<COMMENT>-- types definition</COMMENT>
+
+<KEYWORD>data</KEYWORD> <TYPE>ActivateInput</TYPE> <OPERATOR>=</OPERATOR> <TYPE>ActivateInput</TYPE> {
+    cL_ActivateRequest <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>ActivateOutput</TYPE> <OPERATOR>=</OPERATOR> <TYPE>ActivateOutput</TYPE> {
+    responseActivateOutput <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>LM_Collection</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>LM_Collection</TYPE> <OPERATOR>=</OPERATOR> <TYPE>LM_Collection</TYPE> {
+    lmcLogMessage <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>LogMessage</TYPE><OPERATOR>]</OPERATOR>,
+    lmcLM_ChangeList <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>LM_ChangeList</TYPE><OPERATOR>]</OPERATOR>,
+    lmcLM_Party <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>LM_Party</TYPE><OPERATOR>]</OPERATOR>,
+    lmcLM_BusinessSystem <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>LM_CommunicationComponent</TYPE><OPERATOR>]</OPERATOR>,
+    lmcLM_BusinessComponent <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>LM_CommunicationComponent</TYPE><OPERATOR>]</OPERATOR>,
+    lmcLM_IntegrationProcess <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>LM_CommunicationComponent</TYPE><OPERATOR>]</OPERATOR>,
+    lmcLM_CommunicationChannel <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>LM_CommunicationChannel</TYPE><OPERATOR>]</OPERATOR>,
+    lmcLM_SenderAgreement <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>LM_MessageHeader</TYPE><OPERATOR>]</OPERATOR>,
+    lmcLM_ReceiverAgreement <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>LM_MessageHeader</TYPE><OPERATOR>]</OPERATOR>,
+    lmcLM_InterfaceDetermination <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>LM_MessageHeader</TYPE><OPERATOR>]</OPERATOR>,
+    lmcLM_ReceiverDetermination <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>LM_MessageHeader</TYPE><OPERATOR>]</OPERATOR>,
+    lmcLM_ValueMapping <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>LM_ValueMapping</TYPE><OPERATOR>]</OPERATOR>,
+    lmcLM_ConfigurationScenario <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>LM_ConfigurationScenario</TYPE><OPERATOR>]</OPERATOR>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>LogMessage</TYPE> <OPERATOR>=</OPERATOR> <TYPE>LogMessage</TYPE> {
+    lmLM_Item <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>LM_Item</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>LM_Item</TYPE> <OPERATOR>=</OPERATOR> <TYPE>LM_Item</TYPE> {
+    lmiSeverityCode <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    lmiClassificationCode <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    lmiMessage <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>Text</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>Text</TYPE> <OPERATOR>=</OPERATOR> <TYPE>Text</TYPE> {
+    tlanguageCode <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    tvalue <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>LM_ChangeList</TYPE> <OPERATOR>=</OPERATOR> <TYPE>LM_ChangeList</TYPE> {
+    lmclCL_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>CL_ID</TYPE>,
+    lmclLM_Item <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>LM_Item</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>CL_ID</TYPE> <OPERATOR>=</OPERATOR> <TYPE>CL_ID</TYPE> {
+    clidCL_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    clidName <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    clidDescription <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>LONG_Description</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>LONG_Description</TYPE> <OPERATOR>=</OPERATOR> <TYPE>LONG_Description</TYPE> {
+    ldlanguageCode <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    ldvalue <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>LM_Party</TYPE> <OPERATOR>=</OPERATOR> <TYPE>LM_Party</TYPE> {
+    lmpPI_D <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    lmpLM_Item <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>LM_Item</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>LM_CommunicationComponent</TYPE> <OPERATOR>=</OPERATOR> <TYPE>LM_CommunicationComponent</TYPE> {
+    lmccmpCC_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>Cmp_ID</TYPE>,
+    lmccmpLM_Item <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>LM_Item</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>Cmp_ID</TYPE> <OPERATOR>=</OPERATOR> <TYPE>Cmp_ID</TYPE> {
+    ccidPI_D <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    ccidCI_D <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>LM_CommunicationChannel</TYPE> <OPERATOR>=</OPERATOR> <TYPE>LM_CommunicationChannel</TYPE> {
+    lmccCC_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>CC_ID</TYPE>,
+    lmccLM_Item <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>LM_Item</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>CC_ID</TYPE> <OPERATOR>=</OPERATOR> <TYPE>CC_ID</TYPE> {
+    ccidPartyID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    ccidComponentID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    ccidChannelID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>LM_MessageHeader</TYPE> <OPERATOR>=</OPERATOR> <TYPE>LM_MessageHeader</TYPE> {
+    lmmhMessageHeader <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>MH_ID</TYPE>,
+    lmmhLM_Item <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>LM_Item</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>MH_ID</TYPE> <OPERATOR>=</OPERATOR> <TYPE>MH_ID</TYPE> {
+    mhidSP_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    mhidSC_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    mhidInterfaceName <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    mhidInterfaceNamespace <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    mhidRP_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    mhidRC_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>LM_ValueMapping</TYPE> <OPERATOR>=</OPERATOR> <TYPE>LM_ValueMapping</TYPE> {
+    lmvmVM_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    lmvmLM_Item <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>LM_Item</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>LM_ConfigurationScenario</TYPE> <OPERATOR>=</OPERATOR> <TYPE>LM_ConfigurationScenario</TYPE> {
+    lmcsCS_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    lmcsLM_Item <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>LM_Item</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>CheckContentInput</TYPE> <OPERATOR>=</OPERATOR> <TYPE>CheckContentInput</TYPE> {
+    cL_CheckContentRequest <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>CheckContentOutput</TYPE> <OPERATOR>=</OPERATOR> <TYPE>CheckContentOutput</TYPE> {
+    responseCheckContentOutput <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>LM_Collection</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>CreateInput</TYPE> <OPERATOR>=</OPERATOR> <TYPE>CreateInput</TYPE> {
+    cL_CreateRequest <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>CL_IDRestricted</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>CL_IDRestricted</TYPE> <OPERATOR>=</OPERATOR> <TYPE>CL_IDRestricted</TYPE> {
+    clidrName <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    clidrDescription <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>LONG_Description</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>CreateOutput</TYPE> <OPERATOR>=</OPERATOR> <TYPE>CreateOutput</TYPE> {
+    responseCreateOutput <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>CL_CreateOut</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>CL_CreateOut</TYPE> <OPERATOR>=</OPERATOR> <TYPE>CL_CreateOut</TYPE> {
+    clcoCL_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>CL_ID</TYPE>,
+    clcoLM_Collection <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>LM_Collection</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>GetCacheStateInput</TYPE> <OPERATOR>=</OPERATOR> <TYPE>GetCacheStateInput</TYPE> {
+    cL_GetCacheStateRequest <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>GetCacheStateOutput</TYPE> <OPERATOR>=</OPERATOR> <TYPE>GetCacheStateOutput</TYPE> {
+    responseGetCacheStateOutput <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>CL_GetCacheStateOut</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>CL_GetCacheStateOut</TYPE> <OPERATOR>=</OPERATOR> <TYPE>CL_GetCacheStateOut</TYPE> {
+    clgcsoCacheState <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>CL_CacheState</TYPE><OPERATOR>]</OPERATOR>,
+    clgcsoLM_Collection <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>LM_Collection</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>CL_CacheState</TYPE> <OPERATOR>=</OPERATOR> <TYPE>CL_CacheState</TYPE> {
+    clcsConsumer <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    clcsNotificationState <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    clcsRefreshState <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    clcsErrorMessage <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>LM_Item</TYPE><OPERATOR>]</OPERATOR>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>GetObjectIdentifiersInput</TYPE> <OPERATOR>=</OPERATOR> <TYPE>GetObjectIdentifiersInput</TYPE> {
+    cL_GetObjectIdentifiersRequest <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>GetObjectIdentifiersOutput</TYPE> <OPERATOR>=</OPERATOR> <TYPE>GetObjectIdentifiersOutput</TYPE> {
+    responseGetObjectIdentifiersOutput <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>CL_GetObjectIdentifiersOut</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>CL_GetObjectIdentifiersOut</TYPE> <OPERATOR>=</OPERATOR> <TYPE>CL_GetObjectIdentifiersOut</TYPE> {
+    clgoioPI_D <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>String</TYPE><OPERATOR>]</OPERATOR>,
+    clgoioBS_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>Cmp_ID</TYPE><OPERATOR>]</OPERATOR>,
+    clgoioBC_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>Cmp_ID</TYPE><OPERATOR>]</OPERATOR>,
+    clgoioIP_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>Cmp_ID</TYPE><OPERATOR>]</OPERATOR>,
+    clgoioCC_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>CC_ID</TYPE><OPERATOR>]</OPERATOR>,
+    clgoioSA_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>MH_ID</TYPE><OPERATOR>]</OPERATOR>,
+    clgoioRA_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>MH_ID</TYPE><OPERATOR>]</OPERATOR>,
+    clgoioRD_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>MH_ID</TYPE><OPERATOR>]</OPERATOR>,
+    clgoioID_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>MH_ID</TYPE><OPERATOR>]</OPERATOR>,
+    clgoioVM_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>String</TYPE><OPERATOR>]</OPERATOR>,
+    clgoioCS_ID <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <OPERATOR>[</OPERATOR><TYPE>String</TYPE><OPERATOR>]</OPERATOR>,
+    clgoioLM_Collection <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>LM_Collection</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>GetStateInput</TYPE> <OPERATOR>=</OPERATOR> <TYPE>GetStateInput</TYPE> {
+    cL_GetStateRequest <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>GetStateOutput</TYPE> <OPERATOR>=</OPERATOR> <TYPE>GetStateOutput</TYPE> {
+    responseGetStateOutput <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>CL_GetStateOut</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>CL_GetStateOut</TYPE> <OPERATOR>=</OPERATOR> <TYPE>CL_GetStateOut</TYPE> {
+    clgsoState <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>,
+    clgsoLM_Collection <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>LM_Collection</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>RevertInput</TYPE> <OPERATOR>=</OPERATOR> <TYPE>RevertInput</TYPE> {
+    cL_RevertRequest <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>String</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+<KEYWORD>data</KEYWORD> <TYPE>RevertOutput</TYPE> <OPERATOR>=</OPERATOR> <TYPE>RevertOutput</TYPE> {
+    responseRevertOutput <OPERATOR>::</OPERATOR> <TYPE>Maybe</TYPE> <TYPE>LM_Collection</TYPE>
+} <KEYWORD>deriving</KEYWORD> (<TYPE>Typeable</TYPE>, <TYPE>Show</TYPE>, <TYPE>Eq</TYPE>) 
+
+
+
+<COMMENT>-- instances</COMMENT>
+
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>ActivateInput</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn2:ChangeListActivateRequest"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>cL_ActivateRequest</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>ActivateInput</TYPE> (fromContent c1)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn2:ChangeListActivateRequest"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>ActivateOutput</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn2:Response"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>responseActivateOutput</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>ActivateOutput</TYPE> (fromContent c1)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn2:Response"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>LM_Collection</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:LogMessage"</STRING>, <STRING>"urn0:LogMessageChangeList"</STRING>, <STRING>"urn0:LogMessageParty"</STRING>, <STRING>"urn0:LogMessageBusinessSystem"</STRING>, <STRING>"urn0:LogMessageBusinessComponent"</STRING>, <STRING>"urn0:LogMessageIntegrationProcess"</STRING>, <STRING>"urn0:LogMessageCommunicationChannel"</STRING>, <STRING>"urn0:LogMessageSenderAgreement"</STRING>, <STRING>"urn0:LogMessageReceiverAgreement"</STRING>, <STRING>"urn0:LogMessageInterfaceDetermination"</STRING>, <STRING>"urn0:LogMessageReceiverDetermination"</STRING>, <STRING>"urn0:LogMessageValueMapping"</STRING>, <STRING>"urn0:LogMessageConfigurationScenario"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmcLogMessage</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmcLM_ChangeList</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmcLM_Party</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmcLM_BusinessSystem</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmcLM_BusinessComponent</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmcLM_IntegrationProcess</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmcLM_CommunicationChannel</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmcLM_SenderAgreement</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmcLM_ReceiverAgreement</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmcLM_InterfaceDetermination</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmcLM_ReceiverDetermination</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmcLM_ValueMapping</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmcLM_ConfigurationScenario</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>LM_Collection</TYPE> (fromContent c1) (fromContent c2) (fromContent c3) (fromContent c4) (fromContent c5) (fromContent c6) (fromContent c7) (fromContent c8) (fromContent c9) (fromContent c10) (fromContent c11) (fromContent c12) (fromContent c13)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:LogMessage"</STRING>, <STRING>"urn0:LogMessageChangeList"</STRING>, <STRING>"urn0:LogMessageParty"</STRING>, <STRING>"urn0:LogMessageBusinessSystem"</STRING>, <STRING>"urn0:LogMessageBusinessComponent"</STRING>, <STRING>"urn0:LogMessageIntegrationProcess"</STRING>, <STRING>"urn0:LogMessageCommunicationChannel"</STRING>, <STRING>"urn0:LogMessageSenderAgreement"</STRING>, <STRING>"urn0:LogMessageReceiverAgreement"</STRING>, <STRING>"urn0:LogMessageInterfaceDetermination"</STRING>, <STRING>"urn0:LogMessageReceiverDetermination"</STRING>, <STRING>"urn0:LogMessageValueMapping"</STRING>, <STRING>"urn0:LogMessageConfigurationScenario"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>LogMessage</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:LogMessageItem"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmLM_Item</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>LogMessage</TYPE> (fromContent c1)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:LogMessageItem"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>LM_Item</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:SeverityCode"</STRING>, <STRING>"urn0:ClassificationCode"</STRING>, <STRING>"urn0:Message"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmiSeverityCode</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmiClassificationCode</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmiMessage</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>LM_Item</TYPE> (fromContent c1) (fromContent c2) (fromContent c3)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2, c3<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:SeverityCode"</STRING>, <STRING>"urn0:ClassificationCode"</STRING>, <STRING>"urn0:Message"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>Text</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:languageCode"</STRING>, <STRING>"urn0:value"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>tlanguageCode</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>tvalue</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>Text</TYPE> (fromContent c1) (fromContent c2)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:languageCode"</STRING>, <STRING>"urn0:value"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>LM_ChangeList</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:ChangeListID"</STRING>, <STRING>"urn0:LogMessageItem"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmclCL_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmclLM_Item</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>LM_ChangeList</TYPE> (fromContent c1) (fromContent c2)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:ChangeListID"</STRING>, <STRING>"urn0:LogMessageItem"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>CL_ID</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn1:ChangeListID"</STRING>, <STRING>"urn1:Name"</STRING>, <STRING>"urn1:Description"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clidCL_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clidName</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clidDescription</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>CL_ID</TYPE> (fromContent c1) (fromContent c2) (fromContent c3)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2, c3<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn1:ChangeListID"</STRING>, <STRING>"urn1:Name"</STRING>, <STRING>"urn1:Description"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>LONG_Description</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn1:languageCode"</STRING>, <STRING>"urn1:value"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>ldlanguageCode</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>ldvalue</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>LONG_Description</TYPE> (fromContent c1) (fromContent c2)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn1:languageCode"</STRING>, <STRING>"urn1:value"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>LM_Party</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:PartyID"</STRING>, <STRING>"urn0:LogMessageItem"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmpPI_D</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmpLM_Item</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>LM_Party</TYPE> (fromContent c1) (fromContent c2)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:PartyID"</STRING>, <STRING>"urn0:LogMessageItem"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>LM_CommunicationComponent</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:CommunicationComponentID"</STRING>, <STRING>"urn0:LogMessageItem"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmccmpCC_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmccmpLM_Item</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>LM_CommunicationComponent</TYPE> (fromContent c1) (fromContent c2)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:CommunicationComponentID"</STRING>, <STRING>"urn0:LogMessageItem"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>Cmp_ID</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:PartyID"</STRING>, <STRING>"urn0:ComponentID"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>ccidPI_D</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>ccidCI_D</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>Cmp_ID</TYPE> (fromContent c1) (fromContent c2)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:PartyID"</STRING>, <STRING>"urn0:ComponentID"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>LM_CommunicationChannel</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:CommunicationChannelID"</STRING>, <STRING>"urn0:LogMessageItem"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmccCC_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmccLM_Item</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>LM_CommunicationChannel</TYPE> (fromContent c1) (fromContent c2)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:CommunicationChannelID"</STRING>, <STRING>"urn0:LogMessageItem"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>CC_ID</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:PartyID"</STRING>, <STRING>"urn0:ComponentID"</STRING>, <STRING>"urn0:ChannelID"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>ccidPartyID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>ccidComponentID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>ccidChannelID</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>CC_ID</TYPE> (fromContent c1) (fromContent c2) (fromContent c3)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2, c3<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:PartyID"</STRING>, <STRING>"urn0:ComponentID"</STRING>, <STRING>"urn0:ChannelID"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>LM_MessageHeader</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:MessageHeader"</STRING>, <STRING>"urn0:LogMessageItem"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmmhMessageHeader</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmmhLM_Item</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>LM_MessageHeader</TYPE> (fromContent c1) (fromContent c2)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:MessageHeader"</STRING>, <STRING>"urn0:LogMessageItem"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>MH_ID</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:SenderPartyID"</STRING>, <STRING>"urn0:SenderComponentID"</STRING>, <STRING>"urn0:InterfaceName"</STRING>, <STRING>"urn0:InterfaceNamespace"</STRING>, <STRING>"urn0:ReceiverPartyID"</STRING>, <STRING>"urn0:ReceiverComponentID"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>mhidSP_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>mhidSC_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>mhidInterfaceName</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>mhidInterfaceNamespace</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>mhidRP_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>mhidRC_ID</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>MH_ID</TYPE> (fromContent c1) (fromContent c2) (fromContent c3) (fromContent c4) (fromContent c5) (fromContent c6)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2, c3, c4, c5, c6<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:SenderPartyID"</STRING>, <STRING>"urn0:SenderComponentID"</STRING>, <STRING>"urn0:InterfaceName"</STRING>, <STRING>"urn0:InterfaceNamespace"</STRING>, <STRING>"urn0:ReceiverPartyID"</STRING>, <STRING>"urn0:ReceiverComponentID"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>LM_ValueMapping</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:ValueMappingID"</STRING>, <STRING>"urn0:LogMessageItem"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmvmVM_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmvmLM_Item</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>LM_ValueMapping</TYPE> (fromContent c1) (fromContent c2)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:ValueMappingID"</STRING>, <STRING>"urn0:LogMessageItem"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>LM_ConfigurationScenario</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:ConfigurationScenarioID"</STRING>, <STRING>"urn0:LogMessageItem"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmcsCS_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>lmcsLM_Item</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>LM_ConfigurationScenario</TYPE> (fromContent c1) (fromContent c2)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:ConfigurationScenarioID"</STRING>, <STRING>"urn0:LogMessageItem"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>CheckContentInput</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn2:ChangeListCheckContentRequest"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>cL_CheckContentRequest</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>CheckContentInput</TYPE> (fromContent c1)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn2:ChangeListCheckContentRequest"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>CheckContentOutput</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn2:Response"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>responseCheckContentOutput</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>CheckContentOutput</TYPE> (fromContent c1)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn2:Response"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>CreateInput</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn2:ChangeListCreateRequest"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>cL_CreateRequest</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>CreateInput</TYPE> (fromContent c1)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn2:ChangeListCreateRequest"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>CL_IDRestricted</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn1:Name"</STRING>, <STRING>"urn1:Description"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clidrName</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clidrDescription</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>CL_IDRestricted</TYPE> (fromContent c1) (fromContent c2)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn1:Name"</STRING>, <STRING>"urn1:Description"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>CreateOutput</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn2:Response"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>responseCreateOutput</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>CreateOutput</TYPE> (fromContent c1)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn2:Response"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>CL_CreateOut</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:ChangeListID"</STRING>, <STRING>"urn0:LogMessageCollection"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clcoCL_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clcoLM_Collection</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>CL_CreateOut</TYPE> (fromContent c1) (fromContent c2)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:ChangeListID"</STRING>, <STRING>"urn0:LogMessageCollection"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>GetCacheStateInput</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn2:ChangeListGetCacheStateRequest"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>cL_GetCacheStateRequest</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>GetCacheStateInput</TYPE> (fromContent c1)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn2:ChangeListGetCacheStateRequest"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>GetCacheStateOutput</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn2:Response"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>responseGetCacheStateOutput</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>GetCacheStateOutput</TYPE> (fromContent c1)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn2:Response"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>CL_GetCacheStateOut</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:CacheState"</STRING>, <STRING>"urn0:LogMessageCollection"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clgcsoCacheState</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clgcsoLM_Collection</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>CL_GetCacheStateOut</TYPE> (fromContent c1) (fromContent c2)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:CacheState"</STRING>, <STRING>"urn0:LogMessageCollection"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>CL_CacheState</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:Consumer"</STRING>, <STRING>"urn0:NotificationState"</STRING>, <STRING>"urn0:RefreshState"</STRING>, <STRING>"urn0:ErrorMessage"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clcsConsumer</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clcsNotificationState</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clcsRefreshState</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clcsErrorMessage</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>CL_CacheState</TYPE> (fromContent c1) (fromContent c2) (fromContent c3) (fromContent c4)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2, c3, c4<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:Consumer"</STRING>, <STRING>"urn0:NotificationState"</STRING>, <STRING>"urn0:RefreshState"</STRING>, <STRING>"urn0:ErrorMessage"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>GetObjectIdentifiersInput</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn2:ChangeListGetObjectIdentifiersRequest"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>cL_GetObjectIdentifiersRequest</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>GetObjectIdentifiersInput</TYPE> (fromContent c1)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn2:ChangeListGetObjectIdentifiersRequest"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>GetObjectIdentifiersOutput</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn2:Response"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>responseGetObjectIdentifiersOutput</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>GetObjectIdentifiersOutput</TYPE> (fromContent c1)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn2:Response"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>CL_GetObjectIdentifiersOut</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:PartyID"</STRING>, <STRING>"urn0:BusinessSystemID"</STRING>, <STRING>"urn0:BusinessComponentID"</STRING>, <STRING>"urn0:IntegrationProcessID"</STRING>, <STRING>"urn0:CommunicationChannelID"</STRING>, <STRING>"urn0:SenderAgreementID"</STRING>, <STRING>"urn0:ReceiverAgreementID"</STRING>, <STRING>"urn0:ReceiverDeterminationID"</STRING>, <STRING>"urn0:InterfaceDeterminationID"</STRING>, <STRING>"urn0:ValueMappingID"</STRING>, <STRING>"urn0:ConfigurationScenarioID"</STRING>, <STRING>"urn0:LogMessageCollection"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clgoioPI_D</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clgoioBS_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clgoioBC_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clgoioIP_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clgoioCC_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clgoioSA_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clgoioRA_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clgoioRD_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clgoioID_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clgoioVM_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clgoioCS_ID</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clgoioLM_Collection</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>CL_GetObjectIdentifiersOut</TYPE> (fromContent c1) (fromContent c2) (fromContent c3) (fromContent c4) (fromContent c5) (fromContent c6) (fromContent c7) (fromContent c8) (fromContent c9) (fromContent c10) (fromContent c11) (fromContent c12)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:PartyID"</STRING>, <STRING>"urn0:BusinessSystemID"</STRING>, <STRING>"urn0:BusinessComponentID"</STRING>, <STRING>"urn0:IntegrationProcessID"</STRING>, <STRING>"urn0:CommunicationChannelID"</STRING>, <STRING>"urn0:SenderAgreementID"</STRING>, <STRING>"urn0:ReceiverAgreementID"</STRING>, <STRING>"urn0:ReceiverDeterminationID"</STRING>, <STRING>"urn0:InterfaceDeterminationID"</STRING>, <STRING>"urn0:ValueMappingID"</STRING>, <STRING>"urn0:ConfigurationScenarioID"</STRING>, <STRING>"urn0:LogMessageCollection"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>GetStateInput</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn2:ChangeListGetStateRequest"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>cL_GetStateRequest</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>GetStateInput</TYPE> (fromContent c1)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn2:ChangeListGetStateRequest"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>GetStateOutput</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn2:Response"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>responseGetStateOutput</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>GetStateOutput</TYPE> (fromContent c1)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn2:Response"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>CL_GetStateOut</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn0:State"</STRING>, <STRING>"urn0:LogMessageCollection"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clgsoState</OO>, <OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>clgsoLM_Collection</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>CL_GetStateOut</TYPE> (fromContent c1) (fromContent c2)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1, c2<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn0:State"</STRING>, <STRING>"urn0:LogMessageCollection"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>RevertInput</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn2:ChangeListRevertRequest"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>cL_RevertRequest</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>RevertInput</TYPE> (fromContent c1)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn2:ChangeListRevertRequest"</STRING><OPERATOR>]</OPERATOR> cs
+
+<KEYWORD>instance</KEYWORD> <TYPE>Xmlable</TYPE> <TYPE>RevertOutput</TYPE> <KEYWORD>where</KEYWORD>
+        toContent x <OPERATOR>=</OPERATOR> <OPERATOR>[</OPERATOR>makeToContent <OPERATOR>[</OPERATOR><STRING>"urn2:Response"</STRING><OPERATOR>]</OPERATOR> <OPERATOR>[</OPERATOR><OBJ>toContent</OBJ><FUNCTION>.</FUNCTION><OO>responseRevertOutput</OO><OPERATOR>]</OPERATOR> x<OPERATOR>]</OPERATOR>
+        fromContent cs <OPERATOR>=</OPERATOR> <TYPE>RevertOutput</TYPE> (fromContent c1)
+                <KEYWORD>where</KEYWORD> <OPERATOR>[</OPERATOR>c1<OPERATOR>]</OPERATOR> <OPERATOR>=</OPERATOR> forFromContent nss <OPERATOR>[</OPERATOR><STRING>"urn2:Response"</STRING><OPERATOR>]</OPERATOR> cs

@@ -1,0 +1,9 @@
+
+<COMMENT>&lt;!--malformed --&gt;</COMMENT>
+&lt;<HTMLTAG>tag</HTMLTAG> &lt;<TYPE>nottag</TYPE>&gt; nottag&gt;
+weare="not inside a tag"
+  &lt;<HTMLTAG>colons:and-dashes:are-fine-as:tag-names</HTMLTAG>&gt;
+ 
+<COMMENT>&lt;!-- technically this is an error, but browsers will terminate the string at the '&gt;' --&gt;</COMMENT>
+&lt;<HTMLTAG>tag</HTMLTAG> <TYPE>x</TYPE>=<STRING>"hello</STRING>&gt;
+

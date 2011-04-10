@@ -1,0 +1,320 @@
+<KEYWORD>use</KEYWORD> Purple<OPERATOR>;</OPERATOR>
+<KEYWORD>use</KEYWORD> <OBJ>XML</OBJ><OPERATOR>::</OPERATOR><OO>XPath</OO><OPERATOR>;</OPERATOR>
+<KEYWORD>use</KEYWORD> <OBJ>XML</OBJ><OPERATOR>::</OPERATOR><OO>XPath</OO><OPERATOR>::</OPERATOR><OO>XMLParser</OO><OPERATOR>;</OPERATOR>
+<KEYWORD>use</KEYWORD> <CONSTANT>POSIX</CONSTANT><OPERATOR>;</OPERATOR>
+
+<KEYWORD>use</KEYWORD> strict<OPERATOR>;</OPERATOR>
+<KEYWORD>use</KEYWORD> warnings<OPERATOR>;</OPERATOR>
+
+<KEYWORD>our</KEYWORD> <VARIABLE>%PLUGIN_INFO</VARIABLE> <OPERATOR>=</OPERATOR> (
+    perl_api_version <OPERATOR>=&gt;</OPERATOR> <NUMERIC>2</NUMERIC><OPERATOR>,</OPERATOR>
+    name <OPERATOR>=&gt;</OPERATOR> <STRING>'Twitter Status'</STRING><OPERATOR>,</OPERATOR>
+    version <OPERATOR>=&gt;</OPERATOR> <STRING>'0.4.1'</STRING><OPERATOR>,</OPERATOR>
+    summary <OPERATOR>=&gt;</OPERATOR> <STRING>'Use a Twitter feed as your status message.'</STRING><OPERATOR>,</OPERATOR>
+    description <OPERATOR>=&gt;</OPERATOR> <STRING>'Use a Twitter feed as your status message.'</STRING><OPERATOR>,</OPERATOR>
+    author <OPERATOR>=&gt;</OPERATOR> <STRING>'Aaron D. Santos &lt;aaronds109@gmail.com&gt;, Kurt Nelson &lt;kurt@thisisnotajoke.com&gt;, '</STRING>
+              <OPERATOR>.</OPERATOR><STRING>'Patrick Tulskie &lt;patricktulskie@gmail.com&gt; and Ramkumar R. Aiyengar &lt;andyetitmoves@gmail.com&gt;'</STRING><OPERATOR>,</OPERATOR>
+    url <OPERATOR>=&gt;</OPERATOR> <STRING>'http://code.google.com/p/pidgin-twitterstatus/'</STRING><OPERATOR>,</OPERATOR>
+
+    load <OPERATOR>=&gt;</OPERATOR> <STRING>'plugin_load'</STRING><OPERATOR>,</OPERATOR>
+    unload <OPERATOR>=&gt;</OPERATOR> <STRING>'plugin_unload'</STRING><OPERATOR>,</OPERATOR>
+    prefs_info <OPERATOR>=&gt;</OPERATOR> <STRING>'prefs_info_cb'</STRING>
+)<OPERATOR>;</OPERATOR>
+
+<COMMENT>#Begin Global Variables</COMMENT>
+<KEYWORD>my</KEYWORD> <VARIABLE>$pref_root</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>'/plugins/core/gtk-aaron_ds-twitterstatus'</STRING><OPERATOR>;</OPERATOR>
+<KEYWORD>my</KEYWORD> <VARIABLE>$log_category</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>'twitterstatus'</STRING><OPERATOR>;</OPERATOR>
+<KEYWORD>my</KEYWORD> <VARIABLE>$user_agent</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"pidgin-twitterstatus/$PLUGIN_INFO{version}"</STRING><OPERATOR>;</OPERATOR>
+<KEYWORD>my</KEYWORD> <VARIABLE>$source_agent</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>'pidgintwitterstatus'</STRING><OPERATOR>;</OPERATOR>
+
+<KEYWORD>my</KEYWORD> <VARIABLE>$plugin_instance</VARIABLE><OPERATOR>;</OPERATOR>
+<KEYWORD>my</KEYWORD> <VARIABLE>$active_update_timer</VARIABLE><OPERATOR>;</OPERATOR>
+<COMMENT>#End Global Variables</COMMENT>
+
+<KEYWORD>sub</KEYWORD> find_latest_tweet
+{
+        <KEYWORD>my</KEYWORD> <VARIABLE>@twitter_statuses</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>@_</VARIABLE><OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$out_status</VARIABLE><OPERATOR>;</OPERATOR>
+
+        <KEYWORD>my</KEYWORD> <VARIABLE>$pref_ignore_replies</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_bool</OO>(<STRING>"$pref_root/ignore_replies"</STRING>)<OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$pref_filter_regex</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_string</OO>(<STRING>"$pref_root/filter_regex"</STRING>)<OPERATOR>;</OPERATOR>
+
+        <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Debug</OO><OPERATOR>::</OPERATOR><OO>info</OO>(<VARIABLE>$log_category</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"Preferences: "</STRING>
+                            <OPERATOR>.</OPERATOR><STRING>"ignore_replies = $pref_ignore_replies, "</STRING>
+                            <OPERATOR>.</OPERATOR><STRING>"filter_regex = '$pref_filter_regex'<ESC>\n</ESC>"</STRING>)<OPERATOR>;</OPERATOR>
+
+        <KEYWORD>my</KEYWORD> <VARIABLE>$last_seen_id</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_int</OO>(<STRING>"$pref_root/state/last_seen_id"</STRING>)<OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$last_seen_id_dirty</VARIABLE><OPERATOR>;</OPERATOR>
+
+        <KEYWORD>foreach</KEYWORD> <KEYWORD>my</KEYWORD> <VARIABLE>$this_status</VARIABLE> (<VARIABLE>@twitter_statuses</VARIABLE>) {
+
+                <KEYWORD>my</KEYWORD> <VARIABLE>$this_status_id</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this_status</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>find</OO>(<STRING>'id'</STRING>)<OPERATOR>-&gt;</OPERATOR><OO>string_value</OO><OPERATOR>;</OPERATOR>
+                <KEYWORD>if</KEYWORD> (<VARIABLE>$this_status_id</VARIABLE> <OPERATOR>&gt;</OPERATOR> <VARIABLE>$last_seen_id</VARIABLE>) {
+                        <VARIABLE>$last_seen_id</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this_status_id</VARIABLE><OPERATOR>;</OPERATOR>
+                        <VARIABLE>$last_seen_id_dirty</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>1</NUMERIC><OPERATOR>;</OPERATOR>
+                }
+                <KEYWORD>my</KEYWORD> <VARIABLE>$this_status_message</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this_status</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>find</OO>(<STRING>'text'</STRING>)<OPERATOR>-&gt;</OPERATOR><OO>string_value</OO><OPERATOR>;</OPERATOR>
+                <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Debug</OO><OPERATOR>::</OPERATOR><OO>info</OO>(<VARIABLE>$log_category</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"Found twitter status $this_status_id: '$this_status_message'<ESC>\n</ESC>"</STRING>)<OPERATOR>;</OPERATOR>
+
+                <KEYWORD>my</KEYWORD> <VARIABLE>$emsg</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>do</KEYWORD> {
+                        <KEYWORD>if</KEYWORD> (<VARIABLE>$this_status_id</VARIABLE> <OPERATOR>&lt;=</OPERATOR> <NUMERIC>0</NUMERIC>) { <STRING>'invalid status ID'</STRING> }
+                        <KEYWORD>elsif</KEYWORD> (<FUNCTION>length</FUNCTION>(<VARIABLE>$this_status_message</VARIABLE>) <OPERATOR>&lt;=</OPERATOR> <NUMERIC>1</NUMERIC>) { <STRING>'too short'</STRING> }
+                        <KEYWORD>elsif</KEYWORD> (<VARIABLE>$pref_ignore_replies</VARIABLE> <OPERATOR>&amp;&amp;</OPERATOR>
+                               (<VARIABLE>$this_status</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>find</OO>(<STRING>'in_reply_to_user_id'</STRING>)<OPERATOR>-&gt;</OPERATOR><OO>string_value</OO> <OPERATOR>||</OPERATOR>
+                                <VARIABLE>$this_status</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>find</OO>(<STRING>'in_reply_to_status_id'</STRING>)<OPERATOR>-&gt;</OPERATOR><OO>string_value</OO> <OPERATOR>||</OPERATOR>
+                                <VARIABLE>$this_status</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>find</OO>(<STRING>'in_reply_to_screen_name'</STRING>)<OPERATOR>-&gt;</OPERATOR><OO>string_value</OO>)) { <STRING>'was a reply to someone'</STRING> }
+                        <KEYWORD>elsif</KEYWORD> (<VARIABLE>$pref_filter_regex</VARIABLE> <OPERATOR>&amp;&amp;</OPERATOR> <VARIABLE>$this_status_message</VARIABLE> <OPERATOR>=~</OPERATOR> <DELIMITER>m/</DELIMITER><REGEX>$pref_filter_regex</REGEX><DELIMITER>/</DELIMITER>) { <STRING>'matched the discard filter'</STRING> }
+                }<OPERATOR>;</OPERATOR>
+                <KEYWORD>if</KEYWORD> (<VARIABLE>$emsg</VARIABLE>) {
+                        <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Debug</OO><OPERATOR>::</OPERATOR><OO>info</OO>(<VARIABLE>$log_category</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"Skipping status message: $emsg<ESC>\n</ESC>"</STRING>)<OPERATOR>;</OPERATOR>
+                } <KEYWORD>else</KEYWORD> {
+                        <VARIABLE>$out_status</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this_status</VARIABLE><OPERATOR>;</OPERATOR>
+                        <KEYWORD>last</KEYWORD><OPERATOR>;</OPERATOR>
+                }
+        }
+        <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>set_int</OO>(<STRING>"$pref_root/state/last_seen_id"</STRING><OPERATOR>,</OPERATOR> <VARIABLE>$last_seen_id</VARIABLE>) <KEYWORD>if</KEYWORD> <VARIABLE>$last_seen_id_dirty</VARIABLE><OPERATOR>;</OPERATOR>
+        <KEYWORD>return</KEYWORD> <VARIABLE>$out_status</VARIABLE><OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> update_active_tweet
+{
+        <KEYWORD>my</KEYWORD> <VARIABLE>$tweet</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>shift</FUNCTION><OPERATOR>;</OPERATOR>
+        <KEYWORD>return</KEYWORD> <KEYWORD>unless</KEYWORD> <VARIABLE>$tweet</VARIABLE><OPERATOR>;</OPERATOR>
+
+        <KEYWORD>my</KEYWORD> <VARIABLE>$tweet_id</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$tweet</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>find</OO>(<STRING>'id'</STRING>)<OPERATOR>-&gt;</OPERATOR><OO>string_value</OO><OPERATOR>;</OPERATOR>
+        <KEYWORD>return</KEYWORD> <KEYWORD>if</KEYWORD> <VARIABLE>$tweet_id</VARIABLE> <OPERATOR>&lt;=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_int</OO>(<STRING>"$pref_root/state/last_updated_id"</STRING>)<OPERATOR>;</OPERATOR>
+
+        <KEYWORD>my</KEYWORD> <VARIABLE>$tweet_message</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$tweet</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>find</OO>(<STRING>'text'</STRING>)<OPERATOR>-&gt;</OPERATOR><OO>string_value</OO><OPERATOR>;</OPERATOR>
+        <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>set_int</OO>(<STRING>"$pref_root/state/last_updated_id"</STRING><OPERATOR>,</OPERATOR> <VARIABLE>$tweet_id</VARIABLE>)<OPERATOR>;</OPERATOR>
+        <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>set_string</OO>(<STRING>"$pref_root/state/last_updated_text"</STRING><OPERATOR>,</OPERATOR> <VARIABLE>$tweet_message</VARIABLE>)<OPERATOR>;</OPERATOR>
+
+        <KEYWORD>return</KEYWORD> <VARIABLE>$tweet_id</VARIABLE><OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> get_savedstatuses_to_update {
+        <KEYWORD>return</KEYWORD> <FUNCTION>map</FUNCTION> { (<OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>SavedStatus</OO><OPERATOR>::</OPERATOR><OO>find</OO>(<VARIABLE>$_</VARIABLE>) <OPERATOR>||</OPERATOR>
+                      <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>SavedStatus</OO><OPERATOR>::</OPERATOR><OO>new</OO>(<VARIABLE>$_</VARIABLE><OPERATOR>,</OPERATOR> <NUMERIC>2</NUMERIC>)) }
+          (<FUNCTION>split</FUNCTION> <DELIMITER>/</DELIMITER><REGEX>\s*,\s*</REGEX><DELIMITER>/</DELIMITER><OPERATOR>,</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_string</OO>(<STRING>"$pref_root/savedstatuses_to_update"</STRING>))<OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> refresh_purple_status
+{
+        <KEYWORD>my</KEYWORD> <VARIABLE>$twitter_status</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_string</OO>(<STRING>"$pref_root/state/last_updated_text"</STRING>)<OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$status_message</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_string</OO>(<STRING>"$pref_root/status_template"</STRING>)<OPERATOR>;</OPERATOR>
+        <VARIABLE>$status_message</VARIABLE> <OPERATOR>=~</OPERATOR> <DELIMITER>s/</DELIMITER><REGEX>\%\%</REGEX><DELIMITER>/</DELIMITER><STRING><ESC>\%</ESC></STRING><DELIMITER>/</DELIMITER><KEYWORD>g</KEYWORD><OPERATOR>;</OPERATOR>
+        <VARIABLE>$status_message</VARIABLE> <OPERATOR>=~</OPERATOR> <DELIMITER>s/</DELIMITER><REGEX>\%s</REGEX><DELIMITER>/</DELIMITER><STRING>$twitter_status</STRING><DELIMITER>/</DELIMITER><KEYWORD>g</KEYWORD><OPERATOR>;</OPERATOR>
+
+        <KEYWORD>my</KEYWORD> <VARIABLE>$now_string</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>localtime</FUNCTION><OPERATOR>;</OPERATOR>
+        <VARIABLE>$status_message</VARIABLE> <OPERATOR>=~</OPERATOR> <DELIMITER>s/</DELIMITER><REGEX>\%t</REGEX><DELIMITER>/</DELIMITER><STRING>$now_string</STRING><DELIMITER>/</DELIMITER><KEYWORD>g</KEYWORD><OPERATOR>;</OPERATOR>
+
+        <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Debug</OO><OPERATOR>::</OPERATOR><OO>info</OO>(<VARIABLE>$log_category</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"Refreshing purple status to: $status_message<ESC>\n</ESC>"</STRING>)<OPERATOR>;</OPERATOR>
+
+        <KEYWORD>my</KEYWORD> <VARIABLE>@update_list</VARIABLE> <OPERATOR>=</OPERATOR> get_savedstatuses_to_update()<OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>@dirty_list</VARIABLE> <OPERATOR>=</OPERATOR> (<FUNCTION>grep</FUNCTION> { <VARIABLE>$_</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>get_message</OO>() <OPERATOR>ne</OPERATOR> <VARIABLE>$status_message</VARIABLE> } <VARIABLE>@update_list</VARIABLE>)<OPERATOR>;</OPERATOR>
+        <VARIABLE>$_</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>set_message</OO>(<VARIABLE>$status_message</VARIABLE>) <KEYWORD>foreach</KEYWORD> <VARIABLE>@dirty_list</VARIABLE><OPERATOR>;</OPERATOR>
+
+        <KEYWORD>my</KEYWORD> <VARIABLE>$cur_status</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>SavedStatus</OO><OPERATOR>::</OPERATOR><OO>get_default</OO>()<OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$cur_status_title</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$cur_status</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>get_title</OO>()<OPERATOR>;</OPERATOR>
+        <KEYWORD>return</KEYWORD> <KEYWORD>unless</KEYWORD> <VARIABLE>$cur_status_title</VARIABLE><OPERATOR>;</OPERATOR>
+        <VARIABLE>$_</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>activate</OO> <KEYWORD>foreach</KEYWORD> (<FUNCTION>grep</FUNCTION> { <VARIABLE>$_</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>get_title</OO>() <OPERATOR>eq</OPERATOR> <VARIABLE>$cur_status_title</VARIABLE> } <VARIABLE>@dirty_list</VARIABLE>)<OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> merge_twitter_response
+{
+        <KEYWORD>my</KEYWORD> (<VARIABLE>$twitter_response</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$status_list_xpath</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>@_</VARIABLE><OPERATOR>;</OPERATOR>
+        <KEYWORD>return</KEYWORD> <KEYWORD>unless</KEYWORD> <VARIABLE>$twitter_response</VARIABLE><OPERATOR>;</OPERATOR>
+
+        <KEYWORD>my</KEYWORD> <VARIABLE>$twitter_xml</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>XML</OBJ><OPERATOR>::</OPERATOR><OO>XPath</OO><OPERATOR>-&gt;</OPERATOR><OO>new</OO>(xml<OPERATOR>=&gt;</OPERATOR><VARIABLE>$twitter_response</VARIABLE>)<OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>@twitter_statuses</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$twitter_xml</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>find</OO>(<VARIABLE>$status_list_xpath</VARIABLE>)<OPERATOR>-&gt;</OPERATOR><OO>get_nodelist</OO>()<OPERATOR>;</OPERATOR>
+
+        <KEYWORD>my</KEYWORD> <VARIABLE>$tweet_id</VARIABLE> <OPERATOR>=</OPERATOR> update_active_tweet (find_latest_tweet(<VARIABLE>@twitter_statuses</VARIABLE>))<OPERATOR>;</OPERATOR>
+        refresh_purple_status()<OPERATOR>;</OPERATOR>
+        <KEYWORD>return</KEYWORD> <VARIABLE>$tweet_id</VARIABLE><OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> fetch_url_cb
+{
+        <KEYWORD>my</KEYWORD> <VARIABLE>$twitter_response</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>shift</FUNCTION><OPERATOR>;</OPERATOR>
+        merge_twitter_response <VARIABLE>$twitter_response</VARIABLE><OPERATOR>,</OPERATOR> <STRING>'/statuses/status'</STRING><OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> update_status
+{
+        <KEYWORD>my</KEYWORD> <VARIABLE>$timeout</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>shift</FUNCTION><OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$twitterusername</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_string</OO>(<STRING>"$pref_root/twitterusername"</STRING>)<OPERATOR>;</OPERATOR>
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$twitterusername</VARIABLE> <OPERATOR>=~</OPERATOR> <DELIMITER>/</DELIMITER><REGEX>[A-Za-z0-9_]+</REGEX><DELIMITER>/</DELIMITER>) {
+                <KEYWORD>my</KEYWORD> <VARIABLE>$api_root</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_string</OO>(<STRING>"$pref_root/api_root"</STRING>)<OPERATOR>;</OPERATOR>
+                <KEYWORD>my</KEYWORD> (<VARIABLE>@url_params</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$pref</VARIABLE>)<OPERATOR>;</OPERATOR>
+                <VARIABLE>$pref</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_int</OO>(<STRING>"$pref_root/max_statuses_to_fetch"</STRING>)<OPERATOR>;</OPERATOR>
+                <FUNCTION>push</FUNCTION> <VARIABLE>@url_params</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"count=$pref"</STRING> <KEYWORD>if</KEYWORD> <VARIABLE>$pref</VARIABLE> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+                <VARIABLE>$pref</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_int</OO>(<STRING>"$pref_root/state/last_seen_id"</STRING>)<OPERATOR>;</OPERATOR>
+                <FUNCTION>push</FUNCTION> <VARIABLE>@url_params</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"since_id=$pref"</STRING> <KEYWORD>if</KEYWORD> <VARIABLE>$pref</VARIABLE> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+
+                <KEYWORD>my</KEYWORD> <VARIABLE>$twitterurl</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"$api_root/statuses/user_timeline/$twitterusername.xml?"</STRING><OPERATOR>.</OPERATOR>(<FUNCTION>join</FUNCTION> <STRING>'&amp;'</STRING><OPERATOR>,</OPERATOR> <VARIABLE>@url_params</VARIABLE>)<OPERATOR>;</OPERATOR>
+
+                <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Util</OO><OPERATOR>::</OPERATOR><OO>fetch_url</OO>(<VARIABLE>$plugin_instance</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$twitterurl</VARIABLE><OPERATOR>,</OPERATOR> <NUMERIC>1</NUMERIC><OPERATOR>,</OPERATOR> <VARIABLE>$user_agent</VARIABLE><OPERATOR>,</OPERATOR> <NUMERIC>1</NUMERIC><OPERATOR>,</OPERATOR> <STRING>'fetch_url_cb'</STRING>)<OPERATOR>;</OPERATOR>
+        } <KEYWORD>else</KEYWORD> {
+                <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Debug</OO><OPERATOR>::</OPERATOR><OO>error</OO>(<VARIABLE>$log_category</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"Blank or invalid username: '$twitterusername'<ESC>\n</ESC>"</STRING>)<OPERATOR>;</OPERATOR>
+        }
+}
+
+<KEYWORD>sub</KEYWORD> schedule_status_update
+{
+        <KEYWORD>my</KEYWORD> <VARIABLE>$delay</VARIABLE> <OPERATOR>=</OPERATOR> ((<FUNCTION>shift</FUNCTION>) <OPERATOR>||</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_int</OO>(<STRING>"$pref_root/poll_interval"</STRING>))<OPERATOR>;</OPERATOR>
+
+        <COMMENT># If there's a timer already ticking, remove that first</COMMENT>
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$active_update_timer</VARIABLE>) {
+                <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Debug</OO><OPERATOR>::</OPERATOR><OO>info</OO>(<VARIABLE>$log_category</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"Cancelling current scheduled status update<ESC>\n</ESC>"</STRING>)<OPERATOR>;</OPERATOR>
+                <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>timeout_remove</OO>(<VARIABLE>$active_update_timer</VARIABLE>)<OPERATOR>;</OPERATOR>
+                <KEYWORD>undef</KEYWORD> <VARIABLE>$active_update_timer</VARIABLE><OPERATOR>;</OPERATOR>
+        }
+
+        <VARIABLE>$active_update_timer</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>timeout_add</OO>(<VARIABLE>$plugin_instance</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$delay</VARIABLE><OPERATOR>,</OPERATOR> <OPERATOR>\&amp;</OPERATOR>timeout_cb)<OPERATOR>;</OPERATOR>
+        <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Debug</OO><OPERATOR>::</OPERATOR><OO>info</OO>(<VARIABLE>$log_category</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"Scheduling next status update in $delay seconds<ESC>\n</ESC>"</STRING>)<OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> timeout_cb
+{
+        <KEYWORD>undef</KEYWORD> <VARIABLE>$active_update_timer</VARIABLE><OPERATOR>;</OPERATOR>
+        <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Debug</OO><OPERATOR>::</OPERATOR><OO>info</OO>(<VARIABLE>$log_category</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"Starting the sequence.  Pidgin's timer expired.<ESC>\n</ESC>"</STRING>)<OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$poll_interval</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_int</OO>(<STRING>"$pref_root/poll_interval"</STRING>)<OPERATOR>;</OPERATOR>
+        update_status <VARIABLE>$poll_interval</VARIABLE><OPERATOR>;</OPERATOR>
+        schedule_status_update <VARIABLE>$poll_interval</VARIABLE><OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> send_tweet
+{
+        <KEYWORD>my</KEYWORD> <VARIABLE>$status</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>shift</FUNCTION><OPERATOR>;</OPERATOR>
+        <KEYWORD>return</KEYWORD> <KEYWORD>unless</KEYWORD> <VARIABLE>$status</VARIABLE><OPERATOR>;</OPERATOR>
+        <KEYWORD>return</KEYWORD> <KEYWORD>unless</KEYWORD> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_bool</OO>(<STRING>"$pref_root/sendstatus"</STRING>)<OPERATOR>;</OPERATOR>
+
+        <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Debug</OO><OPERATOR>::</OPERATOR><OO>info</OO>(<VARIABLE>$log_category</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"Tweeting back: $status<ESC>\n</ESC>"</STRING>)<OPERATOR>;</OPERATOR>
+        <VARIABLE>$status</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Util</OO><OPERATOR>::</OPERATOR><OO>url_encode</OO>(<VARIABLE>$status</VARIABLE>)<OPERATOR>;</OPERATOR>
+
+        <KEYWORD>my</KEYWORD> <VARIABLE>$pref_username</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_string</OO>(<STRING>"$pref_root/twitterusername"</STRING>)<OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$pref_password</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_string</OO>(<STRING>"$pref_root/twitterpassword"</STRING>)<OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$api_root</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_string</OO>(<STRING>"$pref_root/api_root"</STRING>)<OPERATOR>;</OPERATOR>
+
+        <KEYWORD>my</KEYWORD> <VARIABLE>$pid</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>open</FUNCTION> (<CONSTANT>KID_TO_READ</CONSTANT><OPERATOR>,</OPERATOR> <STRING>'-|'</STRING>)<OPERATOR>;</OPERATOR>
+        <KEYWORD>unless</KEYWORD> (<VARIABLE>$pid</VARIABLE>) { <COMMENT># child</COMMENT>
+                <FUNCTION>exec</FUNCTION> (<STRING>'curl'</STRING><OPERATOR>,</OPERATOR> <STRING>'--user'</STRING><OPERATOR>,</OPERATOR> <STRING>"$pref_username:$pref_password"</STRING><OPERATOR>,</OPERATOR>
+                      <STRING>'--data'</STRING><OPERATOR>,</OPERATOR> <STRING>"status=$status"</STRING><OPERATOR>,</OPERATOR> <STRING>'--data'</STRING><OPERATOR>,</OPERATOR> <STRING>"source=$source_agent"</STRING><OPERATOR>,</OPERATOR>
+                      <STRING>"$api_root/statuses/update.xml"</STRING>) <OPERATOR>||</OPERATOR> <KEYWORD>die</KEYWORD> <STRING>"Unable to exec for tweet update: $!"</STRING><OPERATOR>;</OPERATOR>
+                <COMMENT># Not reached here</COMMENT>
+        }
+        <KEYWORD>my</KEYWORD> <VARIABLE>$twitter_response</VARIABLE><OPERATOR>;</OPERATOR>
+        {
+                <KEYWORD>local</KEYWORD> <VARIABLE>$/</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>undef</KEYWORD><OPERATOR>;</OPERATOR>
+                <VARIABLE>$twitter_response</VARIABLE> <OPERATOR>=</OPERATOR> <OPERATOR>&lt;</OPERATOR><CONSTANT>KID_TO_READ</CONSTANT><OPERATOR>&gt;;</OPERATOR>
+                <FUNCTION>close</FUNCTION> <CONSTANT>KID_TO_READ</CONSTANT><OPERATOR>;</OPERATOR>
+        }
+        <KEYWORD>return</KEYWORD> <VARIABLE>$twitter_response</VARIABLE><OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> saved_status_changed_cb
+{
+        <KEYWORD>my</KEYWORD> (<VARIABLE>$new_status</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$old_status</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>@_</VARIABLE><OPERATOR>;</OPERATOR>
+
+        <COMMENT># For some reason, calling methods on arguments passed don't work, so fetch afresh</COMMENT>
+        <VARIABLE>$new_status</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>SavedStatus</OO><OPERATOR>::</OPERATOR><OO>get_default</OO>()<OPERATOR>;</OPERATOR>
+        <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR> <VARIABLE>$new_status</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>is_transient</OO>()) {
+                <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Debug</OO><OPERATOR>::</OPERATOR><OO>info</OO>(<VARIABLE>$log_category</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"Changed to a Saved Status, ignoring<ESC>\n</ESC>"</STRING>)<OPERATOR>;</OPERATOR>
+                <KEYWORD>return</KEYWORD><OPERATOR>;</OPERATOR>
+        }
+        <KEYWORD>my</KEYWORD> <VARIABLE>$status_message_escaped</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$new_status</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>get_message</OO>()<OPERATOR>;</OPERATOR>
+        <COMMENT># There should be a better way to unescape the XML encoded string</COMMENT>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$status_xml</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>XML</OBJ><OPERATOR>::</OPERATOR><OO>XPath</OO><OPERATOR>-&gt;</OPERATOR><OO>new</OO>(xml<OPERATOR>=&gt;</OPERATOR><STRING>"&lt;status&gt;$status_message_escaped&lt;/status&gt;"</STRING>)<OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>@status_nodes</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$status_xml</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>find</OO>(<STRING>'/status'</STRING>)<OPERATOR>-&gt;</OPERATOR><OO>get_nodelist</OO>()<OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$new_status_message</VARIABLE> <OPERATOR>=</OPERATOR> (<VARIABLE>$status_nodes</VARIABLE>[<NUMERIC>0</NUMERIC>])<OPERATOR>-&gt;</OPERATOR><OO>string_value</OO><OPERATOR>;</OPERATOR>
+
+        <KEYWORD>my</KEYWORD> <VARIABLE>$twitter_response</VARIABLE> <OPERATOR>=</OPERATOR> send_tweet(<VARIABLE>$new_status_message</VARIABLE>)<OPERATOR>;</OPERATOR>
+
+        <KEYWORD>if</KEYWORD> (merge_twitter_response <VARIABLE>$twitter_response</VARIABLE><OPERATOR>,</OPERATOR> <STRING>'/status'</STRING>) {
+                <COMMENT># We successfully updated status, let's reset timeout</COMMENT>
+                schedule_status_update<OPERATOR>;</OPERATOR>
+                <KEYWORD>my</KEYWORD> <VARIABLE>$switch_to</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>get_string</OO>(<STRING>"$pref_root/savedstatus_to_switch_after_tweetback"</STRING>)<OPERATOR>;</OPERATOR>
+                <KEYWORD>if</KEYWORD> (<VARIABLE>$switch_to</VARIABLE>) {
+                        <KEYWORD>my</KEYWORD> <VARIABLE>$saved_status</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>SavedStatus</OO><OPERATOR>::</OPERATOR><OO>find</OO>(<VARIABLE>$switch_to</VARIABLE>)<OPERATOR>;</OPERATOR>
+                        <COMMENT># This would make a recursive call, but we only activate a saved status</COMMENT>
+                        <VARIABLE>$saved_status</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>activate</OO>() <KEYWORD>if</KEYWORD> (<VARIABLE>$saved_status</VARIABLE> <OPERATOR>&amp;&amp;</OPERATOR> <OPERATOR>!</OPERATOR> <VARIABLE>$saved_status</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>is_transient</OO>())<OPERATOR>;</OPERATOR>
+                }
+        }
+}
+
+<KEYWORD>sub</KEYWORD> plugin_init
+{
+    <KEYWORD>return</KEYWORD> <VARIABLE>%PLUGIN_INFO</VARIABLE><OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> plugin_load
+{
+    <VARIABLE>$plugin_instance</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>shift</FUNCTION><OPERATOR>;</OPERATOR>
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Debug</OO><OPERATOR>::</OPERATOR><OO>info</OO>(<VARIABLE>$log_category</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"plugin_load() - Twitter Status Feed.<ESC>\n</ESC>"</STRING>)<OPERATOR>;</OPERATOR>
+
+    <COMMENT># Here we are adding a set of preferences</COMMENT>
+    <COMMENT>#  The second argument is the default value for the preference.</COMMENT>
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>add_none</OO>(<STRING>"$pref_root"</STRING>)<OPERATOR>;</OPERATOR>
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>add_string</OO>(<STRING>"$pref_root/twitterusername"</STRING><OPERATOR>,</OPERATOR> <STRING>''</STRING>)<OPERATOR>;</OPERATOR>
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>add_string</OO>(<STRING>"$pref_root/twitterpassword"</STRING><OPERATOR>,</OPERATOR> <STRING>''</STRING>)<OPERATOR>;</OPERATOR>
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>add_string</OO>(<STRING>"$pref_root/filter_regex"</STRING><OPERATOR>,</OPERATOR> <STRING>''</STRING>)<OPERATOR>;</OPERATOR>
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>add_bool</OO>(<STRING>"$pref_root/sendstatus"</STRING><OPERATOR>,</OPERATOR> <STRING>''</STRING>)<OPERATOR>;</OPERATOR>
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>add_int</OO>(<STRING>"$pref_root/poll_interval"</STRING><OPERATOR>,</OPERATOR> <NUMERIC>120</NUMERIC>)<OPERATOR>;</OPERATOR>
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>add_bool</OO>(<STRING>"$pref_root/ignore_replies"</STRING><OPERATOR>,</OPERATOR> <NUMERIC>1</NUMERIC>)<OPERATOR>;</OPERATOR>
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>add_int</OO>(<STRING>"$pref_root/max_statuses_to_fetch"</STRING><OPERATOR>,</OPERATOR> <NUMERIC>0</NUMERIC>)<OPERATOR>;</OPERATOR>
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>add_string</OO>(<STRING>"$pref_root/api_root"</STRING><OPERATOR>,</OPERATOR> <STRING>'http://twitter.com'</STRING>)<OPERATOR>;</OPERATOR>
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>add_string</OO>(<STRING>"$pref_root/status_template"</STRING><OPERATOR>,</OPERATOR> <STRING>'%s'</STRING>)<OPERATOR>;</OPERATOR>
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>add_string</OO>(<STRING>"$pref_root/savedstatuses_to_update"</STRING><OPERATOR>,</OPERATOR> <STRING>'Twitter'</STRING>)<OPERATOR>;</OPERATOR>
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>add_string</OO>(<STRING>"$pref_root/savedstatus_to_switch_after_tweetback"</STRING><OPERATOR>,</OPERATOR> <STRING>''</STRING>)<OPERATOR>;</OPERATOR>
+
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>add_none</OO>(<STRING>"$pref_root/state"</STRING>)<OPERATOR>;</OPERATOR>
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>add_int</OO>(<STRING>"$pref_root/state/last_seen_id"</STRING><OPERATOR>,</OPERATOR> <NUMERIC>0</NUMERIC>)<OPERATOR>;</OPERATOR>
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>add_int</OO>(<STRING>"$pref_root/state/last_updated_id"</STRING><OPERATOR>,</OPERATOR> <NUMERIC>0</NUMERIC>)<OPERATOR>;</OPERATOR>
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>add_string</OO>(<STRING>"$pref_root/state/last_updated_text"</STRING><OPERATOR>,</OPERATOR> <STRING>''</STRING>)<OPERATOR>;</OPERATOR>
+
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Signal</OO><OPERATOR>::</OPERATOR><OO>connect</OO>(<OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>SavedStatuses</OO><OPERATOR>::</OPERATOR><OO>get_handle</OO>()<OPERATOR>,</OPERATOR> <STRING>'savedstatus-changed'</STRING><OPERATOR>,</OPERATOR> <VARIABLE>$plugin_instance</VARIABLE><OPERATOR>,</OPERATOR> <OPERATOR>\&amp;</OPERATOR>saved_status_changed_cb<OPERATOR>,</OPERATOR> <STRING>''</STRING>)<OPERATOR>;</OPERATOR>
+
+    <COMMENT># Discard last seen ID optimizations for the first run, in case plugin logic has changed</COMMENT>
+    <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Prefs</OO><OPERATOR>::</OPERATOR><OO>set_int</OO>(<STRING>"$pref_root/state/last_seen_id"</STRING><OPERATOR>,</OPERATOR> <NUMERIC>0</NUMERIC>)<OPERATOR>;</OPERATOR>
+
+    schedule_status_update <NUMERIC>10</NUMERIC><OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> plugin_unload
+{
+        <KEYWORD>undef</KEYWORD> <VARIABLE>$_</VARIABLE> <KEYWORD>foreach</KEYWORD> (<VARIABLE>$active_update_timer</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$plugin_instance</VARIABLE>)<OPERATOR>;</OPERATOR>
+        <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>Debug</OO><OPERATOR>::</OPERATOR><OO>info</OO>(<VARIABLE>$log_category</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"plugin_unload() - Twitter Status Feed.<ESC>\n</ESC>"</STRING>)<OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> prefs_info_cb
+{
+    <KEYWORD>my</KEYWORD> (<VARIABLE>$frame</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$ppref</VARIABLE>)<OPERATOR>;</OPERATOR>
+
+    <COMMENT># The first step is to initialize the Purple::Pref::Frame that will be returned</COMMENT>
+    <VARIABLE>$frame</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>PluginPref</OO><OPERATOR>::</OPERATOR><OO>Frame</OO><OPERATOR>-&gt;</OPERATOR><OO>new</OO>()<OPERATOR>;</OPERATOR>
+
+    <VARIABLE>$frame</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>add</OO>(<OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>PluginPref</OO><OPERATOR>-&gt;</OPERATOR><OO>new_with_label</OO>(<STRING>'Twitter Account Information'</STRING>))<OPERATOR>;</OPERATOR>
+    <VARIABLE>$frame</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>add</OO>(<OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>PluginPref</OO><OPERATOR>-&gt;</OPERATOR><OO>new_with_name_and_label</OO>(<STRING>"$pref_root/twitterusername"</STRING><OPERATOR>,</OPERATOR> <STRING>'Twitter User Name'</STRING>))<OPERATOR>;</OPERATOR>
+
+    <COMMENT># Let's expose this when we are more sure about tweeting back.</COMMENT>
+    <COMMENT># $frame-&gt;add(Purple::PluginPref-&gt;new_with_name_and_label("$pref_root/twitterpassword", 'Twitter Password (Optional)'));</COMMENT>
+
+    <VARIABLE>$frame</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>add</OO>(<OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>PluginPref</OO><OPERATOR>-&gt;</OPERATOR><OO>new_with_label</OO>(<STRING>'Options'</STRING>))<OPERATOR>;</OPERATOR>
+    <VARIABLE>$ppref</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>PluginPref</OO><OPERATOR>-&gt;</OPERATOR><OO>new_with_name_and_label</OO>(<STRING>"$pref_root/poll_interval"</STRING><OPERATOR>,</OPERATOR> <STRING>'Poll Interval (in seconds)'</STRING>)<OPERATOR>;</OPERATOR>
+    <VARIABLE>$ppref</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>set_bounds</OO>(<NUMERIC>40</NUMERIC><OPERATOR>,</OPERATOR> <NUMERIC>900</NUMERIC>)<OPERATOR>;</OPERATOR> <COMMENT># Twitter has 100 per hour IP limit, which means 36 seconds between polls</COMMENT>
+    <VARIABLE>$frame</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>add</OO>(<VARIABLE>$ppref</VARIABLE>)<OPERATOR>;</OPERATOR>
+    <VARIABLE>$frame</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>add</OO>(<OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>PluginPref</OO><OPERATOR>-&gt;</OPERATOR><OO>new_with_name_and_label</OO>(<STRING>"$pref_root/ignore_replies"</STRING><OPERATOR>,</OPERATOR> <STRING>'Ignore reply tweets'</STRING>))<OPERATOR>;</OPERATOR>
+    <VARIABLE>$frame</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>add</OO>(<OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>PluginPref</OO><OPERATOR>-&gt;</OPERATOR><OO>new_with_name_and_label</OO>(<STRING>"$pref_root/status_template"</STRING><OPERATOR>,</OPERATOR> <STRING>'Status message template'</STRING>))<OPERATOR>;</OPERATOR>
+    <VARIABLE>$frame</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>add</OO>(<OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>PluginPref</OO><OPERATOR>-&gt;</OPERATOR><OO>new_with_name_and_label</OO>(<STRING>"$pref_root/savedstatuses_to_update"</STRING><OPERATOR>,</OPERATOR> <STRING>'Saved statuses to update (comma separated)'</STRING>))<OPERATOR>;</OPERATOR>
+
+    <COMMENT># $frame-&gt;add(Purple::PluginPref-&gt;new_with_name_and_label("$pref_root/sendstatus", 'Tweet my status message when I change it in Pidgin'));</COMMENT>
+    <COMMENT># $frame-&gt;add(Purple::PluginPref-&gt;new_with_name_and_label("$pref_root/savedstatus_to_switch_after_tweetback", 'Switch to this saved status after tweeting back'));</COMMENT>
+
+    <VARIABLE>$frame</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>add</OO>(<OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>PluginPref</OO><OPERATOR>-&gt;</OPERATOR><OO>new_with_label</OO>(<STRING>'Advanced Options'</STRING>))<OPERATOR>;</OPERATOR>
+    <VARIABLE>$frame</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>add</OO>(<OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>PluginPref</OO><OPERATOR>-&gt;</OPERATOR><OO>new_with_name_and_label</OO>(<STRING>"$pref_root/filter_regex"</STRING><OPERATOR>,</OPERATOR> <STRING>'Ignore regexp for tweets'</STRING>))<OPERATOR>;</OPERATOR>
+    <VARIABLE>$frame</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>add</OO>(<OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>PluginPref</OO><OPERATOR>-&gt;</OPERATOR><OO>new_with_name_and_label</OO>(<STRING>"$pref_root/api_root"</STRING><OPERATOR>,</OPERATOR> <STRING>'API Root URL'</STRING>))<OPERATOR>;</OPERATOR>
+    <VARIABLE>$ppref</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Purple</OBJ><OPERATOR>::</OPERATOR><OO>PluginPref</OO><OPERATOR>-&gt;</OPERATOR><OO>new_with_name_and_label</OO>(<STRING>"$pref_root/max_statuses_to_fetch"</STRING><OPERATOR>,</OPERATOR> <STRING>'Maximum statuses to request'</STRING>)<OPERATOR>;</OPERATOR>
+    <VARIABLE>$ppref</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>set_bounds</OO>(<NUMERIC>0</NUMERIC><OPERATOR>,</OPERATOR> <NUMERIC>100</NUMERIC>)<OPERATOR>;</OPERATOR> <COMMENT># Twitter anyway doesn't return more than 20</COMMENT>
+    <VARIABLE>$frame</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>add</OO>(<VARIABLE>$ppref</VARIABLE>)<OPERATOR>;</OPERATOR>
+
+    <KEYWORD>return</KEYWORD> <VARIABLE>$frame</VARIABLE><OPERATOR>;</OPERATOR>
+}
