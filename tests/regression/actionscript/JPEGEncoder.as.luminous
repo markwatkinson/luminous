@@ -717,9 +717,9 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Constructor for JPEGEncoder class</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> quality </DOCPROPERTY>The quality level between 1 and 100 that detrmines the</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> quality</DOCPROPERTY> The quality level between 1 and 100 that detrmines the</DOCCOMMENT>
 <DOCCOMMENT>		 * level of compression used in the generated JPEG</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> dct </DOCPROPERTY>The forward DCT method to use,</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> dct</DOCPROPERTY> The forward DCT method to use,</DOCCOMMENT>
 <DOCCOMMENT>		 * supported methods: JDCT_ISLOW, JDCT_IFAST, JDCT_FLOAT</DOCCOMMENT>
 <DOCCOMMENT>		 * <DOCTAG>@langversion</DOCTAG> ActionScript 3.0</DOCCOMMENT>
 <DOCCOMMENT>		 * <DOCTAG>@playerversion</DOCTAG> Flash 9.0</DOCCOMMENT>
@@ -748,7 +748,7 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Created a JPEG image from the specified BitmapData</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> image </DOCPROPERTY>The BitmapData that will be converted into the JPEG format.</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> image</DOCPROPERTY> The BitmapData that will be converted into the JPEG format.</DOCCOMMENT>
 <DOCCOMMENT>		 * <DOCTAG>@return</DOCTAG> a ByteArray representing the JPEG encoded image data.</DOCCOMMENT>
 <DOCCOMMENT>		 * <DOCTAG>@langversion</DOCTAG> ActionScript 3.0</DOCCOMMENT>
 <DOCCOMMENT>		 * <DOCTAG>@playerversion</DOCTAG> Flash 9.0</DOCCOMMENT>

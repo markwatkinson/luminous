@@ -161,8 +161,8 @@
   <DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>   * Trim the array to the required size.</DOCCOMMENT>
 <DOCCOMMENT>   *</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> array </DOCPROPERTY>the array</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> size </DOCPROPERTY> the size to trim it to</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> array</DOCPROPERTY> the array</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> size</DOCPROPERTY>  the size to trim it to</DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>@return</DOCTAG> the new trimmed array</DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
   <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <KEYWORD>function</KEYWORD> trimArray(array<OPERATOR>:</OPERATOR><TYPE>Array</TYPE><OPERATOR>,</OPERATOR> size<OPERATOR>:</OPERATOR><TYPE>int</TYPE>)<OPERATOR>:</OPERATOR><TYPE>Array</TYPE> {
@@ -183,12 +183,12 @@
 <DOCCOMMENT>   * elements, each of which can be one to six modules wide. The four bar and</DOCCOMMENT>
 <DOCCOMMENT>   * four space elements shall measure 17 modules in total.</DOCCOMMENT>
 <DOCCOMMENT>   *</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rowCounters </DOCPROPERTY>an array containing the counts of black pixels for each column</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rowCounters</DOCPROPERTY> an array containing the counts of black pixels for each column</DOCCOMMENT>
 <DOCCOMMENT>   *                    in the row.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rowNumber </DOCPROPERTY>  the current row number of codewords.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rowHeight </DOCPROPERTY>  the height of this row in pixels.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> codewords </DOCPROPERTY>  the codeword array to save codewords into.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> next </DOCPROPERTY>       the next available index into the codewords array.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rowNumber</DOCPROPERTY>   the current row number of codewords.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rowHeight</DOCPROPERTY>   the height of this row in pixels.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> codewords</DOCPROPERTY>   the codeword array to save codewords into.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> next</DOCPROPERTY>        the next available index into the codewords array.</DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>@return</DOCTAG> the next available index into the codeword array after processing</DOCCOMMENT>
 <DOCCOMMENT>   *         this row.</DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
@@ -279,7 +279,7 @@
 <DOCCOMMENT>   * represents the module widths of the eight elements of that symbol</DOCCOMMENT>
 <DOCCOMMENT>   * character.</DOCCOMMENT>
 <DOCCOMMENT>   *</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> counters </DOCPROPERTY> array of pixel counter corresponding to each Bar/Space pattern.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> counters</DOCPROPERTY>  array of pixel counter corresponding to each Bar/Space pattern.</DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>@return</DOCTAG> the symbol</DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
   <COMMENT>/*</COMMENT>
@@ -324,7 +324,7 @@
   <DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>   * Translate the symbol into a codeword.</DOCCOMMENT>
 <DOCCOMMENT>   *</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> symbol </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> symbol</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>@return</DOCTAG> the codeword corresponding to the symbol.</DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
   <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <KEYWORD>function</KEYWORD> getCodeword(symbol<OPERATOR>:</OPERATOR><TYPE>Number</TYPE>)<OPERATOR>:</OPERATOR><TYPE>int</TYPE> {
@@ -344,7 +344,7 @@
 <DOCCOMMENT>   * Use a binary search to find the index of the codeword corresponding to</DOCCOMMENT>
 <DOCCOMMENT>   * this symbol.</DOCCOMMENT>
 <DOCCOMMENT>   *</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> symbol </DOCPROPERTY>the symbol from the barcode.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> symbol</DOCPROPERTY> the symbol from the barcode.</DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>@return</DOCTAG> the index into the codeword table.</DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
   <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <KEYWORD>function</KEYWORD> findCodewordIndex(symbol<OPERATOR>:</OPERATOR><TYPE>Number</TYPE>)<OPERATOR>:</OPERATOR><TYPE>int</TYPE> {
@@ -392,16 +392,16 @@
 <DOCCOMMENT>   * elements, each of which can be one to six modules wide. The four bar and</DOCCOMMENT>
 <DOCCOMMENT>   * four space elements shall measure 17 modules in total.</DOCCOMMENT>
 <DOCCOMMENT>   *</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rowCounters </DOCPROPERTY>an array containing the counts of black pixels for each column</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rowCounters</DOCPROPERTY> an array containing the counts of black pixels for each column</DOCCOMMENT>
 <DOCCOMMENT>   *                    in the row.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rowNumber </DOCPROPERTY>  the current row number of codewords.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rowHeight </DOCPROPERTY>  the height of this row in pixels.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> moduleWidth </DOCPROPERTY>the size of a module in pixels.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> codewords </DOCPROPERTY>  the codeword array to save codewords into.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> next </DOCPROPERTY>       the next available index into the codewords array.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rowNumber</DOCPROPERTY>   the current row number of codewords.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rowHeight</DOCPROPERTY>   the height of this row in pixels.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> moduleWidth</DOCPROPERTY> the size of a module in pixels.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> codewords</DOCPROPERTY>   the codeword array to save codewords into.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>@param</DOCTAG><DOCPROPERTY> next</DOCPROPERTY>        the next available index into the codewords array.</DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>@return</DOCTAG> the next available index into the codeword array after processing</DOCCOMMENT>
 <DOCCOMMENT>   *         this row.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>@throws</DOCTAG><DOCPROPERTY> ReaderException </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>@throws</DOCTAG><DOCPROPERTY> ReaderException</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
   <COMMENT>/*</COMMENT>
 <COMMENT>  int processRow1(int[] rowCounters, int rowNumber, int rowHeight,</COMMENT>

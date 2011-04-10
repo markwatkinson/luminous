@@ -23,12 +23,12 @@
 
 
  <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\file</DOCTAG><DOCPROPERTY> luminous.php </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\file</DOCTAG><DOCPROPERTY> luminous.php</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> Easy (non-OO, single line call) API for Luminous.</DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\author</DOCTAG> Mark Watkinson</DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\defgroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY>LuminousEasyAPI</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\example</DOCTAG><DOCPROPERTY> example.php </DOCPROPERTY>Example calling and arrangement</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\defgroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY> LuminousEasyAPI</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\example</DOCTAG><DOCPROPERTY> example.php</DOCPROPERTY> Example calling and arrangement</DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
 
   
@@ -40,69 +40,69 @@
   
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> Maximum age of a cached file before it expires (in seconds), or -1</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.20 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.20</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>   
   <KEYWORD>global</KEYWORD> <VARIABLE>$LUMINOUS_MAX_AGE</VARIABLE>;
   <VARIABLE>$LUMINOUS_MAX_AGE</VARIABLE> <OPERATOR>=</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>;
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> Maximum lenth of time between cache purges (deletion of everything) in seconds, or -1</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.20 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.20</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT> 
   <KEYWORD>global</KEYWORD> <VARIABLE>$LUMINOUS_PURGE_TIME</VARIABLE>;
   <VARIABLE>$LUMINOUS_PURGE_TIME</VARIABLE> <OPERATOR>=</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>;
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> Line wrap at x characters, set to -1 to disable wrapping</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.20 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.20</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT> 
   <KEYWORD>global</KEYWORD> <VARIABLE>$LUMINOUS_WRAP_WIDTH</VARIABLE>;
   <VARIABLE>$LUMINOUS_WRAP_WIDTH</VARIABLE> <OPERATOR>=</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>;
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> Enables or disables line numbering</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.20 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.20</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT> 
   <KEYWORD>global</KEYWORD> <VARIABLE>$LUMINOUS_LINE_NUMBERS</VARIABLE>;
   <VARIABLE>$LUMINOUS_LINE_NUMBERS</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD>;
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> So-called 'verbosity' level control</DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\ref</DOCTAG> verbosity</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.25 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.25</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>   
   <KEYWORD>global</KEYWORD> <VARIABLE>$LUMINOUS_HIGHLIGHTING_LEVEL</VARIABLE>;
   <VARIABLE>$LUMINOUS_HIGHLIGHTING_LEVEL</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>4</NUMERIC>;
   
   <DOCCOMMENT>/** </DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> Enables or disables URI linking by the formatter.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.30 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.30</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
   <KEYWORD>global</KEYWORD> <VARIABLE>$LUMINOUS_LINK_URIS</VARIABLE>;
   <VARIABLE>$LUMINOUS_LINK_URIS</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD>;
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * Information variable which logs whether the most recent Luminous call was</DOCCOMMENT>
 <DOCCOMMENT>   * read from the cache or generated. </DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.30 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.30</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT> 
   <KEYWORD>global</KEYWORD> <VARIABLE>$LUMINOUS_WAS_CACHED</VARIABLE>;
   <VARIABLE>$LUMINOUS_WAS_CACHED</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD>;
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   * The maximum height, in pixels, of the resulting widget. Use 0 or -1 to </DOCCOMMENT>
 <DOCCOMMENT>   * unconstrain. The excess height will be scrollable.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.30 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.30</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>   
   <KEYWORD>global</KEYWORD> <VARIABLE>$LUMINOUS_WIDGET_HEIGHT</VARIABLE>;
@@ -110,8 +110,8 @@
   
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.30 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.30</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> Version number of Luminous</DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>   
   <KEYWORD>global</KEYWORD> <VARIABLE>$LUMINOUS_VERSION</VARIABLE>;
@@ -119,7 +119,7 @@
   
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> Performance log</DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   * Performance log. Each array element has the keys</DOCCOMMENT>
@@ -135,7 +135,7 @@
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   * The log is ordered chronologically starting from index 0 as the first </DOCCOMMENT>
 <DOCCOMMENT>   * highlight on this page load.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.30 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.30</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>     
   <KEYWORD>global</KEYWORD> <VARIABLE>$LUMINOUS_PERFORMANCE_LOG</VARIABLE>;
@@ -143,7 +143,7 @@
   
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> Sets whether to escape Luminous input or whether it is pre-escaped.</DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   * Luminous operates on a string of text and uses some special characters </DOCCOMMENT>
@@ -152,7 +152,7 @@
 <DOCCOMMENT>   * you may be feeding &amp;Luminous code which is already escaped like this, in</DOCCOMMENT>
 <DOCCOMMENT>   * which case you will want to set this flag to false so that Luminous doesn't</DOCCOMMENT>
 <DOCCOMMENT>   * double-escape these characters.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.30 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.30</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
   <KEYWORD>global</KEYWORD> <VARIABLE>$LUMINOUS_ESCAPE_INPUT</VARIABLE>;
@@ -163,9 +163,9 @@
   
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY>  0.5.4 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY>  0.5.4</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> The output format (as string). </DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   * Current recognised formats are 'html' and 'latex'.</DOCCOMMENT>
@@ -175,13 +175,13 @@
   
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.5.4 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.5.4</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> The theme to use. </DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   * The theme must exist as a (css) file in luminous/style/</DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\warning</DOCTAG> This has no direct effect in HTML output, you can still include</DOCCOMMENT>
 <DOCCOMMENT>   * whatever stylesheet you like and ignore this completely.</DOCCOMMENT>
@@ -193,9 +193,9 @@
   
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY>  0.5.4 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY>  0.5.4</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> returns what %Luminous believes is its root directory on the filesystem.</DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
@@ -212,13 +212,13 @@
   }
   
   
-  <DOCCOMMENT>///<DOCTAG>\cond</DOCTAG><DOCPROPERTY> DEV </DOCPROPERTY></DOCCOMMENT>
+  <DOCCOMMENT>///<DOCTAG>\cond</DOCTAG><DOCPROPERTY> DEV</DOCPROPERTY></DOCCOMMENT>
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> Collects settings together into an array</DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\internal</DOCTAG></DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.30 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.30</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
   
   <KEYWORD>function</KEYWORD> <USER_FUNCTION>luminous_create_settings</USER_FUNCTION>()
@@ -240,13 +240,13 @@
   }
   <DOCCOMMENT>///<DOCTAG>\endcond</DOCTAG></DOCCOMMENT>
   
-  <DOCCOMMENT>///<DOCTAG>\cond</DOCTAG><DOCPROPERTY> DEV </DOCPROPERTY></DOCCOMMENT>
+  <DOCCOMMENT>///<DOCTAG>\cond</DOCTAG><DOCPROPERTY> DEV</DOCPROPERTY></DOCCOMMENT>
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\internal</DOCTAG></DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY>  0.5.4 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY>  0.5.4</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> returns the output formatter currently specified in the LUMINOUS_OUTPUT_FORMAT variable</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\throw</DOCTAG><DOCPROPERTY> Exception </DOCPROPERTY>if an unknown formatter is specified</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\throw</DOCTAG><DOCPROPERTY> Exception</DOCPROPERTY> if an unknown formatter is specified</DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\return</DOCTAG> A LuminousFormatter object.</DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
    
@@ -277,18 +277,18 @@
   
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> Simple call to luminous with language grammar</DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> grammar </DOCPROPERTY>The grammar to use to parse the string, as LuminousGrammar</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> src </DOCPROPERTY>the source string to be formatted (string)</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> use_cache </DOCPROPERTY>determines whether to use the caching system, </DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> grammar</DOCPROPERTY> The grammar to use to parse the string, as LuminousGrammar</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> src</DOCPROPERTY> the source string to be formatted (string)</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> use_cache</DOCPROPERTY> determines whether to use the caching system, </DOCCOMMENT>
 <DOCCOMMENT>   *    default is true. (true|false)</DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\return</DOCTAG> an HTML formatted piece of text representing the input string</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\throw</DOCTAG><DOCPROPERTY> Exception </DOCPROPERTY>if luminous encounters a fatal error (a more descriptive</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\throw</DOCTAG><DOCPROPERTY> Exception</DOCPROPERTY> if luminous encounters a fatal error (a more descriptive</DOCCOMMENT>
 <DOCCOMMENT>   *    string will be set as its message)</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\see</DOCTAG><DOCPROPERTY> Luminous </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\see</DOCTAG><DOCPROPERTY> LuminousEasyAPI::$luminous_grammars </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\see</DOCTAG><DOCPROPERTY> Luminous</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\see</DOCTAG><DOCPROPERTY> LuminousEasyAPI::$luminous_grammars</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT> 
   
   <KEYWORD>function</KEYWORD> <USER_FUNCTION>luminous_grammar</USER_FUNCTION>(LuminousGrammar <VARIABLE>$grammar</VARIABLE>, <VARIABLE>$src</VARIABLE>, <VARIABLE>$use_cache</VARIABLE><OPERATOR>=</OPERATOR><KEYWORD>true</KEYWORD>)
@@ -370,22 +370,22 @@
   
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> Simple call to luminous with language code</DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> language </DOCPROPERTY>The language code (which shall be looked up in </DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> language</DOCPROPERTY> The language code (which shall be looked up in </DOCCOMMENT>
 <DOCCOMMENT>   *    luminous_grammars. If no corresponding grammar is found, its default </DOCCOMMENT>
 <DOCCOMMENT>   *    will be used. In the event that no default is specified luminous, will </DOCCOMMENT>
 <DOCCOMMENT>   *    raise an Exception. </DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> src </DOCPROPERTY>the source string to be formatted (string)</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> use_cache </DOCPROPERTY>determines whether to use the caching system, </DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> src</DOCPROPERTY> the source string to be formatted (string)</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> use_cache</DOCPROPERTY> determines whether to use the caching system, </DOCCOMMENT>
 <DOCCOMMENT>   *    default is true. (true|false)</DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\return</DOCTAG> a piece of text representing the input string, formatted according</DOCCOMMENT>
 <DOCCOMMENT>   *    to the format specified in LuminousEasyAPI::$LUMINOUS_OUTPUT_FORMAT</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\throw</DOCTAG><DOCPROPERTY> Exception </DOCPROPERTY>if luminous encounters a fatal error (a more descriptive</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\throw</DOCTAG><DOCPROPERTY> Exception</DOCPROPERTY> if luminous encounters a fatal error (a more descriptive</DOCCOMMENT>
 <DOCCOMMENT>   *    string will be set as its message)</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\see</DOCTAG><DOCPROPERTY> Luminous </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\see</DOCTAG><DOCPROPERTY> LuminousEasyAPI::$luminous_grammars </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\see</DOCTAG><DOCPROPERTY> Luminous</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\see</DOCTAG><DOCPROPERTY> LuminousEasyAPI::$luminous_grammars</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT> 
   <KEYWORD>function</KEYWORD> <USER_FUNCTION>luminous</USER_FUNCTION>(<VARIABLE>$language</VARIABLE>, <VARIABLE>$src</VARIABLE>, <VARIABLE>$use_cache</VARIABLE><OPERATOR>=</OPERATOR><KEYWORD>true</KEYWORD>)
   {
@@ -395,21 +395,21 @@
   }
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> Simple call to Luminous with a file path to use as src.</DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> language </DOCPROPERTY>The language code (which shall be looked up in </DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> language</DOCPROPERTY> The language code (which shall be looked up in </DOCCOMMENT>
 <DOCCOMMENT>   *    luminous_grammars. If no corresponding grammar is found, its default </DOCCOMMENT>
 <DOCCOMMENT>   *    will be used. In the event that no default is specified luminous, will </DOCCOMMENT>
 <DOCCOMMENT>   *    raise an Exception.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> path </DOCPROPERTY>The path to the source file which shall be read by Luminous.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> use_cache </DOCPROPERTY>determines whether to use the caching system, </DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> path</DOCPROPERTY> The path to the source file which shall be read by Luminous.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> use_cache</DOCPROPERTY> determines whether to use the caching system, </DOCCOMMENT>
 <DOCCOMMENT>   *    default is true. (true|false)</DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\return</DOCTAG> an HTML formatted piece of text representing the input string</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\throw</DOCTAG><DOCPROPERTY> Exception </DOCPROPERTY>if luminous encounters a fatal error (a more descriptive</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\throw</DOCTAG><DOCPROPERTY> Exception</DOCPROPERTY> if luminous encounters a fatal error (a more descriptive</DOCCOMMENT>
 <DOCCOMMENT>   *    string will be set as its message)</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\see</DOCTAG><DOCPROPERTY> Luminous </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\see</DOCTAG><DOCPROPERTY> LuminousEasyAPI::$luminous_grammars </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\see</DOCTAG><DOCPROPERTY> Luminous</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\see</DOCTAG><DOCPROPERTY> LuminousEasyAPI::$luminous_grammars</DOCPROPERTY> </DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT> 
   <KEYWORD>function</KEYWORD> <USER_FUNCTION>luminous_file</USER_FUNCTION>(<VARIABLE>$language</VARIABLE>, <VARIABLE>$path</VARIABLE>, <VARIABLE>$use_cache</VARIABLE><OPERATOR>=</OPERATOR><KEYWORD>true</KEYWORD>)
   {
@@ -419,7 +419,7 @@
   
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> Prints a table of known languages and their codes to output</DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   * This is a convenience function the user can call to determine which </DOCCOMMENT>
@@ -448,7 +448,7 @@
   }
 
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * Returns a list of themes present in the $ROOT/style/ directory.</DOCCOMMENT>
 <DOCCOMMENT>   * The names will simply be the filename, not including the parent directory</DOCCOMMENT>
 <DOCCOMMENT>   * structure.</DOCCOMMENT>
@@ -477,9 +477,9 @@
   }
   
   
-  <DOCCOMMENT>///<DOCTAG>\cond</DOCTAG><DOCPROPERTY> DEV </DOCPROPERTY></DOCCOMMENT>
+  <DOCCOMMENT>///<DOCTAG>\cond</DOCTAG><DOCPROPERTY> DEV</DOCPROPERTY></DOCCOMMENT>
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * returns the theme file as a string.</DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   * If you need to access the raw contents of a theme, this method is </DOCCOMMENT>
@@ -513,20 +513,20 @@
   <DOCCOMMENT>///<DOCTAG>\endcond</DOCTAG></DOCCOMMENT>
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   * Returns a string representing everything that needs to be printed in </DOCCOMMENT>
 <DOCCOMMENT>   * the \&lt;head\&gt; section of a website.</DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> $theme </DOCPROPERTY>(str) the theme to use. The theme file should exist</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> $theme</DOCPROPERTY> (str) the theme to use. The theme file should exist</DOCCOMMENT>
 <DOCCOMMENT>   *    as a file of the same name in luminous/style/. If you leave this as </DOCCOMMENT>
 <DOCCOMMENT>   *    <DOCTAG>\c</DOCTAG> NULL, the theme in LuminousEasyAPI::$LUMINOUS_THEME will be used</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> $javascript </DOCPROPERTY>(boolean) whether or not to use JavaScript</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> $jquery </DOCPROPERTY>(boolean) whether or not to include jQuery: jQuery is required for </DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> $javascript</DOCPROPERTY> (boolean) whether or not to use JavaScript</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> $jquery</DOCPROPERTY> (boolean) whether or not to include jQuery: jQuery is required for </DOCCOMMENT>
 <DOCCOMMENT>   *    javascript to work, but you may include it yourself (if you need a different</DOCCOMMENT>
 <DOCCOMMENT>   *    version). If so, it must be included before this function's output is </DOCCOMMENT>
 <DOCCOMMENT>   *    echoed.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> relative_root </DOCPROPERTY>Optionally, you may specify the path to luminous/</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> relative_root</DOCPROPERTY> Optionally, you may specify the path to luminous/</DOCCOMMENT>
 <DOCCOMMENT>   *    relative to the document root (remember to include the leading slash).</DOCCOMMENT>
 <DOCCOMMENT>   *    If you don't specify this, Luminous attempts to work it out. See</DOCCOMMENT>
 <DOCCOMMENT>   *    warning.</DOCCOMMENT>
@@ -537,7 +537,7 @@
 <DOCCOMMENT>   * <DOCTAG>\b</DOCTAG> must specify relative_root.</DOCCOMMENT>
 <DOCCOMMENT>   * http://bugs.php.net/46260</DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.5.0 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.5.0</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
   
   <KEYWORD>function</KEYWORD> <USER_FUNCTION>luminous_get_html_head</USER_FUNCTION>(<VARIABLE>$theme</VARIABLE><OPERATOR>=</OPERATOR><KEYWORD>null</KEYWORD>, <VARIABLE>$javascript</VARIABLE><OPERATOR>=</OPERATOR><KEYWORD>true</KEYWORD>,
@@ -587,7 +587,7 @@
   
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\ingroup</DOCTAG><DOCPROPERTY> LuminousEasyAPI</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\brief</DOCTAG> Lookup table for language codes to grammars.</DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   * Global variable holding a LuminousGrammars language to grammar lookup </DOCCOMMENT>

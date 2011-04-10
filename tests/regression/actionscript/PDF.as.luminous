@@ -105,7 +105,7 @@
 <DOCCOMMENT>	 *</DOCCOMMENT>
 <DOCCOMMENT>	 * <DOCTAG>@eventType</DOCTAG> org.alivepdf.events.PageEvent.ADDED</DOCCOMMENT>
 <DOCCOMMENT>	 *</DOCCOMMENT>
-<DOCCOMMENT>	 * * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>	 * * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>	 * This example shows how to listen for such an event :</DOCCOMMENT>
 <DOCCOMMENT>	 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>	 * &lt;pre&gt;</DOCCOMMENT>
@@ -121,7 +121,7 @@
 <DOCCOMMENT>	 *</DOCCOMMENT>
 <DOCCOMMENT>	 * <DOCTAG>@eventType</DOCTAG> org.alivepdf.events.ProcessingEvent.COMPLETE</DOCCOMMENT>
 <DOCCOMMENT>	 *</DOCCOMMENT>
-<DOCCOMMENT>	 * * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>	 * * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>	 * This example shows how to listen for such an event :</DOCCOMMENT>
 <DOCCOMMENT>	 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>	 * &lt;pre&gt;</DOCCOMMENT>
@@ -137,7 +137,7 @@
 <DOCCOMMENT>	 *</DOCCOMMENT>
 <DOCCOMMENT>	 * <DOCTAG>@eventType</DOCTAG> org.alivepdf.events.ProcessingEvent.PAGE_TREE</DOCCOMMENT>
 <DOCCOMMENT>	 *</DOCCOMMENT>
-<DOCCOMMENT>	 * * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>	 * * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>	 * This example shows how to listen for such an event :</DOCCOMMENT>
 <DOCCOMMENT>	 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>	 * &lt;pre&gt;</DOCCOMMENT>
@@ -153,7 +153,7 @@
 <DOCCOMMENT>	 *</DOCCOMMENT>
 <DOCCOMMENT>	 * <DOCTAG>@eventType</DOCTAG> org.alivepdf.events.ProcessingEvent.RESOURCES</DOCCOMMENT>
 <DOCCOMMENT>	 *</DOCCOMMENT>
-<DOCCOMMENT>	 * * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>	 * * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>	 * This example shows how to listen for such an event :</DOCCOMMENT>
 <DOCCOMMENT>	 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>	 * &lt;pre&gt;</DOCCOMMENT>
@@ -169,7 +169,7 @@
 <DOCCOMMENT>	 *</DOCCOMMENT>
 <DOCCOMMENT>	 * <DOCTAG>@eventType</DOCTAG> org.alivepdf.events.ProcessingEvent.STARTED</DOCCOMMENT>
 <DOCCOMMENT>	 *</DOCCOMMENT>
-<DOCCOMMENT>	 * * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>	 * * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>	 * This example shows how to listen for such an event :</DOCCOMMENT>
 <DOCCOMMENT>	 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>	 * &lt;pre&gt;</DOCCOMMENT>
@@ -190,7 +190,7 @@
 <DOCCOMMENT>	 * </DOCCOMMENT>
 <DOCCOMMENT>	 * <DOCTAG>@author</DOCTAG> Thibault Imbert</DOCCOMMENT>
 <DOCCOMMENT>	 * </DOCCOMMENT>
-<DOCCOMMENT>	 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>	 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>	 * This example shows how to create a PDF document :</DOCCOMMENT>
 <DOCCOMMENT>	 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>	 * &lt;pre&gt;</DOCCOMMENT>
@@ -351,7 +351,7 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * The PDF class represents a PDF document.</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to create a valid PDF document :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -420,11 +420,11 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you specify the left, top, and right margins</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> left </DOCPROPERTY>Left margin</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> top </DOCPROPERTY>Right number</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> right </DOCPROPERTY>Top number</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> bottom </DOCPROPERTY>Bottom number</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> left</DOCPROPERTY> Left margin</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> top</DOCPROPERTY> Right number</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> right</DOCPROPERTY> Top number</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> bottom</DOCPROPERTY> Bottom number</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to set margins for the PDF document :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -446,7 +446,7 @@
 <DOCCOMMENT>		 * Lets you retrieve the margins dimensions</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
 <DOCCOMMENT>		 * <DOCTAG>@return</DOCTAG> Rectangle</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to get the margins dimensions :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -465,8 +465,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you specify the left margin</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> margin </DOCPROPERTY>Left margin</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> margin</DOCPROPERTY> Left margin</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how set left margin for the PDF document :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -484,8 +484,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you specify the top margin</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> margin </DOCPROPERTY>Top margin</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> margin</DOCPROPERTY> Top margin</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how set top margin for the PDF document :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -502,8 +502,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you specify the bottom margin</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> margin </DOCPROPERTY>Bottom margin</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> margin</DOCPROPERTY> Bottom margin</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how set bottom margin for the PDF document :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -520,8 +520,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you specify the right margin</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> margin </DOCPROPERTY>Right margin</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> margin</DOCPROPERTY> Right margin</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how set right margin for the PDF document :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -538,8 +538,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you enable or disable auto page break mode and triggering margin </DOCCOMMENT>
 <DOCCOMMENT>		 * </DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> auto </DOCPROPERTY>Page break mode</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> margin </DOCPROPERTY>Bottom margin</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> auto</DOCPROPERTY> Page break mode</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> margin</DOCPROPERTY> Bottom margin</DOCCOMMENT>
 <DOCCOMMENT>		 * </DOCCOMMENT>
 <DOCCOMMENT>		 */</DOCCOMMENT>		
 		<KEYWORD>public</KEYWORD> <KEYWORD>function</KEYWORD> setAutoPageBreak ( auto<OPERATOR>:</OPERATOR><TYPE>Boolean</TYPE><OPERATOR>,</OPERATOR> margin<OPERATOR>:</OPERATOR><TYPE>Number</TYPE> )<OPERATOR>:</OPERATOR><KEYWORD>void</KEYWORD>
@@ -552,11 +552,11 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you set a specific display mode, the DisplayMode takes care of the general layout of the PDF in the PDF reader</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> zoom </DOCPROPERTY>Zoom mode, can be Display.FULL_PAGE, Display.FULL_WIDTH, Display.REAL, Display.DEFAULT</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> layout </DOCPROPERTY>Layout of the PDF document, can be Layout.SINGLE_PAGE, Layout.ONE_COLUMN, Layout.TWO_COLUMN_LEFT, Layout.TWO_COLUMN_RIGHT</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> mode </DOCPROPERTY>PageMode can be pageMode.USE_NONE, PageMode.USE_OUTLINES, PageMode.USE_THUMBS, PageMode.FULL_SCREEN</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> zoomValue </DOCPROPERTY>Zoom factor to be used when the PDF is opened, a value of 1.5 would open the PDF with a 150% zoom</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> zoom</DOCPROPERTY> Zoom mode, can be Display.FULL_PAGE, Display.FULL_WIDTH, Display.REAL, Display.DEFAULT</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> layout</DOCPROPERTY> Layout of the PDF document, can be Layout.SINGLE_PAGE, Layout.ONE_COLUMN, Layout.TWO_COLUMN_LEFT, Layout.TWO_COLUMN_RIGHT</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> mode</DOCPROPERTY> PageMode can be pageMode.USE_NONE, PageMode.USE_OUTLINES, PageMode.USE_THUMBS, PageMode.FULL_SCREEN</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> zoomValue</DOCPROPERTY> Zoom factor to be used when the PDF is opened, a value of 1.5 would open the PDF with a 150% zoom</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example creates a PDF which opens at full page scaling, one page at a time :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -590,8 +590,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you set specify the timing (in seconds) a page is shown when the PDF is shown in fullscreen mode</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> title </DOCPROPERTY>The title</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> title</DOCPROPERTY> The title</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to set a specific advance timing (5 seconds) for the current page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -617,8 +617,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you set a title for the PDF</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> title </DOCPROPERTY>The title</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> title</DOCPROPERTY> The title</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to set a specific title to the PDF tags :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -635,8 +635,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you set a subject for the PDF</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> subject </DOCPROPERTY>The subject</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> subject</DOCPROPERTY> The subject</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 *  This example shows how to set a specific subject to the PDF tags :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -653,8 +653,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Sets the specified author for the PDF</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> author </DOCPROPERTY>The author</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> author</DOCPROPERTY> The author</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to add a specific author to the PDF tags :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -671,8 +671,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Sets the specified keywords for the PDF</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> keywords </DOCPROPERTY>The keywords</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> keywords</DOCPROPERTY> The keywords</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to add some keywords to the PDF tags :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -689,8 +689,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Sets the specified creator for the PDF</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> creator </DOCPROPERTY>Name of the PDF creator</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> creator</DOCPROPERTY> Name of the PDF creator</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to set a creator name to the PDF tags :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -718,8 +718,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you specify an alias for the total number of pages</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> alias </DOCPROPERTY>Alias to use</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> alias</DOCPROPERTY> Alias to use</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to show the total number of pages :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -740,10 +740,10 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you rotate a specific page (between 1 and n-1)</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> number </DOCPROPERTY>Page number</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rotation </DOCPROPERTY>Page rotation (must be a multiple of 90)</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@throws</DOCTAG><DOCPROPERTY> RangeError </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> number</DOCPROPERTY> Page number</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rotation</DOCPROPERTY> Page rotation (must be a multiple of 90)</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@throws</DOCTAG><DOCPROPERTY> RangeError</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to rotate the first page 90 clock wise :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -769,8 +769,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you add a page to the current PDF</DOCCOMMENT>
 <DOCCOMMENT>		 *  </DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> page </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> page</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * </DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to add an A4 page with a landscape orientation :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
@@ -841,9 +841,9 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you retrieve a Page object</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> page </DOCPROPERTY>page number, from 1 to total numbers of pages</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> page</DOCPROPERTY> page number, from 1 to total numbers of pages</DOCCOMMENT>
 <DOCCOMMENT>		 * <DOCTAG>@return</DOCTAG> Page</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to retrieve the first page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -862,7 +862,7 @@
 <DOCCOMMENT>		 * Lets you retrieve all the PDF pages</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
 <DOCCOMMENT>		 * <DOCTAG>@return</DOCTAG> Array</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to retrieve all the PDF pages :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -888,8 +888,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you move to a Page in the PDF</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> page </DOCPROPERTY>page number, from 1 to total numbers of pages</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> page</DOCPROPERTY> page number, from 1 to total numbers of pages</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to move to the first page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -910,9 +910,9 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you remove a Page from the PDF</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> page </DOCPROPERTY>page number, from 1 to total numbers of pages</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> page</DOCPROPERTY> page number, from 1 to total numbers of pages</DOCCOMMENT>
 <DOCCOMMENT>		 * <DOCTAG>@return</DOCTAG> Page</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to remove the first page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -933,7 +933,7 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you remove all the pages from the PDF</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to remove all the pages :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -950,7 +950,7 @@
 <DOCCOMMENT>		 * Lets you retrieve the current Page</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
 <DOCCOMMENT>		 * <DOCTAG>@return</DOCTAG> Page A Page object</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to retrieve the current page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -969,7 +969,7 @@
 <DOCCOMMENT>		 * Lets you retrieve the number of pages in the PDF document</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
 <DOCCOMMENT>		 * <DOCTAG>@return</DOCTAG> int Number of pages in the PDF</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to retrieve the number of pages :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -986,8 +986,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you insert a line break for text</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height </DOCPROPERTY>Line break height</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height</DOCPROPERTY> Line break height</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to add a line break :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -1025,7 +1025,7 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you specify the X position for the current page</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x </DOCPROPERTY>The X position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x</DOCPROPERTY> The X position</DOCCOMMENT>
 <DOCCOMMENT>		 */</DOCCOMMENT>
 		<KEYWORD>public</KEYWORD> <KEYWORD>function</KEYWORD> setX ( x<OPERATOR>:</OPERATOR><TYPE>Number</TYPE> )<OPERATOR>:</OPERATOR><KEYWORD>void</KEYWORD>
 		{
@@ -1036,7 +1036,7 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you specify the Y position for the current page</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y </DOCPROPERTY>The Y position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y</DOCPROPERTY> The Y position</DOCCOMMENT>
 <DOCCOMMENT>		 */</DOCCOMMENT>
 		<KEYWORD>public</KEYWORD> <KEYWORD>function</KEYWORD> setY ( y<OPERATOR>:</OPERATOR><TYPE>Number</TYPE> )<OPERATOR>:</OPERATOR><KEYWORD>void</KEYWORD>
 		{
@@ -1050,8 +1050,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you specify the X and Y position for the current page</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x </DOCPROPERTY>The X position</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y </DOCPROPERTY>The Y position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x</DOCPROPERTY> The X position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y</DOCPROPERTY> The Y position</DOCCOMMENT>
 <DOCCOMMENT>		 */</DOCCOMMENT>
 		<KEYWORD>public</KEYWORD> <KEYWORD>function</KEYWORD> setXY ( x<OPERATOR>:</OPERATOR><TYPE>Number</TYPE><OPERATOR>,</OPERATOR> y<OPERATOR>:</OPERATOR><TYPE>Number</TYPE> )<OPERATOR>:</OPERATOR><KEYWORD>void</KEYWORD>
 		{
@@ -1225,9 +1225,9 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you specify the opacity for the next drawing operations, from 0 (100% transparent) to 1 (100% opaque)</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> alpha </DOCPROPERTY>Opacity</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> blendMode </DOCPROPERTY>Blend mode, can be Blend.DIFFERENCE, BLEND.HARDLIGHT, etc.</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> alpha</DOCPROPERTY> Opacity</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> blendMode</DOCPROPERTY> Blend mode, can be Blend.DIFFERENCE, BLEND.HARDLIGHT, etc.</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to set the transparency to 50% for any following drawing, image or text operation :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -1246,9 +1246,9 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you move the current drawing point to the specified destination</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x </DOCPROPERTY>X position</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y </DOCPROPERTY>Y position</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x</DOCPROPERTY> X position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y</DOCPROPERTY> Y position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to move the pen to 120,200 :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -1265,9 +1265,9 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you draw a stroke from the current point to the new point</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x </DOCPROPERTY>X position</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y </DOCPROPERTY>Y position</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x</DOCPROPERTY> X position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y</DOCPROPERTY> Y position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to draw some dashed lines in the current page with specific caps style and joint style :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;br&gt;&lt;b&gt;Important : Always call the end() method when you're done&lt;/b&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
@@ -1291,7 +1291,7 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * The end method closes the stroke</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to draw some dashed lines in the current page with specific caps style and joint style :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;br&gt;&lt;b&gt;Important : Always call the end() method when you're done&lt;/b&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
@@ -1315,13 +1315,13 @@
 		
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * The curveTo method draws a cubic bezier curve</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> controlX1 </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> controlY1 </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> controlX2 </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> controlY2 </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> finalX3 </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> finalY3 </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> controlX1</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> controlY1</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> controlX2</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> controlY2</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> finalX3</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> finalY3</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to draw some curves lines in the current page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;br&gt;&lt;b&gt;Important : Always call the end() method when you're done&lt;/b&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
@@ -1342,17 +1342,17 @@
 		
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Sets the stroke style</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> color </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> thickness </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> flatness </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> alpha </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rule </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> blendMode </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> style </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> caps </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> joints </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> miterLimit </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> color</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> thickness</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> flatness</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> alpha</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rule</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> blendMode</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> style</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> caps</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> joints</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> miterLimit</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to draw a star with an "even odd" rule :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -1447,7 +1447,7 @@
 		
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Sets the text color for different color spaces CMYK, RGB, and DEVICEGRAY</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 */</DOCCOMMENT>
 		<KEYWORD>protected</KEYWORD> <KEYWORD>function</KEYWORD> setTextColor ( color<OPERATOR>:</OPERATOR>IColor<OPERATOR>,</OPERATOR> tint<OPERATOR>:</OPERATOR><TYPE>Number</TYPE><OPERATOR>=</OPERATOR><NUMERIC>100</NUMERIC> )<OPERATOR>:</OPERATOR><KEYWORD>void</KEYWORD>
 		{
@@ -1487,8 +1487,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Sets the filling color for different color spaces CMYK/RGB/DEVICEGRAY</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> color </DOCPROPERTY>Color object, can be CMYKColor, GrayColor, or RGBColor</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> color</DOCPROPERTY> Color object, can be CMYKColor, GrayColor, or RGBColor</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to create a red rectangle in the current page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -1538,10 +1538,10 @@
 		
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * The beginBitmapFill method fills a surface with a bitmap as a texture</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> bitmap </DOCPROPERTY>A flash.display.BitmapData object</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> matrix </DOCPROPERTY>A flash.geom.Matrix object</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> bitmap</DOCPROPERTY> A flash.display.BitmapData object</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> matrix</DOCPROPERTY> A flash.geom.Matrix object</DOCCOMMENT>
 <DOCCOMMENT>		 * </DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to create a 100*100 rectangle filled with a bitmap texture :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -1564,7 +1564,7 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Ends all previous filling</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to create a red rectangle in the current page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -1586,8 +1586,8 @@
 		
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * The drawRect method draws a rectangle shape</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rect </DOCPROPERTY>A flash.geom.Rectange object</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rect</DOCPROPERTY> A flash.geom.Rectange object</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to create a blue rectangle in the current page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -1613,9 +1613,9 @@
 		
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * The drawRoundedRect method draws a rounded rectangle shape</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rect </DOCPROPERTY>A flash.geom.Rectange object</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> ellipseWidth </DOCPROPERTY>Angle radius</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rect</DOCPROPERTY> A flash.geom.Rectange object</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> ellipseWidth</DOCPROPERTY> Angle radius</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to create a rounded green rectangle in the current page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -1641,13 +1641,13 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * The drawComplexRoundRect method draws a rounded rectangle shape</DOCCOMMENT>
 <DOCCOMMENT>		 * </DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rect </DOCPROPERTY>A flash.geom.Rectange object</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> topLeftEllipseWidth </DOCPROPERTY>Angle radius</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> bottomLeftEllipseWidth </DOCPROPERTY>Angle radius</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> topRightEllipseWidth </DOCPROPERTY>Angle radius</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> bottomRightEllipseWidth </DOCPROPERTY>Angle radius</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rect</DOCPROPERTY> A flash.geom.Rectange object</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> topLeftEllipseWidth</DOCPROPERTY> Angle radius</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> bottomLeftEllipseWidth</DOCPROPERTY> Angle radius</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> topRightEllipseWidth</DOCPROPERTY> Angle radius</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> bottomRightEllipseWidth</DOCPROPERTY> Angle radius</DOCCOMMENT>
 <DOCCOMMENT>		 * </DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to create a complex rounded green rectangle (different angles radius) in the current page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -1694,11 +1694,11 @@
 		
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * The drawEllipse method draws an ellipse</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x </DOCPROPERTY>X Position</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y </DOCPROPERTY>Y Position</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> radiusX </DOCPROPERTY>X Radius</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> radiusY </DOCPROPERTY>Y Radius</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x</DOCPROPERTY> X Position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y</DOCPROPERTY> Y Position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> radiusX</DOCPROPERTY> X Radius</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> radiusY</DOCPROPERTY> Y Radius</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to create a rounded red ellipse in the current page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -1747,10 +1747,10 @@
 		
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * The drawCircle method draws a circle</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x </DOCPROPERTY>X Position</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y </DOCPROPERTY>Y Position</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> radius </DOCPROPERTY>Circle Radius</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x</DOCPROPERTY> X Position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y</DOCPROPERTY> Y Position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> radius</DOCPROPERTY> Circle Radius</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to create a rounded red ellipse in the current page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -1767,8 +1767,8 @@
 		
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * The drawPolygone method draws a polygone</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> points </DOCPROPERTY>Array of points</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> points</DOCPROPERTY> Array of points</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to create a polygone with a few points :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -1831,12 +1831,12 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you add a text annotation to the current page</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x </DOCPROPERTY>Note X position</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y </DOCPROPERTY>Note Y position</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> width </DOCPROPERTY>Note width</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height </DOCPROPERTY>Note height</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> text </DOCPROPERTY>Text for the note</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x</DOCPROPERTY> Note X position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y</DOCPROPERTY> Note Y position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> width</DOCPROPERTY> Note width</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height</DOCPROPERTY> Note height</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> text</DOCPROPERTY> Text for the note</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to add a note annotation in the current page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -1854,12 +1854,12 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you add a stamp annotation to the current page</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> style </DOCPROPERTY>Stamp style can be StampStyle.CONFIDENTIAL, StampStyle.FOR_PUBLIC_RELEASE, etc.</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x </DOCPROPERTY>Note X position</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y </DOCPROPERTY>Note Y position</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> width </DOCPROPERTY>Note width</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height </DOCPROPERTY>Note height</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> style</DOCPROPERTY> Stamp style can be StampStyle.CONFIDENTIAL, StampStyle.FOR_PUBLIC_RELEASE, etc.</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x</DOCPROPERTY> Note X position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y</DOCPROPERTY> Note Y position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> width</DOCPROPERTY> Note width</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height</DOCPROPERTY> Note height</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to add a stamp annotation in the current page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -1877,11 +1877,11 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you add a bookmark</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> text </DOCPROPERTY>Text appearing in the outline panel</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> level </DOCPROPERTY>Specify the bookmark's level</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y </DOCPROPERTY>Position in the current page to go</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> color </DOCPROPERTY>RGBColor object</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> text</DOCPROPERTY> Text appearing in the outline panel</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> level</DOCPROPERTY> Specify the bookmark's level</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y</DOCPROPERTY> Position in the current page to go</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> color</DOCPROPERTY> RGBColor object</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to add a bookmark for the current page just added :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -1921,13 +1921,13 @@
 <DOCCOMMENT>		 * Lets you add clickable link to a specific position</DOCCOMMENT>
 <DOCCOMMENT>		 * Link can be internal (document level navigation) or external (HTTP)</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x </DOCPROPERTY>Page Format, can be Size.A3, Size.A4, Size.A5, Size.LETTER or Size.LEGAL</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> width </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> link </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> highlight </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x</DOCPROPERTY> Page Format, can be Size.A3, Size.A4, Size.A5, Size.LETTER or Size.LEGAL</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> width</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> link</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> highlight</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to add an invisible clickable HTTP link in the current page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -1984,7 +1984,7 @@
 <DOCCOMMENT>		 * Returns an InternalLink object linked to the current page at the current Y in the page </DOCCOMMENT>
 <DOCCOMMENT>		 * <DOCTAG>@return</DOCTAG> InternalLink</DOCCOMMENT>
 <DOCCOMMENT>		 * </DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to add an internal link using the getInternalLink method :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -2004,12 +2004,12 @@
 <DOCCOMMENT>		 * Lets you add a transition between each PDF page</DOCCOMMENT>
 <DOCCOMMENT>		 * Note : PDF must be shown in fullscreen to see the transitions, use the setDisplayMode method with the PageMode.FULL_SCREEN parameter</DOCCOMMENT>
 <DOCCOMMENT>		 * </DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> style </DOCPROPERTY>Transition style, can be Transition.SPLIT, Transition.BLINDS, BLINDS.BOX, Transition.WIPE, etc.</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> duration </DOCPROPERTY>The transition duration</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> dimension </DOCPROPERTY>The dimension in which the the specified transition effect occurs</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> motionDirection </DOCPROPERTY>The motion's direction for the specified transition effect</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> transitionDirection </DOCPROPERTY>The direction in which the specified transition effect moves</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> style</DOCPROPERTY> Transition style, can be Transition.SPLIT, Transition.BLINDS, BLINDS.BOX, Transition.WIPE, etc.</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> duration</DOCPROPERTY> The transition duration</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> dimension</DOCPROPERTY> The dimension in which the the specified transition effect occurs</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> motionDirection</DOCPROPERTY> The motion's direction for the specified transition effect</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> transitionDirection</DOCPROPERTY> The direction in which the specified transition effect moves</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to add a 4 seconds "Wipe" transition between the first and second page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt; </DOCCOMMENT>
@@ -2026,13 +2026,13 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you control the way the document is to be presented on the screen or in print.</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> toolbar </DOCPROPERTY>Toolbar behavior</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> menubar </DOCPROPERTY>Menubar behavior</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> windowUI </DOCPROPERTY>WindowUI behavior</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> fitWindow </DOCPROPERTY>Specify whether to resize the document's window to fit the size of the first displayed page.</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> centeredWindow </DOCPROPERTY>Specify whether to position the document's window in the center of the screen.</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> displayTitle </DOCPROPERTY>Specify whether the window's title bar should display the document title taken from the value passed to the setTitle method</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> toolbar</DOCPROPERTY> Toolbar behavior</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> menubar</DOCPROPERTY> Menubar behavior</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> windowUI</DOCPROPERTY> WindowUI behavior</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> fitWindow</DOCPROPERTY> Specify whether to resize the document's window to fit the size of the first displayed page.</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> centeredWindow</DOCPROPERTY> Specify whether to position the document's window in the center of the screen.</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> displayTitle</DOCPROPERTY> Specify whether the window's title bar should display the document title taken from the value passed to the setTitle method</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to present the document centered on the screen with no toolbars :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -2130,10 +2130,10 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you set a specific font</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> A </DOCPROPERTY>font, can be a core font (org.alivepdf.fonts.CoreFont), or an embedded font (org.alivepdf.fonts.EmbeddedFont)</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> size </DOCPROPERTY>Any font size</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> underlined </DOCPROPERTY>if text should be underlined</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> A</DOCPROPERTY> font, can be a core font (org.alivepdf.fonts.CoreFont), or an embedded font (org.alivepdf.fonts.EmbeddedFont)</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> size</DOCPROPERTY> Any font size</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> underlined</DOCPROPERTY> if text should be underlined</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to set the Helvetica font, with a bold style :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -2161,8 +2161,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you set a new size for the current font</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> size </DOCPROPERTY>Font size</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> size</DOCPROPERTY> Font size</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to se the current font to 18 :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -2182,8 +2182,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you remove an embedded font from the PDF</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> font </DOCPROPERTY>The embedded font</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> font</DOCPROPERTY> The embedded font</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to remove an embedded font :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -2204,7 +2204,7 @@
 <DOCCOMMENT>		 * Lets you retrieve the total number of fonts used in the PDF document</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
 <DOCCOMMENT>		 * <DOCTAG>@return</DOCTAG> int Number of fonts (embedded or not) used in the PDF</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to retrieve the number of fonts used in the PDF document :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -2222,7 +2222,7 @@
 <DOCCOMMENT>		 * Lets you retrieve the fonts used in the PDF document</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
 <DOCCOMMENT>		 * <DOCTAG>@return</DOCTAG> Array An Array of fonts objects (CoreFont, EmbeddedFont)</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to retrieve the fonts :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -2252,10 +2252,10 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you set some text to any position on the page</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> text </DOCPROPERTY>The text to add</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x </DOCPROPERTY>X position</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y </DOCPROPERTY>Y position</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> text</DOCPROPERTY> The text to add</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x</DOCPROPERTY> X position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y</DOCPROPERTY> Y position</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to set some text to a specific place :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -2275,14 +2275,14 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Sets the text style</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> color </DOCPROPERTY>Color object, can be CMYKColor, GrayColor, or RGBColor</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> alpha </DOCPROPERTY>Text opacity</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rendering </DOCPROPERTY>pRendering Specify the text rendering mode</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> wordSpace </DOCPROPERTY>Spaces between each words</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> characterSpace </DOCPROPERTY>Spaces between each characters</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> scale </DOCPROPERTY>Text scaling</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> leading </DOCPROPERTY>Text leading</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> color</DOCPROPERTY> Color object, can be CMYKColor, GrayColor, or RGBColor</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> alpha</DOCPROPERTY> Text opacity</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> rendering</DOCPROPERTY> pRendering Specify the text rendering mode</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> wordSpace</DOCPROPERTY> Spaces between each words</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> characterSpace</DOCPROPERTY> Spaces between each characters</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> scale</DOCPROPERTY> Text scaling</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> leading</DOCPROPERTY> Text leading</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to set a specific black text style with full opacity :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -2310,15 +2310,15 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Add a cell with some text to the current page</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> width </DOCPROPERTY>Cell width</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height </DOCPROPERTY>Cell height</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> text </DOCPROPERTY>Text to add into the cell</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> ln </DOCPROPERTY>Sets the new position after cell is drawn, default value is 0</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> align </DOCPROPERTY>Lets you center or align the text into the cell</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> fill </DOCPROPERTY>Lets you specify if the cell is colored (1) or transparent (0)</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> link </DOCPROPERTY>Link can be internal to do document level navigation (InternalLink) or external (HTTPLink)</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> width</DOCPROPERTY> Cell width</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height</DOCPROPERTY> Cell height</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> text</DOCPROPERTY> Text to add into the cell</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> ln</DOCPROPERTY> Sets the new position after cell is drawn, default value is 0</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> align</DOCPROPERTY> Lets you center or align the text into the cell</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> fill</DOCPROPERTY> Lets you specify if the cell is colored (1) or transparent (0)</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> link</DOCPROPERTY> Link can be internal to do document level navigation (InternalLink) or external (HTTPLink)</DOCCOMMENT>
 <DOCCOMMENT>		 * <DOCTAG>@return</DOCTAG> Page</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to write some text within a cell :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -2412,14 +2412,14 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Add a multicell with some text to the current page</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> width </DOCPROPERTY>Cell width</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height </DOCPROPERTY>Cell height</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> text </DOCPROPERTY>Text to add into the cell</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> border </DOCPROPERTY>Lets you specify if a border should be drawn around the cell</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> align </DOCPROPERTY>Lets you center or align the text into the cell, values can be L (left align), C (centered), R (right align), J (justified) default value</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> filled </DOCPROPERTY>Lets you specify if the cell is colored (1) or transparent (0)</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> width</DOCPROPERTY> Cell width</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height</DOCPROPERTY> Cell height</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> text</DOCPROPERTY> Text to add into the cell</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> border</DOCPROPERTY> Lets you specify if a border should be drawn around the cell</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> align</DOCPROPERTY> Lets you center or align the text into the cell, values can be L (left align), C (centered), R (right align), J (justified) default value</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> filled</DOCPROPERTY> Lets you specify if the cell is colored (1) or transparent (0)</DOCCOMMENT>
 <DOCCOMMENT>		 * <DOCTAG>@return</DOCTAG> Page</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to write a table made of text cells :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -2558,10 +2558,10 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you write some text</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> lineHeight </DOCPROPERTY>Line height, lets you specify height between each lines</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> text </DOCPROPERTY>Text to write, to put a line break just add a \n in the text string</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> link </DOCPROPERTY>Any link, like http://www.mylink.com, will open te browser when clicked</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> lineHeight</DOCPROPERTY> Line height, lets you specify height between each lines</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> text</DOCPROPERTY> Text to write, to put a line break just add a \n in the text string</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> link</DOCPROPERTY> Any link, like http://www.mylink.com, will open te browser when clicked</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to add some text to the current page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -2665,10 +2665,10 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * Lets you write some text with basic HTML type formatting</DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> pHeight </DOCPROPERTY>Line height, lets you specify height between each lines</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> pText </DOCPROPERTY>Text to write, to put a line break just add a \n in the text string</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> pLink </DOCPROPERTY>Any link, like http://www.mylink.com, will open te browser when clicked</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> pHeight</DOCPROPERTY> Line height, lets you specify height between each lines</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> pText</DOCPROPERTY> Text to write, to put a line break just add a \n in the text string</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> pLink</DOCPROPERTY> Any link, like http://www.mylink.com, will open te browser when clicked</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * </DOCCOMMENT>
 <DOCCOMMENT>		 * Only a limited subset of tags are currently supported</DOCCOMMENT>
 <DOCCOMMENT>		 *  &lt;b&gt; &lt;/b&gt;</DOCCOMMENT>
@@ -3332,13 +3332,13 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * </DOCCOMMENT>
 <DOCCOMMENT>		 *</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> method </DOCPROPERTY>Can be se to Method.LOCAL, the savePDF will return the PDF ByteArray. When Method.REMOTE is passed, just specify the path to the create.php file</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> url </DOCPROPERTY>The url of the create.php file</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> downloadMethod </DOCPROPERTY>Lets you specify the way the PDF is going to be available. Use Download.INLINE if you want the PDF to be opened in the browser, use Download.ATTACHMENT if you want to make it available with a save-as dialog box</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> fileName </DOCPROPERTY>The name of the PDF, only available when Method.REMOTE is used</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> frame </DOCPROPERTY>The frame where the window whould be opened</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> method</DOCPROPERTY> Can be se to Method.LOCAL, the savePDF will return the PDF ByteArray. When Method.REMOTE is passed, just specify the path to the create.php file</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> url</DOCPROPERTY> The url of the create.php file</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> downloadMethod</DOCPROPERTY> Lets you specify the way the PDF is going to be available. Use Download.INLINE if you want the PDF to be opened in the browser, use Download.ATTACHMENT if you want to make it available with a save-as dialog box</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> fileName</DOCPROPERTY> The name of the PDF, only available when Method.REMOTE is used</DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> frame</DOCPROPERTY> The frame where the window whould be opened</DOCCOMMENT>
 <DOCCOMMENT>		 * <DOCTAG>@return</DOCTAG> The ByteArray PDF when Method.LOCAL is used, otherwise the method returns null</DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to save the PDF on the desktop with the AIR runtime :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -3439,8 +3439,8 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * The addJavaScript allows you to inject JavaScript code to be executed when the PDF document is opened</DOCCOMMENT>
 <DOCCOMMENT>		 * </DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> script </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> script</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to open the print dialog when the PDF document is opened :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -3471,19 +3471,19 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * The addImage method takes an incoming DisplayObject. A JPG or PNG snapshot is done and included in the PDF document</DOCCOMMENT>
 <DOCCOMMENT>		 * </DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> displayObject </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> resizeMode </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> width </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> keepTransformation </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> imageFormat </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> quality </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> alpha </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> blendMode </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> link </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> displayObject</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> resizeMode</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> width</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> keepTransformation</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> imageFormat</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> quality</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> alpha</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> blendMode</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> link</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to add a 100% compression quality JPG image into the current page at a position of 0,0 with no resizing behavior :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -3553,16 +3553,16 @@
 		<DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>		 * The addEPSImage method takes an incoming EPS (.eps) file or Adobe® Illustrator® file (.ai) and render it on the current page.</DOCCOMMENT>
 <DOCCOMMENT>		 * </DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> stream </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> resizeMode </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> width </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> alpha </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> blendMode </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> link </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> stream</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> resizeMode</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> width</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> alpha</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> blendMode</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> link</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to add an EPS file stream on the current page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>
@@ -3791,18 +3791,18 @@
 <DOCCOMMENT>		 * The addImageStream method takes an incoming image as a ByteArray. This method can be used to embed high-quality images (300 dpi) to the PDF.</DOCCOMMENT>
 <DOCCOMMENT>		 * You must specify the image color space, if you don't know, there is a lot of chance the color space will be ColorSpace.DEVICE_RGB.</DOCCOMMENT>
 <DOCCOMMENT>		 * </DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> imageBytes </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> colorSpace </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> resizeMode </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> width </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> alpha </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> blendMode </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> keepTransformation </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> link </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY> </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> imageBytes</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> colorSpace</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> resizeMode</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> x</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> y</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> width</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> height</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> alpha</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> blendMode</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> keepTransformation</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@param</DOCTAG><DOCPROPERTY> link</DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>		 * <DOCTAG>@example</DOCTAG><DOCPROPERTY></DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>		 * This example shows how to add an RGB image as a ByteArray into the current page :</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;div class="listing"&gt;</DOCCOMMENT>
 <DOCCOMMENT>		 * &lt;pre&gt;</DOCCOMMENT>

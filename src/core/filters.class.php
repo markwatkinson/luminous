@@ -102,10 +102,13 @@ class LuminousFilters {
         $s = $l[$i];
         $start .= $s . ' ';
         unset($l[$i]);
-        if (trim($s) != '')
+        if (trim($s) !== '')
           $j++;
       }
+      $start = preg_replace('/ $/', '', $start);
       $start .= "</DOCPROPERTY>";
+      $l = array_values($l);
+      if (!empty($l)) $start .= ' ';
       $start .= implode(' ', $l);    
       return $start;
     }

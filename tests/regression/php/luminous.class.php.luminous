@@ -30,11 +30,11 @@
 
 
 <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT> * <DOCTAG>\file</DOCTAG><DOCPROPERTY> luminous.class.php </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>\file</DOCTAG><DOCPROPERTY> luminous.class.php</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT> *  </DOCCOMMENT>
 <DOCCOMMENT> * <DOCTAG>\brief</DOCTAG> The central luminous class and a few utility functions.</DOCCOMMENT>
 <DOCCOMMENT> * </DOCCOMMENT>
-<DOCCOMMENT> * <DOCTAG>\defgroup</DOCTAG><DOCPROPERTY> LuminousUtils </DOCPROPERTY>LuminousUtils</DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>\defgroup</DOCTAG><DOCPROPERTY> LuminousUtils</DOCPROPERTY> LuminousUtils</DOCCOMMENT>
 <DOCCOMMENT> * A set of ulities used by the Luminous class.</DOCCOMMENT>
 <DOCCOMMENT> * <DOCTAG>\internal</DOCTAG></DOCCOMMENT>
 <DOCCOMMENT> */</DOCCOMMENT> 
@@ -44,12 +44,12 @@
 
 
 <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT> * <DOCTAG>\class</DOCTAG><DOCPROPERTY> Luminous </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>\class</DOCTAG><DOCPROPERTY> Luminous</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT> * </DOCCOMMENT>
 <DOCCOMMENT> * <DOCTAG>\brief</DOCTAG> Luminous is an automaton which handles source code highlighting.</DOCCOMMENT>
 <DOCCOMMENT></DOCCOMMENT>
-<DOCCOMMENT> * <DOCTAG>\see</DOCTAG><DOCPROPERTY> Luminous::ParseDelimiters </DOCPROPERTY></DOCCOMMENT>
-<DOCCOMMENT> * <DOCTAG>\see</DOCTAG><DOCPROPERTY> Luminous::ParseRegex </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>\see</DOCTAG><DOCPROPERTY> Luminous::ParseDelimiters</DOCPROPERTY> </DOCCOMMENT>
+<DOCCOMMENT> * <DOCTAG>\see</DOCTAG><DOCPROPERTY> Luminous::ParseRegex</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT> * </DOCCOMMENT>
 <DOCCOMMENT> * <DOCTAG>\todo</DOCTAG> Some of these methods are missing documentation.</DOCCOMMENT>
 <DOCCOMMENT> * <DOCTAG>\todo</DOCTAG> probably should merge the non-stateful code into the stateful code.</DOCCOMMENT>
@@ -68,7 +68,7 @@
   
   <DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>   * Sets whether or not the input is already HTML entity escaped</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.30 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.30</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT> 
   <KEYWORD>public</KEYWORD> <VARIABLE>$pre_escaped</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD>;
   
@@ -76,7 +76,7 @@
   <DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>   * Sets whether or not to tag the input. This may be disabled in the case </DOCCOMMENT>
 <DOCCOMMENT>   * that callback functions are used to transform matched elements.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.5.0 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.5.0</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
   
   <KEYWORD>public</KEYWORD> <VARIABLE>$tag_input</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD>;
@@ -89,7 +89,7 @@
 <DOCCOMMENT>   * appears in a different element.).</DOCCOMMENT>
 <DOCCOMMENT>   * Other times, this is not important.</DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.5.0 </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\since</DOCTAG><DOCPROPERTY> 0.5.0</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
   <KEYWORD>public</KEYWORD> <VARIABLE>$separate_lines</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD>;
 
@@ -276,8 +276,8 @@
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\return</DOCTAG> the index </DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> state </DOCPROPERTY>the state array (as stored on the stack)</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> real_end </DOCPROPERTY>if a state ends with the sequence 'xyz' and the sequence</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> state</DOCPROPERTY> the state array (as stored on the stack)</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> real_end</DOCPROPERTY> if a state ends with the sequence 'xyz' and the sequence</DOCCOMMENT>
 <DOCCOMMENT>   *    abcxyz is encountered, it may sometimes be preferable to determine</DOCCOMMENT>
 <DOCCOMMENT>   *    the index of 'c', or in other situations, the index of 'z'. </DOCCOMMENT>
 <DOCCOMMENT>   *    real_end=true includes the delimiter xyz, real_end=false does not.</DOCCOMMENT>
@@ -521,9 +521,9 @@
   
   <DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>   * Constructor. Nothing interesting here.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> src </DOCPROPERTY>the source string (optionally set this later with </DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> src</DOCPROPERTY> the source string (optionally set this later with </DOCCOMMENT>
 <DOCCOMMENT>   *    SetSource)</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\see</DOCTAG><DOCPROPERTY> Luminous::SetSource </DOCPROPERTY></DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\see</DOCTAG><DOCPROPERTY> Luminous::SetSource</DOCPROPERTY></DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT> 
   <KEYWORD>function</KEYWORD> <USER_FUNCTION>__construct</USER_FUNCTION>(<VARIABLE>$src</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>null</KEYWORD>)
   {
@@ -533,7 +533,7 @@
   
   <DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>    * Sets the input source string</DOCCOMMENT>
-<DOCCOMMENT>    * <DOCTAG>\param</DOCTAG><DOCPROPERTY> src </DOCPROPERTY>the string of source code to parse</DOCCOMMENT>
+<DOCCOMMENT>    * <DOCTAG>\param</DOCTAG><DOCPROPERTY> src</DOCPROPERTY> the string of source code to parse</DOCCOMMENT>
 <DOCCOMMENT>    */</DOCCOMMENT>
   <KEYWORD>public</KEYWORD> 
   <KEYWORD>function</KEYWORD> <USER_FUNCTION>SetSource</USER_FUNCTION>(<VARIABLE>$src</VARIABLE>)
@@ -546,7 +546,7 @@
 <DOCCOMMENT>   * Sets the extraction offset to start at.  This is for recursive calls on</DOCCOMMENT>
 <DOCCOMMENT>   * the same string,  so that different parser objects do not collide and</DOCCOMMENT>
 <DOCCOMMENT>   * overwrite each other's changes with their own</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> num </DOCPROPERTY>The base number to start from.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> num</DOCPROPERTY> The base number to start from.</DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
 
   <KEYWORD>public</KEYWORD> 
@@ -557,7 +557,7 @@
 
   <DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>   * Sets Luminous's grammar</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> grammar </DOCPROPERTY>the LuminousGrammar object</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> grammar</DOCPROPERTY> the LuminousGrammar object</DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
 
   <KEYWORD>public</KEYWORD> 
@@ -616,7 +616,7 @@
 
   <DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>   * Determines if a character at a given index is escaped or not</DOCCOMMENT>
-<DOCCOMMENT>   *  <DOCTAG>\param</DOCTAG><DOCPROPERTY> index </DOCPROPERTY>the index of the character. If null, the current $this-&gt;index</DOCCOMMENT>
+<DOCCOMMENT>   *  <DOCTAG>\param</DOCTAG><DOCPROPERTY> index</DOCPROPERTY> the index of the character. If null, the current $this-&gt;index</DOCCOMMENT>
 <DOCCOMMENT>   * is used</DOCCOMMENT>
 <DOCCOMMENT>   *  <DOCTAG>\return</DOCTAG> true or false</DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
@@ -640,8 +640,8 @@
   <DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>   * Adds a 'replacement' to the internal data. The given string isreplaced by</DOCCOMMENT>
 <DOCCOMMENT>   * some pattern, and the alias lookup stored internally</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> replacement </DOCPROPERTY>the string to be replaced</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> tag </DOCPROPERTY>the type (tag) of the data which is being stored. This may be </DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> replacement</DOCPROPERTY> the string to be replaced</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> tag</DOCPROPERTY> the type (tag) of the data which is being stored. This may be </DOCCOMMENT>
 <DOCCOMMENT>   *    null but if the data is all of one type, it really shouldn't be.</DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\return</DOCTAG> the alias which now represents the string.</DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>  
@@ -690,8 +690,8 @@
   }
   
   <DOCCOMMENT>/**</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> rule </DOCPROPERTY>the current rule for which to search for an ending</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> match_txt </DOCPROPERTY>the text of the next match, returned as a reference</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> rule</DOCPROPERTY> the current rule for which to search for an ending</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> match_txt</DOCPROPERTY> the text of the next match, returned as a reference</DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\return</DOCTAG> the index of the next matching delimiter for the given rule_text</DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT>
   <KEYWORD>private</KEYWORD> <KEYWORD>function</KEYWORD> <USER_FUNCTION>GetNextEndDelim</USER_FUNCTION>(<VARIABLE>$rule</VARIABLE>, <OPERATOR>&amp;</OPERATOR><VARIABLE>$match_txt</VARIABLE>)
@@ -1309,7 +1309,7 @@
   
   <DOCCOMMENT>/**</DOCCOMMENT>
 <DOCCOMMENT>   * Deals with SimpleRules</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> str </DOCPROPERTY>the input string to parse.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> str</DOCPROPERTY> the input string to parse.</DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\return</DOCTAG> the input tagged according to the given simple rules.</DOCCOMMENT>
 <DOCCOMMENT>   */</DOCCOMMENT> 
   <KEYWORD>private</KEYWORD> 
@@ -1540,7 +1540,7 @@
 <DOCCOMMENT>   * <DOCTAG>\return</DOCTAG> a string which is formatted with an internal tagging spec.</DOCCOMMENT>
 <DOCCOMMENT>   *    But the caller should not worry about that, it's only for recursion.</DOCCOMMENT>
 <DOCCOMMENT>   *</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\throw</DOCTAG><DOCPROPERTY> Exception </DOCPROPERTY>in the event that the PCRE module fails somehow. The</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\throw</DOCTAG><DOCPROPERTY> Exception</DOCPROPERTY> in the event that the PCRE module fails somehow. The</DOCCOMMENT>
 <DOCCOMMENT>   *    error is given in the exception message, but this is likely down to an</DOCCOMMENT>
 <DOCCOMMENT>   *    exceptionally large string which is triggering the PCRE backtrack limit.</DOCCOMMENT>
 <DOCCOMMENT>   *    The parser should survive, but the string will not by syntax highlighted</DOCCOMMENT>
@@ -1668,12 +1668,12 @@
 <DOCCOMMENT>   * source string and its language or gramamr and returns to you a formatted </DOCCOMMENT>
 <DOCCOMMENT>   * HTML string (we hope).</DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> source_string: </DOCPROPERTY>The source to parse, as a string</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> grammar </DOCPROPERTY>The LuminousGrammar to apply to the source.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> source_string:</DOCPROPERTY> The source to parse, as a string</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\param</DOCTAG><DOCPROPERTY> grammar</DOCPROPERTY> The LuminousGrammar to apply to the source.</DOCCOMMENT>
 <DOCCOMMENT>   * <DOCTAG>\return</DOCTAG> return A string which is 'tagged' by Luminous's spec. This should</DOCCOMMENT>
 <DOCCOMMENT>   * then be given to an instance of LuminousFormatter to be turned into </DOCCOMMENT>
 <DOCCOMMENT>   * something more universal.</DOCCOMMENT>
-<DOCCOMMENT>   * <DOCTAG>\throw</DOCTAG><DOCPROPERTY> Exception </DOCPROPERTY>if no suitable grammar is given.</DOCCOMMENT>
+<DOCCOMMENT>   * <DOCTAG>\throw</DOCTAG><DOCPROPERTY> Exception</DOCPROPERTY> if no suitable grammar is given.</DOCCOMMENT>
 <DOCCOMMENT>   * </DOCCOMMENT>
 <DOCCOMMENT>  */</DOCCOMMENT>
 
