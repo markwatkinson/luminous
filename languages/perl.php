@@ -237,7 +237,9 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
     // quote-like operators. we override these.
     // I got these out of the old luminous tree, I don't know how accurate
     // or complete they are. 
-    $this->add_pattern('DELIMETERS', '/(q[rqxw]?|m|s|tr|y)([\s]*)([^a-zA-Z0-9])/');
+    // According to psh, delimiters can be escaped?
+    $this->add_pattern('DELIMETERS', 
+      '/(q[rqxw]?|m|s|tr|y)([\s]*)(\\\\?[^a-zA-Z0-9\s])/');
     $this->add_pattern('IDENT', '/[a-zA-Z_]\w*/');
     
     
