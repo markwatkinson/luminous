@@ -6,7 +6,16 @@
  * BTW PHP IS MOSTLY CASE INSENSITIVE
  */
 CLASS LUMINOUSLOLCODESCANNER EXTENDS LUMINOUSSIMPLESCANNER {
-  
+
+  FUNCTION FUNCDEF_OVERRIDE($MATCHES) {
+    $this->RECORD($MATCHES[0], 'KEYWORD');
+    $this->POS_SHIFT(STRLEN($MATCHES[0]));
+    $this->skip_whitespace();
+    IF ($this->SCAN('/[a-z_]\w*/i')) {
+      $this->RECORD($this->MATCH(), 'USER_FUNCTION');
+      $this->user_defs[$this->MATCH()] = 'FUNCTION';
+    }
+  }
   FUNCTION STR_FILTER($TOKEN) {
     $TOKEN = LUMINOUSUTILS::ESCAPE_TOKEN($TOKEN);
     $STR = &$TOKEN[1];
@@ -23,6 +32,7 @@ CLASS LUMINOUSLOLCODESCANNER EXTENDS LUMINOUSSIMPLESCANNER {
 
   FUNCTION INIT() {
     $this->ADD_FILTER('STRING', array($this, 'STR_FILTER'));
+    $this->REMOVE_FILTER('constant');
     
     $this->ADD_PATTERN('COMMENT', '/(?s:OBTW.*?TLDR)|BTW.*/');
     $this->ADD_PATTERN('STRING', '/" (?: [^":]+ | :.)* "/x');
@@ -41,6 +51,8 @@ CLASS LUMINOUSLOLCODESCANNER EXTENDS LUMINOUSSIMPLESCANNER {
         (?:AN|NOT)\\b
       )
       /x');
+    $this->ADD_PATTERN('FUNC_DEF', '/how\s+duz\s+i\\b/i');
+    $this->overrides['FUNC_DEF'] = array($this, 'FUNCDEF_OVERRIDE');
     $this->ADD_PATTERN('NUMERIC', LUMINOUSTOKENPRESETS::$NUM_REAL);
     $this->ADD_PATTERN('IDENT', '/[a-zA-Z_]\w*\\??/');
     
@@ -52,7 +64,7 @@ CLASS LUMINOUSLOLCODESCANNER EXTENDS LUMINOUSSIMPLESCANNER {
       'KTHX', 'KTHXBYE', 'HAS', 'HOW', 'I', 'IM', 'IN', 'IS', 'IZ',
       'ITS', 'ITZ', 
       'IF', 'FOUND', 'GTFO', 'MAEK', 'MEBBE', 'NO', 'NOW', 'O', 'OIC', 
-      'OMG', 'OMGWTF', 'RLY?', 'R', 'SAY', 'SO', 'TIL', 'YA', 'YR', 'U',
+      'OMG', 'OMGWTF', 'RLY', 'RLY?', 'R', 'SAY', 'SO', 'TIL', 'YA', 'YR', 'U',
       'WAI', 'WILE', 'WTF?'));
     $this->ADD_IDENTIFIER_MAPPING('FUNCTION', array('GIMMEH', 'VISIBLE', 
       'UPPIN', 'NERFIN'));
