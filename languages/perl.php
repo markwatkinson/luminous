@@ -47,8 +47,9 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
         $finish = $next[0] + strlen($next[1][0]);
       }
       elseif($next[1][2] === $close)  {
-        $close_delimiter_match = $next[1][2];
-        $stack--; 
+        $stack--;
+        if (!$stack)
+          $close_delimiter_match = $next[1][2];
         $finish = $next[0];
       }
       else assert(0);
