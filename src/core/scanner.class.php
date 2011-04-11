@@ -723,6 +723,7 @@ class LuminousScanner extends Scanner {
     $this->add_filter('comment-note', 'COMMENT', array('LuminousFilters', 'comment_note'));    
     $this->add_filter('comment-to-doc', 'COMMENT', array('LuminousFilters', 'generic_doc_comment'));
     $this->add_filter('string-escape', 'STRING', array('LuminousFilters', 'string'));
+    $this->add_filter('char-escape', 'CHARACTER', array('LuminousFilters', 'string'));
     $this->add_filter('pcre', 'REGEX', array('LuminousFilters', 'pcre'));
     $this->add_filter('user-defs', 'IDENT', array($this, 'user_def_filter'));
 
@@ -999,6 +1000,31 @@ class LuminousScanner extends Scanner {
     if (ctype_space($this->peek())) {
       $this->record($this->scan('/\s+/'), null);
     }    
+  }
+
+
+  function nestable_token($token_name, $open, $close) {
+    if ($this->check($open) === null) {
+      throw new Exception('Nestable called at a non-matching point');
+      return;
+    }
+    $patterns = array('open'=>$open, 'close'=>$close);
+
+    $stack = 0;
+    $start = $this->pos();
+    do {
+      list($name, $index, $matches) = $this->get_next_named($patterns);
+      if ($name === 'open') $stack++;
+      elseif($name === 'close') $stack--;
+      else {
+        $this->terminate();
+        break;
+      }
+      $this->pos($index + strlen($matches[0]));
+    } while ($stack);
+    $substr = substr($this->string(), $start, $this->pos()-$start);
+    $this->record($substr, $token_name);
+
   }
 }
 
