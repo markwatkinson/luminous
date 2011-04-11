@@ -196,6 +196,7 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
         $this->record(substr($this->string(), $index), null);
         $this->clean_exit = true;
         $this->interrupt = false;
+        $this->terminate();
         break;
       }
       

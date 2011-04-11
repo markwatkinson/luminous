@@ -161,7 +161,9 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
       elseif($c === '>') {
         $get = true; 
         $this->state_ = 'global';
-        if ($this->scripts && ($this->tagname === 'script' || $this->tagname === 'style')) {
+        if ($this->scripts 
+          && ($this->tagname === 'script' || $this->tagname === 'style')) 
+        {
           $this->record($this->get(), null);          
           $this->scan_child( ($this->tagname === 'script')? 'js' : 'css');
           continue;
