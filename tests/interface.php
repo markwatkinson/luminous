@@ -1,14 +1,19 @@
 <?php
+error_reporting(E_ALL);
 
 require_once('../src/luminous.php');
 
 luminous::set('max-height', 300);
-// luminous::set('theme', 'oxygen');
+luminous::set('theme', 'geonyx');
+luminous::set('relative-root', '../');
+if (isset($_POST['theme'])) luminous::set('theme', $_POST['theme']);
+if (isset($_POST['format'])) luminous::set('format', $_POST['format']);
+
 ?>
 <!DOCTYPE html>
 <html>
   <head>
-  <?php echo luminous::head_html(false, false, '/luminous-exp/'); ?>
+  <?php echo luminous::head_html(); ?>
 
   </head>
 <body>
@@ -20,6 +25,7 @@ luminous::set('max-height', 300);
       $out = luminous::highlight($_POST['lang'], $_POST['src'], false);
       $t1 = microtime(true);
       echo ($t1-$t) . 'seconds <br>';
+      echo strlen($out) . '<br>';
       echo $out;
     }
     ?>
@@ -33,6 +39,25 @@ luminous::set('max-height', 300);
       echo "<option value='{$codes[0]}'$def>$lang</option>\n";
     } ?>
     </select>
+    <br/>
+    <select name='theme'>
+    <?php foreach(luminous::themes() as $t) {
+      $def = (isset($_POST['theme']) && $_POST['theme'] === $t)? ' selected': 
+          '';
+      echo sprintf("<option value='%s'%s>%s</option>\n", $t, $def,
+        preg_replace('/\.css$/i', '', $t));
+
+    }
+?>  </select>
+    <br/>
+    <select name='format'>    
+    <?php foreach(array('html', 'latex') as $f) {
+      $def = (isset($_POST['format']) && $_POST['format'] === $f)? ' selected': 
+          '';
+      echo sprintf("<option value='%s'%s>%s</option>\n", $f, $def, $f);
+
+    }
+?>  </select>
     <br/>
 
     <textarea rows=15 cols=75 name='src'><?php
