@@ -50,7 +50,7 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
         $stack--;
         if (!$stack)
           $close_delimiter_match = $next[1][2];
-        $finish = $next[0];
+        $finish = $next[0] + strlen($next[1][1]);
       }
       else assert(0);
       $this->pos($next[0] + strlen($next[1][0]));
