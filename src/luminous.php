@@ -140,7 +140,8 @@ class _Luminous {
       
     $this->scanners->AddScanner(array('python', 'py'),
       'LuminousPythonScanner', 'Python', "$language_dir/python.php");
-      
+    $this->scanners->AddScanner(array('scala', 'scl'),
+      'LuminousScalaScanner', 'Scala', "$language_dir/scala.php", 'xml');
     $this->scanners->AddScanner(array('sql', 'mysql'),
       'LuminousSQLScanner', 'SQL', "$language_dir/sql.php");
       
