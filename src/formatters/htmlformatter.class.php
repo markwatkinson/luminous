@@ -39,7 +39,6 @@ class LuminousFormatterHTML extends LuminousFormatter
   {
     $line_numbers = false;
     
-    
     if ($this->tab_width - 1 > 0)
     {
       $tab_rep = "";
@@ -55,7 +54,7 @@ class LuminousFormatterHTML extends LuminousFormatter
       $lines = $this->Format_LineNumbers($src);
     else
       $lines = $this->Format_NoLineNumbers($src);
-    
+
     
     $lines = preg_replace('/(?<=<\/)[A-Z_0-9]+(?=>)/', 'span', $lines);
     
@@ -120,6 +119,7 @@ class LuminousFormatterHTML extends LuminousFormatter
         return $src;
     
     $chars = "0-9a-zA-Z\$\-_\.+!\*,%";
+    $src_ = $src;
     // everyone stand back, I know regular expressions
     $src = preg_replace_callback(
       "@(?<![\w])
@@ -132,7 +132,12 @@ class LuminousFormatterHTML extends LuminousFormatter
       (?:[/$chars/?=\#;]+|&amp;|<[^>]+>(?!$))*
       @xm",
       array($this, 'Linkify_cb'), $src);
-      
+    // this can hit a backtracking limit, in which case it nulls our string
+    // FIXME: see if we can make the above regex more resiliant wrt
+    // backtracking
+    if (preg_last_error() !== PREG_NO_ERROR) {
+      $src = $src_;
+    }
     return $src;
   }
   
