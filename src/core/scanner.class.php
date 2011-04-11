@@ -1002,7 +1002,23 @@ class LuminousScanner extends Scanner {
     }    
   }
 
-
+  /**
+   * @brief Handles tokens that may nest inside themselves
+   *
+   * Convenience function. It's fairly common for many languages to allow
+   * things like nestable comments. Handling these is easy but fairly 
+   * long winded, so this function will take an opening and closing delimiter
+   * and consume the token until it is fully closed, or until the end of
+   * the string in the case that it is unterminated.
+   *
+   * When the function returns, the token will have been consumed and appended
+   * to the token stream.
+   *
+   * @param $token_name the name of the token
+   * @param $open the opening delimiter pattern (regex), e.g. '% /\\* %x'
+   * @param $close the closing delimiter pattern (regex), e.g. '% \\* /%x'
+   *
+   */
   function nestable_token($token_name, $open, $close) {
     if ($this->check($open) === null) {
       throw new Exception('Nestable called at a non-matching point');
