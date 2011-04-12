@@ -468,6 +468,7 @@ class Scanner {
         $matches = $m;
         assert($m !== null);
         $name = $name_;
+        if ($index === $this->index) break;
       }
     }
     return array($name, $next, $matches);
@@ -1566,6 +1567,8 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
       }
       $this->transition_rule_cache[$sn] = array($patterns, $states);
     }
+//    print_r($patterns);
+//    die();
     $next = $this->get_next_named($patterns);
     // map to real state data
     if ($next[1] !== -1) {
@@ -1606,6 +1609,13 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
       $c[] = $str;
   }
 
+  function record_token($str, $type) {
+    $state_data = array($type);
+    $this->push_state($state_data);
+    $this->record($str);
+    $this->pop_state();
+  }
+
   
   function record_range($from, $to) {
     if ($to > $from) 
@@ -1631,13 +1641,21 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
       if( ($next_pattern_index <= $end_index || $end_index === -1) && $next_pattern_index !== -1) {
         // we're pushing a new state
         $this->record_range($this->pos(), $next_pattern_index);
-        $new_pos = $next_pattern_index + strlen($next_pattern_matches[0]);
+        $new_pos = $next_pattern_index;
         $this->pos($new_pos);
-        $this->push_state($next_pattern_data);
-        $this->record($next_pattern_matches[0]);
-        if ($next_pattern_data[2] === null) {
-          // state was a full pattern, so pop now
-          $this->pop_state();
+        $tok = $next_pattern_data[0];
+        if (isset($this->overrides[$tok])) {
+          call_user_func($this->overrides[$tok], $next_pattern_matches);
+          // TODO throw an exception if it fails to change the state OR advance
+          // the position
+        } else {
+          $this->pos_shift(strlen($next_pattern_matches[0]));
+          $this->push_state($next_pattern_data);
+          $this->record($next_pattern_matches[0]);
+          if ($next_pattern_data[2] === null) {
+            // state was a full pattern, so pop now
+            $this->pop_state();
+          }
         }
       } elseif($end_index !== -1) {
         // we're at the end of a state, record what's left and pop it
@@ -1647,19 +1665,25 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
         $this->pop_state();
       }
       else {
-        // no more matches, if we have any unterminated states then
-        // pop them and then break
+        // no more matches, consume the rest of the stirng and break
         $this->record($this->rest());
-        while(count($this->token_tree_stack) > 1)
-          $this->pop_state();
         $this->terminate();
         break;
       }
-      // this assertion needs to be removed in future, or at least changed...
+      // this needs to be removed in future, or at least changed...
       // if the state changes then pos may equal p
-      assert($this->pos() > $p);
+      if ($this->pos() <= $p) {
+        throw new Exception('Failed to advance pointer in state' 
+          . $this->state_name());
+      }
     }
-    assert(count($this->token_tree_stack) === 1);
+
+    // unterminated states will have left some tokens open, we need to 
+    // close these so there's just the root node on the stack
+    assert(count($this->token_tree_stack) >= 1);
+    while(count($this->token_tree_stack) > 1)
+      $this->pop_state();
+ 
     return $this->token_tree_stack[0];
   }
 
@@ -1685,7 +1709,8 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
       }
     }
     list($token_name, $text,) = $token;
-    return LuminousUtils::tag_block($token_name, $text);
+    return ($token_name === null)?
+      $text : LuminousUtils::tag_block($token_name, $text);
   }
 
   function tagged() {
