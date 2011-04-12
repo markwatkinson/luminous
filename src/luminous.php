@@ -71,6 +71,9 @@ class _Luminous {
     'LuminousActionScriptScanner', 'ActionScript', "$language_dir/as.php", 
     'ecma');
 
+    $this->scanners->AddScanner(array('bnf'), 
+      'LuminousBNFScanner', 'Backus Naur Form', "$language_dir/bnf.php");
+
     $this->scanners->AddScanner(array('bash', 'sh'),
     'LuminousBashScanner', 'Bash', "$language_dir/bash.php");
     
