@@ -1,6 +1,6 @@
 <?php
-error_reporting(E_ALL);
-
+error_reporting(E_ALL | E_STRICT);
+assert_options(ASSERT_BAIL, 1);
 require_once('../src/luminous.php');
 
 luminous::set('max-height', 300);
