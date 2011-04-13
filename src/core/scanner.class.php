@@ -1344,6 +1344,7 @@ class LuminousSimpleScanner extends LuminousScanner {
           $this->record($match, $tok);
       } else {
         $this->record(substr($this->string(), $index), null);
+        $this->terminate();
         break;
       }
     }
