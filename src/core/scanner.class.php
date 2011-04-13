@@ -1336,7 +1336,8 @@ class LuminousSimpleScanner extends LuminousScanner {
           $groups = $this->match_groups();
           $this->unscan();
           $p = $this->pos();
-          call_user_func($this->overrides[$tok], $groups);
+          $ret = call_user_func($this->overrides[$tok], $groups);
+          if ($ret === true) break;
           if ($this->pos() <= $p)
             throw new Exception('Failed to consume any string in override for ' . $tok);
         } else
@@ -1593,15 +1594,22 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
       foreach($this->patterns as $p) $initial[] = $p[0];
       $this->transitions['initial'] = $initial;
     }
-    $this->token_tree_stack[] = array('token_name' => 'initial', 'children'=>array());
+    $this->token_tree_stack[] = array('token_name' => 'initial',
+      'children'=>array());
     $this->rule_tag_map['initial'] = null;
   }
 
   /**
    * Records a string as a child of the currently active token
+   * @warning the second and third parameters are not applicable to this
+   * method, they are only presetnt to suppress PHP warnings. If you set them,
+   * an exception is thrown.
    */
   function record($str, $dummy1=null, $dummy2=null) {
-    
+    if ($dummy1 !== null || $dummy2 !== null) {
+      throw new Exception('LuminousStatefulScanner::record does not currently'
+        . ' observe its second and third parameters');
+    }
     $c = & $this->token_tree_stack[count($this->token_tree_stack)-1]['children'];
     if (!empty($c) && is_string($c[count($c)-1]))
       $c[count($c)-1] .= $str;
