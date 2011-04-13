@@ -97,6 +97,9 @@ class _Luminous {
       'LuminousECMAScriptScanner', 'ECMAScript', 
       "$language_dir/ecmascript.php", 'ecma-includes');
 
+    $this->scanners->AddScanner(array('erlang', 'erl', 'hrl'),
+      'LuminousErlangScanner', 'Erlang', "$language_dir/erlang.php");
+
     $this->scanners->AddScanner(array('groovy'),
       'LuminousGroovyScanner', 'Groovy',
       "$language_dir/groovy.php");
