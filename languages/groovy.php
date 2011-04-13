@@ -8,6 +8,11 @@
 require_once(dirname(__FILE__) . '/include/java_func_list.php');
 class LuminousGroovyScanner extends LuminousSimpleScanner {
 
+
+
+  public $interpolation = false;
+  protected $brace_stack = 0;
+
   function regex_override($match) {
     assert($this->peek() === '/');
     assert($match === array(0=>'/'));
@@ -38,6 +43,74 @@ class LuminousGroovyScanner extends LuminousSimpleScanner {
     }
   }
 
+  // string interpolation is complex and it nests, so we do that in here
+  function interp_string($m) {
+    // this should only be called for doubly quoted strings 
+    // and triple-double quotes
+    //
+    // interpolation is betwee ${ ... }
+    $patterns = array('interp' => '/(?<!\\$)\\$\\{/');
+    $start = $this->pos();
+    if (preg_match('/^"""/', $m[0])) {
+      $patterns['term'] = '/"""/';
+      $this->pos_shift(3);
+    }
+    else {
+      assert(preg_match('/^"/', $m[0]));
+      $patterns['term'] = '/"/';
+      $this->pos_shift(1);
+    }
+    while (1) {
+      $p = $this->pos();
+      list($name, $index, $matches) = $this->get_next_named($patterns);
+      if ($name === null) {
+        // no matches, terminate
+        $this->record(substr($this->string(), $start), 'STRING');
+        $this->terminate();
+        break;
+      }
+      elseif($name === 'term') {
+        // end of the string
+        $range = $index + strlen($matches[0]);
+        $this->record(substr($this->string(), 
+          $start, $range-$start), 'STRING');
+        $this->pos($range);
+        break;
+      } else {
+        // interpolation, handle this with a subscanner
+        $this->record(substr($this->string(), $start, $index-$start), 'STRING');
+        $this->record($matches[0], 'DELIMITER');
+        $subscanner = new LuminousGroovyScanner($this->string());
+        $subscanner->interpolation = true;
+        $subscanner->init();
+        $subscanner->pos($index + strlen($matches[0]));
+        $subscanner->main();
+        
+        $tagged = $subscanner->tagged();
+        $this->record($tagged, 'INTERPOLATION', true);
+        $this->pos($subscanner->pos());
+        if ($this->scan('/\\}/')) $this->record($this->match(), 'DELIMITER');
+        $start = $this->pos();
+      }
+      assert($p < $this->pos());
+      
+    }
+  }
+
+  // brace override halts scanning if the stack is empty and we hit a '}',
+  // this is for interpolated code, the top-level scanner doesn't bind to this
+  function brace($m) {
+    if ($m[0] === '{') $this->brace_stack++;
+    elseif($m[0] === '}') {
+      if ($this->brace_stack <= 0)
+        return true;
+      $this->brace_stack--;
+    }
+    else assert(0);
+    $this->record($m[0], null);
+    $this->pos_shift(strlen($m[0]));
+  }
+
   
   function init() {
     $this->add_identifier_mapping('KEYWORD',
@@ -60,17 +133,21 @@ class LuminousGroovyScanner extends LuminousSimpleScanner {
     $this->add_pattern('COMMENT', '/^#!.*/');
     $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_ML);
     $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_SL);
-    $this->add_pattern('STRING', "/$triple_dstr/sx");
+    $this->add_pattern('INTERP_STRING', "/$triple_dstr/sx");
     $this->add_pattern('STRING', "/$triple_sstr/xs");
-    $this->add_pattern('STRING', LuminousTokenPresets::$DOUBLE_STR);
+    $this->add_pattern('INTERP_STRING', LuminousTokenPresets::$DOUBLE_STR);
+    $this->overrides['INTERP_STRING'] = array($this, 'interp_string');
     // differs from java:
     $this->add_pattern('STRING', LuminousTokenPresets::$SINGLE_STR);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
     $this->add_pattern('IDENT', '/[a-zA-Z_]\w*/');
     $this->add_pattern('OPERATOR', '/[~!%^&*\-=+:?|<>]+/');
-    $this->add_pattern('SLASH', '%/%');
-    
+    $this->add_pattern('SLASH', '%/%');    
     $this->overrides['SLASH'] = array($this, 'regex_override');
+    if ($this->interpolation) {
+      $this->add_pattern('BRACE', '/[{}]/');
+      $this->overrides['BRACE'] = array($this, 'brace');
+    }
   }
 }
