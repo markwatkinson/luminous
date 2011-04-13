@@ -2,26 +2,25 @@
 
 require_once( dirname(__FILE__) . '/include/php_func_list.php');
 
-class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
+/*
+ * This is not a scanner called by an external interface, it's controlled
+ * by LuminousPHPScanner (defined in this file).
+ *
+ * It should break when it sees a '?>', but it should assume it's in php
+ * when it's called.
+ */
+class LuminousPHPSubScanner extends  LuminousScanner {
   
   protected $case_sensitive = false;
   public $snippet = false;
   
-  function __construct($src=null) {
-    $h = new LuminousHTMLScanner($src);
-    $h->embedded_server = true;
-    $h->init();    
-    $this->add_child_scanner('html', $h);
-    
-    parent::__construct($src);
-    
-    $this->add_pattern('START', '/<\?(php|=)?/'); 
-    $this->add_pattern('TERM', '/\?>/'); 
+  function init() {
+    $this->add_pattern('TERM', '/\\?>/'); 
     $this->add_pattern('COMMENT', '% (?://|\#) .*? (?=\\?>|$)  %xm');
     $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_ML); 
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
-    $this->add_pattern('OPERATOR', '@[!%^&*\-=+~:<>/]+|\\?(?!>)@');
+    $this->add_pattern('OPERATOR', '@[!%^&*\\-=+~:<>/\\|\\.;,]+|\\?(?!>)@');
     $this->add_pattern('VARIABLE', '/\\$\\$?[a-zA-Z_]\w*/');
     $this->add_pattern('IDENT', '/[a-zA-Z_]\w*/');
     $this->add_pattern('STRING', LuminousTokenPresets::$DOUBLE_STR);
@@ -32,8 +31,6 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
     $this->add_filter('STRING', array($this, 'str_filter'));
     $this->add_filter('HEREDOC', array($this, 'str_filter'));
     $this->add_filter('NOWDOC', array($this, 'nowdoc_filter'));
-    
-    
   }
 
   static function str_filter($token) {
@@ -55,30 +52,12 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
     return $token;
   }
   
-  function init() {}
-  
-  function scan_child() {
-    $s = $this->child_scanners['html'];
-    $s->pos($this->pos());
-    $s->main();
-    $this->tokens[] = array(null, $s->tagged(), true);
-    $this->pos($s->pos());
-  }
-
-  
   function main() {
-    $inphp = $this->snippet;
     $this->start();
     $expecting = false;
     while (!$this->eos()) {
-      $tok = null;      
-      if (!$inphp) {
-        if ($this->peek(2) !== '<?') {
-          $this->scan_child();
-        }
-        assert ($this->peek(2) === '<?' || $this->eos());
-        if ($this->eos()) break;
-      }      
+      $tok = null;
+
       $index = $this->pos();
       
       if (($match = $this->next_match()) !== null) {
@@ -87,26 +66,22 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
           $this->record(substr($this->string(), $index, $match[1] - $index), null);
         }
       } else {
-        $this->record(substr($this->string(), $index), null);
+        $this->record($this->rest(), null);
+        $this->terminate();
         break;
       }
       
       if ($tok === 'TERM') {
-        $tok = 'DELIMITER';
-        $inphp = false;
+        $this->unscan();
+        break;
       }
-      elseif($tok === 'START') {
-        $tok = 'DELIMITER';
-        $inphp = true;
-      }
-      
       
       if($tok === 'IDENT') {
         $m = $this->match();
         if ($m === 'class') $expecting = 'class';
         elseif ($m === 'function') $expecting = 'function';
         else {
-          if ($expecting === 'class') {                      
+          if ($expecting === 'class') {
             $this->user_defs[$m] = 'TYPE';
             $tok = 'USER_FUNCTION';
           }
@@ -150,6 +125,80 @@ class LuminousPHPScanner extends  LuminousEmbeddedWebScript {
       $this->record($this->match(), $tok);
     }
   }
+}
+
+
+
+
+/*
+ * This is a controller class which handles alternating between PHP and some
+ * other language (currently HTML only, TODO allow plain text as well)
+ * PHP and the other language are handled by subscanners
+ */
+class LuminousPHPScanner extends LuminousScanner {
+
+  /// the 'non-php' scanner
+  protected $subscanner;
+  /// the real php scanner
+  protected $php_scanner;
+
+  /// If it's a snippet, we assume we're starting in PHP mode.
+  public $snippet = false;
+
+  
+  function __construct($src=null) {
+    $this->subscanner = new LuminousHTMLScanner($src);
+    $this->subscanner->embedded_server = true;
+    $this->subscanner->init();
+
+    $this->php_scanner = new LuminousPHPSubScanner($src);
+    $this->php_scanner->init();
+    parent::__construct($src);
+  }
+
+  function string($s=null) {
+    if ($s !== null) {
+      $this->subscanner->string($s);
+      $this->php_scanner->string($s);
+    }
+    return parent::string($s);
+  }
+
+  protected function scan_php($delimiter) {
+    if ($delimiter !== null)
+      $this->record($delimiter, 'DELIMITER');
+    $this->php_scanner->pos($this->pos());
+    $this->php_scanner->main();
+    $this->record($this->php_scanner->tagged(),
+      ($delimiter === '<?=')? 'INTERPOLATION' : null, true);
+      
+    $this->pos($this->php_scanner->pos());
+    assert($this->eos() || $this->check('/\\?>/'));
+    if ($this->scan('/\\?>/'))
+      $this->record($this->match(), 'DELIMITER');
+  }
+
+  protected function scan_child() {
+    $this->subscanner->pos($this->pos());
+    $this->subscanner->main();
+    $this->pos($this->subscanner->pos());
+    assert($this->eos() || $this->check('/<\\?/'));
+    $this->record($this->subscanner->tagged(), null, true);
+  }
+
+  function main() {
+    while (!$this->eos()) {
+      $p = $this->pos();
+      if ($this->snippet)
+        $this->scan_php(null);
+      elseif ($this->scan('/<\\?(?:php|=)?/'))
+        $this->scan_php($this->match());
+      else
+        $this->scan_child();
+      assert($this->pos() > $p);
+    }
+  }
+
 }
 
 

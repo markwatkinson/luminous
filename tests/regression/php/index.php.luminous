@@ -1,11 +1,11 @@
 <DELIMITER>&lt;?php</DELIMITER>
-  <FUNCTION>require_once</FUNCTION>(<STRING>"sql.class.php"</STRING>);
-  <FUNCTION>require_once</FUNCTION>(<STRING>"markupwrapper.php"</STRING>);
+  <FUNCTION>require_once</FUNCTION>(<STRING>"sql.class.php"</STRING>)<OPERATOR>;</OPERATOR>
+  <FUNCTION>require_once</FUNCTION>(<STRING>"markupwrapper.php"</STRING>)<OPERATOR>;</OPERATOR>
   
-  <FUNCTION>date_default_timezone_set</FUNCTION>(<STRING>'Europe/London'</STRING>);
+  <FUNCTION>date_default_timezone_set</FUNCTION>(<STRING>'Europe/London'</STRING>)<OPERATOR>;</OPERATOR>
 
-  <VARIABLE>$tabs</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$SQL</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>GetTabs</OO>();
-  <VARIABLE>$TAB_VIEW</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD>;
+  <VARIABLE>$tabs</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$SQL</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>GetTabs</OO>()<OPERATOR>;</OPERATOR>
+  <VARIABLE>$TAB_VIEW</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD><OPERATOR>;</OPERATOR>
 <DELIMITER>?&gt;</DELIMITER>&lt;<KEYWORD>!DOCTYPE</KEYWORD> <TYPE>html</TYPE>&gt;
 
 &lt;<HTMLTAG>html</HTMLTAG>&gt;
@@ -103,11 +103,11 @@
     <DELIMITER>&lt;?</DELIMITER>
     <KEYWORD>foreach</KEYWORD>(<VARIABLE>$tabs</VARIABLE> <KEYWORD>as</KEYWORD> <VARIABLE>$t</VARIABLE>)
     {
-      <VARIABLE>$title</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"&lt;a href='#<VARIABLE>{$t-&gt;element_id}</VARIABLE>' class='tab_clicker'&gt;<VARIABLE>{$t-&gt;tab_title}</VARIABLE>&lt;/a&gt;"</STRING>;
-      <VARIABLE>$img</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>trim</FUNCTION>(<VARIABLE>$t</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>image</OO>);
-      <KEYWORD>if</KEYWORD> (<VARIABLE>$img</VARIABLE> <OPERATOR>!==</OPERATOR> <KEYWORD>false</KEYWORD> <OPERATOR>&amp;&amp;</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$img</VARIABLE>) <OPERATOR>&amp;&amp;</OPERATOR> @<FUNCTION>file_exists</FUNCTION>(<VARIABLE>$_SERVER</VARIABLE>[<STRING>'DOCUMENT_ROOT'</STRING>].<VARIABLE>$img</VARIABLE>))
-        <VARIABLE>$title</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"&lt;img src='<VARIABLE>$img</VARIABLE>' alt='' title=''&gt; <VARIABLE>$title</VARIABLE>"</STRING>;
-      <FUNCTION>echo</FUNCTION> <STRING>"&lt;div&gt;<VARIABLE>$title</VARIABLE>&lt;/div&gt;"</STRING>;
+      <VARIABLE>$title</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"&lt;a href='#<VARIABLE>{$t-&gt;element_id}</VARIABLE>' class='tab_clicker'&gt;<VARIABLE>{$t-&gt;tab_title}</VARIABLE>&lt;/a&gt;"</STRING><OPERATOR>;</OPERATOR>
+      <VARIABLE>$img</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>trim</FUNCTION>(<VARIABLE>$t</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>image</OO>)<OPERATOR>;</OPERATOR>
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$img</VARIABLE> <OPERATOR>!==</OPERATOR> <KEYWORD>false</KEYWORD> <OPERATOR>&amp;&amp;</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$img</VARIABLE>) <OPERATOR>&amp;&amp;</OPERATOR> @<FUNCTION>file_exists</FUNCTION>(<VARIABLE>$_SERVER</VARIABLE>[<STRING>'DOCUMENT_ROOT'</STRING>]<OPERATOR>.</OPERATOR><VARIABLE>$img</VARIABLE>))
+        <VARIABLE>$title</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"&lt;img src='<VARIABLE>$img</VARIABLE>' alt='' title=''&gt; <VARIABLE>$title</VARIABLE>"</STRING><OPERATOR>;</OPERATOR>
+      <FUNCTION>echo</FUNCTION> <STRING>"&lt;div&gt;<VARIABLE>$title</VARIABLE>&lt;/div&gt;"</STRING><OPERATOR>;</OPERATOR>
     }
     <DELIMITER>?&gt;</DELIMITER>
     &lt;<HTMLTAG>/div</HTMLTAG>&gt;
@@ -115,9 +115,9 @@
     <DELIMITER>&lt;?</DELIMITER> 
         <KEYWORD>foreach</KEYWORD>(<VARIABLE>$tabs</VARIABLE> <KEYWORD>as</KEYWORD> <VARIABLE>$t</VARIABLE>)
         {
-          <FUNCTION>echo</FUNCTION> <STRING>"&lt;div id='<VARIABLE>{$t-&gt;element_id}</VARIABLE>' class='content'&gt;"</STRING>;
-          <FUNCTION>echo</FUNCTION> markup(<VARIABLE>$t</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>content</OO>);
-          <FUNCTION>echo</FUNCTION> <STRING>"&lt;/div&gt;"</STRING>;
+          <FUNCTION>echo</FUNCTION> <STRING>"&lt;div id='<VARIABLE>{$t-&gt;element_id}</VARIABLE>' class='content'&gt;"</STRING><OPERATOR>;</OPERATOR>
+          <FUNCTION>echo</FUNCTION> markup(<VARIABLE>$t</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>content</OO>)<OPERATOR>;</OPERATOR>
+          <FUNCTION>echo</FUNCTION> <STRING>"&lt;/div&gt;"</STRING><OPERATOR>;</OPERATOR>
         }
       <DELIMITER>?&gt;</DELIMITER>
    &lt;<HTMLTAG>/div</HTMLTAG>&gt;
