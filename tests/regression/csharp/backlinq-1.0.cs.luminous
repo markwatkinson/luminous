@@ -74,7 +74,7 @@
         <DOCCOMMENT>/// Returns the input typed as &lt;see cref="IEnumerable{T}"/&gt;.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> AsEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> AsEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(<TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             <KEYWORD>return</KEYWORD> source<OPERATOR>;</OPERATOR>
         }
@@ -84,7 +84,7 @@
         <DOCCOMMENT>/// specified type argument.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> Empty<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>()
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> Empty<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>()
         {
             <KEYWORD>return</KEYWORD> Sequence<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;.</OPERATOR>Empty<OPERATOR>;</OPERATOR>
         }
@@ -94,16 +94,16 @@
         <DOCCOMMENT>/// specified type.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> Cast<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable source)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> Cast<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
             <KEYWORD>return</KEYWORD> CastYield<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>(source)<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> CastYield<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>(
-            IEnumerable source)
+        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> CastYield<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>(
+            <TYPE>IEnumerable</TYPE> source)
         {
             <KEYWORD>foreach</KEYWORD> (<KEYWORD>var</KEYWORD> item <KEYWORD>in</KEYWORD> source)
                 <KEYWORD>yield</KEYWORD> <KEYWORD>return</KEYWORD> (TResult) item<OPERATOR>;</OPERATOR>
@@ -113,16 +113,16 @@
         <DOCCOMMENT>/// Filters the elements of an &lt;see cref="IEnumerable"/&gt; based on a specified type.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> OfType<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable source)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> OfType<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
             <KEYWORD>return</KEYWORD> OfTypeYield<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>(source)<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> OfTypeYield<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>(
-            IEnumerable source)
+        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> OfTypeYield<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>(
+            <TYPE>IEnumerable</TYPE> source)
         {
             <KEYWORD>foreach</KEYWORD> (<KEYWORD>var</KEYWORD> item <KEYWORD>in</KEYWORD> source)
                 <KEYWORD>if</KEYWORD> (item <KEYWORD>is</KEYWORD> TResult)
@@ -135,7 +135,7 @@
         <DOCCOMMENT>/// &lt;param name="start"&gt;The value of the first integer in the sequence.&lt;/param&gt;</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;param name="count"&gt;The number of sequential integers to generate.&lt;/param&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>int</TYPE><OPERATOR>&gt;</OPERATOR> Range(<TYPE>int</TYPE> start<OPERATOR>,</OPERATOR> <TYPE>int</TYPE> count)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>int</TYPE><OPERATOR>&gt;</OPERATOR> Range(<TYPE>int</TYPE> start<OPERATOR>,</OPERATOR> <TYPE>int</TYPE> count)
         {
             <KEYWORD>if</KEYWORD> (count <OPERATOR>&lt;</OPERATOR> <NUMERIC>0</NUMERIC>)
                 <KEYWORD>throw</KEYWORD> <KEYWORD>new</KEYWORD> <TYPE>ArgumentOutOfRangeException</TYPE>(<STRING>"count"</STRING><OPERATOR>,</OPERATOR> count<OPERATOR>,</OPERATOR> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
@@ -147,7 +147,7 @@
             <KEYWORD>return</KEYWORD> RangeYield(start<OPERATOR>,</OPERATOR> end)<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>int</TYPE><OPERATOR>&gt;</OPERATOR> RangeYield(<TYPE>int</TYPE> start<OPERATOR>,</OPERATOR> <TYPE>long</TYPE> end)
+        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>int</TYPE><OPERATOR>&gt;</OPERATOR> RangeYield(<TYPE>int</TYPE> start<OPERATOR>,</OPERATOR> <TYPE>long</TYPE> end)
         {
             <KEYWORD>for</KEYWORD> (<KEYWORD>var</KEYWORD> i <OPERATOR>=</OPERATOR> start<OPERATOR>;</OPERATOR> i <OPERATOR>&lt;</OPERATOR> end<OPERATOR>;</OPERATOR> i<OPERATOR>++</OPERATOR>)
                 <KEYWORD>yield</KEYWORD> <KEYWORD>return</KEYWORD> i<OPERATOR>;</OPERATOR>
@@ -157,14 +157,14 @@
         <DOCCOMMENT>/// Generates a sequence that contains one repeated value.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> Repeat<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>(TResult element<OPERATOR>,</OPERATOR> <TYPE>int</TYPE> count)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> Repeat<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>(TResult element<OPERATOR>,</OPERATOR> <TYPE>int</TYPE> count)
         {
             <KEYWORD>if</KEYWORD> (count <OPERATOR>&lt;</OPERATOR> <NUMERIC>0</NUMERIC>) <KEYWORD>throw</KEYWORD> <KEYWORD>new</KEYWORD> <TYPE>ArgumentOutOfRangeException</TYPE>(<STRING>"count"</STRING><OPERATOR>,</OPERATOR> count<OPERATOR>,</OPERATOR> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
 
             <KEYWORD>return</KEYWORD> RepeatYield(element<OPERATOR>,</OPERATOR> count)<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> RepeatYield<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>(TResult element<OPERATOR>,</OPERATOR> <TYPE>int</TYPE> count)
+        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> RepeatYield<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>(TResult element<OPERATOR>,</OPERATOR> <TYPE>int</TYPE> count)
         {
             <KEYWORD>for</KEYWORD> (<KEYWORD>var</KEYWORD> i <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR> i <OPERATOR>&lt;</OPERATOR> count<OPERATOR>;</OPERATOR> i<OPERATOR>++</OPERATOR>)
                 <KEYWORD>yield</KEYWORD> <KEYWORD>return</KEYWORD> element<OPERATOR>;</OPERATOR>
@@ -174,8 +174,8 @@
         <DOCCOMMENT>/// Filters a sequence of values based on a predicate.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Where<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Where<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             CheckNotNull(predicate<OPERATOR>,</OPERATOR> <STRING>"predicate"</STRING>)<OPERATOR>;</OPERATOR>
@@ -188,8 +188,8 @@
         <DOCCOMMENT>/// Each element's index is used in the logic of the predicate function.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Where<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Where<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
@@ -198,8 +198,8 @@
             <KEYWORD>return</KEYWORD> WhereYield(source<OPERATOR>,</OPERATOR> predicate)<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> WhereYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
+        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> WhereYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             <KEYWORD>var</KEYWORD> i <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
@@ -212,8 +212,8 @@
         <DOCCOMMENT>/// Projects each element of a sequence into a new form.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> Select<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> Select<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> selector)
         {
             CheckNotNull(selector<OPERATOR>,</OPERATOR> <STRING>"selector"</STRING>)<OPERATOR>;</OPERATOR>
@@ -226,8 +226,8 @@
         <DOCCOMMENT>/// incorporating the element's index.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> Select<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> Select<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> selector)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
@@ -236,8 +236,8 @@
             <KEYWORD>return</KEYWORD> SelectYield(source<OPERATOR>,</OPERATOR> selector)<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> SelectYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> SelectYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> selector)
         {
             <KEYWORD>var</KEYWORD> i <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
@@ -250,9 +250,9 @@
         <DOCCOMMENT>/// and flattens the resulting sequences into one sequence.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> SelectMany<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
-            Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;&gt;</OPERATOR> selector)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> SelectMany<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;&gt;</OPERATOR> selector)
         {
             CheckNotNull(selector<OPERATOR>,</OPERATOR> <STRING>"selector"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -266,9 +266,9 @@
         <DOCCOMMENT>/// that element.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> SelectMany<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
-            Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>,</OPERATOR> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;&gt;</OPERATOR> selector)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> SelectMany<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
+            Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>,</OPERATOR> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;&gt;</OPERATOR> selector)
         {
             CheckNotNull(selector<OPERATOR>,</OPERATOR> <STRING>"selector"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -281,9 +281,9 @@
         <DOCCOMMENT>/// a result selector function on each element therein.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> SelectMany<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TCollection<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
-            Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> IEnumerable<OPERATOR>&lt;</OPERATOR>TCollection<OPERATOR>&gt;&gt;</OPERATOR> collectionSelector<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> SelectMany<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TCollection<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TCollection<OPERATOR>&gt;&gt;</OPERATOR> collectionSelector<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TCollection<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector)
         {
             CheckNotNull(collectionSelector<OPERATOR>,</OPERATOR> <STRING>"collectionSelector"</STRING>)<OPERATOR>;</OPERATOR>
@@ -299,9 +299,9 @@
         <DOCCOMMENT>/// of that element.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> SelectMany<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TCollection<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
-            Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>,</OPERATOR> IEnumerable<OPERATOR>&lt;</OPERATOR>TCollection<OPERATOR>&gt;&gt;</OPERATOR> collectionSelector<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> SelectMany<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TCollection<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>,</OPERATOR> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TCollection<OPERATOR>&gt;&gt;</OPERATOR> collectionSelector<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TCollection<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
@@ -311,9 +311,9 @@
             <KEYWORD>return</KEYWORD> SelectManyYield(source<OPERATOR>,</OPERATOR> collectionSelector<OPERATOR>,</OPERATOR> resultSelector)<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> SelectManyYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TCollection<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
-            Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>,</OPERATOR> IEnumerable<OPERATOR>&lt;</OPERATOR>TCollection<OPERATOR>&gt;&gt;</OPERATOR> collectionSelector<OPERATOR>,</OPERATOR>
+        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> SelectManyYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TCollection<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>,</OPERATOR> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TCollection<OPERATOR>&gt;&gt;</OPERATOR> collectionSelector<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TCollection<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector)
         {
             <KEYWORD>var</KEYWORD> i <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
@@ -326,8 +326,8 @@
         <DOCCOMMENT>/// Returns elements from a sequence as long as a specified condition is true.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> TakeWhile<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> TakeWhile<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             CheckNotNull(predicate<OPERATOR>,</OPERATOR> <STRING>"predicate"</STRING>)<OPERATOR>;</OPERATOR>
@@ -340,8 +340,8 @@
         <DOCCOMMENT>/// The element's index is used in the logic of the predicate function.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> TakeWhile<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> TakeWhile<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
@@ -350,8 +350,8 @@
             <KEYWORD>return</KEYWORD> TakeWhileYield(source<OPERATOR>,</OPERATOR> predicate)<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> TakeWhileYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> TakeWhileYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             <KEYWORD>var</KEYWORD> i <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
@@ -373,13 +373,13 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
         
         <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> TSource FirstImpl<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> empty)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             <OBJ>Debug</OBJ><OPERATOR>.</OPERATOR><OO>Assert</OO>(empty <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
 
-            <KEYWORD>var</KEYWORD> list <OPERATOR>=</OPERATOR> source <KEYWORD>as</KEYWORD> IList<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;;</OPERATOR>    <COMMENT>// optimized case for lists</COMMENT>
+            <KEYWORD>var</KEYWORD> list <OPERATOR>=</OPERATOR> source <KEYWORD>as</KEYWORD> <TYPE>IList</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;;</OPERATOR>    <COMMENT>// optimized case for lists</COMMENT>
             <KEYWORD>if</KEYWORD> (list <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>)
                 <KEYWORD>return</KEYWORD> <OBJ>list</OBJ><OPERATOR>.</OPERATOR><OO>Count</OO> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC> <OPERATOR>?</OPERATOR> list[<NUMERIC>0</NUMERIC>] <OPERATOR>:</OPERATOR> empty()<OPERATOR>;</OPERATOR>
 
@@ -392,7 +392,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource First<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>FirstImpl</OO>(Futures<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;.</OPERATOR>Undefined)<OPERATOR>;</OPERATOR>
         }
@@ -402,7 +402,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource First<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             <KEYWORD>return</KEYWORD> First(<OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Where</OO>(predicate))<OPERATOR>;</OPERATOR>
@@ -414,7 +414,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource FirstOrDefault<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>FirstImpl</OO>(Futures<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;.</OPERATOR>Default)<OPERATOR>;</OPERATOR>
         }
@@ -425,7 +425,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource FirstOrDefault<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             <KEYWORD>return</KEYWORD> FirstOrDefault(<OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Where</OO>(predicate))<OPERATOR>;</OPERATOR>
@@ -436,12 +436,12 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> TSource LastImpl<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> empty)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
-            <KEYWORD>var</KEYWORD> list <OPERATOR>=</OPERATOR> source <KEYWORD>as</KEYWORD> IList<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;;</OPERATOR>    <COMMENT>// optimized case for lists</COMMENT>
+            <KEYWORD>var</KEYWORD> list <OPERATOR>=</OPERATOR> source <KEYWORD>as</KEYWORD> <TYPE>IList</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;;</OPERATOR>    <COMMENT>// optimized case for lists</COMMENT>
             <KEYWORD>if</KEYWORD> (list <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>)
                 <KEYWORD>return</KEYWORD> <OBJ>list</OBJ><OPERATOR>.</OPERATOR><OO>Count</OO> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC> <OPERATOR>?</OPERATOR> list[<OBJ>list</OBJ><OPERATOR>.</OPERATOR><OO>Count</OO> <OPERATOR>-</OPERATOR> <NUMERIC>1</NUMERIC>] <OPERATOR>:</OPERATOR> empty()<OPERATOR>;</OPERATOR>
 
@@ -462,7 +462,7 @@
         <DOCCOMMENT>/// Returns the last element of a sequence.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource Last<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>LastImpl</OO>(Futures<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;.</OPERATOR>Undefined)<OPERATOR>;</OPERATOR>
         }
@@ -473,7 +473,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource Last<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             <KEYWORD>return</KEYWORD> Last(<OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Where</OO>(predicate))<OPERATOR>;</OPERATOR>
@@ -485,7 +485,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource LastOrDefault<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>LastImpl</OO>(Futures<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;.</OPERATOR>Default)<OPERATOR>;</OPERATOR>
         }
@@ -496,7 +496,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource LastOrDefault<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             <KEYWORD>return</KEYWORD> LastOrDefault(<OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Where</OO>(predicate))<OPERATOR>;</OPERATOR>
@@ -507,7 +507,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
         
         <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> TSource SingleImpl<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> empty)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
@@ -533,7 +533,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource <TYPE>Single</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>SingleImpl</OO>(Futures<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;.</OPERATOR>Undefined)<OPERATOR>;</OPERATOR>
         }
@@ -545,7 +545,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource <TYPE>Single</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             <KEYWORD>return</KEYWORD> <TYPE>Single</TYPE>(<OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Where</OO>(predicate))<OPERATOR>;</OPERATOR>
@@ -558,7 +558,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource SingleOrDefault<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>SingleImpl</OO>(Futures<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;.</OPERATOR>Default)<OPERATOR>;</OPERATOR>
         }
@@ -571,7 +571,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource SingleOrDefault<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             <KEYWORD>return</KEYWORD> SingleOrDefault(<OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Where</OO>(predicate))<OPERATOR>;</OPERATOR>
@@ -582,7 +582,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource ElementAt<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             <TYPE>int</TYPE> index)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
@@ -590,7 +590,7 @@
             <KEYWORD>if</KEYWORD> (index <OPERATOR>&lt;</OPERATOR> <NUMERIC>0</NUMERIC>)
                 <KEYWORD>throw</KEYWORD> <KEYWORD>new</KEYWORD> <TYPE>ArgumentOutOfRangeException</TYPE>(<STRING>"index"</STRING><OPERATOR>,</OPERATOR> index<OPERATOR>,</OPERATOR> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
 
-            <KEYWORD>var</KEYWORD> list <OPERATOR>=</OPERATOR> source <KEYWORD>as</KEYWORD> IList<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;;</OPERATOR>
+            <KEYWORD>var</KEYWORD> list <OPERATOR>=</OPERATOR> source <KEYWORD>as</KEYWORD> <TYPE>IList</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;;</OPERATOR>
             <KEYWORD>if</KEYWORD> (list <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>)
                 <KEYWORD>return</KEYWORD> list[index]<OPERATOR>;</OPERATOR>
 
@@ -610,7 +610,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource ElementAtOrDefault<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             <TYPE>int</TYPE> index)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
@@ -618,7 +618,7 @@
             <KEYWORD>if</KEYWORD> (index <OPERATOR>&lt;</OPERATOR> <NUMERIC>0</NUMERIC>)
                 <KEYWORD>return</KEYWORD> <KEYWORD>default</KEYWORD>(TSource)<OPERATOR>;</OPERATOR>
 
-            <KEYWORD>var</KEYWORD> list <OPERATOR>=</OPERATOR> source <KEYWORD>as</KEYWORD> IList<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;;</OPERATOR>
+            <KEYWORD>var</KEYWORD> list <OPERATOR>=</OPERATOR> source <KEYWORD>as</KEYWORD> <TYPE>IList</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;;</OPERATOR>
             <KEYWORD>if</KEYWORD> (list <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>)
                 <KEYWORD>return</KEYWORD> index <OPERATOR>&lt;</OPERATOR> <OBJ>list</OBJ><OPERATOR>.</OPERATOR><OO>Count</OO> <OPERATOR>?</OPERATOR> list[index] <OPERATOR>:</OPERATOR> <KEYWORD>default</KEYWORD>(TSource)<OPERATOR>;</OPERATOR>
 
@@ -629,15 +629,15 @@
         <DOCCOMMENT>/// Inverts the order of the elements in a sequence.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
  
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Reverse<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Reverse<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
             <KEYWORD>return</KEYWORD> ReverseYield(source)<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> ReverseYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> ReverseYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(<TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             <KEYWORD>var</KEYWORD> stack <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <TYPE>Stack</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>()<OPERATOR>;</OPERATOR>
             <KEYWORD>foreach</KEYWORD> (<KEYWORD>var</KEYWORD> item <KEYWORD>in</KEYWORD> source)
@@ -652,8 +652,8 @@
         <DOCCOMMENT>/// of a sequence.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Take<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Take<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             <TYPE>int</TYPE> count)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Where</OO>((item<OPERATOR>,</OPERATOR> i) <OPERATOR>=&gt;</OPERATOR> i <OPERATOR>&lt;</OPERATOR> count)<OPERATOR>;</OPERATOR>
@@ -664,8 +664,8 @@
         <DOCCOMMENT>/// returns the remaining elements.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Skip<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Skip<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             <TYPE>int</TYPE> count)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Where</OO>((item<OPERATOR>,</OPERATOR> i) <OPERATOR>=&gt;</OPERATOR> i <OPERATOR>&gt;=</OPERATOR> count)<OPERATOR>;</OPERATOR>
@@ -676,8 +676,8 @@
         <DOCCOMMENT>/// is true and then returns the remaining elements.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> SkipWhile<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> SkipWhile<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             CheckNotNull(predicate<OPERATOR>,</OPERATOR> <STRING>"predicate"</STRING>)<OPERATOR>;</OPERATOR>
@@ -691,8 +691,8 @@
         <DOCCOMMENT>/// index is used in the logic of the predicate function.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> SkipWhile<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> SkipWhile<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
@@ -701,8 +701,8 @@
             <KEYWORD>return</KEYWORD> SkipWhileYield(source<OPERATOR>,</OPERATOR> predicate)<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> SkipWhileYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
+        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> SkipWhileYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             <KEYWORD>using</KEYWORD> (<KEYWORD>var</KEYWORD> e <OPERATOR>=</OPERATOR> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>GetEnumerator</OO>())
@@ -725,11 +725,11 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>int</TYPE> Count<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
-            <KEYWORD>var</KEYWORD> collection <OPERATOR>=</OPERATOR> source <KEYWORD>as</KEYWORD> ICollection<OPERATOR>;</OPERATOR>
+            <KEYWORD>var</KEYWORD> collection <OPERATOR>=</OPERATOR> source <KEYWORD>as</KEYWORD> <TYPE>ICollection</TYPE><OPERATOR>;</OPERATOR>
             <KEYWORD>return</KEYWORD> collection <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD> 
                  <OPERATOR>?</OPERATOR> <OBJ>collection</OBJ><OPERATOR>.</OPERATOR><OO>Count</OO> 
                  <OPERATOR>:</OPERATOR> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Aggregate</OO>(<NUMERIC>0</NUMERIC><OPERATOR>,</OPERATOR> (count<OPERATOR>,</OPERATOR> item) <OPERATOR>=&gt;</OPERATOR> <KEYWORD>checked</KEYWORD>(count <OPERATOR>+</OPERATOR> <NUMERIC>1</NUMERIC>))<OPERATOR>;</OPERATOR>
@@ -741,7 +741,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>int</TYPE> Count<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             <KEYWORD>return</KEYWORD> Count(<OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Where</OO>(predicate))<OPERATOR>;</OPERATOR>
@@ -753,7 +753,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>long</TYPE> LongCount<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -769,7 +769,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>long</TYPE> LongCount<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             <KEYWORD>return</KEYWORD> LongCount(<OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Where</OO>(predicate))<OPERATOR>;</OPERATOR>
@@ -779,9 +779,9 @@
         <DOCCOMMENT>/// Concatenates two sequences.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Concat<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR>
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Concat<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR>
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second)
         {
             CheckNotNull(first<OPERATOR>,</OPERATOR> <STRING>"first"</STRING>)<OPERATOR>;</OPERATOR>
             CheckNotNull(second<OPERATOR>,</OPERATOR> <STRING>"second"</STRING>)<OPERATOR>;</OPERATOR>
@@ -789,9 +789,9 @@
             <KEYWORD>return</KEYWORD> ConcatYield(first<OPERATOR>,</OPERATOR> second)<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> ConcatYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR> 
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second)
+        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> ConcatYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR> 
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second)
         {
             <KEYWORD>foreach</KEYWORD> (<KEYWORD>var</KEYWORD> item <KEYWORD>in</KEYWORD> first)
                 <KEYWORD>yield</KEYWORD> <KEYWORD>return</KEYWORD> item<OPERATOR>;</OPERATOR>
@@ -805,7 +805,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> List<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> ToList<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -817,7 +817,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource[] ToArray<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>ToList</OO>()<OPERATOR>.</OPERATOR><OO>ToArray</OO>()<OPERATOR>;</OPERATOR>
         }
@@ -827,8 +827,8 @@
         <DOCCOMMENT>/// equality comparer to compare values.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Distinct<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Distinct<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             <KEYWORD>return</KEYWORD> Distinct(source<OPERATOR>,</OPERATOR> <COMMENT>/* comparer */</COMMENT> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
         }
@@ -838,18 +838,18 @@
         <DOCCOMMENT>/// &lt;see cref="IEqualityComparer{T}"/&gt; to compare values.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Distinct<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> comparer)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Distinct<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> comparer)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
             <KEYWORD>return</KEYWORD> DistinctYield(source<OPERATOR>,</OPERATOR> comparer)<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> DistinctYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> comparer)
+        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> DistinctYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> comparer)
         {
             <KEYWORD>var</KEYWORD> set <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> Dictionary<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <KEYWORD>object</KEYWORD><OPERATOR>&gt;</OPERATOR>(comparer)<OPERATOR>;</OPERATOR>
 
@@ -870,7 +870,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> Lookup<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TSource<OPERATOR>&gt;</OPERATOR> ToLookup<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector)
         {
             <KEYWORD>return</KEYWORD> ToLookup(source<OPERATOR>,</OPERATOR> keySelector<OPERATOR>,</OPERATOR> e <OPERATOR>=&gt;</OPERATOR> e<OPERATOR>,</OPERATOR> <COMMENT>/* comparer */</COMMENT> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
@@ -883,9 +883,9 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> Lookup<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TSource<OPERATOR>&gt;</OPERATOR> ToLookup<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR>
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
         {
             <KEYWORD>return</KEYWORD> ToLookup(source<OPERATOR>,</OPERATOR> keySelector<OPERATOR>,</OPERATOR> e <OPERATOR>=&gt;</OPERATOR> e<OPERATOR>,</OPERATOR> comparer)<OPERATOR>;</OPERATOR>
         }
@@ -897,7 +897,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> Lookup<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> ToLookup<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> elementSelector)
         {
@@ -911,10 +911,10 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> Lookup<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> ToLookup<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> elementSelector<OPERATOR>,</OPERATOR>
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             CheckNotNull(keySelector<OPERATOR>,</OPERATOR> <STRING>"keySelector"</STRING>)<OPERATOR>;</OPERATOR>
@@ -944,8 +944,8 @@
         <DOCCOMMENT>/// selector function.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TSource<OPERATOR>&gt;&gt;</OPERATOR> GroupBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TSource<OPERATOR>&gt;&gt;</OPERATOR> GroupBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector)
         {
             <KEYWORD>return</KEYWORD> GroupBy(source<OPERATOR>,</OPERATOR> keySelector<OPERATOR>,</OPERATOR> <COMMENT>/* comparer */</COMMENT> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
@@ -957,10 +957,10 @@
         <DOCCOMMENT>/// comparer.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TSource<OPERATOR>&gt;&gt;</OPERATOR> GroupBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TSource<OPERATOR>&gt;&gt;</OPERATOR> GroupBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR>
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
         {
             <KEYWORD>return</KEYWORD> GroupBy(source<OPERATOR>,</OPERATOR> keySelector<OPERATOR>,</OPERATOR> e <OPERATOR>=&gt;</OPERATOR> e<OPERATOR>,</OPERATOR> comparer)<OPERATOR>;</OPERATOR>
         }
@@ -971,8 +971,8 @@
         <DOCCOMMENT>/// using a specified function.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;&gt;</OPERATOR> GroupBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;&gt;</OPERATOR> GroupBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> elementSelector)
         {
@@ -985,11 +985,11 @@
         <DOCCOMMENT>/// its key.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;&gt;</OPERATOR> GroupBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;&gt;</OPERATOR> GroupBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> elementSelector<OPERATOR>,</OPERATOR>
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             CheckNotNull(keySelector<OPERATOR>,</OPERATOR> <STRING>"keySelector"</STRING>)<OPERATOR>;</OPERATOR>
@@ -1004,10 +1004,10 @@
         <DOCCOMMENT>/// group's elements are projected by using a specified function.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> GroupBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> GroupBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR>
-            Func<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector)
+            Func<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector)
         {
             <KEYWORD>return</KEYWORD> GroupBy(source<OPERATOR>,</OPERATOR> keySelector<OPERATOR>,</OPERATOR> resultSelector<OPERATOR>,</OPERATOR> <COMMENT>/* comparer */</COMMENT> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
         }
@@ -1019,11 +1019,11 @@
         <DOCCOMMENT>/// specified function.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> GroupBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> GroupBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR>
-            Func<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector<OPERATOR>,</OPERATOR>
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
+            Func<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector<OPERATOR>,</OPERATOR>
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             CheckNotNull(keySelector<OPERATOR>,</OPERATOR> <STRING>"keySelector"</STRING>)<OPERATOR>;</OPERATOR>
@@ -1038,11 +1038,11 @@
         <DOCCOMMENT>/// its key. The keys are compared by using a specified comparer.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> GroupBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> GroupBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> elementSelector<OPERATOR>,</OPERATOR>
-            Func<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> IEnumerable<OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector)
+            Func<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector)
         {
             <KEYWORD>return</KEYWORD> GroupBy(source<OPERATOR>,</OPERATOR> keySelector<OPERATOR>,</OPERATOR> elementSelector<OPERATOR>,</OPERATOR> resultSelector<OPERATOR>,</OPERATOR> <COMMENT>/* comparer */</COMMENT> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
         }
@@ -1055,12 +1055,12 @@
         <DOCCOMMENT>/// specified function.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> GroupBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> GroupBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> elementSelector<OPERATOR>,</OPERATOR>
-            Func<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> IEnumerable<OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector<OPERATOR>,</OPERATOR>
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
+            Func<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector<OPERATOR>,</OPERATOR>
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             CheckNotNull(keySelector<OPERATOR>,</OPERATOR> <STRING>"keySelector"</STRING>)<OPERATOR>;</OPERATOR>
@@ -1076,7 +1076,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource Aggregate<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TSource<OPERATOR>,</OPERATOR> TSource<OPERATOR>&gt;</OPERATOR> func)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
@@ -1097,7 +1097,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TAccumulate Aggregate<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TAccumulate<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             TAccumulate seed<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TAccumulate<OPERATOR>,</OPERATOR> TSource<OPERATOR>,</OPERATOR> TAccumulate<OPERATOR>&gt;</OPERATOR> func)
         {
@@ -1111,7 +1111,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TResult Aggregate<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TAccumulate<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             TAccumulate seed<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TAccumulate<OPERATOR>,</OPERATOR> TSource<OPERATOR>,</OPERATOR> TAccumulate<OPERATOR>&gt;</OPERATOR> func<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TAccumulate<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector)
@@ -1133,9 +1133,9 @@
         <DOCCOMMENT>/// equality comparer.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Union<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR>
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Union<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR>
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second)
         {
             <KEYWORD>return</KEYWORD> Union(first<OPERATOR>,</OPERATOR> second<OPERATOR>,</OPERATOR> <COMMENT>/* comparer */</COMMENT> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
         }
@@ -1145,10 +1145,10 @@
         <DOCCOMMENT>/// &lt;see cref="IEqualityComparer{T}" /&gt;.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Union<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR>
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second<OPERATOR>,</OPERATOR>
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> comparer)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Union<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR>
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second<OPERATOR>,</OPERATOR>
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> comparer)
         {
             <KEYWORD>return</KEYWORD> <OBJ>first</OBJ><OPERATOR>.</OPERATOR><OO>Concat</OO>(second)<OPERATOR>.</OPERATOR><OO>Distinct</OO>(comparer)<OPERATOR>;</OPERATOR>
         }
@@ -1159,8 +1159,8 @@
         <DOCCOMMENT>/// sequence is empty.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> DefaultIfEmpty<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> DefaultIfEmpty<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>DefaultIfEmpty</OO>(<KEYWORD>default</KEYWORD>(TSource))<OPERATOR>;</OPERATOR>
         }
@@ -1170,8 +1170,8 @@
         <DOCCOMMENT>/// value in a singleton collection if the sequence is empty.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
         
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> DefaultIfEmpty<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> DefaultIfEmpty<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             TSource defaultValue)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
@@ -1179,8 +1179,8 @@
             <KEYWORD>return</KEYWORD> DefaultIfEmptyYield(source<OPERATOR>,</OPERATOR> defaultValue)<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> DefaultIfEmptyYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> DefaultIfEmptyYield<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             TSource defaultValue)
         {
             <KEYWORD>using</KEYWORD> (<KEYWORD>var</KEYWORD> e <OPERATOR>=</OPERATOR> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>GetEnumerator</OO>())
@@ -1197,7 +1197,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>bool</TYPE> All<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
@@ -1215,7 +1215,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>bool</TYPE> Any<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -1229,7 +1229,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>bool</TYPE> Any<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> predicate)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Where</OO>(predicate)<OPERATOR>.</OPERATOR><OO>Any</OO>()<OPERATOR>;</OPERATOR>
@@ -1241,7 +1241,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>bool</TYPE> Contains<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             TSource value)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Contains</OO>(value<OPERATOR>,</OPERATOR> <COMMENT>/* comparer */</COMMENT> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
@@ -1253,15 +1253,15 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>bool</TYPE> Contains<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             TSource value<OPERATOR>,</OPERATOR>
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> comparer)
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> comparer)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
             <KEYWORD>if</KEYWORD> (comparer <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD>)
             {
-                <KEYWORD>var</KEYWORD> collection <OPERATOR>=</OPERATOR> source <KEYWORD>as</KEYWORD> ICollection<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;;</OPERATOR>
+                <KEYWORD>var</KEYWORD> collection <OPERATOR>=</OPERATOR> source <KEYWORD>as</KEYWORD> <TYPE>ICollection</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;;</OPERATOR>
                 <KEYWORD>if</KEYWORD> (collection <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>)
                     <KEYWORD>return</KEYWORD> <OBJ>collection</OBJ><OPERATOR>.</OPERATOR><OO>Contains</OO>(value)<OPERATOR>;</OPERATOR>
             }
@@ -1276,8 +1276,8 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>bool</TYPE> SequenceEqual<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR>
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR>
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second)
         {
             <KEYWORD>return</KEYWORD> <OBJ>first</OBJ><OPERATOR>.</OPERATOR><OO>SequenceEqual</OO>(second<OPERATOR>,</OPERATOR> <COMMENT>/* comparer */</COMMENT> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
         }
@@ -1288,16 +1288,16 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>bool</TYPE> SequenceEqual<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR>
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second<OPERATOR>,</OPERATOR>
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> comparer)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR>
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second<OPERATOR>,</OPERATOR>
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> comparer)
         {
             CheckNotNull(first<OPERATOR>,</OPERATOR> <STRING>"frist"</STRING>)<OPERATOR>;</OPERATOR>
             CheckNotNull(second<OPERATOR>,</OPERATOR> <STRING>"second"</STRING>)<OPERATOR>;</OPERATOR>
 
             comparer <OPERATOR>=</OPERATOR> comparer <OPERATOR>??</OPERATOR> EqualityComparer<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;.</OPERATOR>Default<OPERATOR>;</OPERATOR>
 
-            <KEYWORD>using</KEYWORD> (IEnumerator<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> lhs <OPERATOR>=</OPERATOR> <OBJ>first</OBJ><OPERATOR>.</OPERATOR><OO>GetEnumerator</OO>()<OPERATOR>,</OPERATOR> 
+            <KEYWORD>using</KEYWORD> (<TYPE>IEnumerator</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> lhs <OPERATOR>=</OPERATOR> <OBJ>first</OBJ><OPERATOR>.</OPERATOR><OO>GetEnumerator</OO>()<OPERATOR>,</OPERATOR> 
                                         rhs <OPERATOR>=</OPERATOR> <OBJ>second</OBJ><OPERATOR>.</OPERATOR><OO>GetEnumerator</OO>())
             {
                 <KEYWORD>do</KEYWORD>
@@ -1319,7 +1319,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> TSource MinMaxImpl<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TSource<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> lesser)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
@@ -1333,7 +1333,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> TSource<OPERATOR>?</OPERATOR> MinMaxImpl<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>?&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>?&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             TSource<OPERATOR>?</OPERATOR> seed<OPERATOR>,</OPERATOR> Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>?,</OPERATOR> TSource<OPERATOR>?,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR> lesser) where TSource <OPERATOR>:</OPERATOR> <KEYWORD>struct</KEYWORD>
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
@@ -1348,7 +1348,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource Min<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             <KEYWORD>var</KEYWORD> comparer <OPERATOR>=</OPERATOR> <TYPE>Comparer</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;.</OPERATOR>Default<OPERATOR>;</OPERATOR>
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>MinMaxImpl</OO>((x<OPERATOR>,</OPERATOR> y) <OPERATOR>=&gt;</OPERATOR> <OBJ>comparer</OBJ><OPERATOR>.</OPERATOR><OO>Compare</OO>(x<OPERATOR>,</OPERATOR> y) <OPERATOR>&lt;</OPERATOR> <NUMERIC>0</NUMERIC>)<OPERATOR>;</OPERATOR>
@@ -1360,7 +1360,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TResult Min<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Min</OO>()<OPERATOR>;</OPERATOR>
@@ -1371,7 +1371,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TSource Max<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             <KEYWORD>var</KEYWORD> comparer <OPERATOR>=</OPERATOR> <TYPE>Comparer</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;.</OPERATOR>Default<OPERATOR>;</OPERATOR>
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>MinMaxImpl</OO>((x<OPERATOR>,</OPERATOR> y) <OPERATOR>=&gt;</OPERATOR> <OBJ>comparer</OBJ><OPERATOR>.</OPERATOR><OO>Compare</OO>(x<OPERATOR>,</OPERATOR> y) <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>)<OPERATOR>;</OPERATOR>
@@ -1383,7 +1383,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> TResult Max<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Max</OO>()<OPERATOR>;</OPERATOR>
@@ -1399,7 +1399,7 @@
         <DOCCOMMENT>/// mostly safe among aggregate operations.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/remarks&gt;</DOCCOMMENT>
 
-        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> Renumerable<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR>(<KEYWORD>this</KEYWORD> IEnumerator<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> e)
+        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> Renumerable<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR>(<KEYWORD>this</KEYWORD> <TYPE>IEnumerator</TYPE><OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> e)
         {
             <OBJ>Debug</OBJ><OPERATOR>.</OPERATOR><OO>Assert</OO>(e <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
 
@@ -1411,7 +1411,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IOrderedEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> OrderBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>OrderBy</OO>(keySelector<OPERATOR>,</OPERATOR> <COMMENT>/* comparer */</COMMENT> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
@@ -1423,9 +1423,9 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IOrderedEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> OrderBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR>
-            IComparer<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
+            <TYPE>IComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             CheckNotNull(keySelector<OPERATOR>,</OPERATOR> <STRING>"keySelector"</STRING>)<OPERATOR>;</OPERATOR>
@@ -1438,7 +1438,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IOrderedEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> OrderByDescending<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>OrderByDescending</OO>(keySelector<OPERATOR>,</OPERATOR> <COMMENT>/* comparer */</COMMENT> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
@@ -1450,9 +1450,9 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IOrderedEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> OrderByDescending<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> 
-            IComparer<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
+            <TYPE>IComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"keySelector"</STRING>)<OPERATOR>;</OPERATOR>
@@ -1480,7 +1480,7 @@
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IOrderedEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> ThenBy<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
             <KEYWORD>this</KEYWORD> IOrderedEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> 
-            IComparer<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
+            <TYPE>IComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -1507,7 +1507,7 @@
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IOrderedEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> ThenByDescending<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
             <KEYWORD>this</KEYWORD> IOrderedEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> 
-            IComparer<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
+            <TYPE>IComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -1518,10 +1518,10 @@
         <DOCCOMMENT>/// Base implementation for Intersect and Except operators.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> IntersectExceptImpl<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR> 
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second<OPERATOR>,</OPERATOR> 
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> comparer<OPERATOR>,</OPERATOR>
+        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> IntersectExceptImpl<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR> 
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second<OPERATOR>,</OPERATOR> 
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> comparer<OPERATOR>,</OPERATOR>
             <TYPE>bool</TYPE> flag)
         {
             CheckNotNull(first<OPERATOR>,</OPERATOR> <STRING>"first"</STRING>)<OPERATOR>;</OPERATOR>
@@ -1552,9 +1552,9 @@
         <DOCCOMMENT>/// default equality comparer to compare values.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Intersect<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR> 
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Intersect<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR> 
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second)
         {
             <KEYWORD>return</KEYWORD> <OBJ>first</OBJ><OPERATOR>.</OPERATOR><OO>Intersect</OO>(second<OPERATOR>,</OPERATOR> <COMMENT>/* comparer */</COMMENT> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
         }
@@ -1564,10 +1564,10 @@
         <DOCCOMMENT>/// specified &lt;see cref="IEqualityComparer{T}" /&gt; to compare values.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Intersect<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR> 
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second<OPERATOR>,</OPERATOR> 
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> comparer)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Intersect<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR> 
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second<OPERATOR>,</OPERATOR> 
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> comparer)
         {
             <KEYWORD>return</KEYWORD> IntersectExceptImpl(first<OPERATOR>,</OPERATOR> second<OPERATOR>,</OPERATOR> comparer<OPERATOR>,</OPERATOR> <COMMENT>/* flag */</COMMENT> <KEYWORD>true</KEYWORD>)<OPERATOR>;</OPERATOR>
         }
@@ -1577,9 +1577,9 @@
         <DOCCOMMENT>/// default equality comparer to compare values.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Except<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR>
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Except<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR>
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second)
         {
             <KEYWORD>return</KEYWORD> <OBJ>first</OBJ><OPERATOR>.</OPERATOR><OO>Except</OO>(second<OPERATOR>,</OPERATOR> <COMMENT>/* comparer */</COMMENT> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
         }
@@ -1589,10 +1589,10 @@
         <DOCCOMMENT>/// specified &lt;see cref="IEqualityComparer{T}" /&gt; to compare values.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Except<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR>
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second<OPERATOR>,</OPERATOR>
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> comparer)
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> Except<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> first<OPERATOR>,</OPERATOR>
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> second<OPERATOR>,</OPERATOR>
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> comparer)
         {
             <KEYWORD>return</KEYWORD> IntersectExceptImpl(first<OPERATOR>,</OPERATOR> second<OPERATOR>,</OPERATOR> comparer<OPERATOR>,</OPERATOR> <COMMENT>/* flag */</COMMENT> <KEYWORD>false</KEYWORD>)<OPERATOR>;</OPERATOR>
         }
@@ -1604,7 +1604,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> Dictionary<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TSource<OPERATOR>&gt;</OPERATOR> ToDictionary<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>ToDictionary</OO>(keySelector<OPERATOR>,</OPERATOR> <COMMENT>/* comparer */</COMMENT> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
@@ -1617,9 +1617,9 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> Dictionary<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TSource<OPERATOR>&gt;</OPERATOR> ToDictionary<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> 
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>ToDictionary</OO>(keySelector<OPERATOR>,</OPERATOR> e <OPERATOR>=&gt;</OPERATOR> e)<OPERATOR>;</OPERATOR>
         }
@@ -1631,7 +1631,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
         
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> Dictionary<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> ToDictionary<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> elementSelector)
         {
@@ -1645,10 +1645,10 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> Dictionary<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> ToDictionary<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> elementSelector<OPERATOR>,</OPERATOR> 
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             CheckNotNull(keySelector<OPERATOR>,</OPERATOR> <STRING>"keySelector"</STRING>)<OPERATOR>;</OPERATOR>
@@ -1681,9 +1681,9 @@
         <DOCCOMMENT>/// The default equality comparer is used to compare keys.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> Join<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> TInner<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>&gt;</OPERATOR> outer<OPERATOR>,</OPERATOR>
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TInner<OPERATOR>&gt;</OPERATOR> inner<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> Join<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> TInner<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>&gt;</OPERATOR> outer<OPERATOR>,</OPERATOR>
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TInner<OPERATOR>&gt;</OPERATOR> inner<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> outerKeySelector<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TInner<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> innerKeySelector<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> TInner<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector)
@@ -1697,13 +1697,13 @@
         <DOCCOMMENT>/// specified &lt;see cref="IEqualityComparer{T}" /&gt; is used to compare keys.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> Join<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> TInner<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>&gt;</OPERATOR> outer<OPERATOR>,</OPERATOR>
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TInner<OPERATOR>&gt;</OPERATOR> inner<OPERATOR>,</OPERATOR> 
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> Join<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> TInner<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>&gt;</OPERATOR> outer<OPERATOR>,</OPERATOR>
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TInner<OPERATOR>&gt;</OPERATOR> inner<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> outerKeySelector<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TInner<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> innerKeySelector<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> TInner<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector<OPERATOR>,</OPERATOR>
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
         {
             CheckNotNull(outer<OPERATOR>,</OPERATOR> <STRING>"outer"</STRING>)<OPERATOR>;</OPERATOR>
             CheckNotNull(inner<OPERATOR>,</OPERATOR> <STRING>"inner"</STRING>)<OPERATOR>;</OPERATOR>
@@ -1725,12 +1725,12 @@
         <DOCCOMMENT>/// used to compare keys.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> GroupJoin<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> TInner<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>&gt;</OPERATOR> outer<OPERATOR>,</OPERATOR>
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TInner<OPERATOR>&gt;</OPERATOR> inner<OPERATOR>,</OPERATOR>
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> GroupJoin<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> TInner<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>&gt;</OPERATOR> outer<OPERATOR>,</OPERATOR>
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TInner<OPERATOR>&gt;</OPERATOR> inner<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> outerKeySelector<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TInner<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> innerKeySelector<OPERATOR>,</OPERATOR>
-            Func<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> IEnumerable<OPERATOR>&lt;</OPERATOR>TInner<OPERATOR>&gt;,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector)
+            Func<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TInner<OPERATOR>&gt;,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>outer</OBJ><OPERATOR>.</OPERATOR><OO>GroupJoin</OO>(inner<OPERATOR>,</OPERATOR> outerKeySelector<OPERATOR>,</OPERATOR> innerKeySelector<OPERATOR>,</OPERATOR> resultSelector<OPERATOR>,</OPERATOR> <COMMENT>/* comparer */</COMMENT> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
         }
@@ -1742,13 +1742,13 @@
         <DOCCOMMENT>/// is used to compare keys.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> GroupJoin<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> TInner<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>&gt;</OPERATOR> outer<OPERATOR>,</OPERATOR> 
-            IEnumerable<OPERATOR>&lt;</OPERATOR>TInner<OPERATOR>&gt;</OPERATOR> inner<OPERATOR>,</OPERATOR> 
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> GroupJoin<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> TInner<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR>(
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>&gt;</OPERATOR> outer<OPERATOR>,</OPERATOR> 
+            <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TInner<OPERATOR>&gt;</OPERATOR> inner<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> outerKeySelector<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TInner<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> innerKeySelector<OPERATOR>,</OPERATOR> 
-            Func<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> IEnumerable<OPERATOR>&lt;</OPERATOR>TInner<OPERATOR>&gt;,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector<OPERATOR>,</OPERATOR> 
-            IEqualityComparer<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
+            Func<OPERATOR>&lt;</OPERATOR>TOuter<OPERATOR>,</OPERATOR> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TInner<OPERATOR>&gt;,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector<OPERATOR>,</OPERATOR> 
+            <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
         {
             CheckNotNull(outer<OPERATOR>,</OPERATOR> <STRING>"outer"</STRING>)<OPERATOR>;</OPERATOR>
             CheckNotNull(inner<OPERATOR>,</OPERATOR> <STRING>"inner"</STRING>)<OPERATOR>;</OPERATOR>
@@ -1769,7 +1769,7 @@
 
         <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <KEYWORD>class</KEYWORD> Sequence<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR>
         {
-            <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <KEYWORD>readonly</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> Empty <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> T[<NUMERIC>0</NUMERIC>]<OPERATOR>;</OPERATOR>
+            <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <KEYWORD>readonly</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> Empty <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> T[<NUMERIC>0</NUMERIC>]<OPERATOR>;</OPERATOR>
         }
 
         <KEYWORD>private</KEYWORD> <KEYWORD>sealed</KEYWORD> <KEYWORD>class</KEYWORD> Grouping<OPERATOR>&lt;</OPERATOR>K<OPERATOR>,</OPERATOR> V<OPERATOR>&gt;</OPERATOR> <OPERATOR>:</OPERATOR> List<OPERATOR>&lt;</OPERATOR>V<OPERATOR>&gt;,</OPERATOR> IGrouping<OPERATOR>&lt;</OPERATOR>K<OPERATOR>,</OPERATOR> V<OPERATOR>&gt;</OPERATOR>
@@ -1805,7 +1805,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>int</TYPE> Sum(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>int</TYPE><OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>int</TYPE><OPERATOR>&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -1823,7 +1823,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>int</TYPE> Sum<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Sum</OO>()<OPERATOR>;</OPERATOR>
@@ -1834,7 +1834,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE> Average(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>int</TYPE><OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>int</TYPE><OPERATOR>&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -1861,7 +1861,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE> Average<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Average</OO>()<OPERATOR>;</OPERATOR>
@@ -1873,7 +1873,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>int</TYPE><OPERATOR>?</OPERATOR> Sum(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>int</TYPE><OPERATOR>?&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>int</TYPE><OPERATOR>?&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -1891,7 +1891,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>int</TYPE><OPERATOR>?</OPERATOR> Sum<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>?&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Sum</OO>()<OPERATOR>;</OPERATOR>
@@ -1902,7 +1902,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE><OPERATOR>?</OPERATOR> Average(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>int</TYPE><OPERATOR>?&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>int</TYPE><OPERATOR>?&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -1929,7 +1929,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE><OPERATOR>?</OPERATOR> Average<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>?&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Average</OO>()<OPERATOR>;</OPERATOR>
@@ -1941,7 +1941,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>int</TYPE><OPERATOR>?</OPERATOR> Min(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>int</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>int</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             
@@ -1954,7 +1954,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>int</TYPE><OPERATOR>?</OPERATOR> Min<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>?&gt;</OPERATOR> selector) 
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Min</OO>()<OPERATOR>;</OPERATOR>
@@ -1966,7 +1966,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>int</TYPE><OPERATOR>?</OPERATOR> Max(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>int</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>int</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             
@@ -1980,7 +1980,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>int</TYPE><OPERATOR>?</OPERATOR> Max<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>int</TYPE><OPERATOR>?&gt;</OPERATOR> selector) 
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Max</OO>()<OPERATOR>;</OPERATOR>
@@ -1991,7 +1991,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>long</TYPE> Sum(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>long</TYPE><OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>long</TYPE><OPERATOR>&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -2009,7 +2009,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>long</TYPE> Sum<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>long</TYPE><OPERATOR>&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Sum</OO>()<OPERATOR>;</OPERATOR>
@@ -2020,7 +2020,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE> Average(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>long</TYPE><OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>long</TYPE><OPERATOR>&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -2047,7 +2047,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE> Average<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>long</TYPE><OPERATOR>&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Average</OO>()<OPERATOR>;</OPERATOR>
@@ -2059,7 +2059,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>long</TYPE><OPERATOR>?</OPERATOR> Sum(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>long</TYPE><OPERATOR>?&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>long</TYPE><OPERATOR>?&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -2077,7 +2077,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>long</TYPE><OPERATOR>?</OPERATOR> Sum<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>long</TYPE><OPERATOR>?&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Sum</OO>()<OPERATOR>;</OPERATOR>
@@ -2088,7 +2088,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE><OPERATOR>?</OPERATOR> Average(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>long</TYPE><OPERATOR>?&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>long</TYPE><OPERATOR>?&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -2115,7 +2115,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE><OPERATOR>?</OPERATOR> Average<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>long</TYPE><OPERATOR>?&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Average</OO>()<OPERATOR>;</OPERATOR>
@@ -2127,7 +2127,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>long</TYPE><OPERATOR>?</OPERATOR> Min(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>long</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>long</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             
@@ -2140,7 +2140,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>long</TYPE><OPERATOR>?</OPERATOR> Min<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>long</TYPE><OPERATOR>?&gt;</OPERATOR> selector) 
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Min</OO>()<OPERATOR>;</OPERATOR>
@@ -2152,7 +2152,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>long</TYPE><OPERATOR>?</OPERATOR> Max(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>long</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>long</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             
@@ -2166,7 +2166,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>long</TYPE><OPERATOR>?</OPERATOR> Max<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>long</TYPE><OPERATOR>?&gt;</OPERATOR> selector) 
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Max</OO>()<OPERATOR>;</OPERATOR>
@@ -2177,7 +2177,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>float</TYPE> Sum(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>float</TYPE><OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>float</TYPE><OPERATOR>&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -2195,7 +2195,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>float</TYPE> Sum<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>float</TYPE><OPERATOR>&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Sum</OO>()<OPERATOR>;</OPERATOR>
@@ -2206,7 +2206,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>float</TYPE> Average(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>float</TYPE><OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>float</TYPE><OPERATOR>&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -2233,7 +2233,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>float</TYPE> Average<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>float</TYPE><OPERATOR>&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Average</OO>()<OPERATOR>;</OPERATOR>
@@ -2245,7 +2245,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>float</TYPE><OPERATOR>?</OPERATOR> Sum(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>float</TYPE><OPERATOR>?&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>float</TYPE><OPERATOR>?&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -2263,7 +2263,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>float</TYPE><OPERATOR>?</OPERATOR> Sum<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>float</TYPE><OPERATOR>?&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Sum</OO>()<OPERATOR>;</OPERATOR>
@@ -2274,7 +2274,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>float</TYPE><OPERATOR>?</OPERATOR> Average(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>float</TYPE><OPERATOR>?&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>float</TYPE><OPERATOR>?&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -2301,7 +2301,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>float</TYPE><OPERATOR>?</OPERATOR> Average<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>float</TYPE><OPERATOR>?&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Average</OO>()<OPERATOR>;</OPERATOR>
@@ -2313,7 +2313,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>float</TYPE><OPERATOR>?</OPERATOR> Min(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>float</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>float</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             
@@ -2326,7 +2326,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>float</TYPE><OPERATOR>?</OPERATOR> Min<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>float</TYPE><OPERATOR>?&gt;</OPERATOR> selector) 
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Min</OO>()<OPERATOR>;</OPERATOR>
@@ -2338,7 +2338,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>float</TYPE><OPERATOR>?</OPERATOR> Max(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>float</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>float</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             
@@ -2352,7 +2352,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>float</TYPE><OPERATOR>?</OPERATOR> Max<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>float</TYPE><OPERATOR>?&gt;</OPERATOR> selector) 
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Max</OO>()<OPERATOR>;</OPERATOR>
@@ -2363,7 +2363,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE> Sum(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>double</TYPE><OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>double</TYPE><OPERATOR>&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -2381,7 +2381,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE> Sum<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>double</TYPE><OPERATOR>&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Sum</OO>()<OPERATOR>;</OPERATOR>
@@ -2392,7 +2392,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE> Average(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>double</TYPE><OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>double</TYPE><OPERATOR>&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -2419,7 +2419,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE> Average<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>double</TYPE><OPERATOR>&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Average</OO>()<OPERATOR>;</OPERATOR>
@@ -2431,7 +2431,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE><OPERATOR>?</OPERATOR> Sum(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>double</TYPE><OPERATOR>?&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>double</TYPE><OPERATOR>?&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -2449,7 +2449,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE><OPERATOR>?</OPERATOR> Sum<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>double</TYPE><OPERATOR>?&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Sum</OO>()<OPERATOR>;</OPERATOR>
@@ -2460,7 +2460,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE><OPERATOR>?</OPERATOR> Average(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>double</TYPE><OPERATOR>?&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>double</TYPE><OPERATOR>?&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -2487,7 +2487,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE><OPERATOR>?</OPERATOR> Average<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>double</TYPE><OPERATOR>?&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Average</OO>()<OPERATOR>;</OPERATOR>
@@ -2499,7 +2499,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE><OPERATOR>?</OPERATOR> Min(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>double</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>double</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             
@@ -2512,7 +2512,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE><OPERATOR>?</OPERATOR> Min<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>double</TYPE><OPERATOR>?&gt;</OPERATOR> selector) 
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Min</OO>()<OPERATOR>;</OPERATOR>
@@ -2524,7 +2524,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE><OPERATOR>?</OPERATOR> Max(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>double</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>double</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             
@@ -2538,7 +2538,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>double</TYPE><OPERATOR>?</OPERATOR> Max<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>double</TYPE><OPERATOR>?&gt;</OPERATOR> selector) 
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Max</OO>()<OPERATOR>;</OPERATOR>
@@ -2549,7 +2549,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>decimal</TYPE> Sum(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>decimal</TYPE><OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>decimal</TYPE><OPERATOR>&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -2567,7 +2567,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>decimal</TYPE> Sum<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>decimal</TYPE><OPERATOR>&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Sum</OO>()<OPERATOR>;</OPERATOR>
@@ -2578,7 +2578,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>decimal</TYPE> Average(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>decimal</TYPE><OPERATOR>&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>decimal</TYPE><OPERATOR>&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -2605,7 +2605,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>decimal</TYPE> Average<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>decimal</TYPE><OPERATOR>&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Average</OO>()<OPERATOR>;</OPERATOR>
@@ -2617,7 +2617,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>decimal</TYPE><OPERATOR>?</OPERATOR> Sum(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>decimal</TYPE><OPERATOR>?&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>decimal</TYPE><OPERATOR>?&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -2635,7 +2635,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>decimal</TYPE><OPERATOR>?</OPERATOR> Sum<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>decimal</TYPE><OPERATOR>?&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Sum</OO>()<OPERATOR>;</OPERATOR>
@@ -2646,7 +2646,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>decimal</TYPE><OPERATOR>?</OPERATOR> Average(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>decimal</TYPE><OPERATOR>?&gt;</OPERATOR> source)
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>decimal</TYPE><OPERATOR>?&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
@@ -2673,7 +2673,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>decimal</TYPE><OPERATOR>?</OPERATOR> Average<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>decimal</TYPE><OPERATOR>?&gt;</OPERATOR> selector)
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Average</OO>()<OPERATOR>;</OPERATOR>
@@ -2685,7 +2685,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>decimal</TYPE><OPERATOR>?</OPERATOR> Min(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>decimal</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>decimal</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             
@@ -2698,7 +2698,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>decimal</TYPE><OPERATOR>?</OPERATOR> Min<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>decimal</TYPE><OPERATOR>?&gt;</OPERATOR> selector) 
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Min</OO>()<OPERATOR>;</OPERATOR>
@@ -2710,7 +2710,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>decimal</TYPE><OPERATOR>?</OPERATOR> Max(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR><TYPE>decimal</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR><TYPE>decimal</TYPE><OPERATOR>?&gt;</OPERATOR> source) 
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             
@@ -2724,7 +2724,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>decimal</TYPE><OPERATOR>?</OPERATOR> Max<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
-            <KEYWORD>this</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
+            <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>decimal</TYPE><OPERATOR>?&gt;</OPERATOR> selector) 
         {
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Select</OO>(selector)<OPERATOR>.</OPERATOR><OO>Max</OO>()<OPERATOR>;</OPERATOR>
@@ -2823,7 +2823,7 @@
     <PREPROCESSOR>#endif</PREPROCESSOR>
     <PREPROCESSOR>#endregion</PREPROCESSOR>
     
-    <KEYWORD>interface</KEYWORD> IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> <OPERATOR>:</OPERATOR> IEnumerable<OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;</OPERATOR>
+    <KEYWORD>interface</KEYWORD> IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> <OPERATOR>:</OPERATOR> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;</OPERATOR>
     {
         <DOCCOMMENT>/// &lt;summary&gt;</DOCCOMMENT>
         <DOCCOMMENT>/// Gets the key of the &lt;see cref="IGrouping{TKey,TElement}" /&gt;.</DOCCOMMENT>
@@ -2853,11 +2853,11 @@
     <PREPROCESSOR>#endif</PREPROCESSOR>
     <PREPROCESSOR>#endregion</PREPROCESSOR>
 
-    <KEYWORD>interface</KEYWORD> ILookup<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> <OPERATOR>:</OPERATOR> IEnumerable<OPERATOR>&lt;</OPERATOR>IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;&gt;</OPERATOR>
+    <KEYWORD>interface</KEYWORD> ILookup<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> <OPERATOR>:</OPERATOR> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;&gt;</OPERATOR>
     {
         <TYPE>bool</TYPE> Contains(TKey key)<OPERATOR>;</OPERATOR>
         <TYPE>int</TYPE> Count { get<OPERATOR>;</OPERATOR> }
-        IEnumerable<OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;</OPERATOR> <KEYWORD>this</KEYWORD>[TKey key] { get<OPERATOR>;</OPERATOR> }
+        <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;</OPERATOR> <KEYWORD>this</KEYWORD>[TKey key] { get<OPERATOR>;</OPERATOR> }
     }
 }
 
@@ -2879,7 +2879,7 @@
     <PREPROCESSOR>#endif</PREPROCESSOR>
     <PREPROCESSOR>#endregion</PREPROCESSOR>
 
-    <KEYWORD>interface</KEYWORD> IOrderedEnumerable<OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;</OPERATOR> <OPERATOR>:</OPERATOR> IEnumerable<OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;</OPERATOR>
+    <KEYWORD>interface</KEYWORD> IOrderedEnumerable<OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;</OPERATOR> <OPERATOR>:</OPERATOR> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;</OPERATOR>
     {
         <DOCCOMMENT>/// &lt;summary&gt;</DOCCOMMENT>
         <DOCCOMMENT>/// Performs a subsequent ordering on the elements of an </DOCCOMMENT>
@@ -2887,7 +2887,7 @@
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
         IOrderedEnumerable<OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;</OPERATOR> CreateOrderedEnumerable<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR>(
-            Func<OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> IComparer<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE> descending)<OPERATOR>;</OPERATOR>
+            Func<OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> <TYPE>IComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE> descending)<OPERATOR>;</OPERATOR>
     }
 }
 
@@ -2900,7 +2900,7 @@
     <KEYWORD>using</KEYWORD> System<OPERATOR>;</OPERATOR>
     <KEYWORD>using</KEYWORD> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Collections</OO><OPERATOR>;</OPERATOR>
     <KEYWORD>using</KEYWORD> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Collections</OO><OPERATOR>.</OPERATOR><OO>Generic</OO><OPERATOR>;</OPERATOR>
-    <KEYWORD>using</KEYWORD> IEnumerable<OPERATOR>=</OPERATOR><OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Collections</OO><OPERATOR>.</OPERATOR><OO>IEnumerable</OO><OPERATOR>;</OPERATOR>
+    <KEYWORD>using</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>=</OPERATOR><OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Collections</OO><OPERATOR>.</OPERATOR><OO>IEnumerable</OO><OPERATOR>;</OPERATOR>
 
     <PREPROCESSOR>#endregion</PREPROCESSOR>
 
@@ -2920,7 +2920,7 @@
     {
         <KEYWORD>private</KEYWORD> <KEYWORD>readonly</KEYWORD> Dictionary<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;&gt;</OPERATOR> _map<OPERATOR>;</OPERATOR>
 
-        <KEYWORD>internal</KEYWORD> Lookup(IEqualityComparer<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
+        <KEYWORD>internal</KEYWORD> Lookup(<TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
         {
             _map <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> Dictionary<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;&gt;</OPERATOR>(comparer)<OPERATOR>;</OPERATOR>
         }
@@ -2930,7 +2930,7 @@
             <OBJ>_map</OBJ><OPERATOR>.</OPERATOR><OO>Add</OO>(<OBJ>item</OBJ><OPERATOR>.</OPERATOR><OO>Key</OO><OPERATOR>,</OPERATOR> item)<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>internal</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;</OPERATOR> Find(TKey key)
+        <KEYWORD>internal</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;</OPERATOR> Find(TKey key)
         {
             IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> grouping<OPERATOR>;</OPERATOR>
             <KEYWORD>return</KEYWORD> <OBJ>_map</OBJ><OPERATOR>.</OPERATOR><OO>TryGetValue</OO>(key<OPERATOR>,</OPERATOR> <KEYWORD>out</KEYWORD> grouping) <OPERATOR>?</OPERATOR> grouping <OPERATOR>:</OPERATOR> <KEYWORD>null</KEYWORD><OPERATOR>;</OPERATOR>
@@ -2949,7 +2949,7 @@
         <DOCCOMMENT>/// Gets the collection of values indexed by the specified key.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;</OPERATOR> <KEYWORD>this</KEYWORD>[TKey key]
+        <KEYWORD>public</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;</OPERATOR> <KEYWORD>this</KEYWORD>[TKey key]
         {
             get
             {
@@ -2972,8 +2972,8 @@
         <DOCCOMMENT>/// values and returns the results.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> ApplyResultSelector<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>(
-            Func<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> IEnumerable<OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector)
+        <KEYWORD>public</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR> ApplyResultSelector<OPERATOR>&lt;</OPERATOR>TResult<OPERATOR>&gt;</OPERATOR>(
+            Func<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TElement<OPERATOR>&gt;,</OPERATOR> TResult<OPERATOR>&gt;</OPERATOR> resultSelector)
         {
             <KEYWORD>if</KEYWORD> (resultSelector <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD>) 
                 <KEYWORD>throw</KEYWORD> <KEYWORD>new</KEYWORD> <TYPE>ArgumentNullException</TYPE>(<STRING>"resultSelector"</STRING>)<OPERATOR>;</OPERATOR>
@@ -2986,12 +2986,12 @@
         <DOCCOMMENT>/// Returns a generic enumerator that iterates through the &lt;see cref="Lookup{TKey,TElement}" /&gt;.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> IEnumerator<OPERATOR>&lt;</OPERATOR>IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;&gt;</OPERATOR> GetEnumerator()
+        <KEYWORD>public</KEYWORD> <TYPE>IEnumerator</TYPE><OPERATOR>&lt;</OPERATOR>IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;&gt;</OPERATOR> GetEnumerator()
         {
             <KEYWORD>return</KEYWORD> <OBJ>_map</OBJ><OPERATOR>.</OPERATOR><OO>Values</OO><OPERATOR>.</OPERATOR><OO>GetEnumerator</OO>()<OPERATOR>;</OPERATOR>
         }
 
-        IEnumerator <OBJ>IEnumerable</OBJ><OPERATOR>.</OPERATOR><OO>GetEnumerator</OO>()
+        <TYPE>IEnumerator</TYPE> <OBJ>IEnumerable</OBJ><OPERATOR>.</OPERATOR><OO>GetEnumerator</OO>()
         {
             <KEYWORD>return</KEYWORD> GetEnumerator()<OPERATOR>;</OPERATOR>
         }
@@ -3013,15 +3013,15 @@
 
     <KEYWORD>internal</KEYWORD> <KEYWORD>sealed</KEYWORD> <KEYWORD>class</KEYWORD> OrderedEnumerable<OPERATOR>&lt;</OPERATOR>T<OPERATOR>,</OPERATOR> K<OPERATOR>&gt;</OPERATOR> <OPERATOR>:</OPERATOR> IOrderedEnumerable<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR>
     {
-        <KEYWORD>private</KEYWORD> <KEYWORD>readonly</KEYWORD> IEnumerable<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> _source<OPERATOR>;</OPERATOR>
+        <KEYWORD>private</KEYWORD> <KEYWORD>readonly</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> _source<OPERATOR>;</OPERATOR>
         <KEYWORD>private</KEYWORD> <KEYWORD>readonly</KEYWORD> List<OPERATOR>&lt;</OPERATOR>Comparison<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;&gt;</OPERATOR> _comparisons<OPERATOR>;</OPERATOR>
 
-        <KEYWORD>public</KEYWORD> OrderedEnumerable(IEnumerable<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
-            Func<OPERATOR>&lt;</OPERATOR>T<OPERATOR>,</OPERATOR> K<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> IComparer<OPERATOR>&lt;</OPERATOR>K<OPERATOR>&gt;</OPERATOR> comparer<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE> descending) <OPERATOR>:</OPERATOR>
+        <KEYWORD>public</KEYWORD> OrderedEnumerable(<TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
+            Func<OPERATOR>&lt;</OPERATOR>T<OPERATOR>,</OPERATOR> K<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> <TYPE>IComparer</TYPE><OPERATOR>&lt;</OPERATOR>K<OPERATOR>&gt;</OPERATOR> comparer<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE> descending) <OPERATOR>:</OPERATOR>
             <KEYWORD>this</KEYWORD>(source<OPERATOR>,</OPERATOR> <KEYWORD>null</KEYWORD><OPERATOR>,</OPERATOR> keySelector<OPERATOR>,</OPERATOR> comparer<OPERATOR>,</OPERATOR> descending) {}
 
-        <KEYWORD>private</KEYWORD> OrderedEnumerable(IEnumerable<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> List<OPERATOR>&lt;</OPERATOR>Comparison<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;&gt;</OPERATOR> comparisons<OPERATOR>,</OPERATOR>
-            Func<OPERATOR>&lt;</OPERATOR>T<OPERATOR>,</OPERATOR> K<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> IComparer<OPERATOR>&lt;</OPERATOR>K<OPERATOR>&gt;</OPERATOR> comparer<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE> descending)
+        <KEYWORD>private</KEYWORD> OrderedEnumerable(<TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> List<OPERATOR>&lt;</OPERATOR>Comparison<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;&gt;</OPERATOR> comparisons<OPERATOR>,</OPERATOR>
+            Func<OPERATOR>&lt;</OPERATOR>T<OPERATOR>,</OPERATOR> K<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> <TYPE>IComparer</TYPE><OPERATOR>&lt;</OPERATOR>K<OPERATOR>&gt;</OPERATOR> comparer<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE> descending)
         {
             <KEYWORD>if</KEYWORD> (source <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD>) <KEYWORD>throw</KEYWORD> <KEYWORD>new</KEYWORD> <TYPE>ArgumentNullException</TYPE>(<STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
             <KEYWORD>if</KEYWORD> (keySelector <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD>) <KEYWORD>throw</KEYWORD> <KEYWORD>new</KEYWORD> <TYPE>ArgumentNullException</TYPE>(<STRING>"keySelector"</STRING>)<OPERATOR>;</OPERATOR>
@@ -3040,12 +3040,12 @@
         }
 
         <KEYWORD>public</KEYWORD> IOrderedEnumerable<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> CreateOrderedEnumerable<OPERATOR>&lt;</OPERATOR>KK<OPERATOR>&gt;</OPERATOR>(
-            Func<OPERATOR>&lt;</OPERATOR>T<OPERATOR>,</OPERATOR> KK<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> IComparer<OPERATOR>&lt;</OPERATOR>KK<OPERATOR>&gt;</OPERATOR> comparer<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE> descending)
+            Func<OPERATOR>&lt;</OPERATOR>T<OPERATOR>,</OPERATOR> KK<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> <TYPE>IComparer</TYPE><OPERATOR>&lt;</OPERATOR>KK<OPERATOR>&gt;</OPERATOR> comparer<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE> descending)
         {
             <KEYWORD>return</KEYWORD> <KEYWORD>new</KEYWORD> OrderedEnumerable<OPERATOR>&lt;</OPERATOR>T<OPERATOR>,</OPERATOR> KK<OPERATOR>&gt;</OPERATOR>(_source<OPERATOR>,</OPERATOR> _comparisons<OPERATOR>,</OPERATOR> keySelector<OPERATOR>,</OPERATOR> comparer<OPERATOR>,</OPERATOR> descending)<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>public</KEYWORD> IEnumerator<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> GetEnumerator()
+        <KEYWORD>public</KEYWORD> <TYPE>IEnumerator</TYPE><OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> GetEnumerator()
         {
             <COMMENT>//</COMMENT>
             <COMMENT>// We sort using List&lt;T&gt;.Sort, but docs say that it performs an </COMMENT>
@@ -3085,7 +3085,7 @@
 
         }
 
-        IEnumerator <OBJ>IEnumerable</OBJ><OPERATOR>.</OPERATOR><OO>GetEnumerator</OO>()
+        <TYPE>IEnumerator</TYPE> <OBJ>IEnumerable</OBJ><OPERATOR>.</OPERATOR><OO>GetEnumerator</OO>()
         {
             <KEYWORD>return</KEYWORD> GetEnumerator()<OPERATOR>;</OPERATOR>
         }
