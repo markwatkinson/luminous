@@ -153,9 +153,15 @@ class _Luminous {
       
     $this->scanners->AddScanner(array('vim', 'vimscript'),
       'LuminousVimScriptScanner', 'Vim Script', "$language_dir/vim.php");
+
+    $this->scanners->AddScanner(array('vb', 'bas'),
+      'LuminousVBScanner', 'Visual Basic', "$language_dir/vb.php",
+      'xml');
+
       
     $this->scanners->AddScanner('xml', 'LuminousXMLScanner', 
       'XML', "$language_dir/xml.php", 'html');
+
   }
 
 
