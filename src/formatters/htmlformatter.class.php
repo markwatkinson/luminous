@@ -38,7 +38,7 @@ class LuminousFormatterHTML extends LuminousFormatter
   function format($src)
   {
     $line_numbers = false;
-    
+/*   
     if ($this->tab_width - 1 > 0)
     {
       $tab_rep = "";
@@ -46,6 +46,7 @@ class LuminousFormatterHTML extends LuminousFormatter
         $tab_rep .= " ";
       $src = str_replace("\t", $tab_rep, $src);
     }
+*/
     if ($this->link)
       $src = $this->Linkify($src);
     
