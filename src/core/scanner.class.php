@@ -1605,17 +1605,21 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
    * @warning the second and third parameters are not applicable to this
    * method, they are only presetnt to suppress PHP warnings. If you set them,
    * an exception is thrown.
+   *
    */
   function record($str, $dummy1=null, $dummy2=null) {
     if ($dummy1 !== null || $dummy2 !== null) {
       throw new Exception('LuminousStatefulScanner::record does not currently'
         . ' observe its second and third parameters');
     }
-    $c = & $this->token_tree_stack[count($this->token_tree_stack)-1]['children'];
-    if (!empty($c) && is_string($c[count($c)-1]))
-      $c[count($c)-1] .= $str;
-    else 
-      $c[] = $str;
+    // NOTE we can end up with adjacent strings here,
+    // previously we were checking for this and concatenating if possible,
+    // this involved a call to count($c). For some reason, this causes
+    // exponential runtime on my box.
+    // Anyway,the tree collapser concatenates the things anyway so we don't
+    // really need to here.
+    $c = &$this->token_tree_stack[count($this->token_tree_stack)-1]['children'];
+    $c[] = $str;
   }
 
   function record_token($str, $type) {
