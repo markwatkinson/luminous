@@ -116,6 +116,9 @@ class _Luminous {
       
     $this->scanners->AddScanner('json',
       'LuminousJSONScanner', 'JSON', "$language_dir/json.php");
+
+    $this->scanners->AddScanner(array('latex', 'tex'),
+      'LuminousLatexScanner', 'LaTeX', "$language_dir/latex.php");
       
     $this->scanners->AddScanner(array('lolcode', 'lolc', 'lol'),
       'LuminousLOLCODEScanner', 'LOLCODE', "$language_dir/lolcode.php");
