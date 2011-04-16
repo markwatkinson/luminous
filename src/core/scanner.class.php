@@ -1380,6 +1380,10 @@ class LuminousSimpleScanner extends LuminousScanner {
  * stores the current state data. State data is currently a pattern, as the
  * above tuple.
  *
+ *
+ * @warning Currently 'stream filters' are not applied, because we at no point
+ * end up with a flat stream of tokens. Although the rule name remapper is
+ * applied.
  * 
  */
 class LuminousStatefulScanner extends LuminousSimpleScanner {
@@ -1569,8 +1573,6 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
       }
       $this->transition_rule_cache[$sn] = array($patterns, $states);
     }
-//    print_r($patterns);
-//    die();
     $next = $this->get_next_named($patterns);
     // map to real state data
     if ($next[1] !== -1) {
@@ -1612,12 +1614,8 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
       throw new Exception('LuminousStatefulScanner::record does not currently'
         . ' observe its second and third parameters');
     }
-    // NOTE we can end up with adjacent strings here,
-    // previously we were checking for this and concatenating if possible,
-    // this involved a call to count($c). For some reason, this causes
-    // exponential runtime on my box.
-    // Anyway,the tree collapser concatenates the things anyway so we don't
-    // really need to here.
+    // NOTE to self: if ever this needs to change, don't call count on $c.
+    // Dereference it first: http://bugs.php.net/bug.php?id=34540
     $c = &$this->token_tree_stack[count($this->token_tree_stack)-1]['children'];
     $c[] = $str;
   }
@@ -1658,10 +1656,16 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
         $this->pos($new_pos);
         $tok = $next_pattern_data[0];
         if (isset($this->overrides[$tok])) {
-          call_user_func($this->overrides[$tok], $next_pattern_matches);
-          // TODO throw an exception if it fails to change the state OR advance
-          // the position
+          // call override
+          $state = $this->state_name();
+          $ret = call_user_func($this->overrides[$tok], $next_pattern_matches);
+          if ($ret === true) break;
+          if ($this->state_name() === $state && $this->pos() <= $new_pos) {
+            throw new Exception('Override failed to either advance the pointer'
+              . ' or change the state');
+          }
         } else {
+          // no override
           $this->pos_shift(strlen($next_pattern_matches[0]));
           $this->push_state($next_pattern_data);
           $this->record($next_pattern_matches[0]);
