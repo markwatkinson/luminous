@@ -209,7 +209,7 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
     
     // pod/cut documentation
     $this->add_pattern('DOCCOMMENT', 
-    '/^=(?:pod|head\d*|over|item|back|begin|end|for|encoding)\\b .*? (^=cut$|\\z)/mxs');
+    '/^=[a-z_] .*? (^=cut$|\\z)/mxs');
 
     // variables
     $this->add_pattern('VARIABLE', '/[\\$%@][a-z_]\w*/i');
