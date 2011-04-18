@@ -502,7 +502,7 @@ abstract class luminous {
     }
     // if we ended up with any double slashes, let's zap them, and also
     // trim any trailing ones
-    $relative_root = preg_replace('%//+%', '/', $relative_root);
+    $relative_root = preg_replace('%(?<!:)//+%', '/', $relative_root);
     $relative_root = rtrim($relative_root, '/');
     $out = '';
     $out .= "<link rel='stylesheet' type='text/css'
