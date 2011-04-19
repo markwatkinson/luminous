@@ -1019,6 +1019,14 @@ class LuminousScanner extends Scanner {
    * @param $open the opening delimiter pattern (regex), e.g. '% /\\* %x'
    * @param $close the closing delimiter pattern (regex), e.g. '% \\* /%x'
    *
+   * @warning Although PCRE provides recursive regular expressions, this
+   * function is far preferable. A recursive regex will easily crash PCRE
+   * on garbage input due to it having a fairly small stack: this function
+   * is much more resilient.
+   *
+   * @throws Exception if called at a non-matching point (i.e. 
+   * <code>$this->scan($open)</code> does not match)
+   *
    */
   function nestable_token($token_name, $open, $close) {
     if ($this->check($open) === null) {
@@ -1041,7 +1049,6 @@ class LuminousScanner extends Scanner {
     } while ($stack);
     $substr = substr($this->string(), $start, $this->pos()-$start);
     $this->record($substr, $token_name);
-
   }
 }
 
