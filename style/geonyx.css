@@ -14,9 +14,12 @@
 .luminous .function{ color: #E20800 !important;}
 .luminous .heredoc, .luminous .string {
   color: #00892C !important;
-  background-color: rgba(119, 183, 83, 0.05) !important;
+  background-color: rgba(119, 183, 83, 0.15) !important; 
 }
-.luminous .htmltag {font-weight: bold !important; }
+.luminous .htmltag {
+  font-weight: bold !important;
+  color: #644A9B !important;
+ }
 .luminous .interpolation {background-color: rgba(164, 192, 228, 0.15)  !important;}
 .luminous .keyword { font-weight:bold !important; color: #2C72C7 !important; }
 .luminous .numeric {color: #00BF00 !important; }
