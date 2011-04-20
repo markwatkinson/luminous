@@ -18,27 +18,7 @@ class LuminousHaskellScanner extends LuminousSimpleScanner {
 
   // handles comment nesting of multiline comments.
   function comment_override() {
-    assert($this->peek(2) === '{-');
-    $stack = 0;
-    $patterns = array('/\\{-/', '/-\\}/');
-    $start = $this->pos();
-    do {
-      $next = $this->get_next($patterns);
-      // no matches
-      if ($next[0] === -1) {
-        $this->terminate();
-        break;
-      }
-      if ($next[1][0][0] === '{') $stack++;
-      else $stack--;
-      $this->pos($next[0] + 2);
-    } while ($stack > 0);
-    
-    $this->record(
-      substr($this->string(),
-             $start,
-             $this->pos()-$start),
-      'COMMENT');
+    $this->nestable_token('COMMENT', '/\\{-/', '/-\\}/');
   }
 
   function init() {
