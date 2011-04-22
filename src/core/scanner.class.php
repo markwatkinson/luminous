@@ -1648,6 +1648,7 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
     $this->setup();
     while (!$this->eos()) {
       $p = $this->pos();
+      $state = $this->state_name();
 
       $this->load_transitions();
       list($next_pattern_data,
@@ -1664,7 +1665,6 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
         $tok = $next_pattern_data[0];
         if (isset($this->overrides[$tok])) {
           // call override
-          $state = $this->state_name();
           $ret = call_user_func($this->overrides[$tok], $next_pattern_matches);
           if ($ret === true) break;
           if ($this->state_name() === $state && $this->pos() <= $new_pos) {
@@ -1694,9 +1694,7 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
         $this->terminate();
         break;
       }
-      // this needs to be removed in future, or at least changed...
-      // if the state changes then pos may equal p
-      if ($this->pos() <= $p) {
+      if ($this->state_name() === $state && $this->pos() <= $p) {
         throw new Exception('Failed to advance pointer in state' 
           . $this->state_name());
       }
