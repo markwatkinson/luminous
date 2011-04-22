@@ -7,13 +7,13 @@ luminous::set('max-height', 300);
 luminous::set('theme', 'geonyx');
 luminous::set('relative-root', '../');
 if (isset($_POST['theme'])) luminous::set('theme', $_POST['theme']);
-if (isset($_POST['format'])) luminous::set('format', $_POST['format']);
-
+if (isset($_POST['format'])) luminous::set('format', $_POST['format']); 
 ?>
 <!DOCTYPE html>
 <html>
   <head>
   <?php echo luminous::head_html(); ?>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
   </head>
 <body>
@@ -61,7 +61,7 @@ if (isset($_POST['format'])) luminous::set('format', $_POST['format']);
     <br/>
 
     <textarea rows=15 cols=75 name='src'><?php
-    if (isset($_POST['src'])) echo htmlentities($_POST['src']);
+    if (isset($_POST['src'])) echo htmlspecialchars($_POST['src']);
     ?></textarea>
     <br/>
     <input type=submit>
