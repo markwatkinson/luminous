@@ -38,6 +38,7 @@ if (isset($_POST['format'])) luminous::set('format', $_POST['format']);
  //     echo $_POST['lang'];
       echo "<option value='{$codes[0]}'$def>$lang</option>\n";
     } ?>
+    <option value='no_such_scanner'>error case</option>
     </select>
     <br/>
     <select name='theme'>
@@ -46,7 +47,6 @@ if (isset($_POST['format'])) luminous::set('format', $_POST['format']);
           '';
       echo sprintf("<option value='%s'%s>%s</option>\n", $t, $def,
         preg_replace('/\.css$/i', '', $t));
-
     }
 ?>  </select>
     <br/>
