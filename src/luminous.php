@@ -100,6 +100,10 @@ class _Luminous {
     $this->scanners->AddScanner(array('erlang', 'erl', 'hrl'),
       'LuminousErlangScanner', 'Erlang', "$language_dir/erlang.php");
 
+    $this->scanners->AddScanner('go', 'LuminousGoScanner', 'Go',
+      "$language_dir/go.php");
+    
+
     $this->scanners->AddScanner(array('groovy'),
       'LuminousGroovyScanner', 'Groovy',
       "$language_dir/groovy.php");

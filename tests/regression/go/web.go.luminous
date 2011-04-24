@@ -1,0 +1,610 @@
+<KEYWORD>package</KEYWORD> web
+
+<KEYWORD>import</KEYWORD> (
+    <STRING>"bytes"</STRING>
+    <STRING>"container/vector"</STRING>
+    <STRING>"crypto/hmac"</STRING>
+    <STRING>"encoding/base64"</STRING>
+    <STRING>"fmt"</STRING>
+    <STRING>"http"</STRING>
+    <STRING>"io/ioutil"</STRING>
+    <STRING>"log"</STRING>
+    <STRING>"mime"</STRING>
+    <STRING>"net"</STRING>
+    <STRING>"os"</STRING>
+    <STRING>"path"</STRING>
+    <STRING>"reflect"</STRING>
+    <STRING>"regexp"</STRING>
+    <STRING>"runtime"</STRING>
+    <STRING>"strconv"</STRING>
+    <STRING>"strings"</STRING>
+    <STRING>"time"</STRING>
+)
+
+<KEYWORD>type</KEYWORD> <USER_FUNCTION>conn</USER_FUNCTION> <KEYWORD>interface</KEYWORD> {
+    StartResponse(status <TYPE>int</TYPE>)
+    SetHeader(hdr <TYPE>string</TYPE><OPERATOR>,</OPERATOR> val <TYPE>string</TYPE><OPERATOR>,</OPERATOR> unique <TYPE>bool</TYPE>)
+    Write(data []<TYPE>byte</TYPE>) (n <TYPE>int</TYPE><OPERATOR>,</OPERATOR> err <OBJ>os</OBJ><OPERATOR>.</OPERATOR><OO>Error</OO>)
+    <FUNCTION>Close</FUNCTION>()
+}
+
+<KEYWORD>type</KEYWORD> <USER_FUNCTION>Context</USER_FUNCTION> <KEYWORD>struct</KEYWORD> {
+    <OPERATOR>*</OPERATOR>Request
+    <OPERATOR>*</OPERATOR><TYPE>Server</TYPE>
+    <TYPE>conn</TYPE>
+    responseStarted <TYPE>bool</TYPE>
+}
+
+<KEYWORD>func</KEYWORD> (ctx <OPERATOR>*</OPERATOR><TYPE>Context</TYPE>) StartResponse(status <TYPE>int</TYPE>) {
+    <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>conn</OO><OPERATOR>.</OPERATOR><OO>StartResponse</OO>(status)
+    <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>responseStarted</OO> <OPERATOR>=</OPERATOR> <VALUE>true</VALUE>
+}
+
+<KEYWORD>func</KEYWORD> (ctx <OPERATOR>*</OPERATOR><TYPE>Context</TYPE>) Write(data []<TYPE>byte</TYPE>) (n <TYPE>int</TYPE><OPERATOR>,</OPERATOR> err <OBJ>os</OBJ><OPERATOR>.</OPERATOR><OO>Error</OO>) {
+    <KEYWORD>if</KEYWORD> <OPERATOR>!</OPERATOR><OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>responseStarted</OO> {
+        <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>StartResponse</OO>(<NUMERIC>200</NUMERIC>)
+    }
+
+    <COMMENT>//if it's a HEAD request, we just write blank data</COMMENT>
+    <KEYWORD>if</KEYWORD> <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>Request</OO><OPERATOR>.</OPERATOR><OO>Method</OO> <OPERATOR>==</OPERATOR> <STRING>"HEAD"</STRING> {
+        data <OPERATOR>=</OPERATOR> []<TYPE>byte</TYPE>{}
+    }
+
+    <KEYWORD>return</KEYWORD> <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>conn</OO><OPERATOR>.</OPERATOR><OO>Write</OO>(data)
+}
+<KEYWORD>func</KEYWORD> (ctx <OPERATOR>*</OPERATOR><TYPE>Context</TYPE>) WriteString(content <TYPE>string</TYPE>) {
+    <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>Write</OO>([]<TYPE>byte</TYPE>(content))
+}
+
+<KEYWORD>func</KEYWORD> (ctx <OPERATOR>*</OPERATOR><TYPE>Context</TYPE>) Abort(status <TYPE>int</TYPE><OPERATOR>,</OPERATOR> body <TYPE>string</TYPE>) {
+    <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>StartResponse</OO>(status)
+    <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>WriteString</OO>(body)
+}
+
+<KEYWORD>func</KEYWORD> (ctx <OPERATOR>*</OPERATOR><TYPE>Context</TYPE>) Redirect(status <TYPE>int</TYPE><OPERATOR>,</OPERATOR> url <TYPE>string</TYPE>) {
+    <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>SetHeader</OO>(<STRING>"Location"</STRING><OPERATOR>,</OPERATOR> url<OPERATOR>,</OPERATOR> <VALUE>true</VALUE>)
+    <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>StartResponse</OO>(status)
+    <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>WriteString</OO>(<STRING>"Redirecting to: "</STRING> <OPERATOR>+</OPERATOR> url)
+}
+
+<KEYWORD>func</KEYWORD> (ctx <OPERATOR>*</OPERATOR><TYPE>Context</TYPE>) NotModified() {
+    <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>StartResponse</OO>(<NUMERIC>304</NUMERIC>)
+}
+
+<KEYWORD>func</KEYWORD> (ctx <OPERATOR>*</OPERATOR><TYPE>Context</TYPE>) NotFound(message <TYPE>string</TYPE>) {
+    <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>StartResponse</OO>(<NUMERIC>404</NUMERIC>)
+    <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>WriteString</OO>(message)
+}
+
+<COMMENT>//Sets the content type by extension, as defined in the mime package.</COMMENT>
+<COMMENT>//For example, ctx.ContentType("json") sets the content-type to "application/json"</COMMENT>
+<KEYWORD>func</KEYWORD> (ctx <OPERATOR>*</OPERATOR><TYPE>Context</TYPE>) ContentType(ext <TYPE>string</TYPE>) {
+    <KEYWORD>if</KEYWORD> <OPERATOR>!</OPERATOR><OBJ>strings</OBJ><OPERATOR>.</OPERATOR><OO>HasPrefix</OO>(ext<OPERATOR>,</OPERATOR> <STRING>"."</STRING>) {
+        ext <OPERATOR>=</OPERATOR> <STRING>"."</STRING> <OPERATOR>+</OPERATOR> ext
+    }
+    ctype <OPERATOR>:=</OPERATOR> <OBJ>mime</OBJ><OPERATOR>.</OPERATOR><OO>TypeByExtension</OO>(ext)
+    <KEYWORD>if</KEYWORD> ctype <OPERATOR>!=</OPERATOR> <STRING>""</STRING> {
+        <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>SetHeader</OO>(<STRING>"Content-Type"</STRING><OPERATOR>,</OPERATOR> ctype<OPERATOR>,</OPERATOR> <VALUE>true</VALUE>)
+    }
+}
+
+<COMMENT>//Sets a cookie -- duration is the amount of time in seconds. 0 = forever</COMMENT>
+<KEYWORD>func</KEYWORD> (ctx <OPERATOR>*</OPERATOR><TYPE>Context</TYPE>) SetCookie(name <TYPE>string</TYPE><OPERATOR>,</OPERATOR> value <TYPE>string</TYPE><OPERATOR>,</OPERATOR> age <TYPE>int64</TYPE>) {
+    <KEYWORD>var</KEYWORD> utctime <OPERATOR>*</OPERATOR><OBJ>time</OBJ><OPERATOR>.</OPERATOR><OO>Time</OO>
+    <KEYWORD>if</KEYWORD> age <OPERATOR>==</OPERATOR> <NUMERIC>0</NUMERIC> {
+        <COMMENT>// 2^31 - 1 seconds (roughly 2038)</COMMENT>
+        utctime <OPERATOR>=</OPERATOR> <OBJ>time</OBJ><OPERATOR>.</OPERATOR><OO>SecondsToUTC</OO>(<NUMERIC>2147483647</NUMERIC>)
+    } <KEYWORD>else</KEYWORD> {
+        utctime <OPERATOR>=</OPERATOR> <OBJ>time</OBJ><OPERATOR>.</OPERATOR><OO>SecondsToUTC</OO>(<OBJ>time</OBJ><OPERATOR>.</OPERATOR><OO>UTC</OO>()<OPERATOR>.</OPERATOR><OO>Seconds</OO>() <OPERATOR>+</OPERATOR> age)
+    }
+    cookie <OPERATOR>:=</OPERATOR> <OBJ>fmt</OBJ><OPERATOR>.</OPERATOR><OO>Sprintf</OO>(<STRING>"%s=%s; expires=%s"</STRING><OPERATOR>,</OPERATOR> name<OPERATOR>,</OPERATOR> value<OPERATOR>,</OPERATOR> <FUNCTION>webTime</FUNCTION>(utctime))
+    <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>SetHeader</OO>(<STRING>"Set-Cookie"</STRING><OPERATOR>,</OPERATOR> cookie<OPERATOR>,</OPERATOR> <VALUE>false</VALUE>)
+}
+
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>getCookieSig</USER_FUNCTION>(key <TYPE>string</TYPE><OPERATOR>,</OPERATOR> val []<TYPE>byte</TYPE><OPERATOR>,</OPERATOR> timestamp <TYPE>string</TYPE>) <TYPE>string</TYPE> {
+    hm <OPERATOR>:=</OPERATOR> <OBJ>hmac</OBJ><OPERATOR>.</OPERATOR><OO>NewSHA1</OO>([]<TYPE>byte</TYPE>(key))
+
+    <OBJ>hm</OBJ><OPERATOR>.</OPERATOR><OO>Write</OO>(val)
+    <OBJ>hm</OBJ><OPERATOR>.</OPERATOR><OO>Write</OO>([]<TYPE>byte</TYPE>(timestamp))
+
+    hex <OPERATOR>:=</OPERATOR> <OBJ>fmt</OBJ><OPERATOR>.</OPERATOR><OO>Sprintf</OO>(<STRING>"%02x"</STRING><OPERATOR>,</OPERATOR> <OBJ>hm</OBJ><OPERATOR>.</OPERATOR><OO>Sum</OO>())
+    <KEYWORD>return</KEYWORD> hex
+}
+
+<KEYWORD>func</KEYWORD> (ctx <OPERATOR>*</OPERATOR><TYPE>Context</TYPE>) SetSecureCookie(name <TYPE>string</TYPE><OPERATOR>,</OPERATOR> val <TYPE>string</TYPE><OPERATOR>,</OPERATOR> age <TYPE>int64</TYPE>) {
+    <COMMENT>//base64 encode the val</COMMENT>
+    <KEYWORD>if</KEYWORD> <FUNCTION>len</FUNCTION>(<OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>Server</OO><OPERATOR>.</OPERATOR><OO>Config</OO><OPERATOR>.</OPERATOR><OO>CookieSecret</OO>) <OPERATOR>==</OPERATOR> <NUMERIC>0</NUMERIC> {
+        <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO><OPERATOR>.</OPERATOR><OO>Println</OO>(<STRING>"Secret Key for secure cookies has not been set. Please call web.SetCookieSecret"</STRING>)
+        <KEYWORD>return</KEYWORD>
+    }
+    <KEYWORD>var</KEYWORD> buf <OBJ>bytes</OBJ><OPERATOR>.</OPERATOR><OO>Buffer</OO>
+    encoder <OPERATOR>:=</OPERATOR> <OBJ>base64</OBJ><OPERATOR>.</OPERATOR><OO>NewEncoder</OO>(<OBJ>base64</OBJ><OPERATOR>.</OPERATOR><OO>StdEncoding</OO><OPERATOR>,</OPERATOR> <OPERATOR>&amp;</OPERATOR>buf)
+    <OBJ>encoder</OBJ><OPERATOR>.</OPERATOR><OO>Write</OO>([]<TYPE>byte</TYPE>(val))
+    <OBJ>encoder</OBJ><OPERATOR>.</OPERATOR><OO>Close</OO>()
+    vs <OPERATOR>:=</OPERATOR> <OBJ>buf</OBJ><OPERATOR>.</OPERATOR><OO>String</OO>()
+    vb <OPERATOR>:=</OPERATOR> <OBJ>buf</OBJ><OPERATOR>.</OPERATOR><OO>Bytes</OO>()
+    timestamp <OPERATOR>:=</OPERATOR> <OBJ>strconv</OBJ><OPERATOR>.</OPERATOR><OO>Itoa64</OO>(<OBJ>time</OBJ><OPERATOR>.</OPERATOR><OO>Seconds</OO>())
+    sig <OPERATOR>:=</OPERATOR> <FUNCTION>getCookieSig</FUNCTION>(<OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>Server</OO><OPERATOR>.</OPERATOR><OO>Config</OO><OPERATOR>.</OPERATOR><OO>CookieSecret</OO><OPERATOR>,</OPERATOR> vb<OPERATOR>,</OPERATOR> timestamp)
+    cookie <OPERATOR>:=</OPERATOR> <OBJ>strings</OBJ><OPERATOR>.</OPERATOR><OO>Join</OO>([]<TYPE>string</TYPE>{vs<OPERATOR>,</OPERATOR> timestamp<OPERATOR>,</OPERATOR> sig}<OPERATOR>,</OPERATOR> <STRING>"|"</STRING>)
+    <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>SetCookie</OO>(name<OPERATOR>,</OPERATOR> cookie<OPERATOR>,</OPERATOR> age)
+}
+
+<KEYWORD>func</KEYWORD> (ctx <OPERATOR>*</OPERATOR><TYPE>Context</TYPE>) GetSecureCookie(name <TYPE>string</TYPE>) (<TYPE>string</TYPE><OPERATOR>,</OPERATOR> <TYPE>bool</TYPE>) {
+    cookie<OPERATOR>,</OPERATOR> ok <OPERATOR>:=</OPERATOR> <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>Request</OO><OPERATOR>.</OPERATOR><OO>Cookies</OO>[name]
+    <KEYWORD>if</KEYWORD> <OPERATOR>!</OPERATOR>ok {
+        <KEYWORD>return</KEYWORD> <STRING>""</STRING><OPERATOR>,</OPERATOR> <VALUE>false</VALUE>
+    }
+
+    parts <OPERATOR>:=</OPERATOR> <OBJ>strings</OBJ><OPERATOR>.</OPERATOR><OO>Split</OO>(cookie<OPERATOR>,</OPERATOR> <STRING>"|"</STRING><OPERATOR>,</OPERATOR> <NUMERIC>3</NUMERIC>)
+
+    val <OPERATOR>:=</OPERATOR> parts[<NUMERIC>0</NUMERIC>]
+    timestamp <OPERATOR>:=</OPERATOR> parts[<NUMERIC>1</NUMERIC>]
+    sig <OPERATOR>:=</OPERATOR> parts[<NUMERIC>2</NUMERIC>]
+
+    <KEYWORD>if</KEYWORD> <FUNCTION>getCookieSig</FUNCTION>(<OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>Server</OO><OPERATOR>.</OPERATOR><OO>Config</OO><OPERATOR>.</OPERATOR><OO>CookieSecret</OO><OPERATOR>,</OPERATOR> []<TYPE>byte</TYPE>(val)<OPERATOR>,</OPERATOR> timestamp) <OPERATOR>!=</OPERATOR> sig {
+        <KEYWORD>return</KEYWORD> <STRING>""</STRING><OPERATOR>,</OPERATOR> <VALUE>false</VALUE>
+    }
+
+    ts<OPERATOR>,</OPERATOR> _ <OPERATOR>:=</OPERATOR> <OBJ>strconv</OBJ><OPERATOR>.</OPERATOR><OO>Atoi64</OO>(timestamp)
+
+    <KEYWORD>if</KEYWORD> <OBJ>time</OBJ><OPERATOR>.</OPERATOR><OO>Seconds</OO>()<OPERATOR>-</OPERATOR><NUMERIC>31</NUMERIC><OPERATOR>*</OPERATOR><NUMERIC>86400</NUMERIC> <OPERATOR>&gt;</OPERATOR> ts {
+        <KEYWORD>return</KEYWORD> <STRING>""</STRING><OPERATOR>,</OPERATOR> <VALUE>false</VALUE>
+    }
+
+    buf <OPERATOR>:=</OPERATOR> <OBJ>bytes</OBJ><OPERATOR>.</OPERATOR><OO>NewBufferString</OO>(val)
+    encoder <OPERATOR>:=</OPERATOR> <OBJ>base64</OBJ><OPERATOR>.</OPERATOR><OO>NewDecoder</OO>(<OBJ>base64</OBJ><OPERATOR>.</OPERATOR><OO>StdEncoding</OO><OPERATOR>,</OPERATOR> buf)
+
+    res<OPERATOR>,</OPERATOR> _ <OPERATOR>:=</OPERATOR> <OBJ>ioutil</OBJ><OPERATOR>.</OPERATOR><OO>ReadAll</OO>(encoder)
+    <KEYWORD>return</KEYWORD> <TYPE>string</TYPE>(res)<OPERATOR>,</OPERATOR> <VALUE>true</VALUE>
+}
+
+<COMMENT>// small optimization: cache the context type instead of repeteadly calling reflect.Typeof</COMMENT>
+<KEYWORD>var</KEYWORD> contextType <OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>Type</OO>
+
+<KEYWORD>var</KEYWORD> exeFile <TYPE>string</TYPE>
+
+<COMMENT>// default</COMMENT>
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>defaultStaticDir</USER_FUNCTION>() <TYPE>string</TYPE> {
+    root<OPERATOR>,</OPERATOR> _ <OPERATOR>:=</OPERATOR> <OBJ>path</OBJ><OPERATOR>.</OPERATOR><OO>Split</OO>(exeFile)
+    <KEYWORD>return</KEYWORD> <OBJ>path</OBJ><OPERATOR>.</OPERATOR><OO>Join</OO>(root<OPERATOR>,</OPERATOR> <STRING>"static"</STRING>)
+}
+
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>init</USER_FUNCTION>() {
+    contextType <OPERATOR>=</OPERATOR> <OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>Typeof</OO>(<TYPE>Context</TYPE>{})
+    <COMMENT>//find the location of the exe file</COMMENT>
+    arg0 <OPERATOR>:=</OPERATOR> <OBJ>path</OBJ><OPERATOR>.</OPERATOR><OO>Clean</OO>(<OBJ>os</OBJ><OPERATOR>.</OPERATOR><OO>Args</OO>[<NUMERIC>0</NUMERIC>])
+    wd<OPERATOR>,</OPERATOR> _ <OPERATOR>:=</OPERATOR> <OBJ>os</OBJ><OPERATOR>.</OPERATOR><OO>Getwd</OO>()
+    <KEYWORD>if</KEYWORD> <OBJ>strings</OBJ><OPERATOR>.</OPERATOR><OO>HasPrefix</OO>(arg0<OPERATOR>,</OPERATOR> <STRING>"/"</STRING>) {
+        exeFile <OPERATOR>=</OPERATOR> arg0
+    } <KEYWORD>else</KEYWORD> {
+        <COMMENT>//<COMMENT_NOTE>TODO</COMMENT_NOTE> for robustness, search each directory in $PATH</COMMENT>
+        exeFile <OPERATOR>=</OPERATOR> <OBJ>path</OBJ><OPERATOR>.</OPERATOR><OO>Join</OO>(wd<OPERATOR>,</OPERATOR> arg0)
+    }
+}
+
+<KEYWORD>type</KEYWORD> <USER_FUNCTION>route</USER_FUNCTION> <KEYWORD>struct</KEYWORD> {
+    r       <TYPE>string</TYPE>
+    cr      <OPERATOR>*</OPERATOR><OBJ>regexp</OBJ><OPERATOR>.</OPERATOR><OO>Regexp</OO>
+    method  <TYPE>string</TYPE>
+    handler <OPERATOR>*</OPERATOR><OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>FuncValue</OO>
+}
+
+<KEYWORD>func</KEYWORD> (s <OPERATOR>*</OPERATOR><TYPE>Server</TYPE>) addRoute(r <TYPE>string</TYPE><OPERATOR>,</OPERATOR> method <TYPE>string</TYPE><OPERATOR>,</OPERATOR> handler <KEYWORD>interface</KEYWORD>{}) {
+    cr<OPERATOR>,</OPERATOR> err <OPERATOR>:=</OPERATOR> <OBJ>regexp</OBJ><OPERATOR>.</OPERATOR><OO>Compile</OO>(r)
+    <KEYWORD>if</KEYWORD> err <OPERATOR>!=</OPERATOR> nil {
+        <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO><OPERATOR>.</OPERATOR><OO>Printf</OO>(<STRING>"Error in route regex %q<ESC>\n</ESC>"</STRING><OPERATOR>,</OPERATOR> r)
+        <KEYWORD>return</KEYWORD>
+    }
+    <COMMENT>//is this already a reflect.FuncValue?</COMMENT>
+    <KEYWORD>if</KEYWORD> fv<OPERATOR>,</OPERATOR> ok <OPERATOR>:=</OPERATOR> <OBJ>handler</OBJ><OPERATOR>.</OPERATOR>(<OPERATOR>*</OPERATOR><OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>FuncValue</OO>)<OPERATOR>;</OPERATOR> ok {
+        <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>routes</OO><OPERATOR>.</OPERATOR><OO>Push</OO>(<TYPE>route</TYPE>{r<OPERATOR>,</OPERATOR> cr<OPERATOR>,</OPERATOR> method<OPERATOR>,</OPERATOR> fv})
+    } <KEYWORD>else</KEYWORD> {
+        fv <OPERATOR>:=</OPERATOR> <OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>NewValue</OO>(handler)<OPERATOR>.</OPERATOR>(<OPERATOR>*</OPERATOR><OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>FuncValue</OO>)
+        <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>routes</OO><OPERATOR>.</OPERATOR><OO>Push</OO>(<TYPE>route</TYPE>{r<OPERATOR>,</OPERATOR> cr<OPERATOR>,</OPERATOR> method<OPERATOR>,</OPERATOR> fv})
+    }
+}
+
+<KEYWORD>type</KEYWORD> <USER_FUNCTION>httpConn</USER_FUNCTION> <KEYWORD>struct</KEYWORD> {
+    <TYPE>conn</TYPE> <OBJ>http</OBJ><OPERATOR>.</OPERATOR><OO>ResponseWriter</OO>
+}
+
+<KEYWORD>func</KEYWORD> (c <OPERATOR>*</OPERATOR><TYPE>httpConn</TYPE>) StartResponse(status <TYPE>int</TYPE>) { <OBJ>c</OBJ><OPERATOR>.</OPERATOR><OO>conn</OO><OPERATOR>.</OPERATOR><OO>WriteHeader</OO>(status) }
+
+<KEYWORD>func</KEYWORD> (c <OPERATOR>*</OPERATOR><TYPE>httpConn</TYPE>) SetHeader(hdr <TYPE>string</TYPE><OPERATOR>,</OPERATOR> val <TYPE>string</TYPE><OPERATOR>,</OPERATOR> unique <TYPE>bool</TYPE>) {
+    <COMMENT>//right now unique can't be implemented through the http package.</COMMENT>
+    <COMMENT>//see issue 488</COMMENT>
+    <OBJ>c</OBJ><OPERATOR>.</OPERATOR><OO>conn</OO><OPERATOR>.</OPERATOR><OO>SetHeader</OO>(hdr<OPERATOR>,</OPERATOR> val)
+}
+
+<KEYWORD>func</KEYWORD> (c <OPERATOR>*</OPERATOR><TYPE>httpConn</TYPE>) WriteString(content <TYPE>string</TYPE>) {
+    buf <OPERATOR>:=</OPERATOR> <OBJ>bytes</OBJ><OPERATOR>.</OPERATOR><OO>NewBufferString</OO>(content)
+    <OBJ>c</OBJ><OPERATOR>.</OPERATOR><OO>conn</OO><OPERATOR>.</OPERATOR><OO>Write</OO>(<OBJ>buf</OBJ><OPERATOR>.</OPERATOR><OO>Bytes</OO>())
+}
+
+<KEYWORD>func</KEYWORD> (c <OPERATOR>*</OPERATOR><TYPE>httpConn</TYPE>) Write(content []<TYPE>byte</TYPE>) (n <TYPE>int</TYPE><OPERATOR>,</OPERATOR> err <OBJ>os</OBJ><OPERATOR>.</OPERATOR><OO>Error</OO>) {
+    <KEYWORD>return</KEYWORD> <OBJ>c</OBJ><OPERATOR>.</OPERATOR><OO>conn</OO><OPERATOR>.</OPERATOR><OO>Write</OO>(content)
+}
+
+<KEYWORD>func</KEYWORD> (c <OPERATOR>*</OPERATOR><TYPE>httpConn</TYPE>) <FUNCTION>Close</FUNCTION>() {
+    rwc<OPERATOR>,</OPERATOR> buf<OPERATOR>,</OPERATOR> _ <OPERATOR>:=</OPERATOR> <OBJ>c</OBJ><OPERATOR>.</OPERATOR><OO>conn</OO><OPERATOR>.</OPERATOR><OO>Hijack</OO>()
+    <KEYWORD>if</KEYWORD> buf <OPERATOR>!=</OPERATOR> nil {
+        <OBJ>buf</OBJ><OPERATOR>.</OPERATOR><OO>Flush</OO>()
+    }
+
+    <KEYWORD>if</KEYWORD> rwc <OPERATOR>!=</OPERATOR> nil {
+        <OBJ>rwc</OBJ><OPERATOR>.</OPERATOR><OO>Close</OO>()
+    }
+}
+
+<KEYWORD>func</KEYWORD> (s <OPERATOR>*</OPERATOR><TYPE>Server</TYPE>) ServeHTTP(c <OBJ>http</OBJ><OPERATOR>.</OPERATOR><OO>ResponseWriter</OO><OPERATOR>,</OPERATOR> req <OPERATOR>*</OPERATOR><OBJ>http</OBJ><OPERATOR>.</OPERATOR><OO>Request</OO>) {
+    <TYPE>conn</TYPE> <OPERATOR>:=</OPERATOR> <TYPE>httpConn</TYPE>{c}
+    wreq <OPERATOR>:=</OPERATOR> newRequest(req<OPERATOR>,</OPERATOR> c)
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>routeHandler</OO>(wreq<OPERATOR>,</OPERATOR> <OPERATOR>&amp;</OPERATOR><TYPE>conn</TYPE>)
+}
+
+<COMMENT>//Calls a function with recover block</COMMENT>
+<KEYWORD>func</KEYWORD> (s <OPERATOR>*</OPERATOR><TYPE>Server</TYPE>) safelyCall(function <OPERATOR>*</OPERATOR><OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>FuncValue</OO><OPERATOR>,</OPERATOR> args []<OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>Value</OO>) (resp []<OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>Value</OO><OPERATOR>,</OPERATOR> e <KEYWORD>interface</KEYWORD>{}) {
+    <KEYWORD>defer</KEYWORD> <KEYWORD>func</KEYWORD>() {
+        <KEYWORD>if</KEYWORD> err <OPERATOR>:=</OPERATOR> <FUNCTION>recover</FUNCTION>()<OPERATOR>;</OPERATOR> err <OPERATOR>!=</OPERATOR> nil {
+            <KEYWORD>if</KEYWORD> <OPERATOR>!</OPERATOR><OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Config</OO><OPERATOR>.</OPERATOR><OO>RecoverPanic</OO> {
+                <COMMENT>// go back to panic</COMMENT>
+                <FUNCTION>panic</FUNCTION>(err)
+            } <KEYWORD>else</KEYWORD> {
+                e <OPERATOR>=</OPERATOR> err
+                resp <OPERATOR>=</OPERATOR> nil
+                <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO><OPERATOR>.</OPERATOR><OO>Println</OO>(<STRING>"Handler crashed with error"</STRING><OPERATOR>,</OPERATOR> err)
+                <KEYWORD>for</KEYWORD> i <OPERATOR>:=</OPERATOR> <NUMERIC>1</NUMERIC><OPERATOR>;</OPERATOR> <OPERATOR>;</OPERATOR> i <OPERATOR>+=</OPERATOR> <NUMERIC>1</NUMERIC> {
+                    _<OPERATOR>,</OPERATOR> file<OPERATOR>,</OPERATOR> line<OPERATOR>,</OPERATOR> ok <OPERATOR>:=</OPERATOR> <OBJ>runtime</OBJ><OPERATOR>.</OPERATOR><OO>Caller</OO>(i)
+                    <KEYWORD>if</KEYWORD> <OPERATOR>!</OPERATOR>ok {
+                        <KEYWORD>break</KEYWORD>
+                    }
+                    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO><OPERATOR>.</OPERATOR><OO>Println</OO>(file<OPERATOR>,</OPERATOR> line)
+                }
+            }
+        }
+    }()
+    <KEYWORD>return</KEYWORD> <OBJ>function</OBJ><OPERATOR>.</OPERATOR><OO>Call</OO>(args)<OPERATOR>,</OPERATOR> nil
+}
+
+<COMMENT>//should the context be passed to the handler?</COMMENT>
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>requiresContext</USER_FUNCTION>(handlerType <OPERATOR>*</OPERATOR><OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>FuncType</OO>) <TYPE>bool</TYPE> {
+    <COMMENT>//if the method doesn't take arguments, no</COMMENT>
+    <KEYWORD>if</KEYWORD> <OBJ>handlerType</OBJ><OPERATOR>.</OPERATOR><OO>NumIn</OO>() <OPERATOR>==</OPERATOR> <NUMERIC>0</NUMERIC> {
+        <KEYWORD>return</KEYWORD> <VALUE>false</VALUE>
+    }
+
+    <COMMENT>//if the first argument is not a pointer, no</COMMENT>
+    a0<OPERATOR>,</OPERATOR> ok <OPERATOR>:=</OPERATOR> <OBJ>handlerType</OBJ><OPERATOR>.</OPERATOR><OO>In</OO>(<NUMERIC>0</NUMERIC>)<OPERATOR>.</OPERATOR>(<OPERATOR>*</OPERATOR><OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>PtrType</OO>)
+    <KEYWORD>if</KEYWORD> <OPERATOR>!</OPERATOR>ok {
+        <KEYWORD>return</KEYWORD> <VALUE>false</VALUE>
+    }
+
+    <COMMENT>//if the first argument is a context, yes</COMMENT>
+    <KEYWORD>if</KEYWORD> <OBJ>a0</OBJ><OPERATOR>.</OPERATOR><OO>Elem</OO>() <OPERATOR>==</OPERATOR> contextType {
+        <KEYWORD>return</KEYWORD> <VALUE>true</VALUE>
+    }
+
+    <COMMENT>//another case -- the first argument is a method receiver, and the</COMMENT>
+    <COMMENT>//second argument is a web.Context</COMMENT>
+
+    <KEYWORD>if</KEYWORD> <OBJ>handlerType</OBJ><OPERATOR>.</OPERATOR><OO>NumIn</OO>() <OPERATOR>&gt;</OPERATOR> <NUMERIC>1</NUMERIC> {
+        a1<OPERATOR>,</OPERATOR> ok <OPERATOR>:=</OPERATOR> <OBJ>handlerType</OBJ><OPERATOR>.</OPERATOR><OO>In</OO>(<NUMERIC>1</NUMERIC>)<OPERATOR>.</OPERATOR>(<OPERATOR>*</OPERATOR><OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>PtrType</OO>)
+        <KEYWORD>if</KEYWORD> <OPERATOR>!</OPERATOR>ok {
+            <KEYWORD>return</KEYWORD> <VALUE>false</VALUE>
+        }
+        <KEYWORD>if</KEYWORD> <OBJ>a1</OBJ><OPERATOR>.</OPERATOR><OO>Elem</OO>() <OPERATOR>==</OPERATOR> contextType {
+            <KEYWORD>return</KEYWORD> <VALUE>true</VALUE>
+        }
+    }
+
+    <KEYWORD>return</KEYWORD> <VALUE>false</VALUE>
+}
+
+<KEYWORD>func</KEYWORD> (s <OPERATOR>*</OPERATOR><TYPE>Server</TYPE>) routeHandler(req <OPERATOR>*</OPERATOR>Request<OPERATOR>,</OPERATOR> c <TYPE>conn</TYPE>) {
+    requestPath <OPERATOR>:=</OPERATOR> <OBJ>req</OBJ><OPERATOR>.</OPERATOR><OO>URL</OO><OPERATOR>.</OPERATOR><OO>Path</OO>
+
+    <COMMENT>//log the request</COMMENT>
+    <KEYWORD>if</KEYWORD> <FUNCTION>len</FUNCTION>(<OBJ>req</OBJ><OPERATOR>.</OPERATOR><OO>URL</OO><OPERATOR>.</OPERATOR><OO>RawQuery</OO>) <OPERATOR>==</OPERATOR> <NUMERIC>0</NUMERIC> {
+        <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO><OPERATOR>.</OPERATOR><OO>Println</OO>(<OBJ>req</OBJ><OPERATOR>.</OPERATOR><OO>Method</OO> <OPERATOR>+</OPERATOR> <STRING>" "</STRING> <OPERATOR>+</OPERATOR> requestPath)
+    } <KEYWORD>else</KEYWORD> {
+        <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO><OPERATOR>.</OPERATOR><OO>Println</OO>(<OBJ>req</OBJ><OPERATOR>.</OPERATOR><OO>Method</OO> <OPERATOR>+</OPERATOR> <STRING>" "</STRING> <OPERATOR>+</OPERATOR> requestPath <OPERATOR>+</OPERATOR> <STRING>"?"</STRING> <OPERATOR>+</OPERATOR> <OBJ>req</OBJ><OPERATOR>.</OPERATOR><OO>URL</OO><OPERATOR>.</OPERATOR><OO>RawQuery</OO>)
+    }
+
+    <COMMENT>//parse the form data (if it exists)</COMMENT>
+    perr <OPERATOR>:=</OPERATOR> <OBJ>req</OBJ><OPERATOR>.</OPERATOR><OO>parseParams</OO>()
+    <KEYWORD>if</KEYWORD> perr <OPERATOR>!=</OPERATOR> nil {
+        <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO><OPERATOR>.</OPERATOR><OO>Printf</OO>(<STRING>"Failed to parse form data %q<ESC>\n</ESC>"</STRING><OPERATOR>,</OPERATOR> <OBJ>perr</OBJ><OPERATOR>.</OPERATOR><OO>String</OO>())
+    }
+
+    <COMMENT>//parse the cookies</COMMENT>
+    perr <OPERATOR>=</OPERATOR> <OBJ>req</OBJ><OPERATOR>.</OPERATOR><OO>parseCookies</OO>()
+    <KEYWORD>if</KEYWORD> perr <OPERATOR>!=</OPERATOR> nil {
+        <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO><OPERATOR>.</OPERATOR><OO>Printf</OO>(<STRING>"Failed to parse cookies %q"</STRING><OPERATOR>,</OPERATOR> <OBJ>perr</OBJ><OPERATOR>.</OPERATOR><OO>String</OO>())
+    }
+
+    ctx <OPERATOR>:=</OPERATOR> <TYPE>Context</TYPE>{req<OPERATOR>,</OPERATOR> s<OPERATOR>,</OPERATOR> c<OPERATOR>,</OPERATOR> <VALUE>false</VALUE>}
+
+    <COMMENT>//set some default headers</COMMENT>
+    <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>SetHeader</OO>(<STRING>"Content-Type"</STRING><OPERATOR>,</OPERATOR> <STRING>"text/html; charset=utf-8"</STRING><OPERATOR>,</OPERATOR> <VALUE>true</VALUE>)
+    <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>SetHeader</OO>(<STRING>"Server"</STRING><OPERATOR>,</OPERATOR> <STRING>"web.go"</STRING><OPERATOR>,</OPERATOR> <VALUE>true</VALUE>)
+
+    tm <OPERATOR>:=</OPERATOR> <OBJ>time</OBJ><OPERATOR>.</OPERATOR><OO>UTC</OO>()
+    <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>SetHeader</OO>(<STRING>"Date"</STRING><OPERATOR>,</OPERATOR> <FUNCTION>webTime</FUNCTION>(tm)<OPERATOR>,</OPERATOR> <VALUE>true</VALUE>)
+
+    <COMMENT>//try to serve a static file</COMMENT>
+    staticDir <OPERATOR>:=</OPERATOR> <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Config</OO><OPERATOR>.</OPERATOR><OO>StaticDir</OO>
+    <KEYWORD>if</KEYWORD> staticDir <OPERATOR>==</OPERATOR> <STRING>""</STRING> {
+        staticDir <OPERATOR>=</OPERATOR> <FUNCTION>defaultStaticDir</FUNCTION>()
+    }
+    staticFile <OPERATOR>:=</OPERATOR> <OBJ>path</OBJ><OPERATOR>.</OPERATOR><OO>Join</OO>(staticDir<OPERATOR>,</OPERATOR> requestPath)
+    <KEYWORD>if</KEYWORD> <FUNCTION>fileExists</FUNCTION>(staticFile) <OPERATOR>&amp;&amp;</OPERATOR> (<OBJ>req</OBJ><OPERATOR>.</OPERATOR><OO>Method</OO> <OPERATOR>==</OPERATOR> <STRING>"GET"</STRING> <OPERATOR>||</OPERATOR> <OBJ>req</OBJ><OPERATOR>.</OPERATOR><OO>Method</OO> <OPERATOR>==</OPERATOR> <STRING>"HEAD"</STRING>) {
+        serveFile(<OPERATOR>&amp;</OPERATOR>ctx<OPERATOR>,</OPERATOR> staticFile)
+        <KEYWORD>return</KEYWORD>
+    }
+
+    <KEYWORD>for</KEYWORD> i <OPERATOR>:=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR> i <OPERATOR>&lt;</OPERATOR> <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>routes</OO><OPERATOR>.</OPERATOR><OO>Len</OO>()<OPERATOR>;</OPERATOR> i<OPERATOR>++</OPERATOR> {
+        <TYPE>route</TYPE> <OPERATOR>:=</OPERATOR> <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>routes</OO><OPERATOR>.</OPERATOR><OO>At</OO>(i)<OPERATOR>.</OPERATOR>(<TYPE>route</TYPE>)
+        cr <OPERATOR>:=</OPERATOR> <OBJ>route</OBJ><OPERATOR>.</OPERATOR><OO>cr</OO>
+        <COMMENT>//if the methods don't match, skip this handler (except HEAD can be used in place of GET)</COMMENT>
+        <KEYWORD>if</KEYWORD> <OBJ>req</OBJ><OPERATOR>.</OPERATOR><OO>Method</OO> <OPERATOR>!=</OPERATOR> <OBJ>route</OBJ><OPERATOR>.</OPERATOR><OO>method</OO> <OPERATOR>&amp;&amp;</OPERATOR> <OPERATOR>!</OPERATOR>(<OBJ>req</OBJ><OPERATOR>.</OPERATOR><OO>Method</OO> <OPERATOR>==</OPERATOR> <STRING>"HEAD"</STRING> <OPERATOR>&amp;&amp;</OPERATOR> <OBJ>route</OBJ><OPERATOR>.</OPERATOR><OO>method</OO> <OPERATOR>==</OPERATOR> <STRING>"GET"</STRING>) {
+            <KEYWORD>continue</KEYWORD>
+        }
+
+        <KEYWORD>if</KEYWORD> <OPERATOR>!</OPERATOR><OBJ>cr</OBJ><OPERATOR>.</OPERATOR><OO>MatchString</OO>(requestPath) {
+            <KEYWORD>continue</KEYWORD>
+        }
+        match <OPERATOR>:=</OPERATOR> <OBJ>cr</OBJ><OPERATOR>.</OPERATOR><OO>FindStringSubmatch</OO>(requestPath)
+
+        <KEYWORD>if</KEYWORD> <FUNCTION>len</FUNCTION>(match[<NUMERIC>0</NUMERIC>]) <OPERATOR>!=</OPERATOR> <FUNCTION>len</FUNCTION>(requestPath) {
+            <KEYWORD>continue</KEYWORD>
+        }
+
+        <KEYWORD>var</KEYWORD> args <OBJ>vector</OBJ><OPERATOR>.</OPERATOR><OO>Vector</OO>
+        handlerType <OPERATOR>:=</OPERATOR> <OBJ>route</OBJ><OPERATOR>.</OPERATOR><OO>handler</OO><OPERATOR>.</OPERATOR><OO>Type</OO>()<OPERATOR>.</OPERATOR>(<OPERATOR>*</OPERATOR><OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>FuncType</OO>)
+        <KEYWORD>if</KEYWORD> <FUNCTION>requiresContext</FUNCTION>(handlerType) {
+            <OBJ>args</OBJ><OPERATOR>.</OPERATOR><OO>Push</OO>(<OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>NewValue</OO>(<OPERATOR>&amp;</OPERATOR>ctx))
+        }
+
+        <KEYWORD>for</KEYWORD> _<OPERATOR>,</OPERATOR> arg <OPERATOR>:=</OPERATOR> <KEYWORD>range</KEYWORD> match[<NUMERIC>1</NUMERIC><OPERATOR>:</OPERATOR>] {
+            <OBJ>args</OBJ><OPERATOR>.</OPERATOR><OO>Push</OO>(<OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>NewValue</OO>(arg))
+        }
+
+        valArgs <OPERATOR>:=</OPERATOR> <FUNCTION>make</FUNCTION>([]<OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>Value</OO><OPERATOR>,</OPERATOR> <OBJ>args</OBJ><OPERATOR>.</OPERATOR><OO>Len</OO>())
+        <KEYWORD>for</KEYWORD> i <OPERATOR>:=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR> i <OPERATOR>&lt;</OPERATOR> <OBJ>args</OBJ><OPERATOR>.</OPERATOR><OO>Len</OO>()<OPERATOR>;</OPERATOR> i<OPERATOR>++</OPERATOR> {
+            valArgs[i] <OPERATOR>=</OPERATOR> <OBJ>args</OBJ><OPERATOR>.</OPERATOR><OO>At</OO>(i)<OPERATOR>.</OPERATOR>(<OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>Value</OO>)
+        }
+
+        ret<OPERATOR>,</OPERATOR> err <OPERATOR>:=</OPERATOR> <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>safelyCall</OO>(<OBJ>route</OBJ><OPERATOR>.</OPERATOR><OO>handler</OO><OPERATOR>,</OPERATOR> valArgs)
+        <KEYWORD>if</KEYWORD> err <OPERATOR>!=</OPERATOR> nil {
+            <COMMENT>//there was an error or panic while calling the handler</COMMENT>
+            <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO><OPERATOR>.</OPERATOR><OO>Printf</OO>(<STRING>"Incorrect number of arguments for %s<ESC>\n</ESC>"</STRING><OPERATOR>,</OPERATOR> requestPath)
+            <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>Abort</OO>(<NUMERIC>500</NUMERIC><OPERATOR>,</OPERATOR> <STRING>"Server Error"</STRING>)
+        }
+
+        <KEYWORD>if</KEYWORD> <FUNCTION>len</FUNCTION>(ret) <OPERATOR>==</OPERATOR> <NUMERIC>0</NUMERIC> {
+            <KEYWORD>return</KEYWORD>
+        }
+
+        sval<OPERATOR>,</OPERATOR> ok <OPERATOR>:=</OPERATOR> ret[<NUMERIC>0</NUMERIC>]<OPERATOR>.</OPERATOR>(<OPERATOR>*</OPERATOR><OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>StringValue</OO>)
+
+        <KEYWORD>if</KEYWORD> ok <OPERATOR>&amp;&amp;</OPERATOR> <OPERATOR>!</OPERATOR><OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>responseStarted</OO> {
+            content <OPERATOR>:=</OPERATOR> []<TYPE>byte</TYPE>(<OBJ>sval</OBJ><OPERATOR>.</OPERATOR><OO>Get</OO>())
+            <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>SetHeader</OO>(<STRING>"Content-Length"</STRING><OPERATOR>,</OPERATOR> <OBJ>strconv</OBJ><OPERATOR>.</OPERATOR><OO>Itoa</OO>(<FUNCTION>len</FUNCTION>(content))<OPERATOR>,</OPERATOR> <VALUE>true</VALUE>)
+            <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>StartResponse</OO>(<NUMERIC>200</NUMERIC>)
+            <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>Write</OO>(content)
+        }
+
+        <KEYWORD>return</KEYWORD>
+    }
+
+    <COMMENT>//try to serve index.html || index.htm</COMMENT>
+    <KEYWORD>if</KEYWORD> indexPath <OPERATOR>:=</OPERATOR> <OBJ>path</OBJ><OPERATOR>.</OPERATOR><OO>Join</OO>(<OBJ>path</OBJ><OPERATOR>.</OPERATOR><OO>Join</OO>(staticDir<OPERATOR>,</OPERATOR> requestPath)<OPERATOR>,</OPERATOR> <STRING>"index.html"</STRING>)<OPERATOR>;</OPERATOR> <FUNCTION>fileExists</FUNCTION>(indexPath) {
+        serveFile(<OPERATOR>&amp;</OPERATOR>ctx<OPERATOR>,</OPERATOR> indexPath)
+        <KEYWORD>return</KEYWORD>
+    }
+
+    <KEYWORD>if</KEYWORD> indexPath <OPERATOR>:=</OPERATOR> <OBJ>path</OBJ><OPERATOR>.</OPERATOR><OO>Join</OO>(<OBJ>path</OBJ><OPERATOR>.</OPERATOR><OO>Join</OO>(staticDir<OPERATOR>,</OPERATOR> requestPath)<OPERATOR>,</OPERATOR> <STRING>"index.htm"</STRING>)<OPERATOR>;</OPERATOR> <FUNCTION>fileExists</FUNCTION>(indexPath) {
+        serveFile(<OPERATOR>&amp;</OPERATOR>ctx<OPERATOR>,</OPERATOR> indexPath)
+        <KEYWORD>return</KEYWORD>
+    }
+
+    <OBJ>ctx</OBJ><OPERATOR>.</OPERATOR><OO>Abort</OO>(<NUMERIC>404</NUMERIC><OPERATOR>,</OPERATOR> <STRING>"Page not found"</STRING>)
+}
+
+<KEYWORD>var</KEYWORD> Config <OPERATOR>=</OPERATOR> <OPERATOR>&amp;</OPERATOR><TYPE>ServerConfig</TYPE>{
+    RecoverPanic<OPERATOR>:</OPERATOR> <VALUE>true</VALUE><OPERATOR>,</OPERATOR>
+}
+
+<KEYWORD>var</KEYWORD> mainServer <OPERATOR>=</OPERATOR> <TYPE>Server</TYPE>{
+    Config<OPERATOR>:</OPERATOR> Config<OPERATOR>,</OPERATOR>
+    Logger<OPERATOR>:</OPERATOR> <OBJ>log</OBJ><OPERATOR>.</OPERATOR><OO>New</OO>(<OBJ>os</OBJ><OPERATOR>.</OPERATOR><OO>Stdout</OO><OPERATOR>,</OPERATOR> <STRING>""</STRING><OPERATOR>,</OPERATOR> <OBJ>log</OBJ><OPERATOR>.</OPERATOR><OO>Ldate</OO><OPERATOR>|</OPERATOR><OBJ>log</OBJ><OPERATOR>.</OPERATOR><OO>Ltime</OO>)<OPERATOR>,</OPERATOR>
+}
+
+<KEYWORD>type</KEYWORD> <USER_FUNCTION>Server</USER_FUNCTION> <KEYWORD>struct</KEYWORD> {
+    Config <OPERATOR>*</OPERATOR><TYPE>ServerConfig</TYPE>
+    routes <OBJ>vector</OBJ><OPERATOR>.</OPERATOR><OO>Vector</OO>
+    Logger <OPERATOR>*</OPERATOR><OBJ>log</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO>
+    <COMMENT>//save the listener so it can be closed</COMMENT>
+    l      <OBJ>net</OBJ><OPERATOR>.</OPERATOR><OO>Listener</OO>
+    closed <TYPE>bool</TYPE>
+}
+
+<KEYWORD>func</KEYWORD> (s <OPERATOR>*</OPERATOR><TYPE>Server</TYPE>) initServer() {
+    <KEYWORD>if</KEYWORD> <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Config</OO> <OPERATOR>==</OPERATOR> nil {
+        <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Config</OO> <OPERATOR>=</OPERATOR> <OPERATOR>&amp;</OPERATOR><TYPE>ServerConfig</TYPE>{}
+    }
+
+    <KEYWORD>if</KEYWORD> <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO> <OPERATOR>==</OPERATOR> nil {
+        <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO> <OPERATOR>=</OPERATOR> <OBJ>log</OBJ><OPERATOR>.</OPERATOR><OO>New</OO>(<OBJ>os</OBJ><OPERATOR>.</OPERATOR><OO>Stdout</OO><OPERATOR>,</OPERATOR> <STRING>""</STRING><OPERATOR>,</OPERATOR> <OBJ>log</OBJ><OPERATOR>.</OPERATOR><OO>Ldate</OO><OPERATOR>|</OPERATOR><OBJ>log</OBJ><OPERATOR>.</OPERATOR><OO>Ltime</OO>)
+    }
+}
+
+<KEYWORD>func</KEYWORD> (s <OPERATOR>*</OPERATOR><TYPE>Server</TYPE>) <FUNCTION>Run</FUNCTION>(addr <TYPE>string</TYPE>) {
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>initServer</OO>()
+
+    mux <OPERATOR>:=</OPERATOR> <OBJ>http</OBJ><OPERATOR>.</OPERATOR><OO>NewServeMux</OO>()
+    <OBJ>mux</OBJ><OPERATOR>.</OPERATOR><OO>Handle</OO>(<STRING>"/"</STRING><OPERATOR>,</OPERATOR> s)
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO><OPERATOR>.</OPERATOR><OO>Printf</OO>(<STRING>"web.go serving %s<ESC>\n</ESC>"</STRING><OPERATOR>,</OPERATOR> addr)
+
+    l<OPERATOR>,</OPERATOR> err <OPERATOR>:=</OPERATOR> <OBJ>net</OBJ><OPERATOR>.</OPERATOR><OO>Listen</OO>(<STRING>"tcp"</STRING><OPERATOR>,</OPERATOR> addr)
+    <KEYWORD>if</KEYWORD> err <OPERATOR>!=</OPERATOR> nil {
+        <OBJ>log</OBJ><OPERATOR>.</OPERATOR><OO>Exit</OO>(<STRING>"ListenAndServe:"</STRING><OPERATOR>,</OPERATOR> err)
+    }
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>l</OO> <OPERATOR>=</OPERATOR> l
+    err <OPERATOR>=</OPERATOR> <OBJ>http</OBJ><OPERATOR>.</OPERATOR><OO>Serve</OO>(<OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>l</OO><OPERATOR>,</OPERATOR> mux)
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>l</OO><OPERATOR>.</OPERATOR><OO>Close</OO>()
+}
+
+<COMMENT>//runs the web application and serves http requests</COMMENT>
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>Run</USER_FUNCTION>(addr <TYPE>string</TYPE>) {
+    <OBJ>mainServer</OBJ><OPERATOR>.</OPERATOR><OO>Run</OO>(addr)
+}
+
+<COMMENT>//Stops the web server</COMMENT>
+<KEYWORD>func</KEYWORD> (s <OPERATOR>*</OPERATOR><TYPE>Server</TYPE>) <FUNCTION>Close</FUNCTION>() {
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>l</OO><OPERATOR>.</OPERATOR><OO>Close</OO>()
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>closed</OO> <OPERATOR>=</OPERATOR> <VALUE>true</VALUE>
+}
+
+<COMMENT>//runs the web application and serves http requests</COMMENT>
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>Close</USER_FUNCTION>() {
+    <OBJ>mainServer</OBJ><OPERATOR>.</OPERATOR><OO>Close</OO>()
+}
+
+<KEYWORD>func</KEYWORD> (s <OPERATOR>*</OPERATOR><TYPE>Server</TYPE>) <FUNCTION>RunScgi</FUNCTION>(addr <TYPE>string</TYPE>) {
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>initServer</OO>()
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO><OPERATOR>.</OPERATOR><OO>Printf</OO>(<STRING>"web.go serving scgi %s<ESC>\n</ESC>"</STRING><OPERATOR>,</OPERATOR> addr)
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>listenAndServeScgi</OO>(addr)
+}
+
+<COMMENT>//runs the web application and serves scgi requests</COMMENT>
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>RunScgi</USER_FUNCTION>(addr <TYPE>string</TYPE>) {
+    <OBJ>mainServer</OBJ><OPERATOR>.</OPERATOR><OO>RunScgi</OO>(addr)
+}
+
+<KEYWORD>func</KEYWORD> (s <OPERATOR>*</OPERATOR><TYPE>Server</TYPE>) <FUNCTION>RunFcgi</FUNCTION>(addr <TYPE>string</TYPE>) {
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>initServer</OO>()
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO><OPERATOR>.</OPERATOR><OO>Printf</OO>(<STRING>"web.go serving fcgi %s<ESC>\n</ESC>"</STRING><OPERATOR>,</OPERATOR> addr)
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>listenAndServeFcgi</OO>(addr)
+}
+
+<COMMENT>//runs the web application by serving fastcgi requests</COMMENT>
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>RunFcgi</USER_FUNCTION>(addr <TYPE>string</TYPE>) {
+    <OBJ>mainServer</OBJ><OPERATOR>.</OPERATOR><OO>RunFcgi</OO>(addr)
+}
+
+<COMMENT>//Adds a handler for the 'GET' http method.</COMMENT>
+<KEYWORD>func</KEYWORD> (s <OPERATOR>*</OPERATOR><TYPE>Server</TYPE>) <FUNCTION>Get</FUNCTION>(<TYPE>route</TYPE> <TYPE>string</TYPE><OPERATOR>,</OPERATOR> handler <KEYWORD>interface</KEYWORD>{}) {
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>addRoute</OO>(<TYPE>route</TYPE><OPERATOR>,</OPERATOR> <STRING>"GET"</STRING><OPERATOR>,</OPERATOR> handler)
+}
+
+<COMMENT>//Adds a handler for the 'POST' http method.</COMMENT>
+<KEYWORD>func</KEYWORD> (s <OPERATOR>*</OPERATOR><TYPE>Server</TYPE>) <FUNCTION>Post</FUNCTION>(<TYPE>route</TYPE> <TYPE>string</TYPE><OPERATOR>,</OPERATOR> handler <KEYWORD>interface</KEYWORD>{}) {
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>addRoute</OO>(<TYPE>route</TYPE><OPERATOR>,</OPERATOR> <STRING>"POST"</STRING><OPERATOR>,</OPERATOR> handler)
+}
+
+<COMMENT>//Adds a handler for the 'PUT' http method.</COMMENT>
+<KEYWORD>func</KEYWORD> (s <OPERATOR>*</OPERATOR><TYPE>Server</TYPE>) <FUNCTION>Put</FUNCTION>(<TYPE>route</TYPE> <TYPE>string</TYPE><OPERATOR>,</OPERATOR> handler <KEYWORD>interface</KEYWORD>{}) {
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>addRoute</OO>(<TYPE>route</TYPE><OPERATOR>,</OPERATOR> <STRING>"PUT"</STRING><OPERATOR>,</OPERATOR> handler)
+}
+
+<COMMENT>//Adds a handler for the 'DELETE' http method.</COMMENT>
+<KEYWORD>func</KEYWORD> (s <OPERATOR>*</OPERATOR><TYPE>Server</TYPE>) <FUNCTION>Delete</FUNCTION>(<TYPE>route</TYPE> <TYPE>string</TYPE><OPERATOR>,</OPERATOR> handler <KEYWORD>interface</KEYWORD>{}) {
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>addRoute</OO>(<TYPE>route</TYPE><OPERATOR>,</OPERATOR> <STRING>"DELETE"</STRING><OPERATOR>,</OPERATOR> handler)
+}
+
+<COMMENT>//Adds a handler for the 'GET' http method.</COMMENT>
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>Get</USER_FUNCTION>(<TYPE>route</TYPE> <TYPE>string</TYPE><OPERATOR>,</OPERATOR> handler <KEYWORD>interface</KEYWORD>{}) {
+    <OBJ>mainServer</OBJ><OPERATOR>.</OPERATOR><OO>Get</OO>(<TYPE>route</TYPE><OPERATOR>,</OPERATOR> handler)
+}
+
+<COMMENT>//Adds a handler for the 'POST' http method.</COMMENT>
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>Post</USER_FUNCTION>(<TYPE>route</TYPE> <TYPE>string</TYPE><OPERATOR>,</OPERATOR> handler <KEYWORD>interface</KEYWORD>{}) {
+    <OBJ>mainServer</OBJ><OPERATOR>.</OPERATOR><OO>addRoute</OO>(<TYPE>route</TYPE><OPERATOR>,</OPERATOR> <STRING>"POST"</STRING><OPERATOR>,</OPERATOR> handler)
+}
+
+<COMMENT>//Adds a handler for the 'PUT' http method.</COMMENT>
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>Put</USER_FUNCTION>(<TYPE>route</TYPE> <TYPE>string</TYPE><OPERATOR>,</OPERATOR> handler <KEYWORD>interface</KEYWORD>{}) {
+    <OBJ>mainServer</OBJ><OPERATOR>.</OPERATOR><OO>addRoute</OO>(<TYPE>route</TYPE><OPERATOR>,</OPERATOR> <STRING>"PUT"</STRING><OPERATOR>,</OPERATOR> handler)
+}
+
+<COMMENT>//Adds a handler for the 'DELETE' http method.</COMMENT>
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>Delete</USER_FUNCTION>(<TYPE>route</TYPE> <TYPE>string</TYPE><OPERATOR>,</OPERATOR> handler <KEYWORD>interface</KEYWORD>{}) {
+    <OBJ>mainServer</OBJ><OPERATOR>.</OPERATOR><OO>addRoute</OO>(<TYPE>route</TYPE><OPERATOR>,</OPERATOR> <STRING>"DELETE"</STRING><OPERATOR>,</OPERATOR> handler)
+}
+
+<KEYWORD>func</KEYWORD> (s <OPERATOR>*</OPERATOR><TYPE>Server</TYPE>) <FUNCTION>SetLogger</FUNCTION>(logger <OPERATOR>*</OPERATOR><OBJ>log</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO>) {
+    <OBJ>s</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO> <OPERATOR>=</OPERATOR> logger
+}
+
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>SetLogger</USER_FUNCTION>(logger <OPERATOR>*</OPERATOR><OBJ>log</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO>) {
+    <OBJ>mainServer</OBJ><OPERATOR>.</OPERATOR><OO>Logger</OO> <OPERATOR>=</OPERATOR> logger
+}
+
+<KEYWORD>type</KEYWORD> <USER_FUNCTION>ServerConfig</USER_FUNCTION> <KEYWORD>struct</KEYWORD> {
+    StaticDir    <TYPE>string</TYPE>
+    Addr         <TYPE>string</TYPE>
+    Port         <TYPE>int</TYPE>
+    CookieSecret <TYPE>string</TYPE>
+    RecoverPanic <TYPE>bool</TYPE>
+}
+
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>webTime</USER_FUNCTION>(t <OPERATOR>*</OPERATOR><OBJ>time</OBJ><OPERATOR>.</OPERATOR><OO>Time</OO>) <TYPE>string</TYPE> {
+    ftime <OPERATOR>:=</OPERATOR> <OBJ>t</OBJ><OPERATOR>.</OPERATOR><OO>Format</OO>(<OBJ>time</OBJ><OPERATOR>.</OPERATOR><OO>RFC1123</OO>)
+    <KEYWORD>if</KEYWORD> <OBJ>strings</OBJ><OPERATOR>.</OPERATOR><OO>HasSuffix</OO>(ftime<OPERATOR>,</OPERATOR> <STRING>"UTC"</STRING>) {
+        ftime <OPERATOR>=</OPERATOR> ftime[<NUMERIC>0</NUMERIC><OPERATOR>:</OPERATOR><FUNCTION>len</FUNCTION>(ftime)<OPERATOR>-</OPERATOR><NUMERIC>3</NUMERIC>] <OPERATOR>+</OPERATOR> <STRING>"GMT"</STRING>
+    }
+    <KEYWORD>return</KEYWORD> ftime
+}
+
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>dirExists</USER_FUNCTION>(dir <TYPE>string</TYPE>) <TYPE>bool</TYPE> {
+    d<OPERATOR>,</OPERATOR> e <OPERATOR>:=</OPERATOR> <OBJ>os</OBJ><OPERATOR>.</OPERATOR><OO>Stat</OO>(dir)
+    <KEYWORD>switch</KEYWORD> {
+    <KEYWORD>case</KEYWORD> e <OPERATOR>!=</OPERATOR> nil<OPERATOR>:</OPERATOR>
+        <KEYWORD>return</KEYWORD> <VALUE>false</VALUE>
+    <KEYWORD>case</KEYWORD> <OPERATOR>!</OPERATOR><OBJ>d</OBJ><OPERATOR>.</OPERATOR><OO>IsDirectory</OO>()<OPERATOR>:</OPERATOR>
+        <KEYWORD>return</KEYWORD> <VALUE>false</VALUE>
+    }
+
+    <KEYWORD>return</KEYWORD> <VALUE>true</VALUE>
+}
+
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>fileExists</USER_FUNCTION>(dir <TYPE>string</TYPE>) <TYPE>bool</TYPE> {
+    info<OPERATOR>,</OPERATOR> err <OPERATOR>:=</OPERATOR> <OBJ>os</OBJ><OPERATOR>.</OPERATOR><OO>Stat</OO>(dir)
+    <KEYWORD>if</KEYWORD> err <OPERATOR>!=</OPERATOR> nil {
+        <KEYWORD>return</KEYWORD> <VALUE>false</VALUE>
+    } <KEYWORD>else</KEYWORD> <KEYWORD>if</KEYWORD> <OPERATOR>!</OPERATOR><OBJ>info</OBJ><OPERATOR>.</OPERATOR><OO>IsRegular</OO>() {
+        <KEYWORD>return</KEYWORD> <VALUE>false</VALUE>
+    }
+
+    <KEYWORD>return</KEYWORD> <VALUE>true</VALUE>
+}
+
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>Urlencode</USER_FUNCTION>(data <KEYWORD>map</KEYWORD>[<TYPE>string</TYPE>]<TYPE>string</TYPE>) <TYPE>string</TYPE> {
+    <KEYWORD>var</KEYWORD> buf <OBJ>bytes</OBJ><OPERATOR>.</OPERATOR><OO>Buffer</OO>
+    <KEYWORD>for</KEYWORD> k<OPERATOR>,</OPERATOR> v <OPERATOR>:=</OPERATOR> <KEYWORD>range</KEYWORD> data {
+        <OBJ>buf</OBJ><OPERATOR>.</OPERATOR><OO>WriteString</OO>(<OBJ>http</OBJ><OPERATOR>.</OPERATOR><OO>URLEscape</OO>(k))
+        <OBJ>buf</OBJ><OPERATOR>.</OPERATOR><OO>WriteByte</OO>(<CHARACTER>'='</CHARACTER>)
+        <OBJ>buf</OBJ><OPERATOR>.</OPERATOR><OO>WriteString</OO>(<OBJ>http</OBJ><OPERATOR>.</OPERATOR><OO>URLEscape</OO>(v))
+        <OBJ>buf</OBJ><OPERATOR>.</OPERATOR><OO>WriteByte</OO>(<CHARACTER>'&amp;'</CHARACTER>)
+    }
+    s <OPERATOR>:=</OPERATOR> <OBJ>buf</OBJ><OPERATOR>.</OPERATOR><OO>String</OO>()
+    <KEYWORD>return</KEYWORD> s[<NUMERIC>0</NUMERIC> <OPERATOR>:</OPERATOR> <FUNCTION>len</FUNCTION>(s)<OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>]
+}
+
+<COMMENT>//Extracts the method "name" from the value represented by "val"</COMMENT>
+<COMMENT>//This allows methods to be handlers</COMMENT>
+<KEYWORD>func</KEYWORD> <USER_FUNCTION>MethodHandler</USER_FUNCTION>(val <KEYWORD>interface</KEYWORD>{}<OPERATOR>,</OPERATOR> name <TYPE>string</TYPE>) <OPERATOR>*</OPERATOR><OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>FuncValue</OO> {
+    v <OPERATOR>:=</OPERATOR> <OBJ>reflect</OBJ><OPERATOR>.</OPERATOR><OO>NewValue</OO>(val)
+    typ <OPERATOR>:=</OPERATOR> <OBJ>v</OBJ><OPERATOR>.</OPERATOR><OO>Type</OO>()
+    n <OPERATOR>:=</OPERATOR> <OBJ>typ</OBJ><OPERATOR>.</OPERATOR><OO>NumMethod</OO>()
+    <KEYWORD>for</KEYWORD> i <OPERATOR>:=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR> i <OPERATOR>&lt;</OPERATOR> n<OPERATOR>;</OPERATOR> i<OPERATOR>++</OPERATOR> {
+        m <OPERATOR>:=</OPERATOR> <OBJ>typ</OBJ><OPERATOR>.</OPERATOR><OO>Method</OO>(i)
+        <KEYWORD>if</KEYWORD> <OBJ>m</OBJ><OPERATOR>.</OPERATOR><OO>Name</OO> <OPERATOR>==</OPERATOR> name {
+            <KEYWORD>return</KEYWORD> <OBJ>v</OBJ><OPERATOR>.</OPERATOR><OO>Method</OO>(i)
+        }
+    }
+
+    <FUNCTION>panic</FUNCTION>(<STRING>"Could not find method: "</STRING> <OPERATOR>+</OPERATOR> name)
+    <KEYWORD>return</KEYWORD> nil
+}
