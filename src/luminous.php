@@ -245,15 +245,22 @@ class _Luminous {
   
   /**
    * The real highlighting function
+   * @throw InvalidArgumentException if $scanner is not either a string or a
+   *    LuminousScanner instance, or if $source is not a string.
    */
   function highlight($scanner, $source, $use_cache=true) {
+    if (!is_string($source)) throw new InvalidArgumentException('Non-string '
+        . 'supplied for $source');
     
     if (!($scanner instanceof LuminousScanner)) {
+      if (!is_string($scanner)) throw new InvalidArgumentException('Non-string
+        or LuminousScanner instance supllied for $scanner');
       $code = $scanner;
       $scanner = $this->scanners->GetScanner($code);
       if ($scanner === null) throw new Exception("No known scanner for '$code'");
     }
     $cache_obj = null;
+    $cache_hit = true;
     $out = null;
     if ($use_cache) {
       $cache_id = $this->cache_id($scanner, $source);
@@ -263,13 +270,14 @@ class _Luminous {
       $out = $cache_obj->read();
     }
     if ($out === null) {
+      $cache_hit = false;
       $out_raw = $scanner->highlight($source);
       $formatter = $this->get_formatter();
       $this->set_formatter_options($formatter);
       $out = $formatter->format($out_raw);
     }
 
-    if ($use_cache) {
+    if ($use_cache && !$cache_hit) {
       $cache_obj->write($out);
     }
     return $out;
