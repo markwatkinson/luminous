@@ -25,11 +25,10 @@ directory called luminous/cache and give it 777 permissions. Then include
 luminous/luminous.php and away you go!
 
 ```php
-    <?php
-    require_once 'luminous/luminous.php';
-    echo luminous::head_html(); // outputs CSS includes, intending to go in <head>
-    echo luminous::highlight('c', 'printf("hello world\n");');
-    ?>
+<?php
+require_once 'luminous/luminous.php';
+echo luminous::head_html(); // outputs CSS includes, intending to go in <head>
+echo luminous::highlight('c', 'printf("hello world\n");');
 ```
 
 Useful examples can be found in luminous/examples/. If you have problems,
