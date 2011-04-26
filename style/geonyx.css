@@ -40,15 +40,10 @@
 /*   background-color: #F5F5F4; */
 }
 .luminous .line_number_bar {
-  background-color: #EEEEEE !important;
+  background-color: #F0F0F0 !important;
   border-right: 1px dashed #BBBBBB !important;
+  color: #555555;
 }
-
-.luminous .metabar_buttons_floating {
-  background-color: #EEEEEC;
-}
-
-
 
 
 /* this stuff has to come after the other rules because it will probably
