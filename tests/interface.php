@@ -8,6 +8,11 @@ luminous::set('theme', 'geonyx');
 luminous::set('relative-root', '../');
 if (isset($_POST['theme'])) luminous::set('theme', $_POST['theme']);
 if (isset($_POST['format'])) luminous::set('format', $_POST['format']); 
+$line_numbers = true;
+if (!empty($_POST) && !isset($_POST['line-numbers'])) 
+  $line_numbers = false;
+
+luminous::set('line-numbers', $line_numbers);
 ?>
 <!DOCTYPE html>
 <html>
@@ -35,7 +40,6 @@ if (isset($_POST['format'])) luminous::set('format', $_POST['format']);
     <?php foreach(luminous::scanners() as $lang=>$codes) {
       $def = (isset($_POST['lang']) && $_POST['lang'] === $codes[0])?
         ' selected' : '';
- //     echo $_POST['lang'];
       echo "<option value='{$codes[0]}'$def>$lang</option>\n";
     } ?>
     <option value='no_such_scanner'>error case</option>
@@ -58,6 +62,9 @@ if (isset($_POST['format'])) luminous::set('format', $_POST['format']);
 
     }
 ?>  </select>
+  <br/>
+  <label>Line numbers</label>
+  <input type='checkbox' name='line-numbers'<?= $line_numbers? ' checked' : ''?>>
     <br/>
 
     <textarea rows=15 cols=75 name='src'><?php
