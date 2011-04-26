@@ -31,7 +31,7 @@ class LuminousFormatterHTML extends LuminousFormatter {
   <div class="code_container" %s>%s</div>
 </div>';
 
-  
+
   private function format_numberless($src) {
     $lines = array();
     $lines_original = explode("\n", $src);
@@ -139,52 +139,38 @@ class LuminousFormatterHTML extends LuminousFormatter {
   
   
   private function format_numbered($src) {
-    
-    $lineno = 1;
+
     $linenos = '';
     $lines = '';
     
-    $lines_a = explode("\n", $src);
-    $lines_untagged = explode("\n", strip_tags($lines));
-    
-    $id = rand();
-    
+    $lines_original = explode("\n", $src);
+
     // this seems to run a bit faster if we keep the literals out of
     // the loop.
-    
-    $class = "line_number";
-    $class_emph = " line_number_emphasised";
-    
-    $line_no_tag0 = '<a id="lineno_' . $id . '_';
-    $line_no_tag1 = '" class="' . $class;
-    $line_no_tag2 = '"><span class="line_number">&nbsp;';
-    $line_no_tag3 = "&nbsp;\n</span></a>";
+
+    $line_no_plain_tag0 = '<span class="line_number">&nbsp;';
+    $line_no_emph_tag0 = '<span class="line_number line_number_emphasised">&nbsp;';
+    $line_no_tag1 = "&nbsp;\n</span>";
     
     $wrap_line = "<span class='line_number'>&nbsp;|_\n</span>";
     
-    $line_tag0 = '<span id="line_' . $id . '_';
-    $line_tag1 = '" class="line';
-    $class_alt = ' line_alt';
-    $line_tag2 = '">';
-    $line_tag3 = '</span>';
+    $line_tag0 = '<span class="line">';
+    $line_alt_tag0 = '<span class="line line_alt">';
+    $line_tag1 = '</span>';
 
-    $line_delta = 3;
-    foreach($lines_a as $line)  {
+    $lineno = 1;
+    foreach($lines_original as $line)  {
 
-      $linenos .= $line_no_tag0 . $lineno . $line_no_tag1;
-      if ($lineno % 5 === 0)
-        $linenos .= $class_emph;
-      $linenos .= $line_no_tag2 . $lineno . $line_no_tag3;
+      $linenos .= ($lineno % 5 === 0)? $line_no_emph_tag0
+        : $line_no_plain_tag0;
+      $linenos .= $lineno . $line_no_tag1;
 
       $num = $this->WrapLine($line, $this->wrap_length);
 
-      for ($i=1; $i<$num; $i++)
-        $linenos .= $wrap_line;
+      for ($i=1; $i<$num; $i++)  $linenos .= $wrap_line;
 
-      $lines .= $line_tag0 . $lineno . $line_tag1;
-      if ($lineno % 2 === 0)
-        $lines .= $class_alt;
-      $lines .= $line_tag2 . $line . $line_tag3;
+      $lines .= ($lineno % 2 === 0)? $line_alt_tag0 : $line_tag0;
+      $lines .= $line . $line_tag1;
 
       ++$lineno;
 
