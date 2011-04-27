@@ -1446,7 +1446,7 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
    * At the end of the process we end up with one element in here which is
    * the root node.
    */
-  private $token_tree_stack = array();
+  protected $token_tree_stack = array();
 
   /// Records whether or not the FSM has been set up for the first time.
   /// @see setup()
@@ -1496,11 +1496,17 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
    * the new top token.
    *
    * The top state on the state stack is popped and discarded.
+   * @throw Exception if there is only the initial state on the stack
+   * (we cannot pop the initial state, because then we have no state at all)
    */
   function pop_state() {
+    $c = count($this->token_tree_stack);
+    if ($c <= 1) {
+      throw new Exception('Attempted to pop the initial state');
+    }
     $s = array_pop($this->token_tree_stack);
-    assert(!empty($this->token_tree_stack));
-    $this->token_tree_stack[count($this->token_tree_stack)-1]['children'][] = $s;
+    // -2 because we popped once since counting
+    $this->token_tree_stack[$c-2]['children'][] = $s;
     $this->pop();
   }
 
