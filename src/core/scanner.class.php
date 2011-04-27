@@ -1643,7 +1643,7 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
   /**
    * Records a string as a child of the currently active token
    * @warning the second and third parameters are not applicable to this
-   * method, they are only presetnt to suppress PHP warnings. If you set them,
+   * method, they are only present to suppress PHP warnings. If you set them,
    * an exception is thrown.
    *
    */
