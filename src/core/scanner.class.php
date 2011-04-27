@@ -2,6 +2,22 @@
 
 /// @cond CORE
 
+/**
+ * @file 
+ * @brief The base scanner classes
+ *
+ * This file contains the base scanning classes. All language scanners should
+ * subclass one of these. They are all essentially abstract as far as Luminous
+ * is concerned, but it may occasionally be useful to instantiate one.
+ *
+ * The classes defined here follow a simple hierarchy: Scanner defines basic
+ * string scanning methods, LuminousScanner extends this with logic useful to 
+ * highlighting. LuminousEmbeddedWebScript adds some helpers for web languages,
+ * which may be nested in other languages. LuminousSimpleScanner is a 
+ * generic flat scanner which is driven by token rules. 
+ * LuminousStatefulScanner is a generic transition table driven scanner.
+ */
+
 require_once(dirname(__FILE__) . '/strsearch.class.php');
 require_once(dirname(__FILE__) . '/utils.class.php');
 require_once(dirname(__FILE__) . '/filters.class.php');
@@ -883,10 +899,15 @@ class LuminousScanner extends Scanner {
     if (!isset($this->state_[0])) return null;
     return $this->state_[count($this->state_)-1];
   }
-
+  /**
+   * @brief Pushes some data onto the stack
+   */
   function push($state) {
     $this->state_[] = $state;
   }
+  /**
+   * @brief Pops the top element of the stack, and returns it
+   */
   function pop() {
     return array_pop($this->state_);
   }
@@ -1427,11 +1448,15 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
    */
   private $token_tree_stack = array();
 
+  /// Records whether or not the FSM has been set up for the first time.
+  /// @see setup()
   private $setup = false;
   /// remembers the state on the last iteration so we know whether or not
   /// to load in a new transition-set
   private $last_state = null;
 
+  /// Cache of transition rules
+  /// @see next_start_data()
   private $transition_rule_cache = array();
 
 
@@ -1626,7 +1651,14 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
     $c = &$this->token_tree_stack[count($this->token_tree_stack)-1]['children'];
     $c[] = $str;
   }
-
+  /**
+   * @brief Records a complete token
+   * This is shorthand for pushing a new node onto the stack, recording its
+   * text, and then popping it
+   * 
+   * @param $str the string
+   * @param $type the token type
+   */
   function record_token($str, $type) {
     $state_data = array($type);
     $this->push_state($state_data);
@@ -1634,10 +1666,25 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
     $this->pop_state();
   }
 
-  
+  /**
+   * @brief Helper function to record a range of the string
+   * @param $from the start index
+   * @param $to the end index
+   * This is shorthand for
+   * <code> $this->record(substr($this->string(), $from, $to-$from)</code>
+   *
+   * @throw RangeException if the range is invalid (i.e. $to < $from)
+   *
+   * An empty range (i.e. $to === $from) is allowed, but it is essentially a
+   * no-op.
+   */
   function record_range($from, $to) {
-    if ($to > $from) 
+    if ($to === $from)
+      return;
+    else if ($to > $from) 
       $this->record(substr($this->string(), $from, $to-$from));
+    else 
+      throw new RangeException("Invalid range supplied [$from, $to]");
   }
 
 
@@ -1659,7 +1706,8 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
 
       if( ($next_pattern_index <= $end_index || $end_index === -1) && $next_pattern_index !== -1) {
         // we're pushing a new state
-        $this->record_range($this->pos(), $next_pattern_index);
+        if ($p < $next_pattern_index)
+          $this->record_range($p, $next_pattern_index);
         $new_pos = $next_pattern_index;
         $this->pos($new_pos);
         $tok = $next_pattern_data[0];
