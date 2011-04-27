@@ -45,7 +45,8 @@ function luminous($) {
     var line_nos_expanded = true;
     $('td.line_number_bar', $l).dblclick(function() {
       clearTimeout(click_timer);
-      if (line_nos_expanded) $(this).css({'overflow':'hidden', 'max-width':'6px'});
+      if (line_nos_expanded) $(this).css({'overflow':'hidden', 
+        'max-width':'6px'});
       else $(this).css('max-width', 'none');
       line_nos_expanded = !line_nos_expanded;
     });
@@ -53,7 +54,9 @@ function luminous($) {
   });
 }
 
-jQuery(document).ready(function() {
-  luminous(jQuery);
-});
+if (typeof jQuery !== 'undefined') {
+  jQuery(document).ready(function() {
+    luminous(jQuery);
+  });
+}
 
