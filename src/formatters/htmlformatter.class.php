@@ -37,7 +37,7 @@ class LuminousFormatterHTML extends LuminousFormatter {
     $lines_original = explode("\n", $src);
     foreach($lines_original as $line) {
       $l = $line;
-      $num = $this->WrapLine($l, $this->wrap_length);
+      $num = $this->wrap_line($l, $this->wrap_length);
       // strip the newline if we're going to join it. Seems the easiest way to 
       // fix http://code.google.com/p/luminous/issues/detail?id=10
       $l = substr($l, 0, -1);
@@ -165,7 +165,7 @@ class LuminousFormatterHTML extends LuminousFormatter {
         : $line_no_plain_tag0;
       $linenos .= $lineno . $line_no_tag1;
 
-      $num = $this->WrapLine($line, $this->wrap_length);
+      $num = $this->wrap_line($line, $this->wrap_length);
 
       for ($i=1; $i<$num; $i++)  $linenos .= $wrap_line;
 
