@@ -130,16 +130,26 @@ class LuminousBashScanner extends LuminousScanner {
         $this->record($this->match(), 'IDENT');
       }
       // quoted heredoc is the same as a single string, no interpolation,
-      // so we can do this easilyish
+      // A straight regex is causing backtracking problems on my box so 
+      // we're going to do it the hard way
       // note that the <<- means the delimiter can be indented.
-      elseif($this->scan('/(<<)(\s*)(["\'])(\w+)((?:\\3)?)(.*?)((^\\4)|\z)/msx')
-        || $this->scan("/(<<-)(\s*)([\"'])(\w+)((?:\\3)?)(.*?)((^[ \t]*\\4)|\z)/msx")) {
+      elseif($this->scan('/(<<-?)(\s*)(["\'])(\w+)((?:\\3)?)/msx')) {
         $m = $this->match_groups();
         $this->record($m[1] . $m[2], null);
-        $this->record($m[3] . $m[4] . $m[5], 'KEYWORD');
-        $this->record($m[6], 'HEREDOC');
-        if ($m[7] !== '')
-          $this->record($m[7], 'KEYWORD');
+        $this->record($m[3] . $m[4] . $m[5], 'DELIMITER');
+        $delim_regex = "/^(" . (($m[1] === '<<-')? '\s*' : '') 
+          . ')(' . preg_quote($m[4], '/') . ')\\b/m';
+        $heredoc = $this->scan_until($delim_regex);
+        if ($heredoc === null) {
+          $heredoc = $this->rest();
+          $this->terminate();
+        }
+        $this->record($heredoc, 'HEREDOC');
+        if ($this->scan($delim_regex) !== null) {
+          $g = $this->match_groups();
+          if ($g[1] !== '') $this->record($g[1], null);
+          $this->record($g[2], 'DELIMITER');
+        }
       }
       // heredocs and double quoted strings are pretty much the same
       elseif($this->scan('/(<<-?\s*)(\w+)/') ||
