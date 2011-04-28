@@ -7,8 +7,7 @@ require_once(dirname(__FILE__) . '/../utils/cssparser.class.php');
  * 
  * \since  0.5.4
  */
-class LuminousFormatterLatex extends LuminousFormatter
-{
+class LuminousFormatterLatex extends LuminousFormatter {
   
   private $css = null;
   function __construct() { }
@@ -19,8 +18,7 @@ class LuminousFormatterLatex extends LuminousFormatter
   }
   /// Converts a hexadecimal string in the form #ABCDEF to an RGB array
   /// where each element is normalised to the range 0-1
-  static function hex2rgb($hex)
-  {
+  static function hex2rgb($hex) {
     $x = hexdec(substr($hex, 1));
     $b = $x % 256;
     $g = ($x >> 8) % 256;
@@ -32,18 +30,18 @@ class LuminousFormatterLatex extends LuminousFormatter
     
     $b = round($b, 2);
     $g = round($g, 2);
-    $r = round($r, 2);    
+    $r = round($r, 2);
     
     $rgb = array($r, $g, $b);
     return $rgb;
   }
-  protected function Linkify($src){
+  protected function linkify($src) {
     return $src;
   }
   /// Defines all the styling commands, these are obtained from the css parser
-  function DefineStyleCommands()
-  {
-    if ($this->css === null) throw new Exception('LaTeX formatter has not been set a theme');
+  function define_style_commands() {
+    if ($this->css === null)
+      throw new Exception('LaTeX formatter has not been set a theme');
     $cmds = array();
     foreach($this->css->rules() as $name=>$properties) {
       if (!preg_match('/^\w+$/', $name))
@@ -65,11 +63,9 @@ class LuminousFormatterLatex extends LuminousFormatter
       $cmds[] = "\\newcommand{\\lms{$name}}[1]$cmd";
     }
     
-    if (
-      $this->line_numbers && 
-      ($col = $this->css->value('code', 'color', null)) !== null)
-    {
-      if (preg_match('/^#[a-f0-9]{6}$/i', $col))   {
+    if ($this->line_numbers &&
+        ($col = $this->css->value('code', 'color', null)) !== null) {
+      if (preg_match('/^#[a-f0-9]{6}$/i', $col)) {
         $rgb = $this::hex2rgb($col);
         $col_str = "{$rgb[0]}, {$rgb[1]}, $rgb[2]";
         $cmd = "\\renewcommand{\\theFancyVerbLine}{%
@@ -81,8 +77,7 @@ class LuminousFormatterLatex extends LuminousFormatter
     return implode("\n", $cmds);
   }
   
-  function GetBackgroundColor()
-  {
+  function get_background_colour() {
     if (($col = $this->css->value('code', 'bgcolor', null)) !== null) {
       if (preg_match('/^#[a-f0-9]{6}$/i', $col))
         $rgb = $this::hex2rgb($col);
@@ -106,26 +101,23 @@ class LuminousFormatterLatex extends LuminousFormatter
 \usepackage{color}
 \usepackage{fancyvrb}
 \begin{document}
-{$this->DefineStyleCommands()}
-{$this->GetBackgroundColor()}
+{$this->define_style_commands()}
+{$this->get_background_colour()}
 
 $verbcmd
 
 EOF;
 
-    $s = "";
+    $s = '';
     $str = preg_replace('%<([^/>]+)>\s*</\\1>%', '', $str);
     $str = str_replace("\t", '  ', $str);
     
     $lines = explode("\n", $str);
     
-    if ($this->wrap_length > 0)
-    {
-      $str = "";
-      
-      foreach($lines as $i=>$l)
-      {
-        $this->WrapLine($l, $this->wrap_length);
+    if ($this->wrap_length > 0)  {
+      $str = '';
+      foreach($lines as $i=>$l) {
+        $this->wrap_line($l, $this->wrap_length);
         $str .= $l;
       }
     }
@@ -140,23 +132,18 @@ EOF;
         return "{\\\textbackslash}";
       return "\\\" . $matches[0];');
     
-    foreach($str_ as $s_)
-    {
-      if ($s_[0] === '<')
-      {
+    foreach($str_ as $s_) {
+      if ($s_[0] === '<') {
         $s_ = preg_replace('%</[^>]+>%', '}', $s_);
         $s_ = preg_replace_callback('%<([^>]+)>%', $f1
         ,$s_);
-      }
-      else
-      {
+      } else {
         $s_ = str_replace('&gt;', '>', $s_);
         $s_ = str_replace('&lt;', '<', $s_);
         $s_ = str_replace('&amp;', '&', $s_);
-        
         $s_ = preg_replace_callback('/[#{}_$\\\&]|&(?=amp;)/', $f2, $s_);
       }
-      
+
       $s .= $s_;
     }
     
@@ -176,26 +163,25 @@ EOF;
     $stack = array();
     $pieces = preg_split('/(\\\lms[^\{]+\{|(?<!\\\)(\\\\\\\\)*[\{\}])/', $s, 
       -1, PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY);
-    foreach($pieces as $k=>&$p)
-    {
+
+    // NOTE: p being a reference is probably going to necessitate a lot of
+    // copying to pass through all these preg_* and str* calls.
+    // consider rewriting.
+    foreach($pieces as $k=>&$p)  {
       if (preg_match('/^\\\lms/', $p))
         $stack[] = "" . $p;
-      elseif(preg_match('/^(\\\\\\\\)*\}/', $p))
-      {
+      elseif(preg_match('/^(\\\\\\\\)*\}/', $p)) {
         array_pop($stack);
       }
       elseif(preg_match('/^(\\\\\\\\)*{/', $p))
         $stack [] = $p;
-        
-      elseif(strpos($p, "\n") !== false)
-      {
+      elseif(strpos($p, "\n") !== false)  {
         $before = "";
         $after = "";
-        foreach($stack as $st_)
-        {
+        foreach($stack as $st_) {
           $before .= $st_;
           $after .= '}';
-        }        
+        }
         $p = str_replace("\n",  "$after\n$before" , $p);
       }
     }
@@ -207,7 +193,6 @@ EOF;
 \end{Verbatim}
 \end{document}
 EOF;
-
     return $out;
   }
   
