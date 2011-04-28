@@ -122,10 +122,7 @@ class LuminousBashScanner extends LuminousScanner {
         || $this->scan('/\#.*/')) {
         $this->record($this->match(), 'COMMENT');
       }
-      // FIXME: the old regex had '\\$?' at the front of it, this has been
-      // removed because in PHP 5.3.5-1ubuntu7, this hits the backtracking
-      // limit on the configure.sh regression test.
-      elseif(($m = $this->scan("/'(?: [^'\\\\]+ | \\\\.)* '/sx"))) {
+      elseif(($m = $this->scan("/\\$?'(?> [^'\\\\]+ | \\\\.)* '/sx"))) {
         $tok = ($m[0] === '$')? 'VARIABLE' : 'STRING';
         $this->record($m, $tok);
       }
