@@ -44,12 +44,14 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
     while (!$this->eos()) {
       
       if (!$this->clean_exit) {
-        $tok = $this->resume();
-        if ($this->server_break($tok)) break;
-        
-        $this->record($this->match(), $tok);
-        
-        continue;
+        try {
+          $tok = $this->resume();
+          if ($this->server_break($tok)) break;        
+          $this->record($this->match(), $tok);
+        } catch(Exception $e) {      
+          if (defined('LUMINOUS_DEBUG')) throw $e;
+          else continue;
+        }
       }
       $this->skip_whitespace();
       $pos = $this->pos();

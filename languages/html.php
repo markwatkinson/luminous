@@ -15,12 +15,12 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
    
 
     $this->dirty_exit_recovery = array(
-      'DSTRING' => '/[^">]*("|$|(?=[>]))/',
-      'SSTRING' => "/[^'>]*('|$|(?=[>]))/",
-      'COMMENT1' => '/.*?(?:-->|$)/s',
-      'COMMENT2' => '/.*?(?:>|$)/s',
-      'CDATA' => '/.*?(?:\\]{2}>|$)/s',
-      'ESC' => '/[^;]*(?:;|$)/'
+      'DSTRING' => '/[^">]*+("|$|(?=[>]))/',
+      'SSTRING' => "/[^'>]*+('|$|(?=[>]))/",
+      'COMMENT1' => '/(?> [^\\-]+ | -(?!->))*(?:-->|$)/x',
+      'COMMENT2' => '/[^>]*+(?:>|$)/s',
+      'CDATA' => '/(?>[^\\]]+|\\](?!\\]>))*(?:\\]{2}>|$)/xs',
+      'ESC' => '/[^;]*+(?:;|$)/'
     );
     
     $this->rule_tag_map = array(
@@ -92,9 +92,14 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
       }      
       
       if (!$this->clean_exit) {
-        $tok = $this->resume();
-        if ($this->server_break($tok)) break;
-        $this->record($this->match(), $tok);
+        try {
+          $tok = $this->resume();
+          if ($this->server_break($tok)) break;
+          $this->record($this->match(), $tok);
+        } catch (Exception $e) {
+          if (defined('LUMINOUS_DEBUG')) throw $e;
+          else $this->clean_exit = true;
+        }
         continue;
       }
       
@@ -152,8 +157,9 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
             /ixs'
           )) 
             $tok = 'CDATA';
-          elseif($this->scan('/<!--.*?(?:-->|$)/s')) $tok = 'COMMENT1';
-          elseif($this->scan('/<!.*?(?:>|$)/s')) $tok = 'COMMENT2';
+          elseif($this->scan('/<!--(?> [^\\-]+ | (?:-(?!->))+)* (?:-->|$)/xs')) 
+            $tok = 'COMMENT1';
+          elseif($this->scan('/<![^>]*+(?:>|$)/s')) $tok = 'COMMENT2';
           else assert(0);
         } else {
           // check for <script>          
@@ -179,13 +185,13 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
         array_pop($this->tag_stack);
       }
       elseif($in_tag && 
-        $c === "'" && $this->scan("/' (?: [^'\\\\>]+ | \\\\.)* (?:'|$|(?=>))/xs")) {
+        $c === "'" && $this->scan("/' (?> [^'\\\\>]+ | \\\\.)* (?:'|$|(?=>))/xs")) {
         $tok = 'SSTRING';
         $this->expecting = '';
       }
       
       elseif($in_tag && 
-        $c === '"' && $this->scan('/" (?: [^"\\\\>]+ | \\\\.)* (?:"|$|(?=>))/xs')) {
+        $c === '"' && $this->scan('/" (?> [^"\\\\>]+ | \\\\.)* (?:"|$|(?=>))/xs')) {
         $tok = 'DSTRING';
         $this->expecting = '';
       }      

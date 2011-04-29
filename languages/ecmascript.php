@@ -180,7 +180,15 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
       $escaped = false;
 
       if (!$this->clean_exit) {
-        $tok = $this->resume();
+        try {
+          $tok = $this->resume();
+        } catch(Exception $e) {
+          if (defined('LUMINOUS_DEBUG')) throw $e;
+          else {
+            $this->clean_exit = true;
+            continue;
+          }
+        }
       }
       elseif ($this->child_state !== null && $this->child_state[1] < $this->pos()) {
         $this->scan_child($this->child_state[0]);
