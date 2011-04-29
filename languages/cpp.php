@@ -69,9 +69,10 @@ class LuminousCppScanner extends LuminousSimpleScanner {
 
   function preprocessor_override() {
     $this->skip_whitespace();
-    // TODO: I think if 0s nest
-    if($this->check("/\#\s*if\s+0\\b/")) {
-      $this->nestable_token('COMMENT', '/^\s*#\s*if\s+0\\b/m',
+    // #if 0s nest, according to Kate, which sounds reasonable
+    $pattern = '/^\s*#\s*if\s+0\\b/m';
+    if($this->check($pattern)) {
+      $this->nestable_token('COMMENT', $pattern,
         '/^\s*#endif\\b/m');
     }
     else {
