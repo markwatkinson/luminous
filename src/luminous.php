@@ -1,5 +1,8 @@
 <?php
 
+
+require_once(dirname(__FILE__) . '/debug.php');
+
 require_once(dirname(__FILE__) . '/cache.class.php');
 require_once(dirname(__FILE__) . '/scanners.class.php');
 require_once(dirname(__FILE__) . '/formatters/formatter.class.php');
@@ -43,6 +46,7 @@ class _Luminous {
     'relative-root' => null,
     'include-javascript' => false,
     'include-jquery' => true,
+    'failure-tag' => 'pre'
   );
 
 
@@ -257,7 +261,7 @@ class _Luminous {
         or LuminousScanner instance supllied for $scanner');
       $code = $scanner;
       $scanner = $this->scanners->GetScanner($code);
-      if ($scanner === null) throw new Exception("No known scanner for '$code'");
+      if ($scanner === null) throw new Exception("No known scanner for '$code' and no default set");
     }
     $cache_obj = null;
     $cache_hit = true;
@@ -315,7 +319,17 @@ abstract class luminous {
    */
   static function highlight($scanner, $source, $cache=true) {
     global $luminous_;
-    return $luminous_->highlight($scanner, $source, $cache);
+    try {
+      return $luminous_->highlight($scanner, $source, $cache);
+    } catch (Exception $e) {
+      if (LUMINOUS_DEBUG) throw $e;
+      else {
+        $return = $source;
+        if (($t = self::setting('failure-tag')))
+          $return = "<$t>$return</$t>";
+        return $return;
+      }
+    }
   }
 
   /**
