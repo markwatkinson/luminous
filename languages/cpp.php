@@ -70,15 +70,17 @@ class LuminousCppScanner extends LuminousSimpleScanner {
   function preprocessor_override() {
     $this->skip_whitespace();
     // TODO: I think if 0s nest
-    if($this->scan("/\#\s*if\s+0\\b.*?(?:^\s*#endif|\\z)/ms"))
-      $this->record($this->match(), 'COMMENT');
+    if($this->check("/\#\s*if\s+0\\b/")) {
+      $this->nestable_token('COMMENT', '/^\s*#\s*if\s+0\\b/m',
+        '/^\s*#endif\\b/m');
+    }
     else {
       // a preprocessor statement may have nested comments and strings. We
       // go the lazy route and just zap the whole thing with a regex and let a
       // filter figure out any nested highlighting
       $this->scan("@ \#
         (?: [^/\n\\\\]+
-          | /\* (?s:.*?) (?: $|\*/)    # nested ML comment
+          | /\* (?> [^\\*]+ | (?:\*(?!/))+ ) (?: $|\*/)    # nested ML comment
           | //.*   # nested SL comment
           | /
           | \\\\(?s:.) # escape, and newline

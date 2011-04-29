@@ -1,14 +1,23 @@
 #include <something> /*
   comment
   */
-
+1
 #if 0
 don't compile this code
 #endif
-
+1
 #if           0         
 don't compile this code either
 #endif
+1
+#if 0
+  COMMENT
+  #if 0
+  COMMENT
+  #endif
+  COMMENT
+#endif 
+1
 
 
 int main() {
