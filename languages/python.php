@@ -14,8 +14,8 @@ class LuminousPythonScanner extends LuminousScanner {
     //  "{3} (?: [^"\\]+ | ""[^"\\]+ | "[^"\\]+  | \\.)* (?: "{3}|$)
     
     
-    $triple_str_template = '%1$s{3} (?: [^%1$s\\\\]+ | %1$s%1$s[^%1$s\\\\]+ | %1$s[^%1$s\\\\]+ | \\\\. )* (?: %1$s{3}|$)';
-    $str_template = '%1$s (?: [^%1$s\\\\]+ | \\\\. )* (?: %1$s|$)';
+    $triple_str_template = '%1$s{3} (?> [^%1$s\\\\]+ | %1$s%1$s[^%1$s\\\\]+ | %1$s[^%1$s\\\\]+ | \\\\. )* (?: %1$s{3}|$)';
+    $str_template = '%1$s (?> [^%1$s\\\\]+ | \\\\. )* (?: %1$s|$)';
     $triple_dstr = sprintf($triple_str_template, '"');
     $triple_sstr = sprintf($triple_str_template, "'");    
     

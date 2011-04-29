@@ -125,8 +125,8 @@ class LuminousGroovyScanner extends LuminousSimpleScanner {
     // so it turns out this template isn't quite as readable as I hoped, but
     // it's a triple string, e.g:
     //  "{3} (?: [^"\\]+ | ""[^"\\]+ | "[^"\\]+  | \\.)* (?: "{3}|$)
-    $triple_str_template = '%1$s{3} (?: [^%1$s\\\\]+ | %1$s%1$s[^%1$s\\\\]+ | %1$s[^%1$s\\\\]+ | \\\\. )* (?: %1$s{3}|$)';
-    $str_template = '%1$s (?: [^%1$s\\\\]+ | \\\\. )* (?: %1$s|$)';
+    $triple_str_template = '%1$s{3} (?> [^%1$s\\\\]+ | %1$s%1$s[^%1$s\\\\]+ | %1$s[^%1$s\\\\]+ | \\\\. )* (?: %1$s{3}|$)';
+    $str_template = '%1$s (?> [^%1$s\\\\]+ | \\\\. )* (?: %1$s|$)';
     $triple_dstr = sprintf($triple_str_template, '"');
     $triple_sstr = sprintf($triple_str_template, "'");
 
