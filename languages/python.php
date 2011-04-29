@@ -79,13 +79,32 @@ class LuminousPythonScanner extends LuminousScanner {
     
     $this->add_identifier_mapping('FUNCTION', array('all', 'abs', 'any', 
     'basestring', 'bin', 'callable', 'chr', 'classmethod', 'cmp', 'compile',
-    'dir', 'divmod', 'enumerate', 'eval', 'execfile', 'file', 'filter', 'format',
+    'dir', 'divmod', 'enumerate', 'eval', 'execfile', 'file', 'filter', 
+    'format',
     'frozenset', 'getattr', 'globals', 'hasattr', 'hash', 'help', 'hex', 
     'id', 'input', 'isinstance', 'issubclass', 'iter', 'len', 'locals', 'map',
     'max', 'min', 'memoryview', 'next', 'object', 'oct', 'open', 'ord', 'pow',
      'property', 'range', 'raw_input', 'reduce', 'reload', 'repr', 'reversed',
      'round', 'setattr', 'slice', 'sorted', 'staticmethod', 'sum', 'super',
      'type', 'unichr', 'vars', 'xrange', 'zip', '__import__'));
+
+    // http://docs.python.org/library/exceptions.html
+    $this->add_identifier_mapping('TYPE', array('BaseException', 'SystemExit', 
+      'KeyboardInterrupt', 'GeneratorExit', 'Exception', 'StopIteration', 
+      'StandardError', 'BufferError', 'ArithmeticError',
+      'FloatingPointError', 'OverflowError', 'ZeroDivisionError', 
+      'AssertionError',
+      'AttributeError', 'EnvironmentError', 'IOError', 'OSError',
+      'WindowsError(Windows)', 'VMSError(VMS)', 'EOFError', 'ImportError',
+      'LookupError', 'IndexError', 'KeyError', 'MemoryError', 'NameError',
+      'UnboundLocalError', 'ReferenceError', 'RuntimeError', 
+      'NotImplementedError',
+      'SyntaxError', 'IndentationError', 'TabError', 'SystemError', 'TypeError',
+      'ValueError', 'UnicodeError', 'UnicodeDecodeError', 'UnicodeEncodeError',
+      'UnicodeTranslateError', 'Warning', 'DeprecationWarning',
+      'PendingDeprecationWarning', 'RuntimeWarning', 'SyntaxWarning', 
+      'UserWarning',
+      'FutureWarning', 'ImportWarning', 'UnicodeWarning', 'BytesWarning'));
 
     $this->add_identifier_mapping('VALUE', array('False', 'None', 'self', 
       'True'));
