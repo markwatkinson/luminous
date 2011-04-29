@@ -7,16 +7,16 @@
 abstract class LuminousTokenPresets {
   
   /// multi-line double quoted string using backslash escapes
-  static $DOUBLE_STR = '/" (?: [^"\\\\]+ | \\\\.)* (?:"|$)/xs';
+  static $DOUBLE_STR = '/" (?> [^"\\\\]+ | \\\\.)* (?:"|$)/xs';
   
   /// single line double quoted string using backslash escapes
-  static $DOUBLE_STR_SL = "/\"(?: [^\\\\\"\n]+ | \\\\.)*(?:$|\")/xms";
+  static $DOUBLE_STR_SL = "/\"(?> [^\\\\\"\n]+ | \\\\.)*(?:$|\")/xms";
   
   /// multi-line single quote string using backslash escapes
-  static $SINGLE_STR = "/' (?: [^'\\\\]+ | \\\\.)* (?:'|$)/xs";
+  static $SINGLE_STR = "/' (?> [^'\\\\]+ | \\\\.)* (?:'|$)/xs";
   
   /// single line single quoted string using backslash escapes
-  static $SINGLE_STR_SL = "/'(?: [^\\\\'\n]+ | \\\\.)*(?:$|')/xms";
+  static $SINGLE_STR_SL = "/'(?> [^\\\\'\n]+ | \\\\.)*(?:$|')/xms";
   
   /// Single quoted c-style character
   static $CHAR = "(?: \\\\(?: x[A-F0-9]{1,2}| . ) | . ) (?: '|$)/ixm";
@@ -34,16 +34,16 @@ abstract class LuminousTokenPresets {
   static $C_COMMENT_SL = '% // .* %x';
   
   /// Multiline C style comment
-  static $C_COMMENT_ML = '% / \* .*? (?: \*/ | $) %sx';
+  static $C_COMMENT_ML = '% / \* (?> [^\\*]+ | \\*(?!/) )* (?: \\*/ | $)  %sx';
   
   /// Perl/Python/Ruby style hash-comment (single line)  
   static $PERL_COMMENT = '/#.*/';
   
   /// SQL style single quoted string using '' to escape 
-  static $SQL_SINGLE_STR = "/ ' (?: [^']+ | '' )* (?: '|$)/x";
+  static $SQL_SINGLE_STR = "/ ' (?> [^']+ | '' )* (?: '|$)/x";
   
   /// SQL style single quoted string using '' or \' to escape
-  static $SQL_SINGLE_STR_BSLASH = "/ ' (?: [^'\\\\]+ | '' | \\\\. )* (?: '|$)/x";
+  static $SQL_SINGLE_STR_BSLASH = "/ ' (?> [^'\\\\]+ | '' | \\\\. )* (?: '|$)/x";
   
 }
 /// @endcond
