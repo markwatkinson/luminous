@@ -22,7 +22,7 @@ require_once(dirname(__FILE__) . '/strsearch.class.php');
 require_once(dirname(__FILE__) . '/utils.class.php');
 require_once(dirname(__FILE__) . '/filters.class.php');
 require_once(dirname(__FILE__) . '/tokenpresets.class.php');
-
+require_once(dirname(__FILE__) . '/debug.php');
 
 /**
  * @brief Base string scanning class
