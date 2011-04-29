@@ -201,6 +201,18 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
     $this->record($this->rest(), null);
     $this->terminate();
   }
+  // pod cuts might be very long and trigger the backtrack limit, so 
+  // we do it the old fashioned way
+  function pod_cut_override($matches) {
+    $line = $this->scan('/^=.*/m');
+    assert($line !== null);
+    $term = '/^=cut$|\\z/m';
+    $substr = $this->scan_until($term);
+    assert($substr !== null);
+    $end = $this->scan($term);
+    assert($end !== null);
+    $this->record($line . $substr . $end, 'DOCCOMMENT');
+  }
   
   
   function init() {
@@ -208,7 +220,8 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
     $this->add_pattern('COMMENT', '/#.*/');
     
     // pod/cut documentation
-    $this->add_pattern('DOCCOMMENT', '/^=[a-zA-Z_] .*? (^=cut$|\\z)/mxs');
+    $this->add_pattern('podcut', '/^=[a-zA-Z_]/m');
+    $this->overrides['podcut'] = array($this, 'pod_cut_override');
 
     // variables
     $this->add_pattern('VARIABLE', '/[\\$%@][a-z_]\w*/i');
