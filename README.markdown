@@ -8,7 +8,7 @@ a bunch of common languages and output to HTML and LaTeX.
 
 + [Site/info](http://luminous.asgaard.co.uk/)
 + [Live demo and examples](http://luminous.asgaard.co.uk/index.php/demo)
-+ [Documentation](http://luminous.asgaard.co.uk/index.php/docs/show/index)
++ [Documentation and help, READ THIS!](http://luminous.asgaard.co.uk/index.php/docs/show/index)
 + [Supported language list](http://luminous.asgaard.co.uk/assets/luminous/supported.php)
 + [Luminous on GitHub](https://github.com/markwatkinson/luminous)
 

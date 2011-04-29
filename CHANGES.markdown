@@ -1,9 +1,18 @@
 Luminous Changelog since 0.6.0
 ==============================
 
-##master (as of 27/04/11):
+##v0.6.1 (29/04/11):
 
 - General:
+    - Certain versions of PCRE trigger *a lot* of bugs in the regular 
+      expressions, which seemed to backtrack a lot even on very simple
+      strings. Most (if not all) of these expressions have been rewritten
+      to avoid this.
+    - The above previously threw an exception: this is now true only if the
+      debug flag is set, otherwise the failure is handled.
+    - The User API should catch any exceptions Luminous throws in non-debug
+      code. If one is caught, Luminous returns the input string wrapped in a 
+      pre tag.
     - 'plain' is used as a default scanner in the User API (previously an
       exception was thrown if a scanner was unknown)
     - Fix bug where the User API's 'relative root' would collapse double slashes
@@ -18,21 +27,27 @@ Luminous Changelog since 0.6.0
     - Obsolete JavaScript has been removed and replaced with a much less
       intrusive behaviour of double click the line numbers to hide them,
       js inclusion is disabled by default by User API.
+    - Infinite loop bug in the abstract formatter/word wrap method fixed 
+      (although this wasn't actually reachable by any of the formatters)
 
 - Language fixes:
     - Pod/cut style comments in Perl should now work all the time
+    - C/C++'s "#if 0 ... #endif" blocks (which are highlighted as comments) 
+      now nest
+    - Python recognises a list of exceptions as types
 
 - New Stuff:
     - Go language support
 
 -  Internal/Development:
     - Unit test of stateful scanner much more useful
+    - Formatter base class unit test (tests/unit/formatter.php)
     - Syntax test for scanners (syntax.php)
     - Stateful scanner throws an exception if the initial state is popped
       (downgraded from an assertion)
     - Stateful scanner safety check no longer requires that an iteration
       advances the pointer as long as the state is changed
-    - Coding standards applied in htmlformatter.php
+    - Coding standards applied in all formatters
     - All scanning classes have complete API documentation
     - Paste test (interface.php) works properly with Unicode
 
