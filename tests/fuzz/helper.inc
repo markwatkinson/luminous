@@ -125,6 +125,7 @@ function test($randomish=false) {
       $out = $scanner->highlight($src1);
     } catch (Exception $e) {
       $exception = $e->getMessage();
+      $out = '';
     }
     $out1 = html_entity_decode(strip_tags($out));
     if ($exception ||$out1 !== $src1) {
