@@ -60,7 +60,9 @@ class LuminousStringSearch
       PREG_OFFSET_CAPTURE,  $index)))  {
       if ($ret === false) {
         throw new Exception('preg_match returned false for pattern: "' 
-          . $search . '"');
+          . $search . '", with code: ' . LuminousUtils::pcre_error_decode(
+            preg_last_error())
+        );
       }
       $this->cache[$search] = false;
       return false;
