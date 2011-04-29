@@ -183,7 +183,7 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
         try {
           $tok = $this->resume();
         } catch(Exception $e) {
-          if (defined('LUMINOUS_DEBUG')) throw $e;
+          if (LUMINOUS_DEBUG) throw $e;
           else {
             $this->clean_exit = true;
             continue;

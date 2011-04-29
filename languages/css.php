@@ -49,7 +49,7 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
           if ($this->server_break($tok)) break;        
           $this->record($this->match(), $tok);
         } catch(Exception $e) {      
-          if (defined('LUMINOUS_DEBUG')) throw $e;
+          if (LUMINOUS_DEBUG) throw $e;
           else continue;
         }
       }
