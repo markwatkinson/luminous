@@ -35,8 +35,8 @@ CLASS LUMINOUSLOLCODESCANNER EXTENDS LUMINOUSSIMPLESCANNER {
     $this->REMOVE_FILTER('constant');
     
     $this->ADD_PATTERN('COMMENT', '/(?s:OBTW.*?TLDR)|BTW.*/');
-    $this->ADD_PATTERN('STRING', '/" (?: [^":]+ | :.)* "/x');
-    $this->ADD_PATTERN('STRING', "/' (?: [^':]+ | :.)* '/x");
+    $this->ADD_PATTERN('STRING', '/" (?> [^":]+ | :.)* "/x');
+    $this->ADD_PATTERN('STRING', "/' (?> [^':]+ | :.)* '/x");
     $this->ADD_PATTERN('OPERATOR', 
       '/
       \\b
