@@ -14,7 +14,7 @@ class LuminousVimScriptScanner extends LuminousSimpleScanner {
     if ($comment) {
       $this->record($this->scan("/.*/"), 'COMMENT');
     } else {
-      if ($this->scan("/ \" (?: [^\n\"\\\\]+ | \\\\. )*$ /mx")) {
+      if ($this->scan("/ \" (?> [^\n\"\\\\]+ | \\\\. )*$ /mx")) {
         $this->record($this->match(), 'COMMENT');
       }
       else {
@@ -42,7 +42,7 @@ class LuminousVimScriptScanner extends LuminousSimpleScanner {
   function init() {
     
     $this->add_pattern('COMMENT_STRING', "/[\t ]*\"/");
-    $this->add_pattern('STRING', "/'(?:[^\n\\\\']+ | \\\\. )*'/x");
+    $this->add_pattern('STRING', "/'(?>[^\n\\\\']+ | \\\\. )*'/x");
     $this->add_pattern('NUMERIC','/\#[a-f0-9]+/i');    
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
