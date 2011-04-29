@@ -321,7 +321,14 @@ abstract class luminous {
     global $luminous_;
     try {
       return $luminous_->highlight($scanner, $source, $cache);
-    } catch (Exception $e) {
+    } catch (InvalidArgumentException $e) {
+      // this is a user error, let it bubble
+      throw $e;
+    }
+    catch (Exception $e) {
+      // this is an internal error or a scanner error, or something
+      // it might not technically be Luminous that caused it, but let's not
+      // make it kill the whole page in production code
       if (LUMINOUS_DEBUG) throw $e;
       else {
         $return = $source;
