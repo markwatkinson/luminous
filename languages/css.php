@@ -87,7 +87,7 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
 
       // TODO attr selectors should handle embedded strings, I think.
       elseif(!$in_block && $c === '[' 
-        && $this->scan('/\[ (?: [^\\]\\\\]+ | \\\\.)* \]/sx'))
+        && $this->scan('/\[ (?> [^\\]\\\\]+ | \\\\.)* \]/sx'))
         $tok = 'ATTR_SELECTOR';
       
       elseif($c === '}' || $c === '{') {
@@ -99,9 +99,9 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
           $this->expecting = 'key';
         }
       }
-      elseif($c === '"' && $this->scan('/" (?: [^"\\\\]+ | \\\\.)* (?:"|$)/xs') )
+      elseif($c === '"' && $this->scan(LuminousTokenPresets::$DOUBLE_STR))
         $tok = 'DSTRING';      
-      elseif($c === "'" && $this->scan("/' (?: [^'\\\\]+ | \\\\.)* (?:'|$)/xs"))         
+      elseif($c === "'" && $this->scan(LuminousTokenPresets::$SINGLE_STR))         
         $tok = 'SSTRING';
       elseif($c === ':' && $in_block) {
         $this->expecting = 'value';
