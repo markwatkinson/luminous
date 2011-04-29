@@ -58,7 +58,7 @@ class LuminousStringSearch
     // cache not set, or out of date, we have to perform the match
     if (!($ret = preg_match($search, $this->string, $matches_, 
       PREG_OFFSET_CAPTURE,  $index)))  {
-        if ($ret === false && defined('LUMINOUS_DEBUG')) {
+        if ($ret === false && LUMINOUS_DEBUG) {
           throw new Exception('preg_match returned false for pattern: "' 
           . $search . '", with code: ' . LuminousUtils::pcre_error_decode(
             preg_last_error())
