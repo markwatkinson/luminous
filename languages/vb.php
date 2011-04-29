@@ -38,7 +38,7 @@ class LuminousVBScanner extends LuminousSimpleScanner {
 
     $this->add_pattern('CHARACTER', '/"(?:""|.)"c/i');
 
-    $this->add_pattern('STRING', '/" (?: [^"]+ | "" )* "/x');
+    $this->add_pattern('STRING', '/" (?> [^"]+ | "" )* ($|")/x');
     // in theory we should also match unicode quote chars
     // in reality, well, I read the php docs and I have no idea if it's
     // even possible.
