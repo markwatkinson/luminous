@@ -29,6 +29,11 @@ def print_help():
   Version should correspond to a tag in the Git repository. If it is omitted, 
   'master' is used.'''.format(sys.argv[0]))
 
+def do_production():
+  """ unset the debug flag in the PHP source """
+  subprocess.call(['sed', '-i', 
+    "s/define('LUMINOUS_DEBUG', true);/define('LUMINOUS_DEBUG', false);/",
+    "src/debug.php"])
 
 
 def do_removals():
@@ -43,7 +48,7 @@ def do_doxygen():
     print('Warning: failed to execute doxygen: ' + str(e))
   
 
-functions = [do_removals, do_doxygen]
+functions = [do_removals, do_doxygen, do_production]
 
 def package(version):
   # move into the dist dir
