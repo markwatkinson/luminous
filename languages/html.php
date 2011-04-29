@@ -21,7 +21,6 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
       'COMMENT2' => '/.*?(?:>|$)/s',
       'CDATA' => '/.*?(?:\\]{2}>|$)/s',
       'ESC' => '/[^;]*(?:;|$)/'
-
     );
     
     $this->rule_tag_map = array(
@@ -146,7 +145,12 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
             continue;
           }
           // urgh
-          elseif($this->scan('/<!\\[CDATA\\[.*?(?:\\]\\]>|$)/is')) 
+          elseif($this->scan('/
+            <!\\[CDATA\\[
+            (?> [^\\]]+ | \\](?!\\]>) )*
+            (?: \\]\\]> | $ )
+            /ixs'
+          )) 
             $tok = 'CDATA';
           elseif($this->scan('/<!--.*?(?:-->|$)/s')) $tok = 'COMMENT1';
           elseif($this->scan('/<!.*?(?:>|$)/s')) $tok = 'COMMENT2';
