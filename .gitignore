@@ -3,3 +3,7 @@
 cache/
 tests/formatters/filedump/
 .directory
+
+dist/
+docs/
+tests/log
