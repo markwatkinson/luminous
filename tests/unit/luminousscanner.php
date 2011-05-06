@@ -22,6 +22,10 @@ class LuminousScanner_test extends LuminousScanner {
       assert($this->state() !== $d);
     }
     assert($this->state() === null);
+    $exception = false;
+    try { $this->pop(); }
+    catch(Exception $e) { $exception = true; }
+    assert($exception);
   }
 
   function record_test() {

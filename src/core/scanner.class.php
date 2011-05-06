@@ -909,8 +909,11 @@ class LuminousScanner extends Scanner {
   }
   /**
    * @brief Pops the top element of the stack, and returns it
+   * @throw Exception if the state stack is empty
    */
   function pop() {
+    if (empty($this->state_))
+      throw new Exception('Cannot pop empty state stack');
     return array_pop($this->state_);
   }
   
