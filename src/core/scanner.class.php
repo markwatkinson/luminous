@@ -936,6 +936,28 @@ class LuminousScanner extends Scanner {
     if ($string === null) throw new Exception('Tagging null string');
     $this->tokens[] = array($type, $string, $pre_escaped);
   }
+
+  /**
+   * @brief Helper function to record a range of the string
+   * @param $from the start index
+   * @param $to the end index
+   * @param $type the type of the token
+   * This is shorthand for
+   * <code> $this->record(substr($this->string(), $from, $to-$from)</code>
+   *
+   * @throw RangeException if the range is invalid (i.e. $to < $from)
+   *
+   * An empty range (i.e. $to === $from) is allowed, but it is essentially a
+   * no-op.
+   */
+  function record_range($from, $to, $type) {
+    if ($to === $from)
+      return;
+    else if ($to > $from)
+      $this->record(substr($this->string(), $from, $to-$from), $type);
+    else
+      throw new RangeException("Invalid range supplied [$from, $to]");
+  }
   
   /**
    * @brief Returns the XML representation of the token stream
@@ -1678,6 +1700,7 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
    * @brief Helper function to record a range of the string
    * @param $from the start index
    * @param $to the end index
+   * @param $type dummy argument
    * This is shorthand for
    * <code> $this->record(substr($this->string(), $from, $to-$from)</code>
    *
@@ -1686,12 +1709,14 @@ class LuminousStatefulScanner extends LuminousSimpleScanner {
    * An empty range (i.e. $to === $from) is allowed, but it is essentially a
    * no-op.
    */
-  function record_range($from, $to) {
+  function record_range($from, $to, $type=null) {
+    if ($type !== null) throw new Exception('type argument not supported in '
+      . ' LuminousStatefulScanner::record_range');
     if ($to === $from)
       return;
-    else if ($to > $from) 
-      $this->record(substr($this->string(), $from, $to-$from));
-    else 
+    else if ($to > $from)
+      $this->record(substr($this->string(), $from, $to-$from), $type);
+    else
       throw new RangeException("Invalid range supplied [$from, $to]");
   }
 
