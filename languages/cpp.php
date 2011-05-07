@@ -72,8 +72,8 @@ class LuminousCppScanner extends LuminousSimpleScanner {
     // #if 0s nest, according to Kate, which sounds reasonable
     $pattern = '/^\s*#\s*if\s+0\\b/m';
     if($this->check($pattern)) {
-      $this->nestable_token('COMMENT', $pattern,
-        '/^\s*#endif\\b/m');
+      $this->nestable_token('COMMENT', '/^\s*#\s*if(?:n?def)?\\b/m',
+        '/^\s*#\s*endif\\b/m');
     }
     else {
       // a preprocessor statement may have nested comments and strings. We
