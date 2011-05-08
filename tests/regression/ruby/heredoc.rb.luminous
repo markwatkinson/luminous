@@ -1,5 +1,5 @@
 <COMMENT>#Ruby supports multiline strings by providing two types of here doc syntax. The first syntax uses and additional dash, but allows you to indent the "end of here doc" delimiter ('eos' in the example).</COMMENT>
-  <DELIMITER>&lt;&lt;-eos</DELIMITER><HEREDOC></HEREDOC>
+  <DELIMITER>&lt;&lt;-eos</DELIMITER>
 <HEREDOC>    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor </HEREDOC>
 <HEREDOC>    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud </HEREDOC>
 <HEREDOC>    exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute </HEREDOC>
@@ -9,7 +9,7 @@
 <HEREDOC>    ' "</HEREDOC>
 <HEREDOC></HEREDOC><DELIMITER>  eos</DELIMITER>
 <COMMENT>#Another here doc syntax doesn't require you to use the dash, but it does require that the "end of here doc" delimiter is in column 1 (or there are no spaces that precede it).</COMMENT>
-  <DELIMITER>&lt;&lt;eos</DELIMITER><HEREDOC></HEREDOC>
+  <DELIMITER>&lt;&lt;eos</DELIMITER>
 <HEREDOC>    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor </HEREDOC>
 <HEREDOC>    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud </HEREDOC>
 <HEREDOC>    exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute </HEREDOC>
@@ -19,7 +19,7 @@
 <HEREDOC>    ' "</HEREDOC>
 <HEREDOC></HEREDOC><DELIMITER>eos</DELIMITER>
 <COMMENT>#Both options support the following syntax when passed as a parameter.</COMMENT>
-  <CONSTANT>Content</CONSTANT>.<OO>new</OO>(<VALUE>:value</VALUE> <OPERATOR>=&gt;</OPERATOR> <DELIMITER>&lt;&lt;eos</DELIMITER>)<HEREDOC></HEREDOC>
+  <CONSTANT>Content</CONSTANT>.<OO>new</OO>(<VALUE>:value</VALUE> <OPERATOR>=&gt;</OPERATOR> <DELIMITER>&lt;&lt;eos</DELIMITER>)
 <HEREDOC>    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor </HEREDOC>
 <HEREDOC>    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud </HEREDOC>
 <HEREDOC>    exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute </HEREDOC>
@@ -28,7 +28,7 @@
 <HEREDOC>    ' "</HEREDOC>
 <HEREDOC></HEREDOC><DELIMITER>eos</DELIMITER>
 
- <CONSTANT>Content</CONSTANT>.<OO>new</OO>(<VALUE>:value</VALUE> <OPERATOR>=&gt;</OPERATOR> <DELIMITER>&lt;&lt;eos</DELIMITER><HEREDOC></HEREDOC>
+ <CONSTANT>Content</CONSTANT>.<OO>new</OO>(<VALUE>:value</VALUE> <OPERATOR>=&gt;</OPERATOR> <DELIMITER>&lt;&lt;eos</DELIMITER>
 <HEREDOC>    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor </HEREDOC>
 <HEREDOC>    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud </HEREDOC>
 <HEREDOC>    exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute </HEREDOC>
@@ -49,28 +49,28 @@
              
              
              
-<FUNCTION>print</FUNCTION> <DELIMITER>&lt;&lt;EOF</DELIMITER><HEREDOC></HEREDOC>
+<FUNCTION>print</FUNCTION> <DELIMITER>&lt;&lt;EOF</DELIMITER>
 <HEREDOC>The price is </HEREDOC><DELIMITER>#{</DELIMITER><INTERPOLATION><VARIABLE>$Price</VARIABLE></INTERPOLATION><DELIMITER>}</DELIMITER><HEREDOC>.</HEREDOC>
 <HEREDOC></HEREDOC><DELIMITER>EOF</DELIMITER>
 
-<FUNCTION>print</FUNCTION> <DELIMITER>&lt;&lt;"EOF"</DELIMITER>;          # same as above<HEREDOC></HEREDOC>
+<FUNCTION>print</FUNCTION> <DELIMITER>&lt;&lt;"EOF"</DELIMITER><OPERATOR>;</OPERATOR>          <COMMENT># same as above</COMMENT>
 <HEREDOC>The price is </HEREDOC><DELIMITER>#{</DELIMITER><INTERPOLATION><VARIABLE>$Price</VARIABLE></INTERPOLATION><DELIMITER>}</DELIMITER><HEREDOC>.</HEREDOC>
 <HEREDOC></HEREDOC><DELIMITER>EOF</DELIMITER>
 
-<FUNCTION>print</FUNCTION> <DELIMITER>&lt;&lt;`EOC`</DELIMITER>           # execute commands<HEREDOC></HEREDOC>
+<FUNCTION>print</FUNCTION> <DELIMITER>&lt;&lt;`EOC`</DELIMITER>           <COMMENT># execute commands</COMMENT>
 <HEREDOC>echo hi there</HEREDOC>
 <HEREDOC>echo lo there</HEREDOC>
 <HEREDOC></HEREDOC><DELIMITER>EOC</DELIMITER>
 
 <COMMENT># this should go until the indented one</COMMENT>
-<FUNCTION>print</FUNCTION> <DELIMITER>&lt;&lt;"foo"</DELIMITER>, <DELIMITER>&lt;&lt;-"bar"</DELIMITER>  # you can stack them<HEREDOC></HEREDOC>
+<FUNCTION>print</FUNCTION> <DELIMITER>&lt;&lt;"foo"</DELIMITER>, <DELIMITER>&lt;&lt;-"bar"</DELIMITER>  <COMMENT># you can stack them</COMMENT>
 <HEREDOC>I said foo.</HEREDOC>
 <HEREDOC></HEREDOC><DELIMITER>foo</DELIMITER><HEREDOC></HEREDOC>
 <HEREDOC>I said bar.</HEREDOC>
 <HEREDOC></HEREDOC><DELIMITER>    bar</DELIMITER>
 
 <COMMENT># Kate gets this one wrong</COMMENT>
-myfunc(<DELIMITER>&lt;&lt;"THIS"</DELIMITER>, 23, <DELIMITER>&lt;&lt;'THAT'</DELIMITER>)<HEREDOC></HEREDOC>
+myfunc(<DELIMITER>&lt;&lt;"THIS"</DELIMITER>, <NUMERIC>23</NUMERIC>, <DELIMITER>&lt;&lt;'THAT'</DELIMITER>)
 <HEREDOC>Here's a line</HEREDOC>
 <HEREDOC>or two.</HEREDOC>
 <HEREDOC></HEREDOC><DELIMITER>THIS</DELIMITER><HEREDOC></HEREDOC>
@@ -78,7 +78,7 @@ myfunc(<DELIMITER>&lt;&lt;"THIS"</DELIMITER>, 23, <DELIMITER>&lt;&lt;'THAT'</DEL
 <HEREDOC></HEREDOC><DELIMITER>THAT</DELIMITER>
 
 <KEYWORD>if</KEYWORD> need_define_foo
-<FUNCTION>eval</FUNCTION> <DELIMITER>&lt;&lt;-EOS</DELIMITER>         # delimiters can be indented<HEREDOC></HEREDOC>
+<FUNCTION>eval</FUNCTION> <DELIMITER>&lt;&lt;-EOS</DELIMITER>         <COMMENT># delimiters can be indented</COMMENT>
 <HEREDOC>def foo</HEREDOC>
 <HEREDOC>print "foo\n"</HEREDOC>
 <HEREDOC>end</HEREDOC>

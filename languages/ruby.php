@@ -75,6 +75,10 @@ class LuminousRubyScanner extends LuminousScanner {
   (?:_+\d+)*
   /x';  
 
+  /// queue of heredoc declarations which will need to be handled as soon as EOL is reached
+  /// each element is a tuple: (delimiter(str), identable?, interpolatable?)
+  private $heredocs = array();
+
   private static function balance_delimiter($delimiter) {
     $map = array('[' => ']', '{' => '}', '<' => '>', '('=>')');
     $out = isset($map[$delimiter])? $map[$delimiter] : $delimiter;
@@ -173,11 +177,159 @@ class LuminousRubyScanner extends LuminousScanner {
     return true; // no preceding tokens, presumably a code fragment.
   }
 
+
+  protected function interpolate() {
+    $interpolation_scanner = new LuminousRubyScanner();
+    $interpolation_scanner->string($this->string());
+    $interpolation_scanner->pos($this->pos());
+    $interpolation_scanner->interpolation = true;
+    $interpolation_scanner->init();
+    $interpolation_scanner->main();
+    $this->record($interpolation_scanner->tagged(), 'INTERPOLATION', true);
+    $this->pos($interpolation_scanner->pos());
+  }
+
+
+  // handles the heredoc array. Call at eol/bol when the heredoc queue is
+  // not empty
+  protected function do_heredoc() {
+  
+    assert (!empty($this->heredocs));
+    
+    $start = $this->pos();
+    
+    for($i=0; $i<count($this->heredocs) ; ) {
+      $top = $this->heredocs[$i];
+      list($ident, $identable, $interpolatable) = $top;
+      $searches = array(
+        sprintf('/^%s%s\\b/m', $identable? "[ \t]*" : '',
+          preg_quote($ident, '/'))
+      );
+      if ($interpolatable)
+        $searches[] = '/\#\{/';
+      list($next, $matches) = $this->get_next($searches);
+      if ($next === -1) {
+        // no match for end delim, run to EOS
+        $this->record(substr($this->string(), $start), 'HEREDOC');
+        $this->terminate();
+        break;
+      }
+      assert($matches !== null);
+      if ($matches[0] === '#{') { // interpolation, break heredoc and do that.
+        $this->pos($next);
+        $this->record(substr($this->string(), $start, $this->pos()-$start), 'HEREDOC');
+        $this->record($matches[0], 'DELIMITER');
+        $this->pos_shift(strlen($matches[0]));
+        $this->interpolate();        
+        if ($this->peek() === '}')
+          $this->record($this->get(), 'DELIMITER');
+        $start = $this->pos();
+      }
+      else {
+        // 
+        $this->pos($next);
+        $this->record(substr($this->string(), $start, $this->pos()-$start), 'HEREDOC');
+        $this->record($matches[0], 'DELIMITER');
+        $this->pos($next + strlen($matches[0]));
+        $start = $this->pos();
+        $i++;
+      }
+      // subscanner might have consumed all the string, in which case there's 
+      // no point continuing
+      if ($this->eos()) break;
+      
+    }
+    // we may or may not have technically addressed all the heredocs in the
+    // queue, but we do want to clear them out now
+    $this->heredocs = array();
+  }
+
+  // handles string types (inc regexes), which may have nestable delimiters or
+  // interpolation.
+  // str_data should be a tuple:
+  // (type(str), open_delim(str), close_delim(str), pos(int)
+  protected function do_string($str_data) {
+    list($type, $open_delimiter, $close_delimiter, $pos, $interpolation,
+      $fancy_delim) = $str_data;
+    $balanced = $open_delimiter !== $close_delimiter;
+    $template = '/(?<!\\\\)((?:\\\\\\\\)*)(%s)/';
+    $patterns = array();
+    $patterns['term'] = sprintf($template, preg_quote($close_delimiter, '/'));
+    if ($balanced) {
+      // for nesting balanced delims
+      $patterns['nest'] = sprintf($template, preg_quote($open_delimiter, '/'));
+    }
+    if ($interpolation) {
+      $patterns['interp'] = sprintf($template, preg_quote('#{', '/'));
+    }
+    $nesting_level = 0;
+    $break = false;
+    while (!$break) {
+      list($name, $index, $matches) = $this->get_next_named($patterns);
+      
+      if ($name === null) {
+        // special case, no matches, record the rest of the string and break
+        // immediately
+        $this->record(substr($this->string(), $pos), $type);
+        $this->terminate();
+        break;
+      }
+      elseif ($name === 'nest') {
+        // nestable opener
+        $nesting_level++;
+        $this->pos( $index + strlen($matches[0]) );
+      }
+      elseif($name === 'term') {
+        // terminator, may be nested
+        if ($nesting_level === 0) {
+          // wasn't nested, real terminator. 
+          if ($fancy_delim) {
+            // matches[1] is either empty or a sequence of backslashes
+            $this->record_range($pos, $index + strlen($matches[1]), $type);
+            $this->record($matches[2], 'DELIMITER');
+          } else {
+            $this->record_range($pos, $index+strlen($matches[0]), $type);
+          }
+          $break = true;
+        }
+        else {
+          // pop a nesting level
+          $nesting_level--;
+        }
+        $this->pos( $index + strlen($matches[0]) );
+
+      }
+      elseif($name === 'interp') {
+        // interpolation - temporarily break string highlighting, then
+        // do interpolation, then resume.
+        $this->record_range($pos, $index + strlen($matches[1]), $type);
+        $this->record($matches[2], 'DELIMITER');
+        $this->pos( $index + strlen($matches[0]) );
+        
+        $this->interpolate();
+        if (($c = $this->peek()) === '}')
+          $this->record($this->get(), 'DELIMITER');
+        $pos = $this->pos();
+      }
+      else {
+        assert(0);
+      }
+      if ($break) break;
+    }
+    if ($type === 'REGEX' && $this->scan('/[iomx]+/'))
+      $this->record($this->match(), 'KEYWORD');
+  }
+  
+
   public function main() {
 
     while (!$this->eos()) {
 
-      if ($this->interpolation && $this->state() === null) {
+      if ($this->bol() && !empty($this->heredocs)) {
+        $this->do_heredoc();
+      }
+      
+      if ($this->interpolation) {
         $c = $this->peek();
         if ($c === '{') $this->curley_braces++;
         elseif($c === '}') {
@@ -185,101 +337,8 @@ class LuminousRubyScanner extends LuminousScanner {
           if ($this->curley_braces <= 0) { break;}
         }
       }
-      if ($this->rails && $this->state() === null && $this->check('/-?%>/')) {
+      if ($this->rails && $this->check('/-?%>/')) {
         break;
-      }
-      
-
-      // handles nested string delimiters and interpolation
-      // interpolation is handled by passing the string down to a sub-scanner,
-      // which is expected to figure out where the interpolation ends.
-
-      
-      // XXX: This block is a mess!
-      // this would be far neater if we factored it into its own function
-      // and used its own while loop instead of relying on main.      
-      if (($s = $this->state()) !== null) {
-        $balanced = $s[1] !== $s[2];
-        $interp = $s[4];
-        $template = '/(?<!\\\\)((?:\\\\\\\\)*)(%s)/';
-        $next_patterns = array(sprintf($template, preg_quote($s[1], '/')),
-          sprintf($template, preg_quote($s[2], '/')));
-        if ($interp) $next_patterns[] = '/(?<!\\\\)((?:\\\\\\\\)*)(\#\{)/';
-        $next = $this->get_next($next_patterns);
-        $old_pos = $this->pos();
-        if ($next[0] === -1) {
-          $state = $this->state_[0];
-          $this->record( substr($this->string(), $state[3]), $state[0]);
-          $this->state_ = array();
-          $this->terminate();
-          break;
-        }
-        $pos = $next[0] + strlen($next[1][1]);
-
-
-        if($next[1][2] === '#{') {
-          $i = count($this->state_);
-
-          while($i--) {
-            $s_ = $this->state_[$i];
-            if ($s_[0] !== null) {
-              $this->record(
-                substr($this->string(), $s_[3], $pos - $s_[3]),
-                $s_[0]);
-              break;
-            }
-          }
-          $this->record($next[1][2], 'DELIMITER');
-          $pos = $next[0] + strlen($next[1][0]);
-          
-          $interpolation_scanner = new LuminousRubyScanner();
-          $interpolation_scanner->string($this->string());
-          $interpolation_scanner->pos($pos);
-          $interpolation_scanner->interpolation = true;
-          $interpolation_scanner->init();
-          $interpolation_scanner->main();
-          $tagged = $interpolation_scanner->tagged();
-          $this->record($tagged, 'INTERPOLATION', true);
-          $peek = $interpolation_scanner->peek();
-          // The child scanner may have reached }, EOS or __END__.
-          if ($peek === '}') {
-            $this->record($interpolation_scanner->get(), 'DELIMITER');
-          }
-          $pos = $interpolation_scanner->pos();
-          $this->state_[$i][3] = $pos;
-        }
-        elseif ($balanced && $next[1][2] === $s[1]) { // balanced nesting
-          $this->state_[] = array(null, $s[1], $s[2], null, $interp);
-          $pos = $next[0] + strlen($next[1][0]);
-        }
-        else {
-          $pop = array_pop($this->state_);
-          if ($pop[0] !== null) {
-            $fancy_delim =  $pop[5];
-            $type = $pop[0];
-            if ($fancy_delim) {
-              $type = 'DELIMITER';
-            } else $pos += strlen($next[1][2]);
-
-            $this->record(
-              substr($this->string(), $pop[3], $pos - $pop[3]),
-              $pop[0]
-            );
-            if ($fancy_delim) {
-              $this->record($next[1][2], $type);
-            }
-          }
-          $pos = $next[0] + strlen($next[1][0]);
-          $this->pos($pos);
-          if (empty($this->state_) && $pop[0] === 'REGEX' &&
-            $this->scan('/[iomx]+/')) {
-            $this->record($this->match(), 'KEYWORD');
-          }
-          // urrrgh
-          continue;
-        }
-        $this->pos($pos);
-        continue;
       }
 
       $c = $this->peek();
@@ -305,94 +364,21 @@ class LuminousRubyScanner extends LuminousScanner {
       elseif($this->scan('/:\w+/')) {
         $this->record($this->match(), 'VALUE');
       }
-
-
-      elseif ( $c === '<' && $this->check('/<<-?([\'"`]?)[A-Z_]\w*\\1/i')) {
-        // heredoc is a tiny bit ugly.
-        // Heredocs can stack, so let's get a list of all the heredocs opened
-        // on this line, and keep a list of the declarations as an array:
-        // [delimiter, identable?, interpolatable?]
-        // BTW I have no idea what happens if you nest an interpolatable one
-        // inside a non-interpolatable one.
-        $heredoc_queue = array();
-        $m = $this->check('/.*/');
-        while (!$this->eol()) {
-          // TODO:we need this soemhow linked up with all the other rules:
-          //     <<-EOF + "a string"  is I think legal.
-          $this->skip_whitespace();
-          if ($this->scan('/(<<(-?))([\'"`]?)([A-Z_]\w*)(\\3)/i')) {
-            $m = $this->match_groups();
-            $this->record($m[0], 'DELIMITER');/*
-            $this->record($m[1], null);
-            if ($m[3]) // 2 is nested in 1
-              $this->record($m[3], null);
-            $this->record($m[4], 'KEYWORD');
-            if ($m[5])
-              $this->record($m[5], null);*/
-            $hdoc = array($m[4], $m[2] === '-', $m[3] !== "'");
-            $heredoc_queue[] = $hdoc;
-          }
-          // slow
-          else $this->record($this->get(), null);
-        }
-        
-
-        assert (!empty($heredoc_queue));
-        
-        $start = $this->pos();
-        
-        for($i=0; $i<count($heredoc_queue) ; ) {
-          $top = $heredoc_queue[$i];
-          list($ident, $identable, $interpolatable) = $top;
-          $searches = array(
-            sprintf('/^%s%s\\b/m', $identable? "[ \t]*" : '',
-              preg_quote($ident, '/'))
-          );
-          if ($interpolatable)
-            $searches[] = '/\#\{/';
-          list($next, $matches) = $this->get_next($searches);
-          if ($next === -1) {
-            $this->record(substr($this->string(), $start), 'HEREDOC');
-            $this->terminate();
-            break;
-          }
-          assert($matches !== null);
-          if ($matches[0] === '#{') { // interpolation, break heredoc and do that.
-            $this->pos($next);
-            $this->record(substr($this->string(), $start, $this->pos()-$start), 'HEREDOC');
-            $this->record($matches[0], 'DELIMITER');
-            $this->pos_shift(strlen($matches[0]));
-            // c+p alert
-            $interpolation_scanner = new LuminousRubyScanner();
-            $interpolation_scanner->string($this->string());
-            $interpolation_scanner->pos($this->pos());
-            $interpolation_scanner->interpolation = true;
-            $interpolation_scanner->init();
-            $interpolation_scanner->main();
-            $this->record($interpolation_scanner->tagged(), 'INTERPOLATION', true);
-            $this->pos($interpolation_scanner->pos());
-            if ($this->peek() === '}')
-              $this->record($this->get(), 'DELIMITER');
-            $start = $this->pos();
-          }
-          else {
-            $this->pos($next);
-            $this->record(substr($this->string(), $start, $this->pos()-$start), 'HEREDOC');
-            $this->record($matches[0], 'DELIMITER');
-            $this->pos($next + strlen($matches[0]));
-            $start = $this->pos();
-            $i++;
-          }
-        }
+      elseif ( $c === '<' && $this->scan('/(<<(-?))([\'"`]?)([A-Z_]\w*)(\\3)/i')) {
+        $m = $this->match_groups();
+        $this->record($m[0], 'DELIMITER');
+        $hdoc = array($m[4], $m[2] === '-', $m[3] !== "'");
+        $this->heredocs[] = $hdoc;
       }
+
       // TODO: "% hello " is I think a valid string, using whitespace as
       // delimiters. We're going to disallow this for now because
       // we're not disambiguating between that and modulus
       elseif (($c === '"' || $c === "'" || $c === '`' || $c === '%') &&
         $this->scan('/[\'"`]|%( [qQrswWx](?![[:alnum:]]|$) | (?![[:alnum:]\s]|$))/xm')
-        || ($c === '/' && $this->is_regex())  // regex
-        ) {
-        
+        || ($c === '/' && $this->is_regex())
+        )
+      {
         $interpolation = false;
         $type = 'STRING';
         $delimiter;
@@ -426,10 +412,10 @@ class LuminousRubyScanner extends LuminousScanner {
             $this->record($this->match() . $delimiter, 'DELIMITER');
             $pos = $this->pos();
           }
-          
         }
-        $this->state_[] = array($type, $delimiter, self::balance_delimiter($delimiter),
+        $data = array($type, $delimiter, self::balance_delimiter($delimiter),
           $pos, $interpolation, $fancy_delim);
+        $this->do_string($data);
       }
       elseif( (ctype_alpha($c) || $c === '_') &&
         ($m = $this->scan('/[_a-zA-Z]\w*[!?]?/')) !== null) {          
@@ -441,17 +427,14 @@ class LuminousRubyScanner extends LuminousScanner {
           }
           break;
         }
-        
       }
       elseif($this->scan($this->operator_regex))
         $this->record($this->match(), 'OPERATOR');
+      elseif($this->scan("/[ \t]+/")) $this->record($this->match(), null);
       else {
         $this->record($this->get(), null);
-        $this->skip_whitespace();
       }
-
     }
-
     // In case not everything was popped
     if (isset($this->state_[0])) {
       $this->record(
@@ -462,6 +445,4 @@ class LuminousRubyScanner extends LuminousScanner {
       $this->terminate();
     }
   }
-
-  
 }
