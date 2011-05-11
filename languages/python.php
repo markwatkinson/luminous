@@ -89,7 +89,7 @@ class LuminousPythonScanner extends LuminousScanner {
      'type', 'unichr', 'vars', 'xrange', 'zip', '__import__'));
 
     // http://docs.python.org/library/exceptions.html
-    $this->add_identifier_mapping('EXCEPTION', 
+    $this->add_identifier_mapping('TYPE', 
       array('BaseException', 'SystemExit', 
       'KeyboardInterrupt', 'GeneratorExit', 'Exception', 'StopIteration', 
       'StandardError', 'BufferError', 'ArithmeticError',
@@ -255,7 +255,7 @@ class LuminousPythonScanner extends LuminousScanner {
     // let's look for some trademark pythonic constructs, although I 
     // have a feeling that recent versions of ECMA also impelment some
     // of this
-    if (preg_match('/\\bfor\s+\w+\s+in\s+\w+\s*:/', $src))
+    if (preg_match('/\\bfor\s+\w+\s+in\s+\w+(\s*\(.*\))?\s*:/', $src))
       $p += 0.05;
     if (preg_match('/True|False|None/', $src)) $p += 0.01;
     if (preg_match('/"{3}|\'{3}/', $src)) $p += 0.05;

@@ -232,6 +232,9 @@ class LuminousBashScanner extends LuminousScanner {
 
     // check for some common unix commands
     if (preg_match('/(?<=\s)(cd|ls|mv|cat|grep)(?=\s)/', $src)) $p += 0.05;
+
+    // case ... esac has to be worth something
+    if (preg_match('/\\bcase\\b.*;;.*\\besac\\b/s', $src)) $p += 0.10;
     
 
 

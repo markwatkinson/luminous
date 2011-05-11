@@ -47,7 +47,7 @@ class LuminousVimScriptScanner extends LuminousSimpleScanner {
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
     $this->add_pattern('IDENT', '/[a-z_]\w*/i');
-    $this->add_pattern('OPERATOR', '@[¬!%^&*\-=+;:,<.>/?\|]+@');
+    $this->add_pattern('OPERATOR', '@[~¬!%^&*\-=+;:,<.>/?\|]+@');
     
     $this->add_identifier_mapping('FUNCTION', 
       $GLOBALS['luminous_vim_functions']);
