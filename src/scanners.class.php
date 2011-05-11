@@ -176,14 +176,15 @@ class LuminousScanners
    *    scanner. If false, return false
    * \return The scanner, the default scanner, or null.
    */
-  function GetScanner($language_name, $default=true)
+  function GetScanner($language_name, $default=true, $instance=true)
   {
     $resolved_dependencies = array();
     $g = $this->GetScannerArray($language_name, $default);
     $resolved_dependencies = array();
     
-    if ($g !== false)
-      return new $g['scanner'];
+    if ($g !== false) {
+      return $instance? new $g['scanner'] : $g['scanner'];
+    }
     return null;
   }
   /**

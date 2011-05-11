@@ -24,20 +24,34 @@ luminous::set('line-numbers', $line_numbers);
   </head>
 <body>
   <?php
-    if (count($_POST)) {
-      // turn off caching for the moment or it's hard to see what changes
-      // are having effect
-      $t = microtime(true);
-      $out = luminous::highlight($_POST['lang'], $_POST['src'], false);
-      $t1 = microtime(true);
-      echo ($t1-$t) . 'seconds <br>';
-      echo strlen($_POST['src']) . '<br>';
-      echo $out;
+if (count($_POST)) {
+  $lang = $_POST['lang'];
+  if ($lang === 'guess') {
+    $s = microtime(true);
+    $guesses = luminous::guess_language($_POST['src']);
+    $e = microtime(true);
+    $lang = $guesses[0]['codes'][0];
+    $printable_guesses = array();
+    foreach($guesses as $g) {
+      $printable_guesses[$g['language']] = $g['p'];
     }
-    ?>
+    echo sprintf('Language guessed in %f seconds:', $e-$s);
+    echo '<pre>';
+    print_r($printable_guesses);
+    echo '</pre>';
+  }
+  $t = microtime(true);
+  $out = luminous::highlight($lang, $_POST['src'], false);
+  $t1 = microtime(true);
+  echo ($t1-$t) . 'seconds <br>';
+  echo strlen($_POST['src']) . '<br>';
+  echo $out;
+}
+?>
   <div style='text-align:center'>
     <form method='post' action='interface.php'>
     <select name='lang'>
+    <option value='guess'>Guess Language</option>
     <?php foreach(luminous::scanners() as $lang=>$codes) {
       $def = (isset($_POST['lang']) && $_POST['lang'] === $codes[0])?
         ' selected' : '';

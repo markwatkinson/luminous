@@ -504,6 +504,60 @@ abstract class luminous {
     return $luminous_->get_formatter();
   }
 
+  /**
+    * @internal
+    * Comparison function for guess_language()'s sorting
+    */
+  static function __guess_language_cmp($a, $b) {
+    $c = $a['p'] - $b['p'];
+    if ($c === 0) return 0;
+    elseif ($c < 0) return -1;
+    else return 1;
+  }
+
+  /**
+   * @brief Attempts to guess the language of a piece of source code
+   * @param $src The source code whose language is to be guessed
+   * @return An array - the array is ordered by probability, with the most
+   *    probable language coming first in the array.
+   *    Each array element is an array which represents a language (scanner), 
+   *    and has the keys:
+   *    \li \c 'language' => Human-readable language description,
+   *    \li \c 'codes' => valid codes for the language (array),
+   *    \li \c 'p' => the probability (between 0.0 and 1.0 inclusive),
+   * 
+   * note that \c 'language' and \c 'codes' are the key => value pair from
+   * luminous::scanners()
+   *
+   * @warning Language guessing is inherently unreliable but should be right
+   * about 80% of the time on common languages. Bear in mind that guessing is
+   * going to be severely hampered in the case that one language is used to
+   * generate code in another language.
+   *
+   * Usage for this function will be something like this:
+   * @code
+   * $guesses = luminous::guess_language($src);
+   * $output = luminous::highlight($guesses[0]['codes'][0], $src);
+   * @endcode
+   */
+  static function guess_language($src) {
+    global $luminous_;
+    $return = array();
+    foreach(self::scanners() as $lang=>$codes) {
+      $scanner_name = $luminous_->scanners->GetScanner($codes[0], false,
+        false);
+      assert($scanner_name !== null);
+      $return[] = array(
+        'language' => $lang,
+        'codes' => $codes,
+        'p' => call_user_func(array($scanner_name, 'guess_language'), $src)
+      );
+    }
+    uasort($return, array('luminous', '__guess_language_cmp'));
+    $return = array_reverse($return);
+    return $return;
+  }
+
 
 /**
   * @brief Gets the markup you need to include in your web page
