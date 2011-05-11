@@ -66,5 +66,13 @@ class LuminousVBScanner extends LuminousSimpleScanner {
     $this->add_identifier_mapping('KEYWORD', $luminous_vb_keywords);
     $this->add_identifier_mapping('TYPE', $luminous_csharp_type_list);
   }
+
+  public static function guess_language($src) {
+    $p = 0.0;
+    if (preg_match('/^Imports\s+System/i', $src)) $p += 0.1;
+    if (preg_match('/Dim\s+\w+\s+As\s+/i', $src)) $p += 0.2;
+    if (preg_match('/(Public|Private|Protected)\s+Sub\s+/i', $src)) $p += 0.1;
+    return $p;
+  }
 }
 

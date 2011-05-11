@@ -146,4 +146,18 @@ class LuminousErlangScanner extends LuminousSimpleScanner {
 'time',  'acos', 'asin', 'atan', 'atan2', 'cos', 'cosh', 'exp', 'log', 'log10',
 'pi', 'pow', 'sin', 'sinh', 'tan', 'tanh'));
   }
+
+
+  static function guess_language($src) {
+    $p = 0.0;
+    foreach(array('module', 'author', 'export', 'include') as $s) {
+      if (strpos($src, '-' . $s) !== false) $p += 0.02;
+    }
+    if (strpos($src, ' ++ ') !== false) $p += 0.01;
+    if (preg_match('/[a-zA-Z_]\w*#[a-zA-Z_]+/', $src)) $p += 0.05;
+
+    // doc comment 
+    if (preg_match('/^%%/m', $src)) $p += 0.05;
+    return $p;
+  }
 }

@@ -139,4 +139,15 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
       
     }
   }
+
+  public static function guess_language($src) {
+    $p = 0;
+    if (preg_match('/(font-family|font-style|font-weight)\s*:\s*.*;/', $src))
+      $p += 0.15;
+    if (strpos($src, '!important') !== false) $p += 0.05;
+    // generic rule
+    if (preg_match('/(a|div|span|table|body)\\.\w+\s*\\{/', $src))
+      $p += 0.10;
+    return $p;
+  }
 }

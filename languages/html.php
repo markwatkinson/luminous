@@ -225,5 +225,27 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
       }
     }
   }
+
+  public static function guess_language($src) {
+    $p = 0;
+    // we have to be a bit careful of XML literals nested in other 
+    // langauges here. 
+    // We also have to becareful to take precedence over embedded CSS and JS
+    // but leave some room for being embedded in PHP or Rails
+    // so we're not going to go over 0.75
+    $doctype = strpos(ltrim($src), '<!DOCTYPE ');
+    if ($doctype === 0) return 0.75;
+    if (preg_match('/<(a|table|span|div)\s+class=/', $src)) $p += 0.05;
+    if (preg_match('%</(a|table|span|div)>%', $src)) $p += 0.05;
+    if (preg_match('/<(style|script)\\b/', $src)) $p += 0.15;
+    if (preg_match('/<!\\[CDATA\\[/', $src)) $p += 0.15;
+
+    // look for 1 tag at least every 4 lines
+    $lines = preg_match_all('/$/m',                                             
+      preg_replace('/^\s+/m', '', $src), $m);
+    if (preg_match_all('%<[!?/]?[a-zA-Z_:\\-]%', $src, $m)
+       > $lines/4) $p += 0.15; 
+    return $p;
+  }
   
 }

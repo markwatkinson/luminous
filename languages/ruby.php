@@ -445,4 +445,41 @@ class LuminousRubyScanner extends LuminousScanner {
       $this->terminate();
     }
   }
+
+
+
+  public static function guess_language($src) {
+    if (preg_match('/^#!.*ruby/', $src)) return 1.0;
+    $p = 0;
+    if (strpos($src, '.nil?')) $p += 0.02;
+    if (strpos($src, '.empty?')) $p += 0.02;
+    // interpolation
+    if (strpos($src, '#{$')) $p += 0.02;
+    // @ and $ vars
+    if (preg_match('/@\w+/', $src) && preg_match('/\\$\w+/', $src))
+      $p += 0.02;
+    // symbols
+    if (preg_match('/:\w+/', $src)) $p += 0.01;
+    // func def - no args
+    if (preg_match('/^\s*def\s+[a-zA-Z_]\w*\s*$/m', $src)) 
+      $p += 0.1;
+    // {|x[,y[,z...]]| is a very ruby-like construct
+    if (preg_match('/ \\{ \\| \s*[a-zA-Z_]\w*\s*(,\s*[a-zA-Z_]\w*\s*)*\\|/x',
+      $src))
+      $p += 0.15;
+
+    // class defs with inheritance has quite distinct syntax
+    // class x < y
+    if (preg_match('/\\bclass\s+\w+\s*<\s*\w+\s*$/m', $src))
+      $p += 0.1;
+
+    $num_lines = preg_match_all('/$/m', $src, $m);
+    // let's say if 5% of lines are hash commented that's a good thing
+    if (preg_match_all('/^\s*#/', $src, $m) > $num_lines/20) $p += 0.05;
+    // =~ /regex/
+    if (preg_match('%=~\s+/%', $src)) $p += 0.02;
+
+
+    return $p;
+  }
 }

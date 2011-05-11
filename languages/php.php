@@ -199,9 +199,39 @@ class LuminousPHPScanner extends LuminousScanner {
     }
   }
 
+  static function guess_language($src) {
+    $p = 0.0;
+    // look for delimiter tags
+    if (strpos($src, '<?php') !== false) $p += 0.5;
+    elseif (preg_match('/<\\?(?!xml)|<\\?=/', $src)) $p += 0.20;
+    // check for $this, self:: parent::
+    if (preg_match('/\\$this\\b|((?i: self|parent)::)/x', $src)) $p += 0.15;
+    // check for PHP's OO notation: $somevar->something 
+    if (preg_match('/\\$[a-z_]\w*->[a-z_]\w*/i', $src)) $p += 0.05;
+    // check for some common functions:
+    if (preg_match('/\\b(echo|require(_once)?|include(_once)?|preg_\w+)\\b/i',
+      $src)) $p += 0.05;
+    return $p;
+  }
+
 }
 
 
 class LuminousPHPSnippetScanner extends LuminousPHPScanner {
   public $snippet = true;
+
+  public static function guess_language($src) {
+    $p = parent::guess_language($src);
+    if ($p > 0.0) {
+      // look for the close/open tags, if there is no open tag, or if 
+      // there is a close tag before an open tag, then we guess we're
+      // in a snippet
+      $open_tag = strpos($src, '<?');
+      $close_tag = strpos($src, '?>');
+      if ($open_tag === false || 
+        ($close_tag !== false && $close_tag < $open_tag))
+      $p += 0.01;
+    }
+    return $p;
+  }
 }

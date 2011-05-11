@@ -222,4 +222,19 @@ class LuminousBashScanner extends LuminousScanner {
         $this->record($this->get(), null);
     }
   }
+
+  public static function guess_language($src) {
+    $p = 0.0;
+    if (preg_match('%^#!.*\\b(bash|csh|ksh|zsh|sh)\\b%', $src)) return 1.0;
+
+    // strange conditional syntax
+    if (preg_match('/ (if|while) \s+ \\[\\[ /x', $src)) $p += 0.10;
+
+    // check for some common unix commands
+    if (preg_match('/(?<=\s)(cd|ls|mv|cat|grep)(?=\s)/', $src)) $p += 0.05;
+    
+
+
+    return $p;
+  }
 }

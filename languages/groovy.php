@@ -150,4 +150,17 @@ class LuminousGroovyScanner extends LuminousSimpleScanner {
       $this->overrides['BRACE'] = array($this, 'brace');
     }
   }
+
+  static function guess_language($src) {
+    $p = 0.0;
+    if (preg_match('/\\bdef\s+\w+\s*=/', $src)) $p += 0.04;
+    if (preg_match('/println\s+[\'"\w]/', $src)) $p += 0.03;
+    // Flawed check for interpolation, might match after a string
+    // terminator
+    if (preg_match("/\"[^\"\n\r]*\\$\\{/", $src)) $p += 0.05;
+    // regex literal ~/regex/
+    if (preg_match('%~/%', $src)) $p += 0.05;
+    if (preg_match('/^import\s+groovy/m', $src)) $p += 0.2;
+    return $p;
+  }
 }

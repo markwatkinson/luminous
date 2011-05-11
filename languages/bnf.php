@@ -85,4 +85,16 @@ class LuminousBNFScanner extends LuminousStatefulScanner {
     $this->remove_filter('comment-to-doc');
  
   }
+
+  static function guess_language($src) {
+    // BNF where the rule names are wrapped in brackets makes it easy to
+    // recognise, but we weight it very low because we don't want to get
+    // confused with HTML.
+    // Ultimately, BNF is very unlikely to be the right language at any
+    // time, so we bear that in mind.
+    $p = 0.01;
+    if (preg_match('/^\s*<\w+>/m', $src)) $p += 0.01;
+    if (strpos($src, '::=')) $p += 0.01;
+    return $p;
+  }
 }

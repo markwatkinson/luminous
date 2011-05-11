@@ -754,6 +754,23 @@ class LuminousScanner extends Scanner {
     $this->add_stream_filter('oo-syntax', array('LuminousFilters', 'oo_stream_filter'));
   }
 
+
+  /**
+   * @brief Language guessing
+   *
+   * Each real language scanner should override this method and implement a
+   * simple guessing function to estimate how likely the input source code
+   * is to be the language which they recognise.
+   * 
+   * @param $src the input source code
+   * @return The estimated chance that the source code is in the same language
+   *  as the one the scanner tokenizes, as a real number between 0 (least 
+   *  likely) and 1 (most likely), inclusive
+   */
+  public static function guess_language($src) {
+    return 0.0;
+  }
+
   /**
    * @brief Filter to highlight identifiers whose definitions are in the source
    * 

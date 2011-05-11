@@ -50,4 +50,19 @@ class LuminousSQLScanner extends LuminousSimpleScanner {
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
   }
+
+  public static function guess_language($src) {
+    // we have to be careful not to assign too much weighting to 
+    // generic SQL keywords, which will often appear in other languages
+    // when those languages are executing SQL statements
+    $p = 0.0;
+    if (preg_match(
+      '/SELECT \* FROM|CREATE TABLE|INSERT INTO|DROP TABLE/', $src))
+      $p += 0.05;
+    // single line comments --
+    if (preg_match_all('/^--/m', $src, $m) > 5)
+      $p += 0.05;
+    if (preg_match('/VARCHAR\(\d+\)/', $src)) $p += 0.05;
+    return $p;
+  }
 }

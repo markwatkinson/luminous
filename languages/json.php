@@ -76,5 +76,31 @@ class LuminousJSONScanner extends LuminousScanner {
       $this->record($this->match(), $tok);
     }
   }
+
+  public static function guess_language($src) {
+    // JSON is fairly hard to guess
+    $p = 0;
+    $src_ = trim($src);
+    if (!empty($src_)) {
+      $char = $src_[0];
+      $char2 = $src_[strlen($src_)-1];
+      $str = '"(?>[^"\\\\]+|\\\\.)"';
+      // looks like an object or array
+      if ( ($char === '[' && $char2 === ']')
+        || ($char === '{' && $char2 === '}')) 
+      {
+        $p += 0.05;
+      } 
+      elseif(preg_match("/^(?:$str|(\d+(\.\d+)?([eE]\d+)?)|true|false|null)$/",
+        $src_)) 
+      {
+        // just a string or number or value
+        $p += 0.1;
+      } 
+    }
+    return $p;
+
+
+  }
   
 }

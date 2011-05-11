@@ -47,4 +47,14 @@ class LuminousLatexScanner extends LuminousStatefulScanner {
       // math mode functions
     );
   }
+
+  public static function guess_language($src) {
+    $p = 0.0;
+    foreach(array('documentclass', 'usepackage', 'title',
+      'maketitle', 'end') as $cmd)
+    {
+      if (strpos($src, '\\' . $cmd) !== false) $p += 0.1;
+    }
+    return $p;
+  }
 }

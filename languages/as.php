@@ -52,4 +52,18 @@ class LuminousActionScriptScanner extends LuminousECMAScriptScanner {
     'return', 'super', 'switch', 'static', 'this', 'throw', 'to', 'true', 'try',
     'typeof', 'use', 'void', 'while', 'with'));
   }
+
+  public static function guess_language($src) {
+    // actionscript looks a lot like a cross between Java and, umm, well,
+    // Java.
+    // It has a semi-unique way of declaring types for arguments and
+    // returns and so forth as argname:type, or function name(args):ret-type
+    $p = 0.0;
+
+    if (preg_match(
+      '/\\bfunction\s+\w+\s*\\([^\\)]+\\):(String|int|Number|void)/',
+      $src)) $p += 0.15;
+    if (preg_match('/\\bvar\s+\w+:(String|int|Number)/', $src)) $p += 0.15;
+    return $p;
+  }
 }

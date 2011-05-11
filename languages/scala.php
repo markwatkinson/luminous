@@ -136,4 +136,17 @@ class LuminousScalaScanner extends LuminousSimpleScanner {
     $this->add_identifier_mapping('TYPE', $GLOBALS['luminous_java_types']);
 
   }
+
+  public static function guess_language($src) {
+    $p = 0;
+    // func def, a lot like python
+    if (preg_match('/\\bdef\s+\w+\s*\(/', $src)) $p += 0.05;
+    // val x = y
+    if (preg_match('/\\bval\s+\w+\s*=/', $src)) $p += 0.1;
+    // argument types
+    if (preg_match('/\\(\s*\w+\s*:\s*(String|Int|Array)/', $src)) $p += 0.05;
+    // tripled quoted strings, like python
+    if (preg_match('/\'{3}|"{3}/', $src)) $p += 0.05;
+    return $p;
+  }
 }

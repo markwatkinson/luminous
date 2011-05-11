@@ -35,4 +35,13 @@ class LuminousCSharpScanner extends LuminousSimpleScanner {
       'sbyte', 'short', 'string', 'uint', 'ulong', 'ushort'),
       $GLOBALS['luminous_csharp_type_list']));
   }
+
+  static function guess_language($src) {
+    $p = 0.0;
+    if (preg_match('/^\s*#region\\b/m', $src)) $p += 0.10;
+    if (preg_match('/^\s*using\s+System;/m', $src)) $p += 0.10;
+    if (preg_match('/^\s*using\s+System\\..*;/m', $src)) $p += 0.10;
+    if (preg_match('/partial\s+class\s+\w+/', $src)) $p += 0.05;
+    return $p;
+  }
 }

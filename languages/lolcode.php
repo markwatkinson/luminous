@@ -68,6 +68,15 @@ CLASS LUMINOUSLOLCODESCANNER EXTENDS LUMINOUSSIMPLESCANNER {
       'WAI', 'WILE', 'WTF?'));
     $this->ADD_IDENTIFIER_MAPPING('FUNCTION', array('GIMMEH', 'VISIBLE', 
       'UPPIN', 'NERFIN'));
-      
+  }
+
+  public static function guess_language($src) {
+    $p = 0.0;
+    foreach(array('\\bOMGWTF\\b', 'I\s+CAN\s+HA[SZ]', 'I\s+HA[SZ]\s+A\\b',
+      'UPPIN|NERFIN|GIMMEH', 'TROOF|NUMBAR|NUMBR') as $regex)
+    {
+      if (preg_match("/$regex/", $src)) $p += 0.1;
+    }
+    return $p;
   }
 }
