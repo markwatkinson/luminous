@@ -25,6 +25,7 @@ class LuminousPHPSubScanner extends  LuminousScanner {
     $this->add_pattern('IDENT', '/[a-zA-Z_]\w*/');
     $this->add_pattern('STRING', LuminousTokenPresets::$DOUBLE_STR);
     $this->add_pattern('STRING', LuminousTokenPresets::$SINGLE_STR);
+    $this->add_pattern('FUNCTION', '/`(?>[^`\\\\]+|\\\\.)*(`|$)/s');
     $this->add_identifier_mapping('FUNCTION', $GLOBALS['luminous_php_functions']);
     $this->add_identifier_mapping('KEYWORD', $GLOBALS['luminous_php_keywords']);
 
