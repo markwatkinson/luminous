@@ -479,6 +479,12 @@ class LuminousRubyScanner extends LuminousScanner {
     // =~ /regex/
     if (preg_match('%=~\s+/%', $src)) $p += 0.02;
 
+    if (preg_match('/unless\s+.*\?/', $src)) $p += 0.05;
+
+    if (preg_match('/^(\s*)def\s+.*^\1end\s/ms', $src)) $p += 0.05;
+
+    if (preg_match('/\.to_\w+(?=\s|$)/', $src)) $p += 0.01;
+
 
     return $p;
   }
