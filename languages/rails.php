@@ -60,6 +60,7 @@ class LuminousRailsScanner extends LuminousScanner {
     $p = LuminousRubyScanner::guess_language($src);
     if ($p < 1 && $p > 0) {
       if (preg_match('/<%#?.*%>/', $src)) $p += 0.02;
+      else $p = 0.0;
       $p = min($p, 1);
     }
     return $p;
