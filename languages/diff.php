@@ -170,12 +170,12 @@ class LuminousDiffScanner extends LuminousScanner {
     }
   }
 
-  static function guess_language($src) {
+  static function guess_language($src, $info) {
     // diff isn't too hard. We check for 'index' and a few other things
     $p = 0.0;
-    if (preg_match('/^-{3}.*\s+^\\+{3}/m', $src)) $p = 0.25;
+    if (preg_match("/^-{3}.*+[\n\r]++\\+{3}/m", $src)) $p = 0.25;
     if (preg_match('/^@@.*@@/m', $src)) $p += 0.25;
-    if (preg_match('/^(index|diff)\\b/', $src)) $p += 0.10;
+    if (preg_match('/^(index|diff)\\b/m', $src)) $p += 0.10;
 
 
     // finally we look for the diff markers at the line starts
@@ -184,8 +184,8 @@ class LuminousDiffScanner extends LuminousScanner {
     // 10%+ of its lines starting with the +/- markers (</> or +/! for 
     // context/original format), and we'll scale real proportion 
     // to fill up the remaining 0.4
-    $c = preg_match_all('/^[<>+\\-!]\s/', $src, $m);
-    $num_lines = preg_match_all("/\r\n|\n|\r/", $src, $m);
+    $c = preg_match_all('/^[<>+\\-!]\s/m', $src, $m);
+    $num_lines = $info['num_lines'];
     if ($num_lines > 0) {
       $proportion = $c/$num_lines;
       $proportion = min(0.1, $proportion);

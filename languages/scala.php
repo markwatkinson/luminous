@@ -137,7 +137,7 @@ class LuminousScalaScanner extends LuminousSimpleScanner {
 
   }
 
-  public static function guess_language($src) {
+  public static function guess_language($src, $info) {
     $p = 0;
     // func def, a lot like python
     if (preg_match('/\\bdef\s+\w+\s*\(/', $src)) $p += 0.05;

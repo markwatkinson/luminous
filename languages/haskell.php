@@ -85,7 +85,7 @@ class LuminousHaskellScanner extends LuminousSimpleScanner {
     
   }
 
-  public static function guess_language($src) {
+  public static function guess_language($src, $info) {
     $p = 0.0;
     // comments
     if (preg_match('/\\{-.*\\-}/', $src)) $p += 0.05;

@@ -151,7 +151,7 @@ class LuminousGroovyScanner extends LuminousSimpleScanner {
     }
   }
 
-  static function guess_language($src) {
+  static function guess_language($src, $info) {
     $p = 0.0;
     if (preg_match('/\\bdef\s+\w+\s*=/', $src)) $p += 0.04;
     if (preg_match('/println\s+[\'"\w]/', $src)) $p += 0.03;

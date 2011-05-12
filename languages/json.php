@@ -77,7 +77,7 @@ class LuminousJSONScanner extends LuminousScanner {
     }
   }
 
-  public static function guess_language($src) {
+  public static function guess_language($src, $info) {
     // JSON is fairly hard to guess
     $p = 0;
     $src_ = trim($src);

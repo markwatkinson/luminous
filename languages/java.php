@@ -20,7 +20,7 @@ class LuminousJavaScanner extends LuminousSimpleScanner {
     $this->add_pattern('OPERATOR', '/[!%^&*\-=+:?|<>]+/');
   }
 
-  public static function guess_language($src) {
+  public static function guess_language($src, $info) {
     $p = 0;
     if (preg_match('/^import\s+java\./m', $src)) return 1.0;
     if (preg_match('/System\.out\.print/', $src)) $p += 0.2;

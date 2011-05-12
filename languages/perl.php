@@ -479,7 +479,7 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
     
   }
 
-  public static function guess_language($src) {
+  public static function guess_language($src, $info) {
     // check the shebang
     if (preg_match('/^#!.*\\bperl\\b/', $src)) return 1.0;
     $p = 0;
@@ -488,6 +488,8 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
     if (preg_match('/%[a-zA-Z_]+/', $src)) $p += 0.02;
     if (preg_match('/\\bsub\s+\w+\s*\\{/', $src)) $p += 0.1;
     if (preg_match('/\\bmy\s+[$@%]/', $src)) $p += 0.05;
+    // $x =~ s/
+    if (preg_match('/\\$[a-zA-Z_]\w*\s+=~\s+s\W/', $src)) $p += 0.15;
     return $p;
   }
 }

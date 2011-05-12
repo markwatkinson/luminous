@@ -48,7 +48,7 @@ class LuminousLatexScanner extends LuminousStatefulScanner {
     );
   }
 
-  public static function guess_language($src) {
+  public static function guess_language($src, $info) {
     $p = 0.0;
     foreach(array('documentclass', 'usepackage', 'title',
       'maketitle', 'end') as $cmd)
@@ -56,12 +56,11 @@ class LuminousLatexScanner extends LuminousStatefulScanner {
       if (strpos($src, '\\' . $cmd) !== false) $p += 0.1;
     }
     // count the number of backslashes
-    $lines = preg_match_all('/$/m', $src, $m);
     $bslashes = substr_count($src, '\\');
-    if ($bslashes > $lines) {
+    if ($bslashes > $info['num_lines']) {
       $p += 0.1;
     }
-    if (substr_count($src, '%') > $lines/10) {
+    if (substr_count($src, '%') > $info['num_lines']/10) {
       $p += 0.02;
     }
     return $p;

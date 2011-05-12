@@ -9,7 +9,7 @@ class LuminousXMLScanner extends LuminousHTMLScanner {
   public $scripts = false;
   public $embedded_server = false;
 
-  public static function guess_language($src) {
+  public static function guess_language($src, $info) {
     if (strpos(ltrim($src), '<?xml') === 0) return 1.0;
     // don't catch HTML doctypes
     if (strpos($src, '<!DOCTYPE') !== false) return 0;

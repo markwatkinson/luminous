@@ -51,14 +51,30 @@ class LuminousSQLScanner extends LuminousSimpleScanner {
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
   }
 
-  public static function guess_language($src) {
+  public static function guess_language($src, $info) {
     // we have to be careful not to assign too much weighting to 
     // generic SQL keywords, which will often appear in other languages
     // when those languages are executing SQL statements
+    //
+    // All in all, SQL is pretty hard to recognise because generally speaking,
+    // an SQL dump will probably contain only a tiny fraction of SQL keywords
+    // with the majority of the text just being data. 
     $p = 0.0;
-    if (preg_match(
-      '/SELECT \* FROM|CREATE TABLE|INSERT INTO|DROP TABLE/', $src))
-      $p += 0.05;
+    // if we're lucky, the top line will be a comment containing the phrase
+    // 'SQL' or 'dump'
+    if (strpos($info['trimmed'], '--') === 0 && isset($info['lines'][0])
+      && (
+        stripos($info['lines'][0], 'sql') !== false)
+        || stripos($info['lines'][0], 'dump' !== false)
+      )
+      $p = 0.5;
+    
+
+    foreach(array('SELECT', 'CREATE TABLE', 'INSERT INTO', 'DROP TABLE',
+      'INNER JOIN', 'OUTER JOIN') as $str) 
+    {
+      if (strpos($src, $str) !== false) $p += 0.01;
+    }
     // single line comments --
     if (preg_match_all('/^--/m', $src, $m) > 5)
       $p += 0.05;

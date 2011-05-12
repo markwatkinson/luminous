@@ -542,6 +542,21 @@ abstract class luminous {
    */
   static function guess_language($src) {
     global $luminous_;
+    // first we're going to make an 'info' array for the source, which
+    // precomputes some frequently useful things, like how many lines it 
+    // has, etc. It prevents scanners from redundantly figuring these things
+    // out themselves
+    $lines = preg_split("/\r\n|[\r\n]/", $src);
+    $shebang = '';
+    if (preg_match('/^#!.*/', $src, $m)) $shebang = $m[0];
+
+    $info = array(
+      'lines' => $lines,
+      'num_lines' => count($lines),
+      'trimmed' => trim($src),
+      'shebang' => $shebang
+    );
+
     $return = array();
     foreach(self::scanners() as $lang=>$codes) {
       $scanner_name = $luminous_->scanners->GetScanner($codes[0], false,
@@ -550,7 +565,8 @@ abstract class luminous {
       $return[] = array(
         'language' => $lang,
         'codes' => $codes,
-        'p' => call_user_func(array($scanner_name, 'guess_language'), $src)
+        'p' => call_user_func(array($scanner_name, 'guess_language'), $src,
+          $info)
       );
     }
     uasort($return, array('luminous', '__guess_language_cmp'));

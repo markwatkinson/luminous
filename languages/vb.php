@@ -67,7 +67,7 @@ class LuminousVBScanner extends LuminousSimpleScanner {
     $this->add_identifier_mapping('TYPE', $luminous_csharp_type_list);
   }
 
-  public static function guess_language($src) {
+  public static function guess_language($src, $info) {
     $p = 0.0;
     if (preg_match('/^Imports\s+System/i', $src)) $p += 0.1;
     if (preg_match('/Dim\s+\w+\s+As\s+/i', $src)) $p += 0.2;

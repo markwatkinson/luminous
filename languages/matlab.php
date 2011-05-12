@@ -35,7 +35,7 @@ class LuminousMATLABScanner extends LuminousSimpleScanner {
     $this->add_identifier_mapping('FUNCTION', $luminous_matlab_functions);
   }
 
-  public static function guess_language($src) {
+  public static function guess_language($src, $info) {
     $p = 0;
     // matlab comments are quite distinctive
     if (preg_match('/%\\{.*%\\}/s', $src)) $p += 0.25;

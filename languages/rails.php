@@ -56,10 +56,10 @@ class LuminousRailsScanner extends LuminousScanner {
   }
 
 
-  public static function guess_language($src) {
-    $p = LuminousRubyScanner::guess_language($src);
-    if ($p < 1 && $p > 0) {
-      if (preg_match('/<%#?.*%>/', $src)) $p += 0.02;
+  public static function guess_language($src, $info) {
+    $p = LuminousRubyScanner::guess_language($src, $info);
+    if ($p > 0) {
+      if (preg_match('/<%.*%>/', $src)) $p += 0.02;
       else $p = 0.0;
       $p = min($p, 1);
     }

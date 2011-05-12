@@ -148,7 +148,7 @@ class LuminousErlangScanner extends LuminousSimpleScanner {
   }
 
 
-  static function guess_language($src) {
+  static function guess_language($src, $info) {
     $p = 0.0;
     foreach(array('module', 'author', 'export', 'include') as $s) {
       if (strpos($src, '-' . $s) !== false) $p += 0.02;

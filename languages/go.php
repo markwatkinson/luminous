@@ -62,7 +62,7 @@ class LuminousGoScanner extends LuminousSimpleScanner {
       'real', 'recover', 'sizeof'));
   }
 
-  public static function guess_language($src) {
+  public static function guess_language($src, $info) {
     $p = 0.0;
     if (strpos($src, 'func ') !== false) $p += 0.02;
     if (preg_match('/func\s*\\(\s*\w+\s*\\*\s*\w+/', $src)) $p += 0.05;

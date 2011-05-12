@@ -109,13 +109,16 @@ class LuminousCppScanner extends LuminousSimpleScanner {
     return $token;
   }
 
-  static function guess_language($src) {
+  static function guess_language($src, $info) {
     // Obviously, C tends to look an awful lot like pretty much every other
     // language. Its only real pseudo-distinct feature is the ugly 
     // preprocessor and "char * ", so let's go with that
 
     $p = 0.0;
-    if (preg_match('/^\s*#\s*(include|if|endif|define)\\b/m', $src)) $p += 0.3;
+    if (preg_match('/^\s*+#\s*+(include\s++[<"]|ifdef|endif|define)\\b/m', 
+      $src)
+    ) 
+      $p += 0.3;
     if (preg_match('/\\bchar\s*\\*\s*\w+/', $src)) $p += 0.05;
     if (preg_match('/\\bmalloc\s*\\(/', $src)) $p += 0.02;
     // TODO we could guess at some C++ stuff too

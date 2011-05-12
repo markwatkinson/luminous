@@ -226,7 +226,7 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
     }
   }
 
-  public static function guess_language($src) {
+  public static function guess_language($src, $info) {
     $p = 0;
     // we have to be a bit careful of XML literals nested in other 
     // langauges here. 

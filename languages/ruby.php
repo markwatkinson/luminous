@@ -448,40 +448,49 @@ class LuminousRubyScanner extends LuminousScanner {
 
 
 
-  public static function guess_language($src) {
-    if (preg_match('/^#!.*ruby/', $src)) return 1.0;
+  public static function guess_language($src, $info) {
+    if (strpos($info['shebang'], 'ruby') !== false) return 1.0;
+    elseif($info['shebang']) return 0;
     $p = 0;
+    if (strpos($src, 'nil')) $p += 0.05;
     if (strpos($src, '.nil?')) $p += 0.02;
     if (strpos($src, '.empty?')) $p += 0.02;
     // interpolation
     if (strpos($src, '#{$')) $p += 0.02;
     // @ and $ vars
-    if (preg_match('/@\w+/', $src) && preg_match('/\\$\w+/', $src))
+    if (preg_match('/@[a-zA-Z_]/', $src) && preg_match('/\\$[a-zA-Z_]/', $src))
       $p += 0.02;
     // symbols
-    if (preg_match('/:\w+/', $src)) $p += 0.01;
+    if (preg_match('/:[a-zA-Z_]/', $src)) $p += 0.01;
     // func def - no args
-    if (preg_match('/^\s*def\s+[a-zA-Z_]\w*\s*$/m', $src)) 
+    if (preg_match("/^\s*+def\s++[a-zA-Z_]\w*+[ \t]*+[\n\r]/m", $src)) 
       $p += 0.1;
     // {|x[,y[,z...]]| is a very ruby-like construct
-    if (preg_match('/ \\{ \\| \s*[a-zA-Z_]\w*\s*(,\s*[a-zA-Z_]\w*\s*)*\\|/x',
-      $src))
+    if (preg_match('/ \\{ \\| 
+      \s*+ [a-zA-Z_]\w*+ \s*+ 
+        (,\s*+[a-zA-Z_]\w*+\s*+)*+
+      \\|/x', $src))
       $p += 0.15;
+    // so is 'do |x|'
+    if (preg_match("/\\bdo\s*+\\|[^\\|\r\n]++\\|/", $src)) 
+      $p += 0.05;
 
     // class defs with inheritance has quite distinct syntax
     // class x < y
-    if (preg_match('/\\bclass\s+\w+\s*<\s*\w+\s*$/m', $src))
+    if (preg_match(
+      "/^ \s* class \s+ \w+ \s* < \s* \w+(::\w+)* [\t ]*+ [\r\n] /mx",
+      $src))
       $p += 0.1;
 
-    $num_lines = preg_match_all('/$/m', $src, $m);
+    $num_lines = $info['num_lines'];
     // let's say if 5% of lines are hash commented that's a good thing
-    if (preg_match_all('/^\s*#/', $src, $m) > $num_lines/20) $p += 0.05;
+    if (substr_count($src, '#') > $num_lines/20) $p += 0.05;
     // =~ /regex/
-    if (preg_match('%=~\s+/%', $src)) $p += 0.02;
+    if (preg_match('%=~\s++/%', $src)) $p += 0.02;
 
-    if (preg_match('/unless\s+.*\?/', $src)) $p += 0.05;
+    if (preg_match('/unless\s+[^\?]++\?/', $src)) $p += 0.05;
 
-    if (preg_match('/^(\s*)def\s+.*^\1end\s/ms', $src)) $p += 0.05;
+    if (preg_match('/^(\s*+)def\s+.*^\1end\s/ms', $src)) $p += 0.05;
 
     if (preg_match('/\.to_\w+(?=\s|$)/', $src)) $p += 0.01;
 

@@ -53,7 +53,7 @@ class LuminousActionScriptScanner extends LuminousECMAScriptScanner {
     'typeof', 'use', 'void', 'while', 'with'));
   }
 
-  public static function guess_language($src) {
+  public static function guess_language($src, $info) {
     // actionscript looks a lot like a cross between Java and, umm, well,
     // Java.
     // It has a semi-unique way of declaring types for arguments and

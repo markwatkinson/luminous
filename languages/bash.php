@@ -223,20 +223,21 @@ class LuminousBashScanner extends LuminousScanner {
     }
   }
 
-  public static function guess_language($src) {
+  public static function guess_language($src, $info) {
     $p = 0.0;
-    if (preg_match('%^#!.*\\b(bash|csh|ksh|zsh|sh)\\b%', $src)) return 1.0;
+    if (preg_match('%\\b (?:bash|csh|ksh|zsh|sh) \\b%x', 
+      $info['shebang'])
+    ) 
+      return 1.0;
 
-    // strange conditional syntax
-    if (preg_match('/ (if|while) \s+ \\[\\[ /x', $src)) $p += 0.10;
+    // strange conditional syntax -- if [ -z ...  ]
+    if (preg_match('/ (if|while) \s++ \\[\s++-\w/x', $src)) $p += 0.10;
 
-    // check for some common unix commands
-    if (preg_match('/(?<=\s)(cd|ls|mv|cat|grep)(?=\s)/', $src)) $p += 0.05;
+    // quoted vars used in comparison: if [ "$somevar" ...
+    if (preg_match('/"\\$\w++"/', $src)) $p += 0.05;
 
     // case ... esac has to be worth something
-    if (preg_match('/\\bcase\\b.*;;.*\\besac\\b/s', $src)) $p += 0.10;
-    
-
+    if (strpos($src, 'case') < strpos($src, 'esac')) $p += 0.1;
 
     return $p;
   }

@@ -767,7 +767,7 @@ class LuminousScanner extends Scanner {
    *  as the one the scanner tokenizes, as a real number between 0 (least 
    *  likely) and 1 (most likely), inclusive
    */
-  public static function guess_language($src) {
+  public static function guess_language($src, $info) {
     return 0.0;
   }
 

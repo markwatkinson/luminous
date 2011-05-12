@@ -86,7 +86,7 @@ class LuminousBNFScanner extends LuminousStatefulScanner {
  
   }
 
-  static function guess_language($src) {
+  static function guess_language($src, $info) {
     // BNF where the rule names are wrapped in brackets makes it easy to
     // recognise, but we weight it very low because we don't want to get
     // confused with HTML.

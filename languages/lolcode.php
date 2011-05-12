@@ -70,12 +70,13 @@ CLASS LUMINOUSLOLCODESCANNER EXTENDS LUMINOUSSIMPLESCANNER {
       'UPPIN', 'NERFIN'));
   }
 
-  public static function guess_language($src) {
+  public static function guess_language($src, $info) {
     $p = 0.0;
-    foreach(array('\\bOMGWTF\\b', 'I\s+CAN\s+HA[SZ]', 'I\s+HA[SZ]\s+A\\b',
-      'UPPIN|NERFIN|GIMMEH', 'TROOF|NUMBAR|NUMBR') as $regex)
+    foreach(array('OMGWTF', 'I CAN HAS', 'GTFO', 'HOW DUZ I', 'IM IN YR', 
+      'IM IN UR', 'I HAS A', 'I HAZ A', ' UPPIN', 'NERFIN', 'TROOF', 'NUMBAR',
+      'NUMBR') as $str)
     {
-      if (preg_match("/$regex/", $src)) $p += 0.1;
+      if (strpos($src, " $str ") !== false) $p += 0.1;
     }
     return $p;
   }

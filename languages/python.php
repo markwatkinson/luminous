@@ -249,27 +249,34 @@ class LuminousPythonScanner extends LuminousScanner {
   }
 
 
-  public static function guess_language($src) {
-    if (preg_match('/^#!.*python/', $src)) return 1.0;
+  public static function guess_language($src, $info) {
+    if (strpos($info['shebang'], 'python') !== false) return 1.0;
+    if ($info['shebang']) return 0.0;
     $p = 0.0;
     // let's look for some trademark pythonic constructs, although I 
     // have a feeling that recent versions of ECMA also impelment some
     // of this
-    if (preg_match('/\\bfor\s+\w+\s+in\s+\w+(\s*\(.*\))?\s*:/', $src))
+    if (preg_match('/^\s*+ for \s++ \w++ \s++ in \s++ \w++ \s*+ :/xm', $src))
       $p += 0.05;
     if (preg_match('/True|False|None/', $src)) $p += 0.01;
     if (preg_match('/"{3}|\'{3}/', $src)) $p += 0.05;
     // class something(Object)
-    if (preg_match('/class\s+\w+\s*\(\s*Object\s*\)/', $src)) $p += 0.1;
+    //
+    if (preg_match('/^\s*+ class \s++ \w++ \s*+ \( \s*+ Object \s*+ \)/xm', 
+      $src)) $p += 0.1;
     // def __init__ (constructor)
-    if (preg_match('/\\bdef\s+__init__\\b/', $src)) $p += 0.2;
+    if (preg_match('/\\bdef \s++ __init__\\b/x', $src)) $p += 0.2;
     // method decorators
-    if (preg_match("/^\s*@[\w\\.]+.*$[\n\r]+\s*def\\b/m", $src)) 
+    if (preg_match("/^\s*+ @[\w\\.]++ .*+ [\n\r]++ \s*+ def\\b/mx", $src)) 
       $p += 0.1;
     // pmax = 0.41
 
+    // common imports: import os|sys|re
+    if (preg_match('/^import\s++(os|sys|re)\\b/m', $src))
+      $p += 0.05;
     // from x import y
-    if (preg_match('/^\s*from\s+(\w+(\.\w+)*)\s+import\s+/m', $src))
+    if (preg_match('/^\s*+ from \s++ (?:\w++(?:\.\w++)*+) \s++ import \s/xm', 
+      $src))
       $p += 0.10;
 
 

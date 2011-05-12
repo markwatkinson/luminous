@@ -36,7 +36,7 @@ class LuminousCSharpScanner extends LuminousSimpleScanner {
       $GLOBALS['luminous_csharp_type_list']));
   }
 
-  static function guess_language($src) {
+  static function guess_language($src, $info) {
     $p = 0.0;
     if (preg_match('/^\s*#region\\b/m', $src)) $p += 0.10;
     if (preg_match('/^\s*using\s+System;/m', $src)) $p += 0.10;
