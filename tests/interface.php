@@ -28,9 +28,9 @@ if (count($_POST)) {
   $lang = $_POST['lang'];
   if ($lang === 'guess') {
     $s = microtime(true);
-    $guesses = luminous::guess_language($_POST['src']);
+    $guesses = luminous::guess_language_full($_POST['src']);
     $e = microtime(true);
-    $lang = $guesses[0]['codes'][0];
+    $lang = luminous::guess_language($_POST['src']);
     $printable_guesses = array();
     foreach($guesses as $g) {
       $printable_guesses[$g['language']] = $g['p'];
@@ -40,12 +40,15 @@ if (count($_POST)) {
     print_r($printable_guesses);
     echo '</pre>';
   }
-  $t = microtime(true);
-  $out = luminous::highlight($lang, $_POST['src'], false);
-  $t1 = microtime(true);
-  echo ($t1-$t) . 'seconds <br>';
-  echo strlen($_POST['src']) . '<br>';
-  echo $out;
+  // else 
+  {
+    $t = microtime(true);
+    $out = luminous::highlight($lang, $_POST['src'], false);
+    $t1 = microtime(true);
+    echo ($t1-$t) . 'seconds <br>';
+    echo strlen($_POST['src']) . '<br>';
+    echo $out;
+  }
 }
 ?>
   <div style='text-align:center'>

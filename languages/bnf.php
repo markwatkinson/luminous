@@ -87,14 +87,9 @@ class LuminousBNFScanner extends LuminousStatefulScanner {
   }
 
   static function guess_language($src, $info) {
-    // BNF where the rule names are wrapped in brackets makes it easy to
-    // recognise, but we weight it very low because we don't want to get
-    // confused with HTML.
-    // Ultimately, BNF is very unlikely to be the right language at any
-    // time, so we bear that in mind.
-    $p = 0.01;
-    if (preg_match('/^\s*<\w+>/m', $src)) $p += 0.01;
-    if (strpos($src, '::=')) $p += 0.01;
-    return $p;
+    // being honest, BNF is going to be so rare that if we ever return 
+    // anything other than 0, it's more likely that we're obscuring the 
+    // correct scanner than correctly identifying BNF.
+    return 0;
   }
 }

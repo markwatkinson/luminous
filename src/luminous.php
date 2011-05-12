@@ -515,6 +515,35 @@ abstract class luminous {
     else return 1;
   }
 
+
+
+  /**
+   * @brief Attempts to guess the language of a piece of source code
+   * @param $src The source code whose language is to be guessed
+   * @param $confidence The desired confidence level: if this is 0.05 but the
+   *  best guess has a confidence of 0.04, then $default is returned. Note 
+   *  that the confidence level returned by scanners is quite arbitrary, so
+   *  don't set this to '1' thinking that'll give you better results. 
+   *  A realistic confidence is likely to be quite low, because a scanner will
+   *  only return 1 if it's able to pick out a shebang (#!) line or something
+   *  else definitive. If there exists no such identifier, a 'strong' 
+   *  confidence which is right most of the time might be as low as 0.1. 
+   *  Therefore it is recommended to keep this between 0.1 and 0.10.
+   * @param $default The default name to return in the event that no scanner
+   * thinks this source belongs to them (at the desired confidence).
+   *
+   * @return A valid code for the best scanner, or $default.
+   *
+   * This is a wrapper around luminous::guess_language_full
+   */
+  static function guess_language($src, $confidence=0.05, $default = 'plain') {
+    $guess = self::guess_language_full($src);
+    if ($guess[0]['p'] >= $confidence) 
+      return $guess[0]['codes'][0];
+    else 
+      return $default;
+  }
+
   /**
    * @brief Attempts to guess the language of a piece of source code
    * @param $src The source code whose language is to be guessed
@@ -539,8 +568,10 @@ abstract class luminous {
    * $guesses = luminous::guess_language($src);
    * $output = luminous::highlight($guesses[0]['codes'][0], $src);
    * @endcode
+   * 
+   * @see luminous::guess_language 
    */
-  static function guess_language($src) {
+  static function guess_language_full($src) {
     global $luminous_;
     // first we're going to make an 'info' array for the source, which
     // precomputes some frequently useful things, like how many lines it 
