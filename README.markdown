@@ -6,11 +6,13 @@ a bunch of common languages and output to HTML and LaTeX.
 
 ##Links:
 
-+ [Site/info](http://luminous.asgaard.co.uk/)
++ [Home page](http://luminous.asgaard.co.uk/) - news, latest stable versions, etc
 + [Live demo and examples](http://luminous.asgaard.co.uk/index.php/demo)
-+ [Documentation and help, READ THIS!](http://luminous.asgaard.co.uk/index.php/docs/show/index)
++ [Documentation and help](http://luminous.asgaard.co.uk/index.php/docs/show/index),
+  read this if you get stuck!
 + [Supported language list](http://luminous.asgaard.co.uk/assets/luminous/supported.php)
-+ [Luminous on GitHub](https://github.com/markwatkinson/luminous)
++ [Luminous on GitHub](https://github.com/markwatkinson/luminous) - please
+  report problems to the issue tracker here
 
 Installation
 ============
@@ -21,18 +23,30 @@ Quick Usage
 ===========
 
 First, if you're going to use caching, which you probably are, create a 
-directory called luminous/cache and give it 777 permissions. Then include 
+directory called luminous/cache and give it writable permissions (chmod 777 on
+most servers -- yours may accept a less permissive value). Then include
 luminous/luminous.php and away you go!
 
 ```php
 <?php
 require_once 'luminous/luminous.php';
-echo luminous::head_html(); // outputs CSS includes, intending to go in <head>
+echo luminous::head_html(); // outputs CSS includes, intended to go in <head>
 echo luminous::highlight('c', 'printf("hello world\n");');
 ```
 
 Useful examples can be found in luminous/examples/. If you have problems,
 check that luminous/examples/example.php works.
+
+
+Command Line Usage
+==================
+
+If you're crazy and want to use Luminous/PHP on the command line, guess what,
+you can!
+```bash
+$ cd luminous/
+$ php luminous.php --help
+```
 
 Polite Warning
 ================
@@ -40,9 +54,10 @@ Polite Warning
 Luminous is pretty slow. It's perfectly usable for highlighting several-KB
 snippets on a blog or similar, and it also caches so highlighting is a
 one-time overhead. Throughput is roughly 50-200 KB/s depending on the
-language. In *most* use cases, this is easily fast enough, and Luminous does
-cache its highlights so there is no real penalty most of the time. You may need
-to run your own tests to decide whether or not it is suitable for you.
+language. In *most* use cases, this is easily fast enough, especially once you
+consider that highlights are cached and therefore there is no real penalty
+most of the time. You may need to run your own tests to decide whether or not
+it is suitable for you.
 
 Licensing
 =========
