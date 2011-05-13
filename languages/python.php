@@ -260,9 +260,9 @@ class LuminousPythonScanner extends LuminousScanner {
       $p += 0.05;
     if (preg_match('/True|False|None/', $src)) $p += 0.01;
     if (preg_match('/"{3}|\'{3}/', $src)) $p += 0.05;
-    // class something(Object)
+    // class something(object)
     //
-    if (preg_match('/^\s*+ class \s++ \w++ \s*+ \( \s*+ Object \s*+ \)/xm', 
+    if (preg_match('/^\s*+ class \s++ \w++ \s*+ \( \s*+ object \s*+ \)/xm', 
       $src)) $p += 0.1;
     // def __init__ (constructor)
     if (preg_match('/\\bdef \s++ __init__\\b/x', $src)) $p += 0.2;
