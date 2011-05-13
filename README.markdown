@@ -39,24 +39,21 @@ Polite Warning
 
 Luminous is pretty slow. It's perfectly usable for highlighting several-KB
 snippets on a blog or similar, and it also caches so highlighting is a
-one-time overhead. Throughput is roughly 100-200 KB/s depending on the
-language. In *most* use cases, this is easily fast enough. You may need to run
-your own tests to decide whether or not it is suitable for you.
-
-
-
+one-time overhead. Throughput is roughly 50-200 KB/s depending on the
+language. In *most* use cases, this is easily fast enough, and Luminous does
+cache its highlights so there is no real penalty most of the time. You may need
+to run your own tests to decide whether or not it is suitable for you.
 
 Licensing
 =========
 
 Luminous is distributed under the GPL3 but includes a bunch of stuff which is
 separate.
-Everything under src/ and languages/ are GPL3.
-Everything under tests/regression/*/ is real source code taken from various
-projects, which is just used as test data. It is all GPL-compatible, but is
-distributed under its own license.
 
-We also include in the distribution jQuery (not currently used by default),
-some small icons from the [MIB Ossigeno icon set](http://kde-look.org/content/show.php/MIB+Ossigeno?content=126122) (also not currently
-used by default), and the Vera-mono font family. These have their own license
-and do not inherit Luminous's.
+  - Everything under src/ and languages/ is part of Luminous.
+  - Everything under tests/regression/*/ is real source code taken from various
+      projects, which is used only as test data. It is all GPL-compatible, but
+      is distributed under its own license. This directory is only present in
+      the git repository and is not part of any stable distribution archives.
+  - We also include jQuery (client/jquery-1.4.2.min.js) and the vera-mono
+    font family (client/font/). These are provided under their own licenses.
