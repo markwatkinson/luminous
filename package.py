@@ -16,13 +16,13 @@ import urllib2
 
 # dirs and files which need removing, relative to the root of the luminous dir
 to_remove = [
-  'dist', 
-  'docs', 
-  'extern'
-  'tests', 
+  'cache',
+  'dist',
+  'extern',
+  'tests',
   'screenshots',
-  '.gitignore', 
-  'package.py', 
+  '.gitignore',
+  'package.py',
   'PREVIEW.markdown'
 ]
 
@@ -47,7 +47,7 @@ class Packagers(object):
 
   def __do_removals(self):
     """ remove the files that don't need to be included in the distribution """
-    for d in to_remove: 
+    for d in to_remove:
       if os.path.isdir(d): shutil.rmtree(d)
       elif os.path.isfile(d): os.remove(d)
     
@@ -134,12 +134,12 @@ class Packagers(object):
 
   def package(self, version):
     self.version = version
-    self.__do_removals()
     self.__do_doxygen()
     self.__do_production()
     self.__do_version()
     self.__do_readme()
-  
+    self.__do_removals()
+
 def package(version):
   # move into the dist dir
   os.chdir(sys.path[0])
