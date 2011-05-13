@@ -18,14 +18,32 @@ $keywords = array(
   'REFERENCES', 'REGEXP', 'REINDEX', 'RELEASE', 'RENAME', 'REPLACE', 'RESTRICT',
   'RIGHT', 'ROLLBACK', 'ROW', 'SAVEPOINT', 'SELECT', 'SET', 'TABLE', 'TEMP',
   'TEMPORARY', 'THEN', 'TO', 'TRANSACTION', 'TRIGGER', 'UNION', 'UNIQUE',
-  'UPDATE', 'USING', 'VACUUM', 'VALUES', 'VIEW', 'VIRTUAL', 'WHEN', 'WHERE'
+  'UPDATE', 'USING', 'VACUUM', 'VALUES', 'VIEW', 'VIRTUAL', 'WHEN', 'WHERE',
+  'WITH',
+
+  // type qualifier stuff
+  'SIGNED', 'UNSIGNED', 'ZEROFILL',
+
+  // seem to be missing these, probably not standard
+  'MINVALUE', 'MAXVALUE', 'START'
 );
 
 $types = array(
-  'BLOB', 'BIGINT', 'BIGINTEGER', 'CHAR', 'DATE', 'DATETIME', 'DECIMAL',
-  'DOUBLE', 'FLOAT', 'INT', 'INTEGER', 'MEDIUMINT', 'MEDIUMINTEGER',
-  'SMALLINT', 'SMALLINTEGER', 'TIME', 'TIMESTAMP', 'TINYINT', 'TINYINTEGER',
-  'VARCHAR'
+  'BINARY', 'BIT', 'BIGINT', 'BIGINTEGER', 'BLOB',
+  'CHAR', 'CLOB',
+  'DATE', 'DATETIME', 'DEC', 'DECIMAL', 'DOUBLE', 'DOUBLE_PRECISION',
+  'ENUM', 
+  'FIXED', 'FLOAT', 
+  'INT', 'INTEGER', 
+  'MEDIUMINT', 'MEDIUMINTEGER',
+  'NUMERIC',
+  'REAL',
+  'SMALLINT', 'SMALLINTEGER', 
+  'SET', 'TEXT', 'TIME', 'TIMESTAMP', 'TINYINT', 
+  'TINYINTEGER',
+  'VARBINARY', 'VARCHAR', 
+  'YEAR',
+  'ZONE' // for time zone
 );
 
 
