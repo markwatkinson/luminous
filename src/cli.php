@@ -1,5 +1,5 @@
 <?php
-
+///@cond ALL
 /* command line interface */
 
 class LuminousCLI {
@@ -212,3 +212,5 @@ function main() {
   $luminous_cli->highlight();
 }
 main();
+
+///@endcond
