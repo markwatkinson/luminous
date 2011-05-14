@@ -43,6 +43,12 @@ class Packagers(object):
     self.version = None
     self.replacements = []
 
+  def __do_version(self):
+    """ Sets the version attribute in luminous.php """
+    subprocess.call(['sed', '-i',
+      "s/define('LUMINOUS_VERSION',.*;/define('LUMINOUS_VERSION', '{0}');/".format(self.version),
+      'src/luminous.php'])
+
   def __do_production(self):
     """ unset the debug flag in the PHP source """
     subprocess.call(['sed', '-i', 
@@ -150,6 +156,7 @@ class Packagers(object):
 
   def package(self, version):
     self.version = version
+    self.__do_version()
     self.__do_doxygen()
     self.__do_production()
     self.__do_version()
