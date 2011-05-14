@@ -1,0 +1,192 @@
+=Writing a language file (scanner)=
+
+\contents 2
+
+== Introduction==
+Writing a language file is either very simple or very complex depending on your language.
+
+We need to consider three classes of language:
+
+  # Simple, context-less, flat languages. These include C, Java, Python, etc, where it's generally sufficient to just define a list of tokens and have a simple state machine take care of it. LuminousSimpleScanner is such a state machine.
+  # Slightly more complex languages where tokens occasionally need to be disambiguated by context. For example, in some languages, a slash `/' may denote a division operator, or a regular expression delimiter. LuminousSimpleScanner provides an 'overrides' array, the overrides are callbacks which let you define finely grained control over specfic tokens, but let LuminousSimpleScanner do the rest.
+  # Complex languages or languages where context/state is important. Luminous provides a LuminousStatefulScanner which is a generic transition table driven state machine, but in other cases it's more sensible to write the scanner from scratch. Examples include Ruby, where there is a lot of disambiguation that needs to be performed, and CSS, where you need to keep track of whether you're inside a {} block, whether you've met a colon yet, whether you've met a semicolon yet, etc.
+
+In any case, you'll also want to peruse the [[Scanning API]] page. If you're feeling adventurous, peruse the languages/ directory, but be warned that some scanners were implemented before all useful infrastructure was written so they might be doing more work than they need to be. langauges/perl.php and languages/json.php are good ones to look at for relatively simple scanners to mildly complex languages.
+
+*Note*: the following examples are all inside the scope of a LumiousScanner or LuminousSimpleScanner subclass definition, but this is omitted for brevity.
+
+== Very Simple Languages ==
+
+Subclass LuminousSimpleScanner, override the init() method, and define your tokens like this highly simplified Python-ish language definition:
+
+{{{lang=php
+<?php
+function init() {
+  $this->add_pattern('COMMENT', '/#.*/');
+  $this->add_pattern('STRING', '/"([^\\\\"]+|\\\\.)*("|$)/');
+  $this->add_pattern('SHELL_CMD', '/`([^\\\\`]+|\\\\.)*(`|$)/');
+  $this->add_pattern('IDENT', '/[a-z_]\w*/');
+
+  $this->add_identifier_mapping('KEYWORD', array('def', 'else', 'elif',
+                                                  'for', 'return', 'while'));
+  $this->rule_tag_map = array(
+    'SHELL_CMD' => 'FUNCTION'
+  );
+}
+}}}
+
+(see src/core/tokenpresets.class.php for a bunch of pre-defined regexes you can use)
+
+A few things to notice here:
+
+ # Patterns are checked in order, so if two patterns match at the same index, the one which was added first will be used.
+ # Backslashes have to be doubled in regexes, that's just php for you. A literal backslash is four backslashes in your source code: '\\\\'
+ # If your given patterns don't fully describe the source code then segments will simply be recorded as a 'null' token.
+ # Delimited patterns which don't have an end-delimiter should technically run until the end of the source or the end of the line, whichever terminates them; the user wants to know if they've left a string open.
+ # The identifier mappings are a 'filter', which looks at anything recorded as an 'IDENT', and converts them into another token. If you don't specify an 'IDENT' pattern, this has no effect.
+ # You can name your patterns however you like, but to pass through the formatter, they need to be `[A-Z_]+`. You can name them arbitrarily, but obviously themes define a finite set of rules, so if you invent a 'SPECIAL_IDENTIFIER' name or something then it'll be tagged in the HTML, but it won't be highlighted because there will be no CSS rule for it. (look in style/luminous_light.css to see what the current rules are). Sometimes it is useful to use descriptive names then map them to an actual CSS rule, this is what the rule_tag_map array is for. If you map something to null, it's kind of like a dummy token. You can use it to describe something, but it won't get 'tagged' in the final highlighted string.
+
+*Examples*: languages/java.php, languages/sql.php are languages defined entirely like this.
+
+
+
+== Slightly more complex languages ==
+
+Let's say you've got a type that can't be matched by a regular expression. For the sake of example we'll use the obvious idea of a '/' as a regex delimiter vs a division operator.
+
+Insert this into your init:
+
+{{{lang=php
+<?php
+function init() {
+  $this->add_pattern('OPERATOR', '@[!%^&*\\\\-=+;:\\|,\\./?]+@');
+  $this->add_pattern('SLASH', '%/%'); // special case
+  // tokenizing these helps us figure out the slash
+  $this->add_pattern('OPENER', '/[\\(\\[\\{]+/');
+  $this->add_pattern('CLOSER', '/[\\)\\]\\}]+/');
+  //... but they aren't real tokens, as far as highlighting is concerned.
+  $this->rule_tag_map['OPENER'] = null;
+  $this->rule_tag_map['CLOSER'] = null;
+
+  $this->overrides['SLASH'] = array($this, 'slash_override'); // this is php's way to define a method reference
+}
+}}}
+
+Now, when LuminousSimpleScanner finds it's at the slash, it passes it down to the override. It has not consumed it (*important detail*: it did consume it, but it called unscan(), which means you should not call unscan until you have called scan, or check, or similar). The override is responsible for consuming the token. It is given an array corresponding to the match groups of the pattern. If it returns and has failed to advance the scan pointer Luminous will throw an exception.
+
+An override to disambiguate '/' looks something like this:
+
+{{{lang=php
+<?php
+function slash_override($matches) {
+  // to disambiguate it we go backwards over the token array and see what
+  // was preceding it
+  $regex = false;
+  for($i=count($this->tokens)-1; $i>=0; $i--) {
+    $t = $this->tokens[$i];  // $t = array($name, $content, $pre_escaped)
+    if ($t[0] === 'COMMENT' || $t[0] === null) continue;     // unimportant
+    elseif($t[0] === 'OPERATOR' || $t[0] === 'OPENER') $regex = true;
+    break;
+  }
+  if ($regex) {
+    // get and consume the regex pattern
+    $str = $this->scan('% / (?: [^\\\\\\\\/]+ | \\\\\\\\.)* ($|/[iogmx]*)%x');
+    assert($str !== null); // this must have matched, else our regex is skewy
+    $this->record($str, 'REGEX');
+  } else {
+    $this->record($this->get(), 'OPERATOR');
+  }
+}
+}}}
+
+
+*Examples*: languages/perl.php is a language which uses several overrides, to handle 'quote-like delimiters', heredoc, and regex/slash disambiguation.
+
+== Finally, a hand-written scanner ==
+
+Hand written scanners should subclass LumiousScanner.
+
+Scanning occurs in the main() method. There are two things you have to worry about: 1 advancing the scan pointer, which is done by calls to scan(), get(), etc, and 2: recording the string segments you're matching as their relevant tokens. This is done by calling `record($string, $token_name, $escaped?=false)`
+
+By the time you exit main(), the string should have been fully record()ed. main() doesn't return anything.
+
+Imagine in your langauge you need to keep track of a context (state) by tracking curly braces. The basic workflow looks something like this:
+
+{{{lang=php
+<?php
+
+function main() {
+  $stack = array();
+  while (!$this->eos()) {
+
+    $this->skip_whitespace(); // consumes any whitespace, records it as type 'null'
+
+    if ($this->scan('% /\\\\* .*? \\\\*/  %xs')) {
+      // scan tries to match at the current index, and returns what it matched,
+      // or null if it didn't match. Watch out for boolean conversion!
+      // '' and '0' both evaluate as false. If your pattern can match these,
+      // make sure you check "if ($this->scan(...) !== null)"
+
+      // after a successful call to scan, if you didn't catch the return,
+      // you can use match(), match_groups() or match_group(n) to retrieve the
+      // match
+
+      $this->record($this->match(), 'COMMENT');
+    }
+    elseif($this->peek() === '{') {
+      // push the stack
+      $stack[] = 'brace';
+      // consume and record...
+      $this->record($this->get(), 'OPENER');
+    }
+    elseif(!empty($stack) && $this->peek() === '}') {
+      array_pop($stack)
+      $this->record($this->get(), 'CLOSER');
+    }
+    // more rules go here
+    // ...
+    // ...
+    // ...
+    else { // ensure we advance the scan pionter
+      $this->record($this->get(), null);
+    }
+  }
+}
+}}}
+
+*Examples*: languages/json.php is a fairly simple scanner which implements its own loop explicitly and records stack based state information.
+
+
+
+
+== Using your scanner ==
+
+Once you have written your scanner, you can use it by either simply passing it as the 'language' parameter of the highlight function, e.g.
+
+{{{lang=php
+<?php
+$scanner = new MyScanner();
+$out = luminous::highlight($scanner, 'some code');
+}}}
+
+
+or, if you have several you can use Luminous's internal scanner table. Let's say you've written a new Python scanner:
+{{{lang=php
+<?php
+
+luminous::register_scanner(
+  array('py', 'python'), // codes - if you only have one, this can be a string
+  'PythonScanner' // the class name of your scanner (as string, yes)
+  'Python', // human readable language name
+  '/path/to/your/scanner/class/file.php'
+);
+
+// this will use your new scanner
+$out = luminous::highlight('py', 'def something(): return 1');
+}}}
+
+Using register_scanner() means you don't have to include or instantiate scanner classes and files yourself, luminous performs lazy file inclusion when it needs to.
+
+There is an optional final argument which is a list of dependencies or null. If you write several scanners which rely on each other, list their codes in the dependencies array. If you end up with circular include requirements*, write a dummy include file which includes everything needed, insert that first with classname=null, and list that insertion's code as a dependency in your real insertion.
+
+* this can happen: you may have a 'compile time' dependency like a superclass's definition, and a 'runtime' dependency like a sub-scanner which needs to be instantiated (at runtime). These are conceptually different but handled in the same way, hence minor problems can occur.

@@ -1,0 +1,45 @@
+=Usage=
+
+==Quick Usage==
+
+Firstly, if you're going to use caching, which you probably are, create a directory called luminous/cache and give it 777 permissions (or whatever the most restrictive permissions necessary are for your server to allow php to write into the directory - 757 or 775 might work). Then include luminous/luminous.php and away you go!
+
+Secondly, if your copy contains it, delete the luminous/tests/ directory. It's full of ugly testing scripts which at best take up room on your server, and at worst expose a security risk (note: a .htaccess is inside the test directory which should prevent external access, but it's best to delete the directory).
+
+{{{lang=php
+<?php 
+require_once 'luminous/luminous.php';
+echo luminous::head_html(); // outputs CSS includes, intended to go in <head>
+echo luminous::highlight('c', 'printf("hello world\n");');
+}}}
+
+Useful examples can be found in luminous/examples/. 
+
+== Troubleshooting ==
+
+If you have problems, point your browser at luminous/examples/example.php and see if it works. This particular example allows you to toggle caching and will spew errors at you if there is a permissions problem with your cache.
+
+If you're seeing some reasonable output but it doesn't seem to be styled, have a look at your page's source and see if the output from luminous::head_html() looks sensible. Luminous may have had trouble figuring out the include path to the stylesheets (this can happen if you're using symbolic links or other filesystem trickery). You should consult the [[User-API-Reference]] and set the 'relative-root' setting to the URL to your luminous directory (not its location on the filesystem), or you can omit the call to head_html() and include the stylesheets as normal in your page (they are located under luminous/style. You should include luminous.css first and then one of the theming stylesheets).
+
+If you still have problems and it seems that Luminous just isn't working on your setup, please [https://github.com/markwatkinson/luminous/issues/new file a bug report] if you're on GitHub or send an email to mark (at) asgaard co uk.
+
+==Advanced Usage==
+  * [[User-API-Reference]]
+
+==Hacking==
+  * [[Writing-a-language-scanner]]
+  * [[Scanning-API]]
+  * [[Writing-a-formatter]]
+
+== Local API docs==
+
+Doxygen HTML documentation can be generated for your working copy by running `$ doxygen` in your luminous diretory. The index page will be output to luminous/docs/html/index.html
+
+The docs come in several sections:
+  * `USER` - this covers the user API, and is generally useful.
+  * `CORE` - this covers the scanning classes and utilities. This is useful if you wish to write your own scanner, and is largely used as an internal specification.
+  * `ALL` - this covers the cache, the scanner lookup table, formatters, etc. These are unlikely to be useful to you.
+
+By default USER and CORE are generated. This can be altered with the 'ENABLED_SECTIONS' setting in the Doxyfile in the luminous directory.
+
+

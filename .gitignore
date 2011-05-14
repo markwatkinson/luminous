@@ -6,5 +6,5 @@ tests/formatters/filedump/
 .directory
 
 dist/
-docs/
+docs/html/
 tests/log

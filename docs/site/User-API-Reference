@@ -1,0 +1,95 @@
+=User's API reference=
+
+
+\contents 2
+
+==Introduction==
+
+This document gives a relatively high level overview of the user's API. For full API documentation, see the Doxygen HTML files in your distribution.
+
+The entirety of the public API is contained within a class called `luminous`. This is used as a namespace, the methods within are static, which means you can call them directly without instantiating the class. For those unfamiliar with the syntax or terminology, this just means that you call the functions as normal but place `luminous::` infront of it. This is as it is shown on this page.
+
+The functions in this namespace interact with a theoretically private singleton object called $luminous_. You should be aware of this if only to avoid overwriting it.
+
+==Basic Functions==
+
+The two main highlighting functions are:
+
+    `luminous::highlight($language, $source, $cache=true)`
+    `luminous::highlight_file($language, $path, $cache=true)`
+
+Note that $language can be a language code (open supported.php in a browser to see a list of what you have available), or your own instance of LuminousScanner.
+
+Since 0.6.3 you can ask Luminous to guess the language of a piece of source code with the function:
+
+    `luminous::guess_language($src, $confidence=0.05, $default='plain')`
+
+This will return a valid language code for the most-probable language. $confidence and $default are related: if no scanner is willing to say with above 0.05 (5%) certainty that it owns the source code, then $default is returned. It's probably best to leave this at 0.05.
+
+*warning:* For obvious reasons, laguage guessing is inherently unreliable. Luminous will try to latch on to unique parts of the language, but this is difficult in languages like C, C# and Java, which are syntatically very similar.
+
+
+    `luminous::head_html()`
+
+This will output several link and script tags. It tries to determine the correct path to the luminous/ directory relative to the document root, but may fail. In this case, you can override it to set it manually. The settings: 'theme', 'relative-root', 'include-javascript' and 'include-jquery' affect this.
+
+==Themes==
+
+    `luminous::themes()`
+    `luminous::theme_exists($theme_name)`
+
+themes() returns a list of themes present in the style/ directory. Use this if you're building a theme selector. theme_exists() returns true if a theme exists in style/, false otherwise.
+
+theme_exists() returns true if a theme exists in the style/ directory, else false.
+
+==Settings==
+
+    `luminous::set($name, $value)`
+
+Sets an internal setting to the given value. An exception is raised if the setting is unrecognised.
+
+    `luminous::setting($name)`
+
+Returns the value currently set for the given setting. An exception is raised if the setting is unrecognised.
+
+===List of observed settings===
+
+As with php, setting an integer setting to 0 or -1 will disable it
+
+
+====Misc====
+
+  * cache-age(int): age (seconds) at which to remove cached files (age is determined by mtime -- cache hits trigger a `touch', so this setting removes cached files which have not been accessed for the given time.), 0 or -1 to disable. (default: 777600 : 90 days)
+  * include-javascript (bool): controls whether luminous::head_html() outputs the javascript 'extras'.
+  * include-jquery (bool): controls whether luminous::head_html() outputs jquery; this is ignored if include-javascript is false.
+  * relative-root (str): luminous::head_html() has to know the location of the luminous directory relative to the location of the document root. It tries to figure this out, but may fail if you are using symlinks. You may override it here.
+  * theme: Sets the internal theme. The LaTeX formatter reads this, and luminous::head_html observes this.
+
+====Formatter====
+
+  * auto-link(bool): if the formatter supports hyperlinking, URIs will be linked
+  * html-strict(bool): Luminous uses the 'target' attribute of hyperlinks (`a' tags). This is not valid for X/HTML4 strict, therefore it may be disabled. Note that this is purely academic: browsers don't care, and let's be honest, it was a stupid idea by the W3C anyway. Luminous produces valid HTML5 and HTML4 transitional output regardless.
+  * line-numbers(bool): If the formatter supports line numbering, lines are numbered. (default: true)
+  * max-height(int): if the formatter can control its height, it will constrain itself to this many pixels (you may specify this as a string with units) (default: 500)
+  * wrap-width(int): if the formatter supports line wrapping, lines will be wrapped at this number of characters (0 or -1 to disable) (default: -1)
+  * format (string): Controls the output format:
+    # 'html': HTML. The HTML is basically a widget, and is heavily styled by external CSS which you have to include in your page.
+    # 'html-full': A full HTML page. The page is a valid and self-contained HTML document and includes all necessary CSS.
+    # 'html-inline': This is a small variation on the HTML formatter which styles output for inline (in-text) display. The output is in an inline-block element, with line numbers and height constraints disabled. You probably want HTML.
+    # 'latex': LaTeX.
+    # 'none', null: the 'identity' formatter, i.e. no formatting is applied. The result is basically an XML fragment, the way Luminous 'tags' the string internally. This is implemented for debugging but may in special circumstances be of user interest?
+
+
+
+==Other functions==
+
+If you have a lot of custom scanners, you can make use of the internal scanner table by registering your scanners:
+
+    `register_scanner($language_code, $classname, $readable_language, $path, $dependencies=null)`
+
+codes may be an array or string. This means you don't have to include or instantiate your scanner classes yourself, instead you can use the given codes and Luminous performs lazy file inclusion as and when necessary.
+
+If you write serveral scanners which rely on each other, list their codes in the dependencies array. If you end up with circular include requirements*, write a dummy include file which includes everything needed, insert that first with classname=null, and list that insertion's code as a dependency in your real insertion.
+
+* this can happen: you may have a 'compile time' dependency like a superclass's definition, and a 'runtime' dependency like a sub-scanner which needs to be instantiated (at runtime). These are conceptually different but handled in the same way, hence minor problems can occur.
+ 
