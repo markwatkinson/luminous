@@ -531,7 +531,7 @@ abstract class luminous {
    *  only return 1 if it's able to pick out a shebang (#!) line or something
    *  else definitive. If there exists no such identifier, a 'strong' 
    *  confidence which is right most of the time might be as low as 0.1. 
-   *  Therefore it is recommended to keep this between 0.1 and 0.10.
+   *  Therefore it is recommended to keep this between 0.01 and 0.10.
    * @param $default The default name to return in the event that no scanner
    * thinks this source belongs to them (at the desired confidence).
    *
