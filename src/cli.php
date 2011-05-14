@@ -52,6 +52,7 @@ Options:
   --list-themes         Lists valid themes and exits
 
   --help                Display this text and exit
+  --version             Display version number and exit
 
 EOF;
   }
@@ -100,6 +101,11 @@ see --help for help
       }
       elseif ($a === '--help') {
         self::print_help();
+        exit(0);
+      }
+      elseif($a === '--version') {
+        echo LUMINOUS_VERSION;
+        echo "\n";
         exit(0);
       }
       elseif ($a === '--no-numbers') {
