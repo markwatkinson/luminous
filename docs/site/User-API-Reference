@@ -20,7 +20,7 @@ The two main highlighting functions are:
 
 Note that $language can be a language code (open supported.php in a browser to see a list of what you have available), or your own instance of LuminousScanner.
 
-Since 0.6.3 you can ask Luminous to guess the language of a piece of source code with the function:
+Since 0.6.2 you can ask Luminous to guess the language of a piece of source code with the function:
 
     `luminous::guess_language($src, $confidence=0.05, $default='plain')`
 
