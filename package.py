@@ -32,6 +32,10 @@ def print_help():
   Version should correspond to a tag in the Git repository. If it is omitted, 
   'master' is used.'''.format(sys.argv[0]))
 
+def read_file(fn):
+  with open(fn, 'r') as fn:
+    return fn.read()
+
 
 class Packagers(object):
 
@@ -89,30 +93,40 @@ class Packagers(object):
 
   def __do_readme(self):
     """ translate README.markdown to index.html, requires perl """
-    with open('README.markdown', 'r') as f:
-      # we're going to alter it slightly, GitHub markdown allows syntax
-      # highlighting, but the original Markdown script does not.
-      # We're going to extract code blocks, run it through Luminous,
-      # then insert it again later
-      markdown = f.read()
-      markdown = re.sub('```(.*)(?:\r\n|[\r\n])([\\S\\s]*?)```',
-          self.__do_readme_replace, markdown)
-          
-      with open('index.html', 'w') as html:
-        try:
-          p = subprocess.Popen(['perl',
-            # use the executing env's version of the script
-            sys.path[0] + '/extern/Markdown_1.0.1/Markdown.pl'],
-            stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        except Exception as e:
-          print 'Readme translation failed with error:' + str(e)
-          return
-        p.stdin.write(markdown)
-        text = p.communicate()[0]
+    markdown = read_file('README.markdown')    
+    # The readme is for github and s therefore stored in GitHub markdown.
+      
+    # we're going to alter it slightly, GitHub markdown allows syntax
+    # highlighting, but the original Markdown script does not.
+    # We're going to extract code blocks, run it through Luminous,
+    # then insert it again later
+    markdown = re.sub('```(.*)(?:\r\n|[\r\n])([\\S\\s]*?)```',
+      self.__do_readme_replace, markdown)
 
-        text = re.sub(r'<code>REPLACEMENT_(\d+)</code>',
-          self.__do_readme_unreplace, text)
-        html.write('''<!DOCTYPE html>
+    # format the markdown
+    # use the executing env's version of the script
+    p = subprocess.Popen(['perl',
+      sys.path[0] + '/extern/Markdown_1.0.1/Markdown.pl'],
+      stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    p.stdin.write(markdown)
+    text = p.communicate()[0]
+    text = re.sub(r'<code>REPLACEMENT_(\d+)</code>',
+      self.__do_readme_unreplace, text)
+
+
+    api_docs = ''
+    # now we're going to copy the API docs from the site. The site
+    # uses a variant on Markdown so we use a different parser
+    path = 'docs/site/User-API-Reference'
+    # use the executing's env if the path doesn't exist in the child
+    if not os.path.exists(path): path = sys.path[0] + '/' + path
+    with open(path, 'r') as f:
+      p = subprocess.Popen( ['php',
+        sys.path[0] + '/extern/markuplite/markup.php'],
+        stdin=f, stdout=subprocess.PIPE)
+      api_docs = p.communicate()[0]
+
+    html_template = '''<!DOCTYPE html>
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -130,7 +144,9 @@ class Packagers(object):
   <body>
     {0}
   </body>
-</html>'''.format(text))
+</html>'''
+    with open('index.html', 'w') as f: f.write(html_template.format(text))
+    with open('api-docs.html', 'w') as f: f.write(html_template.format(api_docs))
 
   def package(self, version):
     self.version = version
