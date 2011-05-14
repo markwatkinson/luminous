@@ -35,7 +35,7 @@ class LuminousDiffScanner extends LuminousScanner {
 
   function string($string=null) {
     if ($string !== null) {
-      if (preg_match('/^[><\d]/m', $string)) {
+      if (preg_match('/^[><]/m', $string)) {
         // normal rules
         $this->patterns['range'] = '/\d+.*/';
         $this->patterns['codeblock'] = "/(^([<> ]).*(\n)?)+/m";
