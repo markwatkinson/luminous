@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__FILE__) . '/../../luminous.php');
+require_once(dirname(__FILE__) . '/../../src/luminous.php');
 require_once(dirname(__FILE__) . '/../extern/php-diff/lib/Diff.php');
 require_once(dirname(__FILE__) . '/../extern/php-diff/lib/Diff/Renderer/Text/Unified.php');
 

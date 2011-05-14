@@ -1,6 +1,8 @@
 <?php
 
-require_once(dirname(__FILE__) . '/../../luminous.php');
+/// this test is broken
+
+require_once(dirname(__FILE__) . '/../../src/luminous.php');
 
 /**
  * iterates over all the source code in the regression testing dir,

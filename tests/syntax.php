@@ -9,7 +9,7 @@
  * go undetected for some time
  */
 
-require '../luminous.php';
+require '../src/luminous.php';
 error_reporting(E_ALL | E_STRICT);
 
 foreach(luminous::scanners() as $codes) {

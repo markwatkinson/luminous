@@ -2,7 +2,7 @@
 $lroot = dirname(__FILE__) . '/../../';
 $path = dirname(__FILE__);
 
-$lpath = realpath($lroot . '/luminous.php');
+$lpath = realpath($lroot . '/src/luminous.php');
 require ($lpath);
 
 luminous::set('format', null);
