@@ -8,6 +8,10 @@ require_once(dirname(__FILE__) . '/scanners.class.php');
 require_once(dirname(__FILE__) . '/formatters/formatter.class.php');
 require_once(dirname(__FILE__) . '/core/scanner.class.php');
 
+// updated automatically, use single quotes, keep single line
+define('LUMINOUS_VERSION', 'master');
+
+
 /*
  * This file contains the public calling interface for Luminous. It's split
  * into two classes: one is basically the user-interface, the other is a
@@ -31,7 +35,6 @@ require_once(dirname(__FILE__) . '/core/scanner.class.php');
  * 
  */
 class _Luminous {
-  public $version = 'master';
 
   /// Settings array
   public $settings = array(
@@ -239,7 +242,7 @@ class _Luminous {
       $this->settings['format'],
       $this->settings['theme'],
       $this->settings['html-strict'],
-      $this->version,
+      LUMINOUS_VERSION,
     );
 
     $id = md5($source);
