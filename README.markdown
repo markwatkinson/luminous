@@ -47,6 +47,10 @@ you can!
 $ cd luminous/
 $ php luminous.php --help
 ```
+Please note: if you're using a command line PHP application and wish to include
+Luminous, then including luminous.php will probably break your script. Instead,
+include src/luminous.php which does exactly the same thing, but bypasses the
+CLI part of Luminous.
 
 Polite Warning
 ================
