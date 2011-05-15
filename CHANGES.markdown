@@ -1,6 +1,38 @@
 Luminous Changelog since 0.6.0
 ==============================
 
+##v0.6.2 (15/05/11):
+
+- General: 
+  - The User API's configuration settings has been changed internally, using
+    the luminous::set() method will throw exceptions if you try to do something
+    nonsensical.
+  - Each configuration option is now documented fully in Doxygen 
+    (LumiousOptions class).
+  - High level user API's docs are bundled in HTML.
+  - PHP 5.2 syntax error fixed in LaTeX formatter (did not affect 5.3+)
+
+- New Stuff:
+  - HTML full-page formatter, which produces a standalone HTML document. Use 
+    'html-full' as the formatter.
+  - Command line interface. Run ``php luminous.php --help`` to see the usage
+  - Language guessing. Generally accurate for large sources of common 
+    languages, with no guarantees in other situations. See 
+    ``luminous::guess_language`` and ``luminous::guess_lanuage_full`` 
+    in Doxygen for details. 
+
+- Language fixes:
+  - C/C++ had its #if 0... #endif nesting slightly wrong, it now works
+    properly
+  - Diff scanner should no longer get confused over formats (i.e. original, 
+    context, or unified) if a line starts with a number.
+  - PHP now recognises backtick delimited 'strings'
+  - Ruby heredoc detection previously had a minor but annoying bug where 
+    a heredoc declaration would kill all highlighting on the remainder of 
+    that line. This now works correctly.
+  - SQL recognises a much more complete set of words, though non-MySQL dialects
+    are still under-represented
+
 ##v0.6.1 (29/04/11):
 
 - General:
