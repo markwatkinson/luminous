@@ -19,7 +19,272 @@ define('LUMINOUS_VERSION', 'master');
  * procedural. It's wrapped in an abstract class for a namespace.
  * The real class is instantiated into a singleton which is manipulated by
  * the abstract class methods.
+ *
+ * We also have a somewhat convoluted settings class, which is defined
+ * explicitly instead of using an assoc. array because this way Doxygen
+ * picks it up, and applying strict validation to the arguments is a lot
+ * easier.
  */
+
+/**
+ * @cond USER
+ *
+ * @brief Options class.
+ *
+ * @warning This object's structure isn't guaranteed to be stable so don't read
+ * or write these directly. As a user, you should be using luminous::set()
+ * and luminous::setting()
+ *
+ * We use a fair bit of PHP trickery in the implementation here. The keener
+ * among you will notice that the options are all private: don't worry about
+ * that. We override the __set() method to apply option specific validation.
+ * Options can be written to as normal.
+ *
+ * The option variable names correspond with option strings that can be passed
+ * through luminous::set(), however, for historical reasons, underscores can be
+ * replaced with dashed in the call.
+ */
+class LuminousOptions {
+  /**
+   * @brief Maximum age of cache files in seconds
+   * 
+   * Cache files which have not been read for this length of time will be
+   * removed from the file system. The file's 'mtime' is used to calculate
+   * when it was last used, and a cache hit triggers a 'touch'
+   *
+   * Set to -1 or 0 to disable cache purges
+   */
+  private $cache_age = 777600;
+
+  /**
+   * @brief Word wrapping
+   *
+   * If the formatter supports line wrapping, lines will be wrapped at
+   * this number of characters (0 or -1 to disable)
+   */
+  private $wrap_width = -1;
+
+  /**
+   * @brief Line numbering
+   *
+   * If the formatter supports line numbering, this setting controls whether
+   * or not lines should be numbered
+   */
+  private $line_numbers = true;
+
+  /**
+   * @brief Hyperlinking
+   *
+   * If the formatter supports hyper-linking, this setting controls whether
+   * or not URLs will be automatically linked
+   */
+  private $auto_link = true;
+
+  /**
+   * @brief Widget height constraint
+   *
+   * If the formatter supports heigh constraint, this setting controls whether
+   * or not to constrain the widget's height, and to what.
+   */
+  private $max_height = 500;
+
+  /**
+   * @brief Output format
+   *
+   * Chooses which output format to use. Current valid settings are:
+   * \li 'html' - standard HTML element, contained in a \<div\> with class 'luminous',
+   *    CSS is not included and must be included on the page separately
+   *    (probably with luminous::head_html())
+   * \li 'html-full' - A complete HTML document. CSS is included.
+   * \li 'html-inline' - Very similar to 'html' but geared towards inline display.
+   *    Probably not very useful.
+   * \li 'latex' - A full LaTeX document
+   * \li 'none' or \c NULL - No formatter. Internal XML format is returned.
+   *    You probably don't want this.
+   */
+  private $format = 'html';
+
+  /**
+   * @brief Theme
+   *
+   * The default theme to use. This is observed by the HTML-full and LaTeX
+   * formatters, it is also read by luminous::head_html().
+   *
+   * This should be a valid theme which exists in style/
+   */
+  private $theme = 'luminous_light.css';
+
+  /**
+   * @brief HTML strict standards mode
+   *
+   * The HTML4-strict doctype disallows a few things which are technically
+   * useful. Set this to true if you don't want Luminous to break validation
+   * on your HTML4-strict document. Luminous should be valid
+   * HTML4 loose/transitional and HTML5 without needing to enable this.
+   */
+  private $html_strict = false;
+
+
+  /**
+   * @brief Location of Luminous relative to your document root
+   *
+   * If you use luminous::head_html(), it has to try to figure out the
+   * path to the style/ directory so that it can return a correct URL to the
+   * necessary stylesheets. Luminous may get this wrong in some situations,
+   * specifically it is currently impossible to get this right if Luminous
+   * exists on the filesystem outside of the document root, and you have used
+   * a symbolic link to put it inside. For this reason, this setting allows you
+   * to override the path.
+   *
+   * e.g. If you set this to '/extern/highlighter', the stylesheets will be
+   * linked with
+   * \<link rel='stylesheet' href='/extern/highlighter/style/luminous.css'\>
+   *
+   */
+  private $relative_root = null;
+
+  /**
+   * @brief JavaScript extras
+   *
+   * controls whether luminous::head_html() outputs the javascript 'extras'.
+   */
+  private $include_javascript = false;
+
+  /**
+   * @brief jQuery
+   *
+   * Controls whether luminous::head_html() outputs jQuery, which is required
+   * for the JavaScript extras. This has no effect if $include_javascript is
+   * false.
+   */
+  private $include_jquery = true;
+
+
+  /**
+   * @brief Failure recovery
+   *
+   * If Luminous hits some kind of unrecoverable internal error, it should
+   * return the input source code back to you. If you want, it can be
+   * wrapped in an HTML tag. Hopefully you will never see this.
+   */
+  private $failure_tag = 'pre';
+
+  
+
+  private static function check_type($value, $type, $nullable=false) {
+    if ($nullable && $value === null) return true;
+    $func = null;
+    if ($type === 'string') $func = 'is_string';
+    elseif($type === 'int') $func = 'is_int';
+    elseif($type === 'numeric') $func = 'is_numeric';
+    elseif($type === 'bool') $func = 'is_bool';
+    else {
+      assert(0);
+      return true;
+    }
+
+    $test = call_user_func($func, $value);
+    if (!$test) {
+      throw new InvalidArgumentException('Argument should be type ' . $type .
+      ($nullable? ' or null' : ''));
+    }
+    return $test;
+  }
+
+  public function __get($name) {
+    if (property_exists('LuminousOptions', $name))
+      return $this->$name;
+    else {
+      throw new Exception('Unknown property: ' . $name);
+    }
+  }
+
+  public function __set($name, $value) {
+    if ($name === 'auto_link')
+      $this->set_bool($name, $value);
+    elseif($name === 'cache_age') {
+      if (self::check_type($value, 'int')) $this->$name = $value;
+    }
+    elseif($name === 'failure_tag') {
+      if (self::check_type($value, 'string', true)) $this->$name = $value;
+    }
+    elseif($name === 'format')
+      $this->set_format($value);
+     elseif($name === 'html_strict') {
+      if (self::check_type($value, 'bool')) $this->$name = $value;
+    }
+    elseif($name === 'include_javascript' || $name === 'include_jquery') 
+      $this->set_bool($name, $value);
+    elseif($name === 'line_numbers') 
+      $this->set_bool($name, $value);
+    elseif($name === 'max_height') 
+      $this->set_height($value);
+    elseif($name === 'relative_root') {
+      if (self::check_type($value, 'string', true)) $this->$name = $value;
+    }
+    elseif($name === 'theme')
+      $this->set_theme($value);
+    elseif($name === 'wrap_width') {
+      if (self::check_type($value, 'int')) $this->$name = $value;
+    }
+    else {
+      throw new Exception('Unknown option: ' . $name);
+    }
+  }
+
+  private function set_bool($key, $value) {
+    if (self::check_type($value, 'bool')) {
+      $this->$key = $value;
+    }
+  }
+  private function set_string($key, $value, $nullable=false) {
+    if (self::check_type($value, 'string', $nullable)) {
+      $this->$key = $value;
+    }
+  }
+
+  private function set_format($value) {
+    // formatter can either be an instance or an identifier (string)
+    $is_obj = $value instanceof LuminousFormatter;
+    if($is_obj || self::check_type($value, 'string', true)) {
+      // validate the string is a known type
+      if (!$is_obj && !in_array($value, array('html', 'html-full',
+        'html-inline', 'latex', 'none', null), true)) {
+        throw new Exception('Invalid formatter: ' . $value);
+      }
+      else {
+        $this->format = $value;
+      }
+    }
+  }
+
+  private function set_theme($value) {
+    if (self::check_type($value, 'string')) {
+      if (!preg_match('/\.css$/', $value)) $value .= '.css';
+      if (!luminous::theme_exists($value)) {
+        throw new Exception('No such theme: '
+          . luminous::root() . '/style/' . $value);
+      }
+      else $this->theme = $value;
+    }
+  }
+
+  private function set_height($value) {
+    // height should be either a number or a numeric string with some units at
+    // the end
+    if (is_numeric($value) 
+      || (is_string($value) && preg_match('/^\d+/', $value))
+    ) {
+      $this->max_height = $value;
+    }
+    else {
+      throw new InvalidArgumentException('Unrecognised format for height');
+    }
+  }
+
+}
+/// @endcond
+
 
 /**
  * @cond ALL
@@ -37,21 +302,8 @@ define('LUMINOUS_VERSION', 'master');
 class _Luminous {
 
   /// Settings array
-  public $settings = array(
-    'cache-age' => 777600, // 90 days
-    'wrap-width' => -1,
-    'line-numbers' => true,
-    'auto-link' => true,
-    'max-height' => 500,
-    'format' => 'html',
-    'theme' => 'luminous_light',
-    'html-strict' => false,
-    'relative-root' => null,
-    'include-javascript' => false,
-    'include-jquery' => true,
-    'failure-tag' => 'pre'
-  );
-
+  /// @see LuminousOptions
+  public $settings;
 
   public $scanners; ///< the scanner table
   
@@ -63,6 +315,8 @@ class _Luminous {
 
   /// registers builtin scanners
   private function register_default_scanners() {
+
+    $this->settings = new LuminousOptions();
     // we should probably hide this in an include for neatness
     // when it starts growing.
     $language_dir = luminous::root() . '/languages/';
@@ -186,43 +440,45 @@ class _Luminous {
   function get_formatter() {
     $fmt_path = dirname(__FILE__) . '/formatters/';
 
-    $fmt = $this->settings['format'];
-    if (!is_string($fmt) && is_subclass_of($fmt, 'LuminousFormatter'))
-      return clone $fmt;
-
-    switch(strtolower($fmt)) {
-      case 'html' :
-        require_once($fmt_path . 'htmlformatter.class.php');
-        return new LuminousFormatterHTML();
-      case 'html-inline':
-        require_once($fmt_path . 'htmlformatter.class.php');
-        return new LuminousFormatterHTMLInline();
-      case 'html-full':
-        require_once($fmt_path . 'htmlformatter.class.php');
-        return new LuminousFormatterHTMLFullPage();
-      case 'latex':
-        require_once($fmt_path . 'latexformatter.class.php');
-        return new LuminousFormatterLatex();
-      case null:
-      case 'none':
-        require_once($fmt_path . 'identityformatter.class.php');
-        return new LuminousIdentityFormatter();
-      default:
-        throw new Exception('Unknown formatter: ' . $this->settings['format']);
-        return null;
+    $fmt = $this->settings->format;
+    $formatter = null;
+    if (!is_string($fmt) && is_subclass_of($fmt, 'LuminousFormatter')) {
+      $formatter = clone $fmt;
+    } elseif ($fmt === 'html') {
+      require_once($fmt_path . 'htmlformatter.class.php');
+      $formatter = new LuminousFormatterHTML();
+    } elseif ($fmt ===  'html-inline') {
+      require_once($fmt_path . 'htmlformatter.class.php');
+      $formatter = new LuminousFormatterHTMLInline();
+    } elseif ($fmt ===  'html-full') {
+      require_once($fmt_path . 'htmlformatter.class.php');
+      $formatter = new LuminousFormatterHTMLFullPage();
+    } elseif($fmt === 'latex') {
+      require_once($fmt_path . 'latexformatter.class.php');
+      $formatter = new LuminousFormatterLatex();
+    } elseif($fmt ===  null || $fmt === 'none') {
+      require_once($fmt_path . 'identityformatter.class.php');
+      $formatter = new LuminousIdentityFormatter();
     }
+    
+    if ($formatter === null) {
+      throw new Exception('Unknown formatter: ' . $this->settings->format);
+      return null;
+    }
+    $this->set_formatter_options($formatter);
+    return $formatter;
   }
 
   /**
    * Sets up a formatter instance according to our current options/settings
    */
   private function set_formatter_options(&$formatter) {
-    $formatter->wrap_length = $this->settings['wrap-width'];
-    $formatter->line_numbers = $this->settings['line-numbers'];
-    $formatter->link = $this->settings['auto-link'];
-    $formatter->height = $this->settings['max-height'];
-    $formatter->strict_standards = $this->settings['html-strict'];
-    $formatter->set_theme(luminous::theme($this->settings['theme']));
+    $formatter->wrap_length = $this->settings->wrap_width;
+    $formatter->line_numbers = $this->settings->line_numbers;
+    $formatter->link = $this->settings->auto_link;
+    $formatter->height = $this->settings->max_height;
+    $formatter->strict_standards = $this->settings->html_strict;
+    $formatter->set_theme(luminous::theme($this->settings->theme));
   }
 
   /**
@@ -235,13 +491,13 @@ class _Luminous {
     // md5 it. This gives us a unique (assuming no collisions) handle to
     // a cache file, which depends on the input source, the relevant formatter
     // settings, the version, and scanner.
-    $settings = array($this->settings['wrap-width'],
-      $this->settings['line-numbers'],
-      $this->settings['auto-link'],
-      $this->settings['max-height'],
-      $this->settings['format'],
-      $this->settings['theme'],
-      $this->settings['html-strict'],
+    $settings = array($this->settings->wrap-width,
+      $this->settings->line_numbers,
+      $this->settings->auto_link,
+      $this->settings->max_height,
+      $this->settings->format,
+      $this->settings->theme,
+      $this->settings->html_strict,
       LUMINOUS_VERSION,
     );
 
@@ -275,7 +531,7 @@ class _Luminous {
     if ($use_cache) {
       $cache_id = $this->cache_id($scanner, $source);
       $cache_obj = new LuminousCache($cache_id);
-      $cache_obj->purge_older_than = $this->settings['cache-age'];
+      $cache_obj->purge_older_than = $this->settings->cache_age;
       $cache_obj->purge();
       $out = $cache_obj->read();
     }
@@ -283,7 +539,6 @@ class _Luminous {
       $cache_hit = false;
       $out_raw = $scanner->highlight($source);
       $formatter = $this->get_formatter();
-      $this->set_formatter_options($formatter);
       $out = $formatter->format($out_raw);
     }
 
@@ -452,28 +707,52 @@ abstract class luminous {
   
   /**
    * @brief Gets a setting's value
-   * @param $option The name of the setting
+   * @param $option The name of the setting (corresponds to an attribute name
+   * in LuminousOptions)
    * @return The value of the given setting
    * @throws Exception if the option is unrecognised
+   *
+   * Options are stored in LuminousOptions, which provides documentation of
+   * each option.
+   * @see LuminousOptions
    */
   static function setting($option) {
     global $luminous_;
-    if (!array_key_exists($option, $luminous_->settings))
+    $option = str_replace('-', '_', $option);
+    if (!property_exists($luminous_->settings, $option))
       throw new Exception("Luminous: No such option: $option");
-    return $luminous_->settings[$option];
+    return $luminous_->settings->$option;
   }
 
   /**
    * @brief Sets the given option to the given value
-   * @param $option The name of the setting
+   * @param $option The name of the setting (corresponds to an attribute name
+   * in LuminousOptions)
    * @param $value The new value of the setting
-   * @throws Exception if the option is unrecognised.
+   * @throws Exception if the option is unrecognised (and in various other
+   * validation failures),
+   * @throws InvalidArgumentException if the argument fails the type-validation
+   * check
+   *
+   * @note This function can also accept multiple settings if $option is a
+   * map of option_name=>value
+   *
+   * Options are stored in LuminousOptions, which provides documentation of
+   * each option.
+   * @see LuminousOptions
    */
-  static function set($option, $value) {
+  static function set($option, $value=null) {
     global $luminous_;
-    if (!array_key_exists($option, $luminous_->settings))
-      throw new Exception("Luminous: No such option: $option");
-    else $luminous_->settings[$option] = $value;
+    if (!is_array($option)) $option = array($option => $value);
+
+    foreach($option as $opt=>$val) {
+      // we switched from storing objects as a keyed array to an actual object
+      // for backwards compatability, we change '-' to '_'
+      $opt = str_replace('-', '_', $opt);
+      if (!property_exists($luminous_->settings, $opt))
+        throw new Exception("Luminous: No such option: $opt");
+      else $luminous_->settings->$opt = $val;
+    }
   }
 
   /**
