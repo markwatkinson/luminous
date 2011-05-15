@@ -491,7 +491,7 @@ class _Luminous {
     // md5 it. This gives us a unique (assuming no collisions) handle to
     // a cache file, which depends on the input source, the relevant formatter
     // settings, the version, and scanner.
-    $settings = array($this->settings->wrap-width,
+    $settings = array($this->settings->wrap_width,
       $this->settings->line_numbers,
       $this->settings->auto_link,
       $this->settings->max_height,
