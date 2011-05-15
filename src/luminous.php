@@ -192,7 +192,7 @@ class LuminousOptions {
   }
 
   public function __get($name) {
-    if (property_exists('LuminousOptions', $name))
+    if (property_exists($this, $name))
       return $this->$name;
     else {
       throw new Exception('Unknown property: ' . $name);
@@ -719,8 +719,6 @@ abstract class luminous {
   static function setting($option) {
     global $luminous_;
     $option = str_replace('-', '_', $option);
-    if (!property_exists($luminous_->settings, $option))
-      throw new Exception("Luminous: No such option: $option");
     return $luminous_->settings->$option;
   }
 
@@ -749,9 +747,7 @@ abstract class luminous {
       // we switched from storing objects as a keyed array to an actual object
       // for backwards compatability, we change '-' to '_'
       $opt = str_replace('-', '_', $opt);
-      if (!property_exists($luminous_->settings, $opt))
-        throw new Exception("Luminous: No such option: $opt");
-      else $luminous_->settings->$opt = $val;
+      $luminous_->settings->$opt = $val;
     }
   }
 
