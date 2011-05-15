@@ -53,7 +53,7 @@ class LuminousFormatterLatex extends LuminousFormatter {
         $cmd = "{\\emph$cmd}";
       if (($col = $this->css->value($name, 'color', null)) !== null) {
         if (preg_match('/^#[a-f0-9]{6}$/i', $col))  {
-          $rgb = $this::hex2rgb($col);
+          $rgb = self::hex2rgb($col);
           $col_str = "{$rgb[0]}, {$rgb[1]}, $rgb[2]";
           $cmd = "{\\textcolor[rgb]{{$col_str}}$cmd}";
         }
@@ -66,7 +66,7 @@ class LuminousFormatterLatex extends LuminousFormatter {
     if ($this->line_numbers &&
         ($col = $this->css->value('code', 'color', null)) !== null) {
       if (preg_match('/^#[a-f0-9]{6}$/i', $col)) {
-        $rgb = $this::hex2rgb($col);
+        $rgb = self::hex2rgb($col);
         $col_str = "{$rgb[0]}, {$rgb[1]}, $rgb[2]";
         $cmd = "\\renewcommand{\\theFancyVerbLine}{%
         \\textcolor[rgb]{{$col_str}}{\arabic{FancyVerbLine}}}";
@@ -80,7 +80,7 @@ class LuminousFormatterLatex extends LuminousFormatter {
   function get_background_colour() {
     if (($col = $this->css->value('code', 'bgcolor', null)) !== null) {
       if (preg_match('/^#[a-f0-9]{6}$/i', $col))
-        $rgb = $this::hex2rgb($col);
+        $rgb = self::hex2rgb($col);
         $col_str = "{$rgb[0]}, {$rgb[1]}, $rgb[2]";
         return "\\pagecolor[rgb]{{$col_str}}";
     }
