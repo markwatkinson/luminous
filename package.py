@@ -143,8 +143,16 @@ class Packagers(object):
       h1{{font-size: x-large;}}
       h2{{font-size: large; }}
       h3{{font-size: medium;}}
-      body{{ margin:1em; font-family: sans-serif;}}
+      body{{ margin:1em; font-family: sans-serif; font-size:12pt;}}
       .luminous {{ border: 1px solid #bbb; }}
+      span.inline-code {{
+        background-color: #E7E7E7;
+        padding: 1px 0.25em;
+        font-family: monospace;
+        font-weight: bold;
+        color: #323232;
+        border: 1px solid #888;
+      }}
     </style>
   </head>
   <body>
