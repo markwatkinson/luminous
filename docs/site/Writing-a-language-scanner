@@ -3,159 +3,50 @@
 \contents 2
 
 == Introduction==
-Writing a language file is either very simple or very complex depending on your language.
 
-We need to consider three classes of language:
+Highlighting a language involves writing some logic to recognise syntax rules and identify different parts of a string of source code as matching different parts of the language's syntax. This is a process known generally as 'tokenization'. The machine we use to tokenize a string is called a 'scanner', which can be entirely automated or completely explicit depending on what's necessary for the language to be highlighted.
 
-  # Simple, context-less, flat languages. These include C, Java, Python, etc, where it's generally sufficient to just define a list of tokens and have a simple state machine take care of it. LuminousSimpleScanner is such a state machine.
-  # Slightly more complex languages where tokens occasionally need to be disambiguated by context. For example, in some languages, a slash `/' may denote a division operator, or a regular expression delimiter. LuminousSimpleScanner provides an 'overrides' array, the overrides are callbacks which let you define finely grained control over specfic tokens, but let LuminousSimpleScanner do the rest.
-  # Complex languages or languages where context/state is important. Luminous provides a LuminousStatefulScanner which is a generic transition table driven state machine, but in other cases it's more sensible to write the scanner from scratch. Examples include Ruby, where there is a lot of disambiguation that needs to be performed, and CSS, where you need to keep track of whether you're inside a {} block, whether you've met a colon yet, whether you've met a semicolon yet, etc.
+Generally, we need to consider a few classes of language:
+  # Simple, flat languages like C# and Java, where we just want to provide a set of tokens and tell Luminous to figure it out.
+  # Languages where context matters sometimes. For example, in JavaScript and related languages, a slash '/' sometimes means 'divide' and sometimes means 'regular expression delimiter'. This needs to be disambiguated somehow.
+  # Languages heavily dependent on context, like CSS, LaTeX and JSON, where different symbols have different meanings depending on what they're nested inside.
+  # Complex languages full of ambiguous constructs where it's best to just write an explicit scanner from scratch. An example is Ruby.
 
-In any case, you'll also want to peruse the [[Scanning API]] page. If you're feeling adventurous, peruse the languages/ directory, but be warned that some scanners were implemented before all useful infrastructure was written so they might be doing more work than they need to be. langauges/perl.php and languages/json.php are good ones to look at for relatively simple scanners to mildly complex languages.
+== Class Structure ==
 
-*Note*: the following examples are all inside the scope of a LumiousScanner or LuminousSimpleScanner subclass definition, but this is omitted for brevity.
+Luminous implements a model for scanners via OO and class hierarchies. Each language to be highlighted will implement a class which extends one of Luminous's core scanning classes. The idea is to make it fairly easy to add support for new languages, while allowing each scanner to be as powerful as it needs to be.
 
-== Very Simple Languages ==
+The class hierarchy looks something like this (please excuse ASCII art):
 
-Subclass LuminousSimpleScanner, override the init() method, and define your tokens like this highly simplified Python-ish language definition:
-
-{{{lang=php
-<?php
-function init() {
-  $this->add_pattern('COMMENT', '/#.*/');
-  $this->add_pattern('STRING', '/"([^\\\\"]+|\\\\.)*("|$)/');
-  $this->add_pattern('SHELL_CMD', '/`([^\\\\`]+|\\\\.)*(`|$)/');
-  $this->add_pattern('IDENT', '/[a-z_]\w*/');
-
-  $this->add_identifier_mapping('KEYWORD', array('def', 'else', 'elif',
-                                                  'for', 'return', 'while'));
-  $this->rule_tag_map = array(
-    'SHELL_CMD' => 'FUNCTION'
-  );
-}
+{{{lang=plain
+.        Scanner
+            |
+    LuminousScanner
+            |
+  LuminousSimpleScanner
+            |
+ LuminousStatefulScanner
 }}}
 
-(see src/core/tokenpresets.class.php for a bunch of pre-defined regexes you can use)
+You will extend LuminousScanner or any of its subclasses.
 
-A few things to notice here:
+In relation to the four classes of language mentioned above, the base scanners we would extend are as follows:
 
- # Patterns are checked in order, so if two patterns match at the same index, the one which was added first will be used.
- # Backslashes have to be doubled in regexes, that's just php for you. A literal backslash is four backslashes in your source code: '\\\\'
- # If your given patterns don't fully describe the source code then segments will simply be recorded as a 'null' token.
- # Delimited patterns which don't have an end-delimiter should technically run until the end of the source or the end of the line, whichever terminates them; the user wants to know if they've left a string open.
- # The identifier mappings are a 'filter', which looks at anything recorded as an 'IDENT', and converts them into another token. If you don't specify an 'IDENT' pattern, this has no effect.
- # You can name your patterns however you like, but to pass through the formatter, they need to be `[A-Z_]+`. You can name them arbitrarily, but obviously themes define a finite set of rules, so if you invent a 'SPECIAL_IDENTIFIER' name or something then it'll be tagged in the HTML, but it won't be highlighted because there will be no CSS rule for it. (look in style/luminous_light.css to see what the current rules are). Sometimes it is useful to use descriptive names then map them to an actual CSS rule, this is what the rule_tag_map array is for. If you map something to null, it's kind of like a dummy token. You can use it to describe something, but it won't get 'tagged' in the final highlighted string.
+  # LuminousSimpleScanner - a generic string traversal algorithm with no concept of state.
+  # LuminousSimpleScanner again - with some *overrides*, which temporarily grant explicit, fine-grained programmatic control to *you*, the implementer for some tokens
+  # LuminousStatefulScanner - A transition table driven implementation of LuminousSimpleScanner (with overrides available)
+  # LuminousScanner - Gives you some helper methods but you write the actual highlighting (tokenization) logic yourself
 
-*Examples*: languages/java.php, languages/sql.php are languages defined entirely like this.
+The base classes define the methods init() and main(). init is where any kind of setup information should go, and main is where the lexing happens. If using the simple or stateful scanners, you won't have to override main.
 
-
-
-== Slightly more complex languages ==
-
-Let's say you've got a type that can't be matched by a regular expression. For the sake of example we'll use the obvious idea of a '/' as a regex delimiter vs a division operator.
-
-Insert this into your init:
-
-{{{lang=php
-<?php
-function init() {
-  $this->add_pattern('OPERATOR', '@[!%^&*\\\\-=+;:\\|,\\./?]+@');
-  $this->add_pattern('SLASH', '%/%'); // special case
-  // tokenizing these helps us figure out the slash
-  $this->add_pattern('OPENER', '/[\\(\\[\\{]+/');
-  $this->add_pattern('CLOSER', '/[\\)\\]\\}]+/');
-  //... but they aren't real tokens, as far as highlighting is concerned.
-  $this->rule_tag_map['OPENER'] = null;
-  $this->rule_tag_map['CLOSER'] = null;
-
-  $this->overrides['SLASH'] = array($this, 'slash_override'); // this is php's way to define a method reference
-}
-}}}
-
-Now, when LuminousSimpleScanner finds it's at the slash, it passes it down to the override. It has not consumed it (*important detail*: it did consume it, but it called unscan(), which means you should not call unscan until you have called scan, or check, or similar). The override is responsible for consuming the token. It is given an array corresponding to the match groups of the pattern. If it returns and has failed to advance the scan pointer Luminous will throw an exception.
-
-An override to disambiguate '/' looks something like this:
-
-{{{lang=php
-<?php
-function slash_override($matches) {
-  // to disambiguate it we go backwards over the token array and see what
-  // was preceding it
-  $regex = false;
-  for($i=count($this->tokens)-1; $i>=0; $i--) {
-    $t = $this->tokens[$i];  // $t = array($name, $content, $pre_escaped)
-    if ($t[0] === 'COMMENT' || $t[0] === null) continue;     // unimportant
-    elseif($t[0] === 'OPERATOR' || $t[0] === 'OPENER') $regex = true;
-    break;
-  }
-  if ($regex) {
-    // get and consume the regex pattern
-    $str = $this->scan('% / (?: [^\\\\\\\\/]+ | \\\\\\\\.)* ($|/[iogmx]*)%x');
-    assert($str !== null); // this must have matched, else our regex is skewy
-    $this->record($str, 'REGEX');
-  } else {
-    $this->record($this->get(), 'OPERATOR');
-  }
-}
-}}}
+If you need to use an override or an explicit scanner, you should at least look at the [[Scanning-API]] page to see what methods are available.
 
 
-*Examples*: languages/perl.php is a language which uses several overrides, to handle 'quote-like delimiters', heredoc, and regex/slash disambiguation.
-
-== Finally, a hand-written scanner ==
-
-Hand written scanners should subclass LumiousScanner.
-
-Scanning occurs in the main() method. There are two things you have to worry about: 1 advancing the scan pointer, which is done by calls to scan(), get(), etc, and 2: recording the string segments you're matching as their relevant tokens. This is done by calling `record($string, $token_name, $escaped?=false)`
-
-By the time you exit main(), the string should have been fully record()ed. main() doesn't return anything.
-
-Imagine in your langauge you need to keep track of a context (state) by tracking curly braces. The basic workflow looks something like this:
-
-{{{lang=php
-<?php
-
-function main() {
-  $stack = array();
-  while (!$this->eos()) {
-
-    $this->skip_whitespace(); // consumes any whitespace, records it as type 'null'
-
-    if ($this->scan('% /\\\\* .*? \\\\*/  %xs')) {
-      // scan tries to match at the current index, and returns what it matched,
-      // or null if it didn't match. Watch out for boolean conversion!
-      // '' and '0' both evaluate as false. If your pattern can match these,
-      // make sure you check "if ($this->scan(...) !== null)"
-
-      // after a successful call to scan, if you didn't catch the return,
-      // you can use match(), match_groups() or match_group(n) to retrieve the
-      // match
-
-      $this->record($this->match(), 'COMMENT');
-    }
-    elseif($this->peek() === '{') {
-      // push the stack
-      $stack[] = 'brace';
-      // consume and record...
-      $this->record($this->get(), 'OPENER');
-    }
-    elseif(!empty($stack) && $this->peek() === '}') {
-      array_pop($stack)
-      $this->record($this->get(), 'CLOSER');
-    }
-    // more rules go here
-    // ...
-    // ...
-    // ...
-    else { // ensure we advance the scan pionter
-      $this->record($this->get(), null);
-    }
-  }
-}
-}}}
-
-*Examples*: languages/json.php is a fairly simple scanner which implements its own loop explicitly and records stack based state information.
-
+== Examples ==
+For neatness, each scanner has its own page:
+  # [simple-scanner Simple Scanner]
+  # [stateful-scanner Stateful Scanner]
+  # [complex-scanner Complex Scanner]
 
 
 

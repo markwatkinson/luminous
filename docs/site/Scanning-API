@@ -3,9 +3,9 @@
 \contents 2
 
 == Introduction ==
-This page is mostly of interest if you're trying to write your own language scanner. It should form a general overview, and does not replace the Doxygen API documentation.
+This page is of interest if you are trying to write your own language scanner. It should form a general overview, and does not replace the Doxygen API documentation for the Scanner classes.
 
-The abstract class `LumiousScanner` is basically a sort of abstract state machine. The general idea is that the caller uses its methods to say "does this match here?" ... "okay, how about this?" ... etc. As matches are found, the string is consumed. It is of course regular expression based, so at some level, it's a sort of super regular expression machine. It's fairly simple and low-level, but somewhat intimidating if you aren't familiar with the concept. Higher level automation functions are also provided.
+The abstract class `LumiousScanner` is a kind of abstract state machine. The general idea is that the caller uses its methods to say "does this match here?" ... "okay, how about this?" ... etc. As matches are found, the string is consumed. It is of course regular expression based, so at some level, it's a sort of super regular expression machine. It's fairly simple and low-level, but somewhat intimidating if you aren't familiar with the concept. Higher level automation functions are also provided.
 
 
 LuminousScanner exposes several interesting public methods:
@@ -28,7 +28,7 @@ Shorthand for all of these is:
 
 ==Primitive String Scanning Methods==
 
-*Warning*: A lot of these functions return either `null` or their match. You should be very careful of this when using boolean testing: `if (null)` is false, but so is `if ('')`, but they are both very different situations. Worse, for reasons known only to the php designers, `if('0')` also evaluates to false! This can lead to you 'losing' data if you're not careful, because the scanner consumes it, but the caller may not realise. You should always test for matches with `if ($return_value === null)`.
+*Warning*: A lot of these functions return either `null` or their match. You should be very careful of this when using boolean testing: `if (null)` is false, but so is `if ('')`, but they are both very different situations. Worse, for reasons known only to the php designers, `if('0')` also evaluates to false! This can lead to you losing data if you're not careful, because the scanner consumes it, but the caller may not realise. You should always test for matches with `if ($return_value === null)`.
 
 
 === Scanning ===

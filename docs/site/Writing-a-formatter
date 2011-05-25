@@ -2,7 +2,7 @@
 
 Luminous has two distinct stages in highlighting. The first consists of tokenizing the string (this is done by the scanners), and results in the string being represented in an intermediate format. The second stage occurs when a formatter is given the intermediate string and converts it to some output format.
 
-The intermediate representation is a loose but well-formed XML structure.
+The intermediate representation is a loose but well-formed XML structure, where the tags represent a way to embed the highlighting data.
 
 Here's a brief example of a simple C program
 
@@ -63,5 +63,5 @@ $formatter = new MyFormatter();
 Luminous::set('format', $formatter);
 }}}
 
-That formatter (actually a clone of it) will be used to format subsequent calls to highlight().
+That formatter (actually a clone of it) will be used to format subsequent calls to `highlight()`.
 
