@@ -552,6 +552,19 @@ class Scanner {
   function add_pattern($name, $pattern) {
     $this->patterns[] = array($name, $pattern . 'S', -1, null);
   }
+  /**
+   * @brief Allows the caller to remove a named pattern
+   *
+   * @param $name the name of the pattern to remove, this should be as it was
+   * supplied to add_pattern().
+   * @warning If there are multiple patterns with the same name, they will all
+   * be removed.
+   */
+  function remove_pattern($name) {
+    foreach($this->patterns as $k=>$p) {
+      if ($p[0] === $name) unset($this->patterns[$k]);
+    }
+  }
   
   /**
    * @brief Automation function: returns the next occurrence of any known patterns.

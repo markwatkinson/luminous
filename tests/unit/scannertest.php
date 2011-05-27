@@ -138,12 +138,15 @@ assert($s->index('/6/') === 6);
 // Now the automation functions
 $s->string('012 45 ');
 $s->add_pattern('zero', '/0/');
+$s->add_pattern('one-dummy', '/1/');
 $s->add_pattern('one', '/1/');
 $s->add_pattern('two', '/2/');
 $s->add_pattern('digit', '/\d/');
 $s->add_pattern('four', '/4/');
 
+$s->remove_pattern('one-dummy');
 // 4 should never match, digit will take precedence.
+// one-dummy should never match, it was removed.
 
 $out = $s->next_match();
 assert($out === array(0=>'zero', 1=>0));
