@@ -12,7 +12,9 @@
 
 class LuminousPerlScanner extends LuminousSimpleScanner {
 
-
+  // keeps track of heredocs we need to handle
+  private $heredoc = null;
+  
   // helper function:
   // consumes a string until the given delimiter (which may be balanced).
   // will handle nested balanced delimiters.
@@ -174,14 +176,31 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
     }
   }
 
-  // figures out heredocs
+  // this override handles the heredoc declaration, and makes a note of it
+  // it adds a new token (a newline) which is overridden to invoke the real
+  // heredoc handling. This is because in Perl, heredocs declarations need not
+  // be the end of the line so we can't necessarily start heredocing straight
+  // away.
   function heredoc_override($matches) {
-    $this->record($matches[1], 'OPERATOR');
-    $this->record($matches[2] . $matches[3] . $matches[4], 'DELIMITER');
-    $this->pos( $this->pos() + strlen($matches[0] ) );
+    list($group, $op, $quote1, $delim, $quote2) = $matches;
+    $this->record($op, 'OPERATOR');
+    $this->record($quote1 . $delim . $quote2, 'DELIMITER');
+    $this->pos_shift(strlen($group));
     // TODO. the quotes (matches[2] and matches[4]) are ignored for now, but
     // they mean something w.r.t interpolation.
-    $delim = preg_quote($matches[3], '/');
+
+    $this->heredoc = $delim;
+    $this->add_pattern('HEREDOC_NL', "/\n/");
+    $this->overrides['HEREDOC_NL'] = array($this, 'heredoc_real_override');
+  }
+  // this override handles the actual heredoc text
+  function heredoc_real_override($matches) {
+    $this->record($matches[0], null);
+    $this->pos_shift(strlen($matches[0]));
+    // don't need this anymore
+    $this->remove_pattern('HEREDOC_NL');
+    assert($this->heredoc !== null);
+    $delim = preg_quote($this->heredoc);
     $substr = $this->scan_until('/^' . $delim . '\\b/m');
     if ($substr !== null) {
       $this->record($substr, 'HEREDOC');
