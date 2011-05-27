@@ -229,7 +229,7 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
     $this->add_pattern('VARIABLE', '/\\$[\|%=\-~^\d&`\'+_\.\/\\\\,"#\\$\\?\\*O\\[\\];!@]/');
 
     // `backticks` (shell cmd)
-    $this->add_pattern('CMD', '/`(?: [^`\\\\]+ | \\\\ . )(`|$)/x');
+    $this->add_pattern('CMD', '/`(?: [^`\\\\]++ | \\\\ . )*+ (?:`|$)/x');
     // straight strings
     $this->add_pattern('STRING', LuminousTokenPresets::$DOUBLE_STR);
     $this->add_pattern('STRING', LuminousTokenPresets::$SINGLE_STR);
