@@ -1,3 +1,4 @@
+# parent: Writing-a-language-scanner
 =Complex hand-written scanners=
 
 Hand written scanners should subclass LumiousScanner.

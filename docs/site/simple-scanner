@@ -1,3 +1,4 @@
+# parent : Writing-a-language-scanner
 = Writing a simple scanner (with LuminousSimpleScanner) =
 
 A simple scanner should be used when there are no state-transitions or awkward requirements to worry about.

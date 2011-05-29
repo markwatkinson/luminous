@@ -1,3 +1,4 @@
+# parent: Writing-a-language-scanner
 =Stateful Scanners (with LuminousStatefulScaner)=
 
 Stateful scanners use a transition table. The LuminousStatefulScanner is an extension of LuminousSimpleScanner, so the approach is very similar and overrides are available.

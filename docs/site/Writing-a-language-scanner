@@ -1,3 +1,4 @@
+# parent: index
 =Writing a language file (scanner)=
 
 \contents 2
@@ -48,6 +49,9 @@ For neatness, each scanner has its own page:
   # [stateful-scanner Stateful Scanner]
   # [complex-scanner Complex Scanner]
 
+== Filters ==
+
+Filters are an additional technique you can use for highlighting minor details. See the [[filters]] page.
 
 
 == Using your scanner ==

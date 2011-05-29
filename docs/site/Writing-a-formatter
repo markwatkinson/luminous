@@ -1,3 +1,4 @@
+# parent: index
 =Writing a Formatter=
 
 Luminous has two distinct stages in highlighting. The first consists of tokenizing the string (this is done by the scanners), and results in the string being represented in an intermediate format. The second stage occurs when a formatter is given the intermediate string and converts it to some output format.
