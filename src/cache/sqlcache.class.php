@@ -1,4 +1,7 @@
 <?php
+
+class LuminousSQLSafetyException extends Exception {}
+
 /*
  * A note regarding escaping:
  * Escaping is hard because we don't want to rely on an RBDMS specific escaping
@@ -29,6 +32,18 @@ class LuminousSQLCache extends LuminousCache {
     $this->sql_function = $func;
   }
 
+  private static function _safety_check($string) {
+    // we should only be handling very restricted data in queries.
+    // http://en.wikipedia.org/wiki/Base64#Variants_summary_table
+    if (is_int($string)
+        || (is_string($string)
+          && preg_match('@^[a-zA-Z0-9\-\+=_/\.:!]*$@i', $string)))
+      return $string;
+    else {
+      throw new LuminousSQLSafetyException();
+    }
+  }
+
   private function _query($sql) {
     if (!is_callable($this->sql_function)) {
       throw new Exception('LuminousSQLCache does not have a callable SQL function');
@@ -50,31 +65,52 @@ class LuminousSQLCache extends LuminousCache {
 
   protected function _update() {
     $this->_query(
-      sprintf(self::$queries['update'], self::$table_name, time(), $this->id)
+      sprintf(self::$queries['update'],
+        self::_safety_check(self::$table_name),
+        time(),
+        self::_safety_check($this->id)
+      )
     );
   }
 
   protected function _read() {
-    $ret = $this->_query(sprintf(self::$queries['select'],
-      self::$table_name, $this->id));
-    if (!empty($ret) && isset($ret[0]) && isset($ret[0]['output'])) {
-      return base64_decode($ret[0]['output']);
-    }
+    $ret = false;
+    try {
+      $ret = $this->_query(
+        sprintf(self::$queries['select'],
+          self::_safety_check(self::$table_name),
+          self::_safety_check($this->id)
+        )
+      );
+      if (!empty($ret) && isset($ret[0]) && isset($ret[0]['output'])) {
+        return base64_decode($ret[0]['output']);
+      }
+    } catch (LuminousSQLSafetyException $e) {}
     return false;
   }
 
   protected function _write($data) {
     $data = base64_encode($data);
     $time = time();
-    $this->_query(sprintf(self::$queries['insert'], self::$table_name,
-      $this->id, $data, $time, $time));
+//     try {
+      $this->_query(sprintf(self::$queries['insert'],
+        self::_safety_check(self::$table_name),
+        self::_safety_check($this->id),
+        self::_safety_check($data),
+        self::_safety_check($time),
+        self::_safety_check($time)
+      ));
+//     } catch(LuminousSQLSafetyException $e) {}
   }
 
   protected function _purge() {
     if ($this->timeout <= 0) return;
-    $this->_query(
-      sprintf(self::$queries['purge'],
-              self::$table_name, time() - $this->timeout));
+    try {
+      $this->_query(
+        sprintf(self::$queries['purge'],
+                self::_safety_check(self::$table_name),
+                self::_safety_check(time() - $this->timeout)));
+    } catch(LuminousSQLSafetyException $e) {}
 
   }
 }
