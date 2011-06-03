@@ -68,6 +68,7 @@ As with php, setting an integer setting to 0 or -1 will disable it. As of 0.6.2 
   * include-jquery (bool): controls whether luminous::head_html() outputs jquery; this is ignored if include-javascript is false.
   * relative-root (str): luminous::head_html() has to know the location of the luminous directory relative to the location of the document root. It tries to figure this out, but may fail if you are using symlinks. You may override it here.
   * theme: Sets the internal theme. The LaTeX and html-full formatters read this, and luminous::head_html observes this.
+  * sql-function: See the [[cache]] page.
 
 ====Formatter====
 
