@@ -8,7 +8,7 @@ To see a map of the documentation area: [docs/map documentation sitemap].
 
   # Extract your archive to some directory (or clone the repo, or whatever). This should be inside your document root, as the style/ directory needs to be web-visible. 
   # If you downloaded a development version from GitHub (as opposed to an archive from this site), remove the tests/ directory, this is not something you want to expose on a public machine. 
-  # Create a directory called 'cache' inside your luminous directory and make sure it is writable to your server (this probably involves 777 permissions).
+  # Create a directory called 'cache' inside your luminous directory and make sure it is writeable to your server (this probably involves 777 permissions).
   # Now test everything is working by creating a new file, the hello world of highlighting:{{{lang=php
 <?php 
 require_once '/path/to/luminous/luminous.php';
@@ -21,13 +21,13 @@ echo luminous::highlight('c', 'printf("hello world\n");');
 Check out the [[troubleshooting]] guide.
 
 == Advanced Usage ==
+  * If you want to use an SQL table for caching instead of the filesystem, consult the [[cache]] page.
   * Check the examples/ directory for a few examples of how you might use Luminous
   * Have a look at the [[User-API-Reference]] for setting up runtime configuration settings.
 
 ==Hacking==
-  * [[Writing-a-language-scanner]]
-  * [[Scanning-API]]
-  * [[Writing-a-formatter]]
+
+If you want to change how Luminous works or add new features, check out the [[hacking]] section.
 
 == Local API Docs==
 

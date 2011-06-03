@@ -1,10 +1,12 @@
 index
+  cache
   User-API-Reference
   troubleshooting
-  Writing-a-language-scanner
-    simple-scanner
-    stateful-scanner
-    complex-scanner
-    Scanning-API
-    filters
-  Writing-a-formatter
+  hacking
+    Writing-a-language-scanner
+      simple-scanner
+      stateful-scanner
+      complex-scanner
+      Scanning-API
+      filters
+    Writing-a-formatter
