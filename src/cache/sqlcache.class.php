@@ -1,5 +1,5 @@
 <?php
-
+/// @cond ALL
 class LuminousSQLSafetyException extends Exception {}
 
 /*
@@ -114,3 +114,5 @@ class LuminousSQLCache extends LuminousCache {
 
   }
 }
+
+/// @endcond

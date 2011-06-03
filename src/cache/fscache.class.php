@@ -1,5 +1,5 @@
 <?php
-
+/// @cond ALL
 class LuminousFileSystemCache extends LuminousCache {
 
   private $dir = null;
@@ -63,3 +63,4 @@ class LuminousFileSystemCache extends LuminousCache {
     }
   }
 }
+/// @endcond
