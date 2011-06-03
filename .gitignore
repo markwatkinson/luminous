@@ -1,7 +1,7 @@
 *~
 *.swp
 *.kate-swp
-cache/
+/cache/
 tests/formatters/filedump/
 .directory
 
