@@ -4,7 +4,6 @@
  * API test - tests the various configuration options
  */
 
-
 include dirname(__FILE__) . '/helper.inc';
 
 function assert_set($setting, $value) {
@@ -136,5 +135,24 @@ function test_formatter_options() {
 }
 
 
+$sql_executed = false;
+function sql($query) {
+  global $sql_executed;
+  $sql_executed = true;
+  return false;
+}
+// tests that setting the SQL function results in the SQL backend being used
+function test_cache() {
+  global $sql_executed;
+  $sql_executed = false;
+  luminous::set('sql_function', 'sql');
+  // this will throw a cache not creatable warning which we don't really care
+  // about
+  @luminous::highlight('plain', '123', true);
+  assert($sql_executed);
+}
+
+
 test_set();
 test_formatter_options();
+test_cache();

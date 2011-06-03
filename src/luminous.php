@@ -3,7 +3,9 @@
 
 require_once(dirname(__FILE__) . '/debug.php');
 
-require_once(dirname(__FILE__) . '/cache.class.php');
+require_once(dirname(__FILE__) . '/cache/cache.class.php');
+require_once(dirname(__FILE__) . '/cache/fscache.class.php');
+require_once(dirname(__FILE__) . '/cache/sqlcache.class.php');
 require_once(dirname(__FILE__) . '/scanners.class.php');
 require_once(dirname(__FILE__) . '/formatters/formatter.class.php');
 require_once(dirname(__FILE__) . '/core/scanner.class.php');
@@ -169,6 +171,20 @@ class LuminousOptions {
    */
   private $failure_tag = 'pre';
 
+  /**
+   * @brief Defines an SQL function which can execute queries on a database
+   *
+   * An SQL database can be used as a replacement for the file-system cache
+   * database.
+   * This function should act similarly to the mysql_query function:
+   * it should take a single argument (the query string) and return:
+   *    @li boolean @c false if the query fails
+   *    @li boolean @c true if the query succeeds but has no return value
+   *    @li An array of associative arrays if the query returns rows (each
+   *      element is a row, and each row is an map keyed by field name)
+   */
+  private $sql_function = null;
+
   
 
   private static function check_type($value, $type, $nullable=false) {
@@ -178,6 +194,7 @@ class LuminousOptions {
     elseif($type === 'int') $func = 'is_int';
     elseif($type === 'numeric') $func = 'is_numeric';
     elseif($type === 'bool') $func = 'is_bool';
+    elseif($type === 'func') $func = 'is_callable';
     else {
       assert(0);
       return true;
@@ -226,6 +243,9 @@ class LuminousOptions {
       $this->set_theme($value);
     elseif($name === 'wrap_width') {
       if (self::check_type($value, 'int')) $this->$name = $value;
+    }
+    elseif($name === 'sql_function') {
+      if (self::check_type($value, 'func', true)) $this->$name = $value;
     }
     else {
       throw new Exception('Unknown option: ' . $name);
@@ -530,9 +550,13 @@ class _Luminous {
     $out = null;
     if ($use_cache) {
       $cache_id = $this->cache_id($scanner, $source);
-      $cache_obj = new LuminousCache($cache_id);
-      $cache_obj->purge_older_than = $this->settings->cache_age;
-      $cache_obj->purge();
+      if ($this->settings->sql_function !== null) {
+        $cache_obj = new LuminousSQLCache($cache_id);
+        $cache_obj->set_sql_function($this->settings->sql_function);
+      } else {
+        $cache_obj = new LuminousFileSystemCache($cache_id);
+      }
+      $cache_obj->set_purge_time($this->settings->cache_age);
       $out = $cache_obj->read();
     }
     if ($out === null) {
