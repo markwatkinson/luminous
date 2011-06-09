@@ -22,9 +22,6 @@ class LuminousPythonScanner extends LuminousScanner {
     $this->add_pattern('IDENT', '/[a-zA-Z_](?>\w*)(?!["\'])/');
     $this->add_pattern('COMMENT', '/\#.*/');
     
-    // catch the colon separately so we can use $match === ':' in figuring out
-    // where docstrs occur
-    $this->add_pattern('OPERATOR', '/[!%^*\-=+;<>\\\\(){}\[\],\\.]+|:/');
     
     // decorator
     $this->add_pattern('TYPE', '/@(\w+\.?)+/');
@@ -71,6 +68,10 @@ class LuminousPythonScanner extends LuminousScanner {
     /x'); 
     
     
+    // catch the colon separately so we can use $match === ':' in figuring out
+    // where docstrs occur
+    $this->add_pattern('OPERATOR', '/[!%^*\-=+;<>\\\\(){}\[\],\\.]+|:/');
+
     $this->add_identifier_mapping('KEYWORD', array('assert', 'as', 'break',
     'class', 'continue', 'del', 'def', 'elif', 'else', 'except', 'exec',
     'finally', 'for', 'from', 'global', 'if', 'import', 'lambda', 
