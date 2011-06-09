@@ -244,13 +244,27 @@ class LuminousRubyScanner extends LuminousScanner {
     $this->heredocs = array();
   }
 
+
+  private function record_string_range($from, $to, $type, $split) {
+    if ($to === $from) return;
+    $substr = substr($this->string(), $from, $to-$from);
+    if ($split) {
+      foreach(preg_split('/(\s+)/', $substr, -1, PREG_SPLIT_DELIM_CAPTURE) as $s) {
+        $type_ = preg_match('/^\s+$/', $s)? null : $type;
+        $this->record($s, $type_);
+      }
+    } else {
+      $this->record($substr, $type);
+    }
+  }
+
   // handles string types (inc regexes), which may have nestable delimiters or
   // interpolation.
-  // str_data should be a tuple:
-  // (type(str), open_delim(str), close_delim(str), pos(int)
+  // strdata is defined in the big ugly block in main()
+  // TODO: proper docs
   protected function do_string($str_data) {
     list($type, $open_delimiter, $close_delimiter, $pos, $interpolation,
-      $fancy_delim) = $str_data;
+      $fancy_delim, $split) = $str_data;
     $balanced = $open_delimiter !== $close_delimiter;
     $template = '/(?<!\\\\)((?:\\\\\\\\)*)(%s)/';
     $patterns = array();
@@ -270,7 +284,7 @@ class LuminousRubyScanner extends LuminousScanner {
       if ($name === null) {
         // special case, no matches, record the rest of the string and break
         // immediately
-        $this->record(substr($this->string(), $pos), $type);
+        $this->record_string_range($pos, strlen($this->string()), $type, $split);
         $this->terminate();
         break;
       }
@@ -285,10 +299,10 @@ class LuminousRubyScanner extends LuminousScanner {
           // wasn't nested, real terminator. 
           if ($fancy_delim) {
             // matches[1] is either empty or a sequence of backslashes
-            $this->record_range($pos, $index + strlen($matches[1]), $type);
+            $this->record_string_range($pos, $index+strlen($matches[1]), $type, $split);
             $this->record($matches[2], 'DELIMITER');
           } else {
-            $this->record_range($pos, $index+strlen($matches[0]), $type);
+            $this->record_string_range($pos, $index+strlen($matches[0]), $type, $split);
           }
           $break = true;
         }
@@ -302,7 +316,7 @@ class LuminousRubyScanner extends LuminousScanner {
       elseif($name === 'interp') {
         // interpolation - temporarily break string highlighting, then
         // do interpolation, then resume.
-        $this->record_range($pos, $index + strlen($matches[1]), $type);
+        $this->record_string_range($pos, $index + strlen($matches[1]), $type, $split);
         $this->record($matches[2], 'DELIMITER');
         $this->pos( $index + strlen($matches[0]) );
         
@@ -384,6 +398,7 @@ class LuminousRubyScanner extends LuminousScanner {
         $delimiter;
         $pos;
         $fancy_delim = false;
+        $split = false;
 
         if ($c === '/') {
           $interpolation = true;
@@ -405,6 +420,8 @@ class LuminousRubyScanner extends LuminousScanner {
             $m1 = $this->match_group(1);
             if ($m1 === 'Q' || $m1 === 'r' || $m1 === 'W' || $m1 === 'x')
               $interpolation = true;
+            if ($m1 === 'w' || $m1 === 'W')
+              $split = true;
             if ($m1 === 'x') $type = 'FUNCTION';
             elseif($m1 === 'r') $type = 'REGEX';
 
@@ -414,7 +431,7 @@ class LuminousRubyScanner extends LuminousScanner {
           }
         }
         $data = array($type, $delimiter, self::balance_delimiter($delimiter),
-          $pos, $interpolation, $fancy_delim);
+          $pos, $interpolation, $fancy_delim, $split);
         $this->do_string($data);
       }
       elseif( (ctype_alpha($c) || $c === '_') &&

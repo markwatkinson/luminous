@@ -188,7 +188,7 @@
   <KEYWORD>end</KEYWORD>
   
   <KEYWORD>def</KEYWORD> test_index_sort_by_field_not_included_in_columns
-    <CONSTANT>Setting</CONSTANT>.<OO>issue_list_default_columns</OO> <OPERATOR>=</OPERATOR> <DELIMITER>%w(</DELIMITER><STRING>subject author</STRING><DELIMITER>)</DELIMITER>
+    <CONSTANT>Setting</CONSTANT>.<OO>issue_list_default_columns</OO> <OPERATOR>=</OPERATOR> <DELIMITER>%w(</DELIMITER><STRING>subject</STRING> <STRING>author</STRING><DELIMITER>)</DELIMITER>
     get <VALUE>:index</VALUE>, <VALUE>:sort</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'tracker'</STRING>
   <KEYWORD>end</KEYWORD>
   
