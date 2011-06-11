@@ -39,8 +39,9 @@ class LuminousPHPSubScanner extends  LuminousScanner {
     elseif(strpos($token[1], '$') === false) return $token;
     
     $token = LuminousUtils::escape_token($token);
+    // matches $var, ${var} and {$var} syntax
     $token[1] = preg_replace('/
-      \{\$[^}]+\}
+      (?: \$\{ | \{\$ ) [^}]++ \}
       |
       \$\$?[a-zA-Z_]\w*
       /x', '<VARIABLE>$0</VARIABLE>',
