@@ -9,7 +9,7 @@ abstract class LuminousCache {
 
   protected $gz = true;
   protected $id = null;
-  protected $timeout = 3600;
+  protected $timeout = 0;
   protected $cache_hit = false;
   private $use_cache = true;
   private $creation_check = false;
