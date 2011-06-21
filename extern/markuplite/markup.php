@@ -8,8 +8,7 @@ class Markup {
   private $obj = null;
   
   function linker($url) {
-    if (preg_match('%^.*://|^www\d*\.%i', $url)) return false;
-    return array('uri' => site_url($url));
+    return false;
   }
 
   public function __construct() {
