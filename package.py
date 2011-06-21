@@ -167,7 +167,6 @@ class Packagers(object):
     self.__do_version()
     self.__do_doxygen()
     self.__do_production()
-    self.__do_version()
     self.__do_readme()
     self.__do_removals()
 
