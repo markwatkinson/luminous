@@ -13,6 +13,7 @@
 require_once(dirname(__FILE__) . '/src/luminous.php');
 
 if (PHP_SAPI === 'cli') {
-  require(dirname(__FILE__) . '/src/cli.php');
   // cli mode
+  if (isset($argv[0]) && $argv[0] === basename(__FILE__)) 
+    require(dirname(__FILE__) . '/src/cli.php');
 }
