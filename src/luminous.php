@@ -947,17 +947,18 @@ abstract class luminous {
     $relative_root = preg_replace('%(?<!:)//+%', '/', $relative_root);
     $relative_root = rtrim($relative_root, '/');
     $out = '';
-    $out .= "<link rel='stylesheet' type='text/css'
-      href='$relative_root/style/luminous.css'>\n";
-    $out .= "<link rel='stylesheet' type='text/css'
-      href='$relative_root/style/$theme'>\n";
-    if ($js){
-      if($jquery)
-        $out .= "<script type='text/javascript'
-          src='$relative_root/client/jquery-1.4.2.min.js'></script>\n";
-      $out .= "<script type='text/javascript'
-        src='$relative_root/client/luminous.js'></script>\n";
+    $link_template = "<link rel='stylesheet' type='text/css' href='$relative_root/style/%s'>\n";
+    $script_template = "<script type='text/javascript' src='$relative_root/client/%s'></script>\n";
+    $out .= sprintf($link_template, 'luminous.css');
+    $out .= sprintf($link_template, $theme);
+    if ($js || LUMINOUS_DEBUG) {
+      if ($jquery)
+        $out .= sprintf($script_template, 'jquery-1.4.2.min.js');
+      $out .= sprintf($script_template, 'luminous.js');
+      if (LUMINOUS_DEBUG) 
+        $out .= sprintf($script_template, 'lineheight.js');
     }
+
     return $out;
   }
 }
