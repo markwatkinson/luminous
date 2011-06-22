@@ -15,7 +15,7 @@ Luminous Changelog since 0.6.0
     what's being executed, so that you can now include it from another 
     CLI program.
 
--Languages fixes:
+- Languages fixes:
   - Fix recognition of Perl's shell command strings (backticks) when the 
     string involves escape characters
   - Fix bug with Perl heredoc recognition not waiting until the next line to
