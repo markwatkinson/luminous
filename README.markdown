@@ -1,8 +1,8 @@
 Luminous - a Syntax Highlighter for PHP
 =======================================
 
-Luminous is an accurate and style-able syntax highlighter for PHP which supports 
-a bunch of common languages and output to HTML and LaTeX.
+Luminous is an accurate and style-able syntax highlighter for PHP which 
+supports a bunch of common languages and output to HTML and LaTeX.
 
 ##Links:
 
@@ -43,15 +43,11 @@ Command Line Usage
 
 If you're crazy and want to use Luminous/PHP on the command line, guess what,
 you can!
+
 ```bash
 $ cd luminous/
 $ php luminous.php --help
 ```
-Please note: if you're using a command line PHP application and wish to include
-Luminous, then including luminous.php will probably break your script. Instead,
-include src/luminous.php which does exactly the same thing, but bypasses the
-CLI part of Luminous.
-
 Polite Warning
 ================
 
@@ -63,6 +59,11 @@ consider that highlights are cached and therefore there is no real penalty
 most of the time. You may need to run your own tests to decide whether or not
 it is suitable for you.
 
+## Caching 
+The cache can be stored either directly on the file system or in a MySQL table
+(support for other DBMSs will come later, patches welcome). In either case,
+check out the [cache documentation](http://luminous.asgaard.co.uk/index.php/docs/show/cache).
+
 Licensing
 =========
 
@@ -70,7 +71,7 @@ Luminous is distributed under the GPL3 but includes a bunch of stuff which is
 separate.
 
   - Everything under src/ and languages/ is part of Luminous.
-  - Everything under tests/regression/*/ is real source code taken from various
+  - Everything under tests/regression/*/* is real source code taken from various
       projects, which is used only as test data. It is all GPL-compatible, but
       is distributed under its own license. This directory is only present in
       the git repository and is not part of any stable distribution archives.
