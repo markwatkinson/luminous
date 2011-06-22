@@ -70,7 +70,7 @@
   <KEYWORD>function</KEYWORD> Read_Temp <KEYWORD>return</KEYWORD> Temperature <KEYWORD>is</KEYWORD>
     Sensor: <OBJ>Ada</OBJ>.<OO>Text_IO</OO>.<OO>File_Type</OO>;
     Sensor_Name: <KEYWORD>constant</KEYWORD> <TYPE>String</TYPE> <OPERATOR>:=</OPERATOR> <STRING>"/sys/devices/virtual/thermal/thermal_zone0/temp"</STRING>;
-    Reading: Integer;
+    Reading: <TYPE>Integer</TYPE>;
   <KEYWORD>begin</KEYWORD>
     <OBJ>Ada</OBJ>.<OO>Text_IO</OO>.<OO>Open</OO> (File <OPERATOR>=</OPERATOR><OPERATOR>&gt;</OPERATOR> Sensor, Name <OPERATOR>=</OPERATOR><OPERATOR>&gt;</OPERATOR> Sensor_Name, Mode <OPERATOR>=</OPERATOR><OPERATOR>&gt;</OPERATOR> <OBJ>Ada</OBJ>.<OO>Text_IO</OO>.<OO>In_File</OO>);
     <OBJ>Ada</OBJ>.<OO>Integer_Text_IO</OO>.<OO>Get</OO> (File <OPERATOR>=</OPERATOR><OPERATOR>&gt;</OPERATOR> Sensor, Item <OPERATOR>=</OPERATOR><OPERATOR>&gt;</OPERATOR> Reading);

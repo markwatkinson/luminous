@@ -37,7 +37,7 @@ class LuminousAdaScanner extends LuminousSimpleScanner {
       'Storage_Array',
       'Wide_character', 'Wide_Wide_Character',
       'Wide_String', 'Wide_Wide_String',
-
+      'Integer',
       'Long', 'Short', 'Byte');
 
     $ident = '(?i:[a-z](?:_?[a-z]++|\d++)*+)';
