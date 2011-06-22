@@ -73,7 +73,7 @@ if (count($_POST)) {
 ?>  </select>
     <br/>
     <select name='format'>    
-    <?php foreach(array('html', 'latex') as $f) {
+    <?php foreach(array('html', 'html-full', 'latex') as $f) {
       $def = (isset($_POST['format']) && $_POST['format'] === $f)? ' selected': 
           '';
       echo sprintf("<option value='%s'%s>%s</option>\n", $f, $def, $f);
