@@ -347,8 +347,8 @@ class _Luminous {
     $this->scanners->AddScanner('ecma-includes', null, null, 
       "$language_dir/include/ecma.php");
       
-    $this->scanners->AddScanner('ada', 'LuminousAdaScanner', 'Ada',
-      "$language_dir/ada.php");
+    $this->scanners->AddScanner(array('ada', 'adb', 'ads'), 
+      'LuminousAdaScanner', 'Ada', "$language_dir/ada.php");
 
     $this->scanners->AddScanner(array('as', 'actionscript'),
     'LuminousActionScriptScanner', 'ActionScript', "$language_dir/as.php", 
