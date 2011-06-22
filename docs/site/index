@@ -35,4 +35,4 @@ The packaged distros come with Doxygen API documentation in the docs/html/ direc
 
 These documents are intended to be a class/method specification. The documentation on this site is supposed to be a little more high level and it is not exhaustive; if you find it insufficient the Doxygen pages should provide more detail. It covers both the public callers' API and the internal scanning API.
 
-A copy of these is held [assets/luminous/docs/html/ online] for a recent development version.
+A copy of these is held [!http://luminous.asgaard.co.uk/assets/luminous/docs/html/ online] for a recent development/git version (which might not be the same as _your_ version).
