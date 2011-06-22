@@ -1,6 +1,32 @@
 Luminous Changelog since 0.6.0
 ==============================
 
+##v0.6.3 (22/06/11):
+
+- New Stuff:
+  - Ada language support
+  - Cache can be stored in a MySQL table. See (the docs)[http://luminous.asgaard.co.uk/index.php/docs/show/cache/]
+
+- Fixes
+  - Disabled cache purging by default in the cache superclass, previously it
+    was set to an hour and may have been invoked accidentally if you 
+    insantiated a cache object yourself for some reason.
+  - Check before invoking the command line arg parser that Luminous is really
+    what's being executed, so that you can now include it from another 
+    CLI program.
+
+-Languages fixes:
+  - Fix recognition of Perl's shell command strings (backticks) when the 
+    string involves escape characters
+  - Fix bug with Perl heredoc recognition not waiting until the next line to
+    invoke heredoc parsing mode
+  - Fix bug with Python not correctly recognising numeric formats with a 
+    leading decimal point
+  - Fix Ruby's %w and %W operators such that their contents are recognised as 
+    strings split by whitespace, not one continual string
+  - Highlight "${var}" string interpolation syntax in PHP scanner
+
+
 ##v0.6.2 (15/05/11):
 
 - General: 
