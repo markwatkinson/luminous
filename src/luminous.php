@@ -56,7 +56,7 @@ class LuminousOptions {
    *
    * Set to -1 or 0 to disable cache purges
    */
-  private $cache_age = 777600;
+  private $cache_age = 7776000; // 90 days
 
   /**
    * @brief Word wrapping
