@@ -8,7 +8,7 @@
 
 This document gives a relatively high level overview of the user's API. For full API documentation, see the Doxygen HTML files in your distribution.
 
-The entirety of the public API is contained within a class called `luminous`. This is used as a namespace, the methods within are static, which means you can call them directly without instantiating the class. For those unfamiliar with the syntax or terminology, this just means that you call the functions as normal but place `luminous::` infront of it. This is as it is shown on this page.
+The entirety of the public API is contained within a class called `luminous`. This is used as a namespace, the methods within are static, which means you can call them directly without instantiating the class. For those unfamiliar with the syntax or terminology, this just means that you call the functions as normal but place `luminous::` in front of it. This is as it is shown on this page.
 
 The functions in this namespace interact with a theoretically private singleton object called $luminous_. You should be aware of this if only to avoid overwriting it.
 
@@ -27,7 +27,7 @@ Since 0.6.2 you can ask Luminous to guess the language of a piece of source code
 
 This will return a valid language code for the most-probable language. $confidence and $default are related: if no scanner is willing to say with above 0.05 (5%) certainty that it owns the source code, then $default is returned. It's probably best to leave this at 0.05.
 
-*warning:* For obvious reasons, laguage guessing is inherently unreliable. Luminous will try to latch on to unique parts of the language, but this is difficult in languages like C, C# and Java, which are syntatically very similar.
+*warning:* For obvious reasons, laguage guessing is inherently unreliable. Luminous will try to latch on to unique parts of the language, but this is difficult in languages like C, C# and Java, which are syntactically very similar.
 
 
     `luminous::head_html()`

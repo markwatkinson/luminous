@@ -95,4 +95,4 @@ Note in CI that the database library will throw a fatal error if debug mode is e
 
 === Security ===
 
-You might be concerned that Luminous doesn't want an SQL-escaping function specific to your RBDMS. This isn't actually a problem: Luminous has strict control over the data being used in queries and doesn't need to escape it: string data is encoded as either b16 or b64 (which have only 'clean' characters). This is double-checked when building each query and if somehow the data has been polluted the query is silently aborted.
+You might be concerned that Luminous doesn't want an SQL-escaping function specific to your RDBMS. This isn't actually a problem: Luminous has strict control over the data being used in queries and doesn't need to escape it: string data is encoded as either b16 or b64 (which have only 'clean' characters). This is double-checked when building each query and if somehow the data has been polluted the query is silently aborted.
