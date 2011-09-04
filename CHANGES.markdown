@@ -1,6 +1,13 @@
 Luminous Changelog since 0.6.0
 ==============================
 
+##v0.6.3-1 (06/08/11):
+
+- Fixes:
+  - Fix stupid bug where the cache will purge items after 9 days of inactivity,
+    instead of 90 days. This is user-overridable by the 'cache-age' option, and
+    will only affect installations where it was left to the default setting.
+
 ##v0.6.3 (22/06/11):
 
 - New Stuff:
