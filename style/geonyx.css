@@ -45,6 +45,11 @@
   color: #555555;
 }
 
+.luminous .highlighted_line {
+  background-color: #A4C0E4;
+  background-color: rgba(164, 192, 228, 0.5);
+}
+
 
 /* this stuff has to come after the other rules because it will probably
  * override some of them 
