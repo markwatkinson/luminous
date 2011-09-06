@@ -228,6 +228,10 @@ div.luminous_inline div.code
   padding-left:0em !important;
 }
 
+/* Rounded border stuff. We need to make sure Luminous's sub-elements are
+ * going to respect any border radiuses applied on the outer-most element.
+ */
+
 /* Firefox and IE9 are happy with just this */
 div.luminous div, div.luminous table, div.luminous tbody, div.luminous tr {
   border-radius: inherit;
