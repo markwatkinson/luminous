@@ -215,7 +215,6 @@ div.luminous table
   padding:0px !important;
   border-collapse:collapse !important;
   margin:0px !important;
-  
 }
 
 /* None-line numbered widget */
@@ -229,3 +228,23 @@ div.luminous_inline div.code
   padding-left:0em !important;
 }
 
+/* Firefox and IE9 are happy with just this */
+div.luminous div, div.luminous table, div.luminous tbody, div.luminous tr {
+  border-radius: inherit;
+}
+/*
+ * Chrome is very fussy and requires a lot mroe detail, otherwise these elements
+ * will 'poke' out beyond the rounded borders of the luminous element
+ */
+div.luminous td.line_number_bar {
+  border-top-left-radius: inherit;
+  border-bottom-left-radius: inherit;
+}
+div.luminous td.code, div.luminous pre.code {
+  border-top-right-radius: inherit;
+  border-bottom-right-radius: inherit;
+}
+
+div.luminous span.line:last-child {
+  border-bottom-right-radius: inherit;
+}
