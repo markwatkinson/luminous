@@ -237,7 +237,7 @@ div.luminous div, div.luminous table, div.luminous tbody, div.luminous tr {
   border-radius: inherit;
 }
 /*
- * Chrome is very fussy and requires a lot mroe detail, otherwise these elements
+ * Chrome is very fussy and requires a lot more detail, otherwise these elements
  * will 'poke' out beyond the rounded borders of the luminous element
  */
 div.luminous td.line_number_bar {
