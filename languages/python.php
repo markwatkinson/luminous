@@ -1,10 +1,7 @@
 <?php
 
 class LuminousPythonScanner extends LuminousScanner {
-  
-  
-  
-  
+ 
   public function init() {
     
     $this->remove_filter('comment-to-doc');
@@ -66,11 +63,10 @@ class LuminousPythonScanner extends LuminousScanner {
       \.(?>[0-9]+)(?:(?:[eE][\+\-]?)?(?>[0-9]+))?[jJ]?
     )
     /x'); 
-    
-    
+
     // catch the colon separately so we can use $match === ':' in figuring out
     // where docstrs occur
-    $this->add_pattern('OPERATOR', '/[!%^*\-=+;<>\\\\(){}\[\],\\.]+|:/');
+    $this->add_pattern('OPERATOR', '/\+=|-=|\*=|\/=|>=|<=|!=|==|\*\*|[!%^*\-=+;<>\\\\(){}\[\],\\.:]/');
 
     $this->add_identifier_mapping('KEYWORD', array('assert', 'as', 'break',
     'class', 'continue', 'del', 'def', 'elif', 'else', 'except', 'exec',
@@ -116,7 +112,7 @@ class LuminousPythonScanner extends LuminousScanner {
   // mini-scanner to handle highlighting module names in import lines
   private function import_line() {
     $import = false;
-    $from = false;    
+    $from = false;
     while(!$this->eol()) {
       $c = $this->peek();
       $tok = null;
