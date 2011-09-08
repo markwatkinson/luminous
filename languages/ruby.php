@@ -79,17 +79,6 @@ class LuminousRubyScanner extends LuminousScanner {
   /// each element is a tuple: (delimiter(str), identable?, interpolatable?)
   private $heredocs = array();
 
-  private static function balance_delimiter($delimiter) {
-    $map = array('[' => ']', '{' => '}', '<' => '>', '('=>')');
-    $out = isset($map[$delimiter])? $map[$delimiter] : $delimiter;
-    return $out;
-  }
-  private static function is_balanced($delimiter) {
-    return ($delimiter === '[' || $delimiter === '{' || $delimiter === '<'
-      || $delimiter === '(');
-  }
-
-
 
   public function init() {
     $this->operator_regex = '/(?: [~!^&*\-+=:;|<>\/?';
@@ -170,7 +159,6 @@ class LuminousRubyScanner extends LuminousScanner {
         if (strpos($tok[1], 'scan' ) !== false) return true;
         if (strpos($tok[1], 'sub') !== false) return true;
         return false;
-        
       }
       return false;
     }
@@ -430,7 +418,7 @@ class LuminousRubyScanner extends LuminousScanner {
             $pos = $this->pos();
           }
         }
-        $data = array($type, $delimiter, self::balance_delimiter($delimiter),
+        $data = array($type, $delimiter, LuminousUtils::balance_delimiter($delimiter),
           $pos, $interpolation, $fancy_delim, $split);
         $this->do_string($data);
       }
