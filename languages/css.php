@@ -121,7 +121,7 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
         
         break;
       }
-      elseif($this->embedded_server && $this->check(sprintf('/%s/', preg_quote($this->server_tags, '/')))) {
+      elseif($this->embedded_server && $this->check($this->server_tags)) {
         $this->interrupt = true;
         $this->clean_exit = true;        
         break;

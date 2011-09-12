@@ -1177,9 +1177,9 @@ abstract class LuminousEmbeddedWebScript extends LuminousScanner {
   public $embedded_server = false;
   
   /**
-   * @brief Opening tag for server-side code
+   * @brief Opening tag for server-side code. This is a regular expression.
    */
-  public $server_tags = '<?';
+  public $server_tags = '/<\?/';
   
   /// @brief closing HTML tag for our code, e.g \</script\>
   public $script_tags;
@@ -1332,7 +1332,8 @@ pattern for ' . $this->exit_state . ' failed to match');
     if ($match === null) $match = $this->match();
     if ($match === null) return false;
     
-    if (($pos_ = stripos($match, $this->server_tags)) !== false) {
+    if (preg_match($this->server_tags, $match, $m_, PREG_OFFSET_CAPTURE)) {
+      $pos_ = $m_[0][1];
       $this->record(substr($match, 0, $pos_), $token_name);
       if ($pos === null) $pos = $this->match_pos();
       $this->pos($pos + $pos_);

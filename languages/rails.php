@@ -13,7 +13,7 @@ class LuminousRailsScanner extends LuminousScanner {
     $this->html_scanner = new LuminousHTMLScanner();
     $this->html_scanner->string($this->string());
     $this->html_scanner->embedded_server = true;
-    $this->html_scanner->server_tags = '<%';
+    $this->html_scanner->server_tags = '/<%/';
     $this->html_scanner->init();
   }
 

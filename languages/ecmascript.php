@@ -7,12 +7,8 @@
  */
 
 class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
-  
-  // TODO clean up redunancy here and in constructor
-  public $server_tags = '<?';
+
   public $script_tags = '</script>';
-  
-  
   // regular expressions in JavaScript are delimited by '/', BUT, the slash
   // character may appear unescaped within character classes
   // we can handle this fairly easily with a single regex because the classes 
@@ -135,12 +131,10 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
     $this->add_pattern('SLASH', '%/%');
     
     $stop_patterns = array();
-    if ($this->embedded_server) $stop_patterns[] = "(?P<SERVER>" . preg_quote($this->server_tags, '%') . ")";
-    if ($this->embedded_html) $stop_patterns[] = "(?P<SCRIPT_TERM></script>)";
-    if (!empty($stop_patterns)) {
-      $this->stop_pattern = '%' . join('|', $stop_patterns) . '%i';
-      $this->add_pattern('STOP', $this->stop_pattern);
-    }
+    if ($this->embedded_server) 
+      $this->add_pattern('STOP_SERVER', $this->server_tags);
+    if ($this->embedded_html)
+      $this->add_pattern('STOP_SCRIPT', '%</script>%');
     
     $xml_scanner = new LuminousHTMLScanner($this->string());
     $xml_scanner->xml_literal = true;
@@ -232,8 +226,12 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
         }
       }
 
-      elseif ($tok === 'STOP') {
-        if ($this->match() === $this->server_tags) $this->interrupt = true;
+      elseif ($tok === 'STOP_SERVER') {
+        $this->interrupt = true;
+        $this->unscan();
+        break;
+      }
+      elseif ($tok === 'STOP_SCRIPT') {
         $this->unscan();
         break;
       }

@@ -54,7 +54,7 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
   function init() {
     $this->add_pattern('', '/&/');
     if ($this->embedded_server) {
-      $this->add_pattern('TERM', sprintf('/%s/', preg_quote($this->server_tags, '/')));
+      $this->add_pattern('TERM', $this->server_tags);
     }
     $this->add_pattern('', '/</');
     $this->state_ = 'global';
@@ -86,7 +86,7 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
     while (!$this->eos()) {
       $index = $this->pos();
       
-      if ($this->embedded_server &&  $this->peek(strlen($this->server_tags) === $this->server_tags)) {
+      if ($this->embedded_server &&  $this->check($this->server_tags)) {
         $this->interrupt = true;
         break;
       }      
@@ -120,10 +120,8 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
           }
         }
       } else {
-        if ($this->embedded_server && 
-          $this->check('/\s*' . preg_quote($this->server_tags, '/') . '/'))
-          {
-          $this->skip_whitespace();
+        $this->skip_whitespace();
+        if ($this->embedded_server && $this->check($this->server_tags)) {
           $this->interrupt = true;
           break;
         }
