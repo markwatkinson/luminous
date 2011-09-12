@@ -20,7 +20,10 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
       'COMMENT1' => '/(?> [^\\-]+ | -(?!->))*(?:-->|$)/x',
       'COMMENT2' => '/[^>]*+(?:>|$)/s',
       'CDATA' => '/(?>[^\\]]+|\\](?!\\]>))*(?:\\]{2}>|$)/xs',
-      'ESC' => '/[^;]*+(?:;|$)/'
+      'ESC' => '/[^;]*+(?:;|$)/',
+      'TYPE' => '/[^\s]*/',
+      'VALUE' => '/[^\s]*/',
+      'HTMLTAG' => '/[^\s]*/',
     );
     
     $this->rule_tag_map = array(
