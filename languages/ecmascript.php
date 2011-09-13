@@ -100,6 +100,11 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
   
   function init() {
     
+    if ($this->embedded_server)
+      $this->add_pattern('STOP_SERVER', $this->server_tags);
+    if ($this->embedded_html)
+      $this->add_pattern('STOP_SCRIPT', '%</script>%');
+    
     $op_pattern = '[=!+*%\-&^|~:?\;,.>';
     if (!($this->embedded_server || $this->embedded_html)) 
       $op_pattern .= '<]+';
@@ -131,10 +136,7 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
     $this->add_pattern('SLASH', '%/%');
     
     $stop_patterns = array();
-    if ($this->embedded_server) 
-      $this->add_pattern('STOP_SERVER', $this->server_tags);
-    if ($this->embedded_html)
-      $this->add_pattern('STOP_SCRIPT', '%</script>%');
+
     
     $xml_scanner = new LuminousHTMLScanner($this->string());
     $xml_scanner->xml_literal = true;
