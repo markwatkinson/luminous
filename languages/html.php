@@ -220,7 +220,7 @@ class LuminousHTMLScanner extends LuminousEmbeddedWebScript {
       if (!$get && $this->server_break($tok)) {break; }
 
       $this->record($get? $this->get(): $this->match(), $tok);
-      assert ($index < $this->pos());
+      assert ($index < $this->pos() || $this->eos());
       if ($this->xml_literal && $this->state_ !== 'tag' && empty($this->tag_stack)) {
         return;
       }
