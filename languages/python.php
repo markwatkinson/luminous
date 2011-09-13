@@ -98,6 +98,7 @@ class LuminousPythonScanner extends LuminousScanner {
     'class', 'continue', 'del', 'def', 'elif', 'else', 'except', 'exec',
     'finally', 'for', 'from', 'global', 'if', 'import', 'lambda', 
     'print', 'pass', 'raise', 'return', 'try', 'while', 'yield',
+    'with',
     'and', 'not', 'in', 'is', 'or', 'print'));
     
     $this->add_identifier_mapping('FUNCTION', array('all', 'abs', 'any', 
