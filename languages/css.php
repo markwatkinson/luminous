@@ -63,8 +63,12 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
       $c = $this->peek();
       
 
-      
-      if ($c === '/' && $this->scan(LuminousTokenPresets::$C_COMMENT_ML)) 
+      if ($this->embedded_server && $this->check($this->server_tags)) {
+        $this->interrupt = true;
+        $this->clean_exit = true;
+        break;
+      }
+      elseif ($c === '/' && $this->scan(LuminousTokenPresets::$C_COMMENT_ML)) 
         $tok = 'COMMENT';
       elseif($in_block && $c === '#' && 
         $this->scan('/#[a-fA-F0-9]{3}(?:[a-fA-F0-9]{3})?/'))
@@ -119,11 +123,6 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
         $this->interrupt = false;
         $this->clean_exit = true;
         
-        break;
-      }
-      elseif($this->embedded_server && $this->check($this->server_tags)) {
-        $this->interrupt = true;
-        $this->clean_exit = true;        
         break;
       }
       elseif($this->scan('/[:\\.#>*]+/')) $tok = 'OPERATOR';
