@@ -1,7 +1,13 @@
 <?php
-
+/*
+ * Python scanner - includes Django
+ *
+ * TODO: Django does not respect {% comment  %} ... {% endcomment %}
+ */
 class LuminousPythonScanner extends LuminousScanner {
- 
+
+  public $django = false;
+  
   public function init() {
     
     $this->remove_filter('comment-to-doc');
@@ -17,7 +23,9 @@ class LuminousPythonScanner extends LuminousScanner {
     $triple_sstr = sprintf($triple_str_template, "'");    
     
     $this->add_pattern('IDENT', '/[a-zA-Z_](?>\w*)(?!["\'])/');
-    $this->add_pattern('COMMENT', '/\#.*/');
+    // I *assume* that Django tags terminate these
+    $this->add_pattern('COMMENT', sprintf('/\#.*%s/',
+      $this->django? '(?=[%}]\})' : ''));
     
     
     // decorator
@@ -62,11 +70,29 @@ class LuminousPythonScanner extends LuminousScanner {
       # or only after the point, float x = .1;
       \.(?>[0-9]+)(?:(?:[eE][\+\-]?)?(?>[0-9]+))?[jJ]?
     )
-    /x'); 
+    /x');
+
+    // %} and }} are django terminators
+    if ($this->django) {
+      $this->add_pattern('TERM', '/[%}]\}/');
+    }
 
     // catch the colon separately so we can use $match === ':' in figuring out
     // where docstrs occur
     $this->add_pattern('OPERATOR', '/\+=|-=|\*=|\/=|>=|<=|!=|==|\*\*|[!%^*\-=+;<>\\\\(){}\[\],\\.:]/');
+
+    if ($this->django) {
+      // Django specific keywords
+      // https://docs.djangoproject.com/en/1.3/ref/templates/builtins/
+      $this->add_identifier_mapping('KEYWORD', array('autoescape',
+        'endautoescape', 'cycle', 'filter', 'endfilter', 'include',
+        'extends', 'firstof', 'empty', 'ifchanged', 'endifchanged',
+        'ifequal', 'endifequal', 'ifnotequal', 'endifnotequal',
+        'load',  'now',  'regroup', 'spaceless', 'endspaceless',
+        'ssi', 'url',  'widthratio', 'endwith',
+        'endfor', 'endif',
+        'endwhile'));
+    }
 
     $this->add_identifier_mapping('KEYWORD', array('assert', 'as', 'break',
     'class', 'continue', 'del', 'def', 'elif', 'else', 'except', 'exec',
@@ -160,6 +186,12 @@ class LuminousPythonScanner extends LuminousScanner {
         $this->record(substr($this->string(), $index), null);
         break;
       }
+      // Django terminator tag - break to superscanner
+      if ($tok === 'TERM') {
+        $this->unscan();
+        break;
+      }
+      
       $m = $this->match();
       
       /* python doc strs are a pain because they're actually just strings. 
@@ -213,7 +245,7 @@ class LuminousPythonScanner extends LuminousScanner {
         $doccstr = false;
       }
       
-      if ($tok === 'IDENT') {        
+      if ($tok === 'IDENT') {
         if ($m === 'import' || $m === 'from') {
           $this->unscan();
           $this->import_line();
@@ -278,5 +310,64 @@ class LuminousPythonScanner extends LuminousScanner {
 
 
     return $p;
+  }
+}
+
+
+class LuminousDjangoScanner extends LuminousScanner {
+  // warning: some copying and pasting with the rails scanner here
+  
+  // HTML scanner has to be persistent.
+  private $html_scanner;
+
+  public function init() {
+    $this->html_scanner = new LuminousHTMLScanner();
+    $this->html_scanner->string($this->string());
+    $this->html_scanner->embedded_server = true;
+    $this->html_scanner->server_tags = '/\{[{%#]/';
+    $this->html_scanner->init();
+  }
+
+  public function scan_html() {
+    $this->html_scanner->pos($this->pos());
+    $this->html_scanner->main();
+    $this->record($this->html_scanner->tagged(), null, true);
+    $this->pos($this->html_scanner->pos());
+  }
+
+
+
+
+  public function scan_python($short=false) {
+    $python_scanner = new LuminousPythonScanner($this->string());
+    $python_scanner->django = true;
+    $python_scanner->init();
+    $python_scanner->pos($this->pos());
+    $python_scanner->main();
+    $this->record($python_scanner->tagged(), $short? 'INTERPOLATION' : null, true);
+    $this->pos($python_scanner->pos());
+  }
+
+
+  public function main() {
+    while(!$this->eos()) {
+      $p = $this->pos();
+      // django's tags are {{ }} and {% %}
+      // there's also a {#  #} comment tag but we can probably handle that here
+      // more easily
+      if ($this->scan('/\{([{%])/')) {
+        $this->record($this->match(), 'DELIMITER');
+        $this->scan_python($this->match_group(1) === '{');
+        if ($this->scan('/[}%]\}/')) {
+          $this->record($this->match(), 'DELIMITER');
+        }
+      } elseif($this->scan('/\{\# (?: [^\#]++ | \#(?! \} ) )*+ (?: \#\} | $)/x')) {
+        $this->record($this->match(), 'COMMENT');
+      }
+      else {
+        $this->scan_html();
+      }
+      assert($p < $this->pos());
+    }
   }
 }
