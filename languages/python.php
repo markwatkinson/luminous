@@ -213,13 +213,17 @@ class LuminousPythonScanner extends LuminousScanner {
        * 
        * 
        * NOTE: note we're skipping whitespace.
+       * NOTE: we disable the no-op detection for Django because the string
+       * might be inside an output tag.
+       * 
        */
       
       if ($definition && $doccstr) {
         if($tok === 'STRING')
           $tok = 'COMMENT';
       }
-      elseif ($tok === 'STRING') {      
+      
+      elseif ($tok === 'STRING' && !$this->django) {
         $i = count($this->tokens);
         $tok = 'COMMENT';
         while ($i--) {
