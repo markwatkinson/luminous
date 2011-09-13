@@ -142,6 +142,8 @@ class LuminousECMAScriptScanner extends LuminousEmbeddedWebScript {
     $xml_scanner->xml_literal = true;
     $xml_scanner->scripts = false;
     $xml_scanner->embedded_server = $this->embedded_server;
+    if ($this->embedded_server)
+      $xml_scanner->server_tags = $this->server_tags;
     $xml_scanner->init();
     $xml_scanner->pos($this->pos());
     $this->add_child_scanner('xml', $xml_scanner);
