@@ -185,6 +185,7 @@ class LuminousPythonScanner extends LuminousScanner {
         }
       } else {
         $this->record(substr($this->string(), $index), null);
+        $this->terminate();
         break;
       }
       // Django terminator tag - break to superscanner
