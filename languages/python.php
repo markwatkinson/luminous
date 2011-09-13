@@ -376,4 +376,12 @@ class LuminousDjangoScanner extends LuminousScanner {
       assert($p < $this->pos());
     }
   }
+
+  public static function guess_language($src, $info) {
+    if (($html = LuminousHTMLScanner::guess_language($src, $info)) >= 0.2) {
+      if (strpos($src, '{{') !== false || strpos($src, '{%') !== false)
+        return $html + 0.01;
+    }
+    return 0.0;
+  }
 }
