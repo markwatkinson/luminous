@@ -436,7 +436,7 @@ class _Luminous {
       
     $this->scanners->AddScanner(array('python', 'py'),
       'LuminousPythonScanner', 'Python', "$language_dir/python.php");
-    $this->scanners->AddScanner(array('django'),
+    $this->scanners->AddScanner(array('django', 'djt'),
       'LuminousDjangoScanner', 'Django', "$language_dir/python.php",
       array('html')
     );
