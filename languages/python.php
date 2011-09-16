@@ -110,7 +110,11 @@ class LuminousPythonScanner extends LuminousScanner {
     'max', 'min', 'memoryview', 'next', 'object', 'oct', 'open', 'ord', 'pow',
      'property', 'range', 'raw_input', 'reduce', 'reload', 'repr', 'reversed',
      'round', 'setattr', 'slice', 'sorted', 'staticmethod', 'sum', 'super',
-     'type', 'unichr', 'vars', 'xrange', 'zip', '__import__'));
+     'type', 'unichr', 'vars', 'xrange', 'zip', '__import__',
+
+     'bytearray', 'complex', 'dict', 'float', 'int', 'list', 'long',
+     'set', 'str', 'tuple', 'unicode', 'apply', 'buffer', 'coerce', 'intern'
+   ));
 
     // http://docs.python.org/library/exceptions.html
     $this->add_identifier_mapping('TYPE', 
