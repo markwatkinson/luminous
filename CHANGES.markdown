@@ -1,5 +1,30 @@
 Luminous Changelog since 0.6.0
 ==============================
+##v0.6.4 (18/09/11):
+
+- New stuff:
+  - Django scanner
+  - 'geoynx' theme now has a per-line highlight style
+
+- Fixes: 
+  - Fix Luminous not fully respecting rounded corners (border-radius) on the 
+    outer-most div element.
+  - A few typos and grammatical problems corrected in documentation
+
+- Language fixes:
+  - Added missing 'with' keyword for Python
+  - Added some missing functions to Python (int, str, float, list, etc)
+  - Fix theoretically possible bug where the HTML scanner cannot 'recover' 
+    after it breaks from HTML-mode into server-side mode.
+  - Fix occasional overzealous assert() triggering in HTML scanner
+  - Fix occasional bug where ECMAScript's embedded XML literals would not break
+    allow embedded server-side languages
+  - Fix occasional bug where CSS and ECMAScript didn't always allow embedded 
+    server-side languages
+
+- Important stuff for developers:
+  - The web language scanner's `server_tags` has been changed to a regular 
+    expression. This is not backwardly compatible.
 
 ##v0.6.3-1 (06/08/11):
 
