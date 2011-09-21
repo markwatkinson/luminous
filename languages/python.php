@@ -365,12 +365,33 @@ class LuminousDjangoScanner extends LuminousScanner {
       // django's tags are {{ }} and {% %}
       // there's also a {#  #} comment tag but we can probably handle that here
       // more easily
+      // same for {% comment %} ... {% endcomment %}
       if ($this->scan('/\{([{%])/')) {
-        $this->record($this->match(), 'DELIMITER');
-        $this->scan_python($this->match_group(1) === '{');
-        if ($this->scan('/[}%]\}/')) {
-          $this->record($this->match(), 'DELIMITER');
+        $match = $this->match();
+        $m1 = $this->match_group(1);
+        // {% comment %} ... {% endcomment %}
+        if ($this->scan('/\s*comment\s*%\}/')) {
+          $match .= $this->match();
+          $end_pattern = '/\{%\s*endcomment\s*%\}/';
+          if ($this->scan_until($end_pattern) !== null) {
+            $match .= $this->match();
+            $match .= $this->scan($end_pattern);
+          }
+          else {
+            $match .= $this->rest();
+            $this->terminate();
+          }
+          $this->record($match, 'COMMENT');
         }
+        // {{ ... }} or {% ... %}
+        else {
+          $this->record($match, 'DELIMITER');
+          $this->scan_python($m1 === '{');
+          if ($this->scan('/[}%]\}/')) {
+            $this->record($this->match(), 'DELIMITER');
+          }
+        }
+      // {# ... #}
       } elseif($this->scan('/\{\# (?: [^\#]++ | \#(?! \} ) )*+ (?: \#\} | $)/x')) {
         $this->record($this->match(), 'COMMENT');
       }
