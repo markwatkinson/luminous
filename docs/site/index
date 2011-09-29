@@ -21,7 +21,7 @@ echo luminous::highlight('c', 'printf("hello world\n");');
 Check out the [[troubleshooting]] guide.
 
 == Advanced Usage ==
-  * If you want to use an SQL table for caching instead of the filesystem, consult the [[cache]] page.
+  * Consult the [[cache]] page to use an SQL table as your cache, or learn more about the cache's behaviour.
   * Check the examples/ directory for a few examples of how you might use Luminous
   * Have a look at the [[User-API-Reference]] for setting up runtime configuration settings.
 
