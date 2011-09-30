@@ -1,0 +1,111 @@
+/**
+ * Kimono - heavily based on the Monokai theme.
+ *
+ * Dark, simple and uncluttered.
+ *
+ * Some colours stolen from http://www.eclipsecolorthemes.org/?view=theme&id=52
+ */
+
+.luminous , .luminous .line_number {
+  color : #F8F8F2 !important;
+}
+.luminous .code, .luminous .line_number_bar {
+  background-color: #272822;
+}
+.luminous .line_number_bar {
+  border-right: 1px solid #d0d0d0;
+}
+.luminous .highlighted_line {
+  background-color: #3E3D32;
+}
+
+.luminous .comment {
+  color: #75715E;
+}
+.luminous .preprocessor {
+  color: #9C977D;
+}
+.luminous .comment_note {
+  color: #CCDF32;
+}
+.luminous .doccomment {
+  color: #D9E577;
+}
+.luminous .doctag {
+  font-weight: bold;
+}
+.luminous .operator {
+  color: #F95994;
+}
+.luminous .numeric {
+  color: #7FB347;
+}
+.luminous .string, .luminous .character, .luminous .heredoc, .luminous .regex {
+  color: #E6DB74;
+}
+.luminous .keyword {
+  color: #66CCB3;
+}
+.luminous .variable {
+  color: #79ABFF;
+}
+.luminous .constant {
+  color: #EFB571;
+}
+.luminous .function {
+  color: #79ABFF;
+}
+.luminous .user_function {
+  color: #BED6FF;
+}
+
+.luminous .htmltag {
+  color: #BED6FF;
+}
+
+.luminous .type {
+  color: #BFA4A4;
+}
+
+.luminous .delimiter {
+  font-weight: bold;
+}
+
+.luminous .esc {
+  color: #AE81FF;
+}
+
+.luminous .diff_header_old {
+  color: #D25252;
+  font-weight: bold;
+}
+.luminous .diff_header_new {
+  color: #51D251;
+  font-weight: bold;
+}
+.luminous .diff_old {
+  color: #D25252;
+  background-color: #2A0000;
+}
+.luminous .diff_new {
+  color: #51D251;
+  background-color: #002A00;
+}
+
+.luminous .diff_unchanged{
+  color: #888888 !important;
+
+}
+
+.luminous .diff_unchanged * {
+  background-color: transparent !important;
+  color: #888888 !important;
+}
+
+.luminous .diff_range {
+  color: #79ABFF;
+}
+
+.luminous a {
+  color: #F95994;
+}
