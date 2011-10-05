@@ -125,40 +125,43 @@ class LuminousRubyScanner extends LuminousScanner {
       'return LuminousFilters::pcre($tok, (isset($tok[1][0]) && $tok[1][0] === "/"));'));
   }
 
+  
   protected function is_regex() {
+    /*
+     * Annoyingly I don't really know exactly what rules Ruby uses for
+     * disambiguating regular expressions. There might be some incorrect
+     * assumptions in here.
+     */
+    
+    if ($this->check('%/=\s%'))
+      return false;
+    $following_space = (bool)$this->check("%/[ \t]%");
+    $space = false;
     for($i=count($this->tokens)-1; $i>=0; $i--) {
       $tok = $this->tokens[$i];
       if ($tok[0] === 'COMMENT') continue;
       elseif ($tok[0] === 'OPERATOR') return true;
       elseif ($tok[1] === '(' || $tok[1] === ',' || $tok[1] === '{' ||
-          $tok[1] === '[') return true;
-      elseif($tok[0] === null) continue;
-      elseif ($tok[0] === 'IDENT') {
-        switch(rtrim($tok[1], '!?')) {
-          
-          // this is by no means exhaustive. Ruby doesn't enforce that you
-          // use brackets around methods' argument lists, which means we
-          // really have no idea if the preceding identifier is a variable,
-          // like  x=0;y=1;z=2;   x / y / z
-          // or if x is a method which takes a regex.
-          // we're guessing at best. Ruby only has itself to blame.
-          case 'split':
-          case 'index':
-          case 'match':
-          case 'case':
-          case 'end':
-          case 'if':
-          case 'elsif':
-          case 'or':
-          case 'and':
-          case 'when':
-          case 'until':
-          case 'print':
-            return true;
-        }
-        if (strpos($tok[1], 'scan' ) !== false) return true;
-        if (strpos($tok[1], 'sub') !== false) return true;
+          $tok[1] === '[') {
+        // this is definitely an operand
+        return true;
+      }
+      elseif($tok[0] === null) {
+        $space = true;
+        continue;
+      }
+      elseif($tok[0] === 'NUMERIC') {
+        // this is definitely an operator
         return false;
+      }
+      elseif ($tok[0] === 'IDENT'
+        || $tok[0] === 'CONSTANT'
+        || $tok[0] === 'VALUE' // aka :symbols
+      ) {
+        // this could be an operator or operand
+        // Kate's syntax engine seems to operate on the following basis:
+        if ($space && $following_space) return false;
+        return $space;
       }
       return false;
     }
