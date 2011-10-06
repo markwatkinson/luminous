@@ -18,28 +18,16 @@ if (!empty($_GET))
     <script type='text/javascript'>
     
     $(document).ready(function() {
+      // theme switcher change handler
       $('#theme_switcher').change(function(){
-        var theme = $(this).val(),
-            themes = [<?php 
-            // we use PHP to populate the list of known themes. If you think 
-            // this is horrible, set up an AJAX interface :)
-            echo "'" . wordwrap(join("', '", luminous::themes())) . "'";
-            ?>],
-            $links = $('link[rel=stylesheet]');
-        
-        if ($.inArray(theme, themes) == -1)
-          return true; 
-        // Now we iterate over the known stylesheets and try to determine if
-        // it's the index of a Luminous theme. If it is, we swap it out.
-        $links.each(function (i, e){
-          var href = $(this).attr('href');
-          var href_basename = href.replace(/.*\//, '');
-          if ($.inArray(href_basename, themes) == -1)
-            return;
-          $(this).attr('href', href.replace(/\/[^\/]+$/, '/' + theme));
-          return true;
-        });
-        return true;
+        // get the /path/to/style/ via the current theme's href attribute
+        var current_url = $('#luminous-theme').attr('href');
+        var base_url = current_url.replace(/[^/]*$/, '');
+        // now replace the href with the new theme's path
+        $('#luminous-theme').attr('href',
+          base_url + $(this).val()
+        );
+        return false;
       });
     });
    
@@ -59,10 +47,12 @@ if (!empty($_GET))
   $default_theme = luminous::setting('theme');
   if (!preg_match('/\.css$/', $default_theme))
     $default_theme .= '.css';
-  foreach(luminous::themes() as $theme)  {
-    $default = ($theme == $default_theme)? ' selected' : '';
-    echo "<option id='{$theme}'{$default}>{$theme}</option>";
-  } ?>
+  foreach(luminous::themes() as $theme): ?>
+    <option id='<?=$theme?>'
+      <?=($theme == $default_theme)? ' selected' : ''?>>
+      <?= $theme ?>
+    </option>
+  <?php endforeach ?>
   </select>
   <noscript><input type='submit' value='Switch'></noscript>
   </form>

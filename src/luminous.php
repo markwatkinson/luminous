@@ -951,10 +951,10 @@ abstract class luminous {
     $relative_root = preg_replace('%(?<!:)//+%', '/', $relative_root);
     $relative_root = rtrim($relative_root, '/');
     $out = '';
-    $link_template = "<link rel='stylesheet' type='text/css' href='$relative_root/style/%s'>\n";
+    $link_template = "<link rel='stylesheet' type='text/css' href='$relative_root/style/%s' id='%s'>\n";
     $script_template = "<script type='text/javascript' src='$relative_root/client/%s'></script>\n";
-    $out .= sprintf($link_template, 'luminous.css');
-    $out .= sprintf($link_template, $theme);
+    $out .= sprintf($link_template, 'luminous.css', 'luminous-style');
+    $out .= sprintf($link_template, $theme, 'luminous-theme');
     if ($js || LUMINOUS_DEBUG) {
       if ($jquery)
         $out .= sprintf($script_template, 'jquery-1.4.2.min.js');
