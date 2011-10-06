@@ -23,7 +23,15 @@ $write_fs = array();
 
 for($i=0; $i<1000; $i++) {
   $data = '';
-  for($j=0; $j<1024; $j++) {
+  for($j=0; $j<1024/8; $j++) {
+    // unrolled for speed
+    $data .= chr(rand(32, 126));
+    $data .= chr(rand(32, 126));
+    $data .= chr(rand(32, 126));
+    $data .= chr(rand(32, 126));
+    $data .= chr(rand(32, 126));
+    $data .= chr(rand(32, 126));
+    $data .= chr(rand(32, 126));
     $data .= chr(rand(32, 126));
   }
   $id = md5($data);
