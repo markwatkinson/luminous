@@ -23,7 +23,11 @@ class LuminousSQLCache extends LuminousCache {
       VALUES("%s", "%s", %d, %d);',
     'update' => 'UPDATE `%s` SET hit_date=%d WHERE cache_id="%s";',
     'select' => 'SELECT output FROM `%s` WHERE cache_id="%s";',
-    'purge' => 'DELETE FROM `%s` WHERE hit_date <= %d;',
+    'purge' => 'DELETE FROM `%s` WHERE hit_date <= %d AND cache_id != "last_purge";',
+    'get_purge_time' => 'SELECT hit_date FROM `%s` WHERE cache_id="last_purge" LIMIT 1;',
+    'set_purge_time' => 'UPDATE `%s` SET hit_date = %d WHERE cache_id="last_purge";',
+    'set_purge_time_initial' => 'INSERT IGNORE INTO `%s` (cache_id, hit_date)
+      VALUES ("last_purge", %d);'
   );
 
   private $sql_function = null;
@@ -105,13 +109,40 @@ class LuminousSQLCache extends LuminousCache {
 
   protected function _purge() {
     if ($this->timeout <= 0) return;
-    try {
+    $purge_time_ = $this->_query(
+      sprintf(self::$queries['get_purge_time'],
+        self::_safety_check(self::$table_name),
+        self::_safety_check(time())
+      )
+    );
+    $purge_time = 0;
+    if ($purge_time_ !== false
+      && !empty($purge_time_) && isset($purge_time_[0]['hit_date'])) {
+      $purge_time = $purge_time_[0]['hit_date'];
+    } else {
+      // we need to insert the record
       $this->_query(
-        sprintf(self::$queries['purge'],
+        sprintf(self::$queries['set_purge_time_initial'],
                 self::_safety_check(self::$table_name),
-                self::_safety_check(time() - $this->timeout)));
-    } catch(LuminousSQLSafetyException $e) {}
-
+                self::_safety_check(time())
+        )
+      );
+    }
+    if ($purge_time < time() - 60*60*24) {
+      // XXX: does this need to be in a try block?
+      try {
+        $this->_query(
+          sprintf(self::$queries['purge'],
+                  self::_safety_check(self::$table_name),
+                  self::_safety_check(time() - $this->timeout)));
+      } catch(LuminousSQLSafetyException $e) {}
+      $this->_query(
+        sprintf(self::$queries['set_purge_time'],
+                self::_safety_check(self::$table_name),
+                self::_safety_check(time())
+        )
+      );
+    }
   }
 }
 
