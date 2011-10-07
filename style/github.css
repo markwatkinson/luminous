@@ -131,7 +131,7 @@
 }
 .luminous .interpolation {
   font-style: italic;
-  background-color: rgba(30, 80, 200, 0.1);
+/*   background-color: rgba(30, 80, 200, 0.1); */
 }
 
 .luminous .delimiter {
