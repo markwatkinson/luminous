@@ -439,7 +439,7 @@
     <COMMENT>#</COMMENT>
     <COMMENT># Flexible HTML escaping</COMMENT>
     <COMMENT>#</COMMENT>
-    <KEYWORD>def</KEYWORD> htmlesc( str, mode<OPERATOR>=:</OPERATOR><CONSTANT>Quotes</CONSTANT> )
+    <KEYWORD>def</KEYWORD> htmlesc( str, mode<OPERATOR>=</OPERATOR><VALUE>:Quotes</VALUE> )
       <KEYWORD>if</KEYWORD> str
         <OBJ>str</OBJ>.<OO>gsub!</OO>( <STRING>'&amp;'</STRING>, <STRING>'&amp;amp;'</STRING> )
         <OBJ>str</OBJ>.<OO>gsub!</OO>( <STRING>'"'</STRING>, <STRING>'&amp;quot;'</STRING> ) <KEYWORD>if</KEYWORD> mode <OPERATOR>!=</OPERATOR> <VALUE>:NoQuotes</VALUE>
@@ -816,11 +816,11 @@
             all
           <KEYWORD>else</KEYWORD>
             url, url_title <OPERATOR>=</OPERATOR> check_refs( url )
-            title <OPERATOR>||=</OPERATOR> url_title
+            title <OPERATOR>||</OPERATOR><OPERATOR>=</OPERATOR> url_title
             
             <COMMENT># Idea below : an URL with unbalanced parethesis and</COMMENT>
             <COMMENT># ending by ')' is put into external parenthesis</COMMENT>
-            <KEYWORD>if</KEYWORD> ( url[<OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>]<OPERATOR>==?</OPERATOR>) <KEYWORD>and</KEYWORD> ((<OBJ>url</OBJ>.<OO>count</OO>(<STRING>"("</STRING>) <OPERATOR>-</OPERATOR> <OBJ>url</OBJ>.<OO>count</OO>(<STRING>")"</STRING>)) <OPERATOR>&lt;</OPERATOR> <NUMERIC>0</NUMERIC> ) )
+            <KEYWORD>if</KEYWORD> ( url[<OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>]<OPERATOR>==</OPERATOR><OPERATOR>?</OPERATOR>) <KEYWORD>and</KEYWORD> ((<OBJ>url</OBJ>.<OO>count</OO>(<STRING>"("</STRING>) <OPERATOR>-</OPERATOR> <OBJ>url</OBJ>.<OO>count</OO>(<STRING>")"</STRING>)) <OPERATOR>&lt;</OPERATOR> <NUMERIC>0</NUMERIC> ) )
               url<OPERATOR>=</OPERATOR>url[<NUMERIC>0.</NUMERIC>.<OPERATOR>-</OPERATOR><NUMERIC>2</NUMERIC>] <COMMENT># discard closing parenth from url</COMMENT>
               post <OPERATOR>=</OPERATOR> <STRING>")"</STRING><OPERATOR>+</OPERATOR>post <COMMENT># add closing parenth to post</COMMENT>
             <KEYWORD>end</KEYWORD>

@@ -81,10 +81,19 @@ class LuminousRubyScanner extends LuminousScanner {
 
 
   public function init() {
-    $this->operator_regex = '/(?: [~!^&*\-+=:;|<>\/?';
-    if ($this->rails) $this->operator_regex .= ']+|%(?!>))+';
-    else $this->operator_regex .= '%]+)';
-    $this->operator_regex .= '/x';
+    // http://www.zenspider.com/Languages/Ruby/QuickRef.html#23
+    $this->operator_regex = '/
+      \?   | ;
+      | ::? | \*[=\*]? | \/=? | -=? | %=? | ^=? | &&? | \|\|? | \.{2,3}
+      | \^=?
+      | < (?:=>|<|=)? | >=?
+      | =[>~] | ={1,3} 
+      | \+=? | ![=~]?
+    /x';
+//     $this->operator_regex = '/(?: [~!^&*\-+=:;|<>\/?';
+//     if ($this->rails) $this->operator_regex .= ']+|%(?!>))+';
+//     else $this->operator_regex .= '%]+)';
+//     $this->operator_regex .= '/x';
       
     $this->add_identifier_mapping('KEYWORD', array('BEGIN', 'END', 'alias',
       'begin', 'break', 'case', 'class', 'def', 'defined?', 'do',
@@ -141,6 +150,7 @@ class LuminousRubyScanner extends LuminousScanner {
       $tok = $this->tokens[$i];
       if ($tok[0] === 'COMMENT') continue;
       elseif ($tok[0] === 'OPERATOR') return true;
+      elseif($tok[0] === 'STRING') return true;
       elseif ($tok[1] === '(' || $tok[1] === ',' || $tok[1] === '{' ||
           $tok[1] === '[') {
         // this is definitely an operand

@@ -243,7 +243,7 @@
     issues <OPERATOR>=</OPERATOR> assigns(<VALUE>:issues</VALUE>)
     assert_not_nil issues
     assert <OPERATOR>!</OPERATOR><OBJ>issues</OBJ>.<OO>empty?</OO>
-    assert_equal <OBJ>issues</OBJ>.<OO>sort</OO> {<OPERATOR>|</OPERATOR>a,b<OPERATOR>|</OPERATOR> <OBJ>a</OBJ>.<OO>tracker</OO> <OPERATOR>==</OPERATOR> <OBJ>b</OBJ>.<OO>tracker</OO> <OPERATOR>?</OPERATOR> <OBJ>b</OBJ>.<OO>id</OO> <OPERATOR>&lt;=&gt;</OPERATOR> <OBJ>a</OBJ>.<OO>id</OO> <OPERATOR>:</OPERATOR> <OBJ>a</OBJ>.<OO>tracker</OO> <OPERATOR>&lt;=&gt;</OPERATOR> <OBJ>b</OBJ>.<OO>tracker</OO> }.<OO>collect</OO>(<OPERATOR>&amp;:</OPERATOR>id), <OBJ>issues</OBJ>.<OO>collect</OO>(<OPERATOR>&amp;:</OPERATOR>id)
+    assert_equal <OBJ>issues</OBJ>.<OO>sort</OO> {<OPERATOR>|</OPERATOR>a,b<OPERATOR>|</OPERATOR> <OBJ>a</OBJ>.<OO>tracker</OO> <OPERATOR>==</OPERATOR> <OBJ>b</OBJ>.<OO>tracker</OO> <OPERATOR>?</OPERATOR> <OBJ>b</OBJ>.<OO>id</OO> <OPERATOR>&lt;=&gt;</OPERATOR> <OBJ>a</OBJ>.<OO>id</OO> <OPERATOR>:</OPERATOR> <OBJ>a</OBJ>.<OO>tracker</OO> <OPERATOR>&lt;=&gt;</OPERATOR> <OBJ>b</OBJ>.<OO>tracker</OO> }.<OO>collect</OO>(<OPERATOR>&amp;</OPERATOR><VALUE>:id</VALUE>), <OBJ>issues</OBJ>.<OO>collect</OO>(<OPERATOR>&amp;</OPERATOR><VALUE>:id</VALUE>)
   <KEYWORD>end</KEYWORD>
   
   <KEYWORD>def</KEYWORD> test_index_with_columns
@@ -254,12 +254,12 @@
     <COMMENT># query should use specified columns</COMMENT>
     query <OPERATOR>=</OPERATOR> assigns(<VALUE>:query</VALUE>)
     assert_kind_of <CONSTANT>Query</CONSTANT>, query
-    assert_equal columns, <OBJ>query</OBJ>.<OO>column_names</OO>.<OO>map</OO>(<OPERATOR>&amp;:</OPERATOR>to_s)
+    assert_equal columns, <OBJ>query</OBJ>.<OO>column_names</OO>.<OO>map</OO>(<OPERATOR>&amp;</OPERATOR><VALUE>:to_s</VALUE>)
     
     <COMMENT># columns should be stored in session</COMMENT>
     assert_kind_of <CONSTANT>Hash</CONSTANT>, session[<VALUE>:query</VALUE>]
     assert_kind_of <CONSTANT>Array</CONSTANT>, session[<VALUE>:query</VALUE>][<VALUE>:column_names</VALUE>]
-    assert_equal columns, session[<VALUE>:query</VALUE>][<VALUE>:column_names</VALUE>].<OO>map</OO>(<OPERATOR>&amp;:</OPERATOR>to_s)
+    assert_equal columns, session[<VALUE>:query</VALUE>][<VALUE>:column_names</VALUE>].<OO>map</OO>(<OPERATOR>&amp;</OPERATOR><VALUE>:to_s</VALUE>)
   <KEYWORD>end</KEYWORD>
 
   <KEYWORD>def</KEYWORD> test_show_by_anonymous
@@ -1125,7 +1125,7 @@
     
     assert_response <NUMERIC>302</NUMERIC>
     <COMMENT># check that the issues were updated</COMMENT>
-    assert_equal [<NUMERIC>7</NUMERIC>, <NUMERIC>7</NUMERIC>, <NUMERIC>7</NUMERIC>], <CONSTANT>Issue</CONSTANT>.<OO>find</OO>([<NUMERIC>1</NUMERIC>,<NUMERIC>2</NUMERIC>,<NUMERIC>6</NUMERIC>]).<OO>map</OO>(<OPERATOR>&amp;:</OPERATOR>priority_id)
+    assert_equal [<NUMERIC>7</NUMERIC>, <NUMERIC>7</NUMERIC>, <NUMERIC>7</NUMERIC>], <CONSTANT>Issue</CONSTANT>.<OO>find</OO>([<NUMERIC>1</NUMERIC>,<NUMERIC>2</NUMERIC>,<NUMERIC>6</NUMERIC>]).<OO>map</OO>(<OPERATOR>&amp;</OPERATOR><VALUE>:priority_id</VALUE>)
     
     issue <OPERATOR>=</OPERATOR> <CONSTANT>Issue</CONSTANT>.<OO>find</OO>(<NUMERIC>1</NUMERIC>)
     journal <OPERATOR>=</OPERATOR> <OBJ>issue</OBJ>.<OO>journals</OO>.<OO>find</OO>(<VALUE>:first</VALUE>, <VALUE>:order</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'created_on DESC'</STRING>)
