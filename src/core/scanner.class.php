@@ -250,7 +250,7 @@ class Scanner {
    * 
    */
   function match() {
-    $index = false;
+//     $index = false;
     if (isset($this->match_history[0])) {
       return $this->match_history[0][2][0];
     }
@@ -321,9 +321,10 @@ class Scanner {
     if (isset($this->match_history[0])) {
       $this->match_history[1] = $this->match_history[0];
     }
-    $this->match_history[0][0] = $index;
-    $this->match_history[0][1] = $match_pos;
-    $this->match_history[0][2] = $match_data;   
+    $m = & $this->match_history[0];
+    $m[0] = $index;
+    $m[1] = $match_pos;
+    $m[2] = $match_data;
   }
   
   /**
