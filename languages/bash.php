@@ -11,8 +11,12 @@
  * 2011-10-10:  Changed comment regex to require a preceding whitespace char
  *      (or start of string). This seems in line with Kate, and it prevents
  *      incorrectly hitting some things as comments which are actually
- *      [I have no idea]. e.g.: for (( i=0; i<${#1}; i=i+2 )); do
+ *      [I have no idea]. e.g.: for (( i=0; i<${#1}; i=i+2 ));
  * 
+ *      Also changed it to not apply any highlighting between (( ... ))
+ *      blocks, which fixes a bug regarding shifts being detected as
+ *      heredocs. This is buggy - it should detect SOME types inside
+ *      these blocks, and it should be aware of nested brackets. FIXME.
  */
 
 class LuminousBashScanner extends LuminousScanner {
@@ -77,7 +81,26 @@ class LuminousBashScanner extends LuminousScanner {
     while(!$this->eos()) {
 
       $c = $this->peek();
-  
+
+      // double brackets are apparently an arithemtic operation
+      // http://stackoverflow.com/questions/2188199/bash-double-or-single-bracket-parentheses-curly-braces
+      // anyway, if we apply normal highlighting in them, it seems to break some
+      // things
+      // TODO I think we should respect certain sub-types in the (( ... ))
+      // block, like strings and other stuff. It may require re-factoring the
+      // scanner to get this right. It may be best to switch this to a
+      // LumiousStatefulScanner. This will do for now though.
+      if ($this->scan('/(\\$?)(\({2})/')) {
+        $dollar = $this->match_group(1);
+        $this->record($this->match(), $dollar? 'KEYWORD' : null);
+        if ($this->scan_until('/\){2}/') !== null) {
+          $this->record($this->match(), null);
+          $this->record($this->scan('/\){2}/'), $dollar? 'KEYWORD' : null);
+        } else {
+          $this->record($this->rest());
+          $this->terminate();
+        }
+      }
       if ($this->scan('/\\$([{(])/')) {
         $this->record($this->match(), 'KEYWORD');
         $stack[] = array($this->match_group(1), true);
