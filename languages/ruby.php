@@ -38,6 +38,7 @@ class LuminousRubyScanner extends LuminousScanner {
   // to leave that for the rails close-tag detection
   private $operator_regex = null;
   private $string_regex = null;
+  private $comment_regex = null;
 
   // gaaah
   private $numeric = '/
@@ -81,6 +82,9 @@ class LuminousRubyScanner extends LuminousScanner {
 
 
   public function init() {
+    $this->comment_regex =
+      $this->rails? "/ \# ([^\n%]*+ | %(?!>)) /x"
+        : '/#.*/';
     // http://www.zenspider.com/Languages/Ruby/QuickRef.html#23
     $this->operator_regex = '/
       \?   | ;
@@ -360,7 +364,7 @@ class LuminousRubyScanner extends LuminousScanner {
       if ($c === '=' && $this->scan('/^=begin .*? (^=end|\\z)/msx')) {
         $this->record($this->match(), 'DOCCOMMENT');
       }
-      elseif($c === '#' && $this->scan('/#.*/'))
+      elseif($c === '#' && $this->scan($this->comment_regex))
         $this->record($this->match(), 'COMMENT');
       
       elseif($this->scan($this->numeric) !== null) {

@@ -22,14 +22,14 @@
           &lt;<HTMLTAG>link</HTMLTAG> <TYPE>rel</TYPE>=<STRING>"apple-touch-startup-image"</STRING> <TYPE>media</TYPE>=<STRING>"screen and (orientation:landscape)"</STRING> <TYPE>href</TYPE>=<STRING>"</STRING><DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> sc_static(<OBJ>config</OBJ>.<OO>startup_image_landscape</OO> <OPERATOR>||</OPERATOR> <STRING>'sproutcore-startup-landscape.png'</STRING>) </INTERPOLATION><DELIMITER>%&gt;</DELIMITER><STRING>"</STRING> /&gt;
           &lt;<HTMLTAG>link</HTMLTAG> <TYPE>rel</TYPE>=<STRING>"shortcut icon"</STRING> <TYPE>href</TYPE>=<STRING>"</STRING><DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> sc_static(<OBJ>config</OBJ>.<OO>favicon</OO> <OPERATOR>||</OPERATOR> <STRING>'favicon.ico'</STRING>) </INTERPOLATION><DELIMITER>%&gt;</DELIMITER><STRING>"</STRING> <TYPE>type</TYPE>=<STRING>"image/x-icon"</STRING> /&gt;
 
-<DELIMITER>&lt;%</DELIMITER> <COMMENT># Set the 'title' in your config to alter this setting %&gt;</COMMENT>
-    <OPERATOR>&lt;</OPERATOR>title<OPERATOR>&gt;</OPERATOR><OPERATOR>&lt;</OPERATOR><DELIMITER>%=</DELIMITER><STRING> title %&gt;&lt;/title&gt;</STRING>
-<STRING>&lt;% #</STRING>
-<STRING>   # You may choose to load one or more bootstrap resources.  These are</STRING>
-<STRING>   # JS targets that you would like to load at the top of the page.  Specify</STRING>
-<STRING>   # these in your Buildfile with the 'bootstrap' config.</STRING>
-<STRING>-%&gt;</STRING>
-<STRING>  &lt;%</STRING><DELIMITER>=</DELIMITER> bootstrap <DELIMITER>%&gt;</DELIMITER>
+<DELIMITER>&lt;%</DELIMITER> <COMMENT># Set the 'title' in your config to alter this setting </COMMENT><DELIMITER>%&gt;</DELIMITER>
+    &lt;<HTMLTAG>title</HTMLTAG>&gt;<DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> title </INTERPOLATION><DELIMITER>%&gt;</DELIMITER>&lt;<HTMLTAG>/title</HTMLTAG>&gt;
+<DELIMITER>&lt;%</DELIMITER> <COMMENT>#</COMMENT>
+   <COMMENT># You may choose to load one or more bootstrap resources.  These are</COMMENT>
+   <COMMENT># JS targets that you would like to load at the top of the page.  Specify</COMMENT>
+   <COMMENT># these in your Buildfile with the 'bootstrap' config.</COMMENT>
+<DELIMITER>-%&gt;</DELIMITER>
+  <DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> bootstrap </INTERPOLATION><DELIMITER>%&gt;</DELIMITER>
 
 <DELIMITER>&lt;%</DELIMITER> <COMMENT>#</COMMENT>
    <COMMENT># This line should appear in your head area to include the stylesheets</COMMENT>
@@ -96,8 +96,8 @@
    <COMMENT># called to actually add the page views to your HTML.  Normally this will</COMMENT>
    <COMMENT># not generate any content.</COMMENT>
 <DELIMITER>-%&gt;</DELIMITER>
-<DELIMITER>&lt;%</DELIMITER> <COMMENT>#render_page_views -%&gt;</COMMENT>
-<OPERATOR>&lt;</OPERATOR><OPERATOR>%</OPERATOR> <COMMENT># Older SproutCore applications need SC.didLoad to be called after onload.</COMMENT>
+<DELIMITER>&lt;%</DELIMITER> <COMMENT>#render_page_views -</COMMENT><DELIMITER>%&gt;</DELIMITER>
+<DELIMITER>&lt;%</DELIMITER> <COMMENT># Older SproutCore applications need SC.didLoad to be called after onload.</COMMENT>
    <COMMENT># This is no longer required by SproutCore so it is off by default.  To</COMMENT>
    <COMMENT># reenable set use_window_onload = true in yur config.</COMMENT>
 <DELIMITER>-%&gt;</DELIMITER>
