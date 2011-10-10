@@ -957,7 +957,7 @@ abstract class luminous {
     $out .= sprintf($link_template, $theme, 'luminous-theme');
     if ($js || LUMINOUS_DEBUG) {
       if ($jquery)
-        $out .= sprintf($script_template, 'jquery-1.4.2.min.js');
+        $out .= sprintf($script_template, 'jquery-1.6.4.min.js');
       $out .= sprintf($script_template, 'luminous.js');
       if (LUMINOUS_DEBUG) 
         $out .= sprintf($script_template, 'lineheight.js');
