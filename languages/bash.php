@@ -6,6 +6,12 @@
  * x=" $(  #   )"
  * is a left unterminated by the comment or if the comment terminates at the )
  * Kate things the latter and I'll go with it.
+ *
+ *
+ * 2011-10-10:  Changed comment regex to require a preceding whitespace char
+ *      (or start of string). This seems in line with Kate, and it prevents
+ *      incorrectly hitting some things as comments which are actually
+ *      [I have no idea]. e.g.: for (( i=0; i<${#1}; i=i+2 )); do
  * 
  */
 
@@ -118,8 +124,8 @@ class LuminousBashScanner extends LuminousScanner {
 
       }
       elseif (($this->interpolated && count($stack) === 1 &&
-        $this->scan('/\#.*?(?=[)]|$)/m'))
-        || $this->scan('/\#.*/')) {
+        $this->scan('/(?<=\s|^)\#.*?(?=[)]|$)/m'))
+        || $this->scan('/(?<=\s|^)\#.*/')) {
         $this->record($this->match(), 'COMMENT');
       }
       elseif(($m = $this->scan("/\\$?'(?> [^'\\\\]+ | \\\\.)* '/sx"))) {
