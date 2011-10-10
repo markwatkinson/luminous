@@ -6,6 +6,13 @@ some_function(<<EOF, 2);
 argument 1
 EOF
 
+$cost = <<'VISTA'; # hasta la ...
+    That'll be $10 please, ma'am.
+VISTA
+$cost = <<\VISTA; # Same thing!
+    That'll be $10 please, ma'am.
+VISTA
+
 
 my $sender = "Buffy the Vampire Slayer";
 my $recipient = "Spike";

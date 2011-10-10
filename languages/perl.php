@@ -184,7 +184,18 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
   function heredoc_override($matches) {
     list($group, $op, $quote1, $delim, $quote2) = $matches;
     $this->record($op, 'OPERATOR');
-    $this->record($quote1 . $delim . $quote2, 'DELIMITER');
+    // Now, if $quote1 is '\', then $quote2 is empty. If quote2 is empty
+    // but quote1 is not '\', this is not a heredoc.
+    if ($quote1 === '\\' && $quote2 === '') {
+      $this->record($quote1 . $delim, 'DELIMITER');
+    } elseif($quote2 === '' && $quote1 !== '') {
+      // this is the error case
+      // shift to the end of the op and break
+      $this->pos_shift(strlen($op));
+      return;
+    } else {
+      $this->record($quote1 . $delim . $quote2, 'DELIMITER');
+    }
     $this->pos_shift(strlen($group));
     // TODO. the quotes (matches[2] and matches[4]) are ignored for now, but
     // they mean something w.r.t interpolation.
@@ -255,7 +266,7 @@ class LuminousPerlScanner extends LuminousSimpleScanner {
     // terminators
     $this->add_pattern('TERM', '/__(?:DATA|END)__/');
     // heredoc (overriden)
-    $this->add_pattern('HEREDOC', '/(<<)([\'"`]?)([a-zA-Z_]\w*)(\\2)/');
+    $this->add_pattern('HEREDOC', '/(<<)([\'"`\\\\]?)([a-zA-Z_]\w*)(\\2?)/');
     // operators, slash is a special case and is overridden
     $this->add_pattern('OPERATOR', '/[!%^&*\-=+;:|,\\.?<>~\\\\]+/');
     $this->add_pattern('SLASH', '%//?%');
