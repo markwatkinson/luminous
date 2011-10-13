@@ -56,7 +56,6 @@ class LuminousPHPSubScanner extends  LuminousScanner {
   
   function main() {
     $this->start();
-    $expecting = false;
     while (!$this->eos()) {
       $tok = null;
 
@@ -79,20 +78,19 @@ class LuminousPHPSubScanner extends  LuminousScanner {
       }
       
       if($tok === 'IDENT') {
+        // do the user defns here, i.e. class XYZ extends/implements ABC
+        // or function XYZ
         $m = $this->match();
-        if ($m === 'class') $expecting = 'class';
-        elseif ($m === 'function') $expecting = 'function';
-        else {
-          if ($expecting === 'class') {
-            $this->user_defs[$m] = 'TYPE';
-            $tok = 'USER_FUNCTION';
-          }
-          elseif($expecting === 'function') {
-            $this->user_defs[$m] = 'FUNCTION';
-            $tok = 'USER_FUNCTION';
-          }
-          $expecting = false;
+        $this->record($m, 'IDENT');
+        if (($m === 'class' || $m === 'function' || $m === 'extends' || $m === 'implements')
+          && $this->scan('/(\s+)([a-zA-Z_]\w*)/') )
+        {
+          $this->record($this->match_group(1), null);
+          $this->record($this->match_group(2), 'USER_FUNCTION');
+          $this->user_defs[$this->match_group(2)] = ($m === 'function')? 'FUNCTION'
+            : 'TYPE';
         }
+        continue;
       }
 
       elseif($tok === 'OPERATOR') {
