@@ -83,7 +83,7 @@ class LuminousRubyScanner extends LuminousScanner {
 
   public function init() {
     $this->comment_regex =
-      $this->rails? "/ \# ([^\n%]*+ | %(?!>)) /x"
+      $this->rails? "/ \# (?: [^\n%]*+ | %(?!>))* /x"
         : '/#.*/';
     // http://www.zenspider.com/Languages/Ruby/QuickRef.html#23
     $this->operator_regex = '/
