@@ -11,17 +11,22 @@
 class LuminousDiffScanner extends LuminousScanner {
 
   public $patterns = array();
+  public $pretty_mode = false; // pretty mode uses language sub-scanners
+    // to try to highlight the embedded code
   
   /* TODO: plug this into the language code selector in the old EasyAPI
    * when we port it across 
    * This function is just a placeholder and will be implemented properly
    * later.
    */
-  static function get_child_scanner($filename) {
+  function get_child_scanner($filename) {
+    // HACK - pretty mode should be reflected elsewhere than here.
+    if (!$this->pretty_mode) return null;
     // $luminous_ is a singleton from the main calling API. It may or may not
     // exist here, but if it does, we're going to use it.
     global $luminous_;
-    if (!isset($luminous_)) return null;
+    if (!isset($luminous_))
+      return null;
 
     $spos = strrpos($filename, '.');
     if ($spos === false) {return null;}
@@ -91,9 +96,10 @@ class LuminousDiffScanner extends LuminousScanner {
       }
       elseif($this->scan('/\\\\.*/') !== null) $tok = null;
       elseif($this->scan($this->patterns['codeblock']) !== null) {
+          
         // this is actual source code.
         // we're going to format this here.
-        // we're going to extract the block, and try to re-assemble it as 
+        // we're going to extract the block, and try to re-assemble it as
         // verbatim code, then highlight it via a child scanner, then split up
         // the lines, re-apply the necessary prefixes (e.g. + or -) to them,
         // and store them as being a DIFF_ token.
@@ -103,7 +109,7 @@ class LuminousDiffScanner extends LuminousScanner {
         // wrong but that can't be helped.
 
         // TODO restructure this so the complicated bits aren't done if there's
-        // no child scanner to pass it down to 
+        // no child scanner to pass it down to
 
         $block = $this->match();
         if (!strlen($block)) {
@@ -136,27 +142,27 @@ class LuminousDiffScanner extends LuminousScanner {
           $c->main();
           $tagged = $c->tagged();
           $escaped = true;
-        } else { 
+        } else {
           $tagged = $verbatim;
         }
         $exp = explode("\n", $tagged);
         assert(count($exp) === count($prefixes));
         foreach($exp as $i=>$v) {
           $t = $types[$i];
-          // if the sub-scanner escaped the line, we also need to escape the 
+          // if the sub-scanner escaped the line, we also need to escape the
           // prefix for consistency
           $prefix = $prefixes[$i];
           if ($escaped) $prefix = LuminousUtils::escape_string($prefix);
           $text = $prefix . $v;
           $this->record(
             $text,
-            $t, 
+            $t,
             $escaped);
           if ($i < count($exp)-1) $this->record("\n", null);
         }
         if ($this->eol()) $this->record($this->get(), null);
         continue;
-      }
+        }
       else $this->scan('/.*/');
 
       // previous else clause can capture empty strings
@@ -194,4 +200,9 @@ class LuminousDiffScanner extends LuminousScanner {
     return $p;
   }
  
+}
+
+
+class LuminousPrettyDiffScanner extends LuminousDiffScanner {
+  public $pretty_mode = true;
 }
