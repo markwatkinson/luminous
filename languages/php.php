@@ -20,6 +20,9 @@ class LuminousPHPSubScanner extends  LuminousScanner {
     $this->add_pattern('COMMENT', LuminousTokenPresets::$C_COMMENT_ML); 
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_HEX);
     $this->add_pattern('NUMERIC', LuminousTokenPresets::$NUM_REAL);
+    // this should be picked up by the LuminousPHPScanner, but in case
+    // a user incorrectly calls the PHP-snippet scanner, we detect it.
+    $this->add_pattern('DELIMITER', '/<\?(?:php)?/');
     $this->add_pattern('OPERATOR', '@[!%^&*\\-=+~:<>/\\|\\.;,]+|\\?(?!>)@');
     $this->add_pattern('VARIABLE', '/\\$\\$?[a-zA-Z_]\w*/');
     $this->add_pattern('IDENT', '/[a-zA-Z_]\w*/');
