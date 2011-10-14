@@ -96,7 +96,7 @@ GitHub has plenty of excellent [http://help.github.com/fork-a-repo/ documentatio
 
 === Guidelines for inclusion ===
 
-Some of these things are more of a general guide to not making a giant mess in 'relaxed' languages like PHP, but generally, Luminous is written to these principles and so should any extensions:
+Some of these things are more of a general guide to not making a giant mess in 'relaxed' languages like PHP, but generally, Luminous is written to these principles and so should any extensions be:
 
 ==== Tests ====
     * Your code should pass existing tests unless they are wrong (it's okay to regenerate regression tests if you've improved them). See below for advice on how to deal with PCRE errors on fuzz tests.
