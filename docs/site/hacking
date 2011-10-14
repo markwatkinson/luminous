@@ -96,22 +96,26 @@ GitHub has plenty of excellent [http://help.github.com/fork-a-repo/ documentatio
 
 === Guidelines for inclusion ===
 
-  * *Tests*:
-    * Your code should pass existing tests unless they are wrong (it's okay to regenerate regression tests if you've improved them).
+Some of these things are more of a general guide to not making a giant mess in 'relaxed' languages like PHP, but generally, Luminous is written to these principles and so should any extensions:
+
+==== Tests ====
+    * Your code should pass existing tests unless they are wrong (it's okay to regenerate regression tests if you've improved them). See below for advice on how to deal with PCRE errors on fuzz tests.
     * If you add functionality, add a unit test for your new function(s).
     * If you fix a problem in a language scanner, add in a test case in the regression database.
     * If you fix something outside of a language scanner, add a unit test.
-  * *Scanners*:
-    * New scanners should be high quality before they're included: they should highlight correctly as many cases as practically possible. This aim starts to become unrealistic in some modern dynamic languages (like Ruby) which require actual execution to fully evaluate their lexical structure, but as a general guideline you should correctly detect/highlight things like:
-      * String escape sequences
-      * Nested comments
-      * Nested string interpolation 
-      * Heredocs and other dynamically delimited types
-    * Try to avoid reliance on easily breakable regular expressions:
-      * Using recursive regular expressions is pretty much banned because they're too fragile, see LuminousScanner::nestable_token() to help you.
+
+==== Scanners ====
+    * New scanners should be high quality before they're included: they should highlight correctly in as many cases as practically possible. This aim starts to become unrealistic in some modern dynamic languages (like Ruby) that have very complex grammars, but as a general guideline you should correctly detect/highlight things like:
+      * String escape sequences ("I said \"hello\"")
+      * Nested comments (if the language supports them, e.g. MATLAB, Haskell)
+      * Complex, nestable string interpolation (e.g. Ruby, Groovy?). In these cases, we use 'sub-scanners' to recurse into the code.
+    * Try to avoid reliance on easily breakable regular expressions, instead don't be scared to implement things yourself:
+      * Don't use recursive regular expressions; they are too fragile and will crash PCRE (stack overflow) on nonsense code. See LuminousScanner::nestable_token() to help you.
       * Try to write your patterns using possessive modifiers where possible to avoid backtracking issues.
-  * *General*:
+      * Using potentially long non-greedy patterns (e.g. a big multiline `.*?` to match a heredoc) can be risky for PCRE. It's best to split the pattern up and implement it in stages using Scanner's methods.
+==== General ====
     * Your code should be compatible with PHP 5.2, which means no closures or namespaces or gotos.
-    * Try not to clutter the global namespace. OO is good, and for procedural stuff we mostly use static class functions, so the class acts as a kind of namespace.
+    * Globals are ugly; put procedural code in static classes.
     * Functions/variables which are exposed publicly to other modules should be documented with Doxygen (specify their aim, their parameters and their return value, and any special cases)
     * Follow the general naming and syntactic conventions, e.g. $a_variable not $aVariable.
+    * Performance is always nice, but don't sacrifice code clarity for it!
