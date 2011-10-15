@@ -1,5 +1,55 @@
 Luminous Changelog since 0.6.0
 ==============================
+
+## master (15/10/11):
+
+- New stuff:
+  - kimono.css theme (based on the more famous Monokai theme)
+  - versioncheck.php (in root) - Version checking script. Run from either a 
+    browser or the command line to query the website's API as to the most 
+    recent version and output whether you're running it.
+
+- Misc stuff:
+  - Some really minor optimisations. Absolutely tiny. You won't notice them. 
+  - Updated jQuery to 1.6.4
+  - The external CSS output by `luminous::head_html() ` now have IDs set, 
+    the theme is IDed as 'luminous-theme'. This makes changing the theme via
+    JS a lot neater (see theme switcher example). Why didn't we think of this
+    earlier?
+  - SQL cache is a tiny bit faster as it does not try to purge old elements
+    excessively anymore (max: once per 24 hours).
+  - GitHub theme is a little bit cleaner with interpolated elements (including
+    PHP short output tags)
+  - Diff scanner: the scanner has been split into two. The old behaviour (where
+    embedded source code was highlighted) has been renamed to diff-pretty, and 
+    'diff' now represents a plain scanner which does not highlight embedded 
+    code. If you want the old behaviour, use diff-pretty (valid code: 
+    diffpretty. See the languages page for more aliases.). This is because 
+    the pretty diff scanner is much slower and can encounter problems, so users
+    may prefer a more reliable and faster but plain option.
+
+- Language fixes:
+  - Support for Java annotations
+  - Django scanner recognises {% comment %} ... {% endcomment %} blocks
+  - Ruby scanner has been altered with respect to how it detects regular 
+    expression literals. It is now similar to Kate/Kwrite's syntax 
+    highlighting and should be slightly better at figuring out what's a 
+    regex and what's a division operator. If it causes problems please 
+    report it, preferably with an explanation of how Ruby's grammar works in 
+    that particular case.
+  - Ruby on Rails will now terminate comments at the end of the Rails block as
+    well as newlines
+  - Bash scanner will not go into heredoc mode inside ((...)) blocks; this 
+    prevents false positives on shift operations
+  - Bash scanner should get fewer false positives when picking out comments
+  - Perl scanner recognises heredoc openings when the delimiter is preceded by
+    a backslash
+  - PHP scanner is a little more careful about detecting user-definitions of
+    functions and classes, i.e. it correctly highlights class names after 
+    implements and extends, and won't get confused by PHP5.3+ closures.
+  - PHP Snippet mode will detect `<?php` correctly, should it be encountered.
+
+
 ##v0.6.4 (18/09/11):
 
 - New stuff:
