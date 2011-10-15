@@ -34,6 +34,8 @@ else {
   $ch = curl_init();
   curl_setopt($ch, CURLOPT_URL, $URL);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+  curl_setopt($ch, CURLOPT_USERAGENT, 'Luminous ' . LUMINOUS_VERSION 
+    . ' version check');
   $json = curl_exec($ch);
   curl_close($ch);
 
