@@ -1,7 +1,7 @@
 <?php 
 // Theme switcher example
 require_once('helper.inc');
-
+luminous::set('include-javascript', true);
 // This isn't an injection or XSS vulnerability. You don't have to worry
 // about sanitising this, Luminous won't use it if it's not a valid theme file.
 if (!empty($_GET))

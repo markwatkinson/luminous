@@ -5,7 +5,7 @@ require_once('helper.inc');
 
 
 luminous::set('line-numbers', false);
-luminous::set('include-javascript', false);
+luminous::set('include-javascript', true);
 luminous::set('format', 'html-inline');
 
 // define a quick and dirty AJAX interface
