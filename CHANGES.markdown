@@ -8,6 +8,10 @@ Luminous Changelog since 0.6.0
   - versioncheck.php (in root) - Version checking script. Run from either a 
     browser or the command line to query the website's API as to the most 
     recent version and output whether you're running it.
+  - style and client both have .htaccesses to ensure that they are in fact
+    readable; this might be useful if for some reason you've put Luminous in
+    a directory which a .htaccess forbids access to (e.g. somewhere in a 
+    framework).
 
 - Misc stuff:
   - Some really minor optimisations. Absolutely tiny. You won't notice them. 
