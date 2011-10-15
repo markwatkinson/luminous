@@ -6,8 +6,8 @@ supports a bunch of common languages and output to HTML and LaTeX.
 
 ##Links:
 
-+ [Home page](http://luminous.asgaard.co.uk/) - news, latest stable versions, etc
-+ [Live demo and examples](http://luminous.asgaard.co.uk/index.php/demo)
++ [Luminous PHP syntax highlighter official site](http://luminous.asgaard.co.uk/) - news, latest stable versions, etc
++ [Online demo](http://luminous.asgaard.co.uk/index.php/demo)
 + [Documentation and help](http://luminous.asgaard.co.uk/index.php/docs/show/index),
   read this if you get stuck!
 + [Supported language list](http://luminous.asgaard.co.uk/assets/luminous/supported.php)
@@ -75,5 +75,5 @@ separate.
       projects, which is used only as test data. It is all GPL-compatible, but
       is distributed under its own license. This directory is only present in
       the git repository and is not part of any stable distribution archives.
-  - We also include jQuery (client/jquery-1.4.2.min.js) and the vera-mono
-    font family (client/font/). These are provided under their own licenses.
+  - We also include jQuery and the vera-mono font family (client/font/). 
+    These are provided under their own licenses.
