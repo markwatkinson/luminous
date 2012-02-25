@@ -97,7 +97,7 @@ class LuminousBashScanner extends LuminousScanner {
           $this->record($this->match(), null);
           $this->record($this->scan('/\){2}/'), $dollar? 'KEYWORD' : null);
         } else {
-          $this->record($this->rest());
+          $this->record($this->rest(), null);
           $this->terminate();
         }
       }

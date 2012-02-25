@@ -61,7 +61,8 @@ class LuminousStringSearch
         if ($ret === false && LUMINOUS_DEBUG) {
           throw new Exception('preg_match returned false for pattern: "' 
           . $search . '", with code: ' . LuminousUtils::pcre_error_decode(
-            preg_last_error())
+            preg_last_error()) . " with string length " . strlen($this->string)
+              . " and offset " . $index
         );
       }
       $this->cache[$search] = false;

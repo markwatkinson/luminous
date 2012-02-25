@@ -91,16 +91,19 @@ class LuminousCppScanner extends LuminousSimpleScanner {
   }
 
   static function preprocessor_filter_cb($matches) {
-    if (isset($matches['STR']) && $matches['STR'] !== '')
-      return LuminousUtils::tag_block('STRING', $matches[0]);
-    else
-      return LuminousUtils::tag_block('COMMENT', $matches[0]);
+  
+    if (!isset($matches[0]) || !isset($matches[0][0])) 
+      return ''; // shouldn't ever happen
+    if ($matches[0][0] === '"') return LuminousUtils::tag_block('STRING', $matches[0]);
+    else if ($matches[0][0] === '&')
+      return '&lt;' . LuminousUtils::tag_block('STRING', $matches[1]) . '&gt;';
+    else return LuminousUtils::tag_block('COMMENT', $matches[0]);
   }
 
   static function preprocessor_filter($token) {
     $token = LuminousUtils::escape_token($token);
     $token[1] = preg_replace_callback("@
-      (?P<STR>  \" (?> [^\\\\\n\"]+ | \\\\. )* (?: \"|$) | (?<=&lt;) .*? (?=&gt;))
+      (?:\" (?> [^\\\\\n\"]+ | \\\\. )* (?: \"|$) | (?: &lt; (.*?) &gt;))
       | // .*
       | /\* (?s:.*?) (\*/ | $)
     @x",

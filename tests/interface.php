@@ -3,6 +3,23 @@ error_reporting(E_ALL | E_STRICT);
 assert_options(ASSERT_BAIL, 1);
 require_once('../src/luminous.php');
 
+
+if (get_magic_quotes_gpc()) {
+    $process = array(&$_GET, &$_POST, &$_COOKIE, &$_REQUEST);
+    while (list($key, $val) = each($process)) {
+        foreach ($val as $k => $v) {
+            unset($process[$key][$k]);
+            if (is_array($v)) {
+                $process[$key][stripslashes($k)] = $v;
+                $process[] = &$process[$key][stripslashes($k)];
+            } else {
+                $process[$key][stripslashes($k)] = stripslashes($v);
+            }
+        }
+    }
+    unset($process);
+}
+
 luminous::set('max-height', 300);
 luminous::set('theme', 'geonyx');
 luminous::set('relative-root', '../');

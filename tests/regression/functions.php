@@ -65,6 +65,12 @@ function compare($path)
   $expected = file_get_contents($path . $output_ext);
   $actual = highlight_luminous($path);
   
+  $expected = str_replace("\r\n", "\n", $expected);
+  $expected = str_replace("\r", "\n", $expected);
+  
+  $actual = str_replace("\r\n", "\n", $actual);
+  $actual = str_replace("\r", "\n", $actual);
+  
   if ($expected == $actual)
     return;
   
@@ -73,7 +79,8 @@ function compare($path)
   $outpath = "$path._diff$output_ext";
   $temppath = "$path.actual$output_ext";
   file_put_contents($temppath, $actual);
-  $x = `diff -u $path$output_ext $temppath > $outpath`;
+  exec("diff -u $path$output_ext $temppath > $outpath", $x, $ret);
+  if ($ret) exit(1);  
   unlink($temppath);
   $diff_output[$path] = $outpath;
   
