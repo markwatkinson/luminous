@@ -44,7 +44,7 @@ else {
       . urlify($DOWNLOAD_URL) . ' to see what the latest version is');
   } else {
     $data = json_decode($json, true);
-    if ($data['release_number'] === $version) {
+    if ($data['release_number'] === $version || 'v' . $data['release_number'] === $version) {
       _echo('You are up to date!');
     } else {
       $output = "You are not up to date: your version is " . $version
