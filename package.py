@@ -5,7 +5,8 @@
 """
 
 # the placeholder is for the version
-url = 'https://github.com/markwatkinson/luminous/tarball/{0}'
+url_tarball = 'https://github.com/markwatkinson/luminous/tarball/{0}'
+url_clone = 'git://github.com/markwatkinson/luminous.git'
 
 import re
 import os
@@ -16,6 +17,7 @@ import urllib2
 
 # dirs and files which need removing, relative to the root of the luminous dir
 to_remove = [
+  '.git',
   'cache',
   'dist',
   'extern',
@@ -42,12 +44,6 @@ class Packagers(object):
   def __init__(self):
     self.version = None
     self.replacements = []
-
-  def __do_version(self):
-    """ Sets the version attribute in luminous.php """
-    subprocess.call(['sed', '-i',
-      "s/define('LUMINOUS_VERSION',.*;/define('LUMINOUS_VERSION', '{0}');/".format(self.version),
-      'src/luminous.php'])
 
   def __do_production(self):
     """ unset the debug flag in the PHP source """
@@ -78,6 +74,14 @@ class Packagers(object):
     f = open('README.markdown', 'w')
     f.write('\n'.join(s))
     f.close()
+    
+    # Sets the version attribute in luminous.php
+    subprocess.call(['sed', '-i',
+      "s/define('LUMINOUS_VERSION',.*;/define('LUMINOUS_VERSION', '{0}');/".format(self.version),
+      'src/luminous.php'])
+    subprocess.call(['sed', '-i',
+      r's/^##\s*master/## {0}/'.format(self.version),
+      'CHANGES.markdown'])
 
 
   def __do_readme_replace(self, match):
@@ -170,17 +174,19 @@ class Packagers(object):
     self.__do_readme()
     self.__do_removals()
 
-def package(version):
-  # move into the dist dir
-  os.chdir(sys.path[0])
-  if not os.path.exists('dist'): os.mkdir('dist')
-  os.chdir('dist')
-  
-  # Empty the tmp dir and move into it
-  if os.path.exists('tmp'): shutil.rmtree('tmp')
-  os.mkdir('tmp')
-  os.chdir('tmp')
-  
+
+def clone(version):
+  global url_clone
+  subprocess.call(['git', 'clone', url_clone, 'luminous-' + version])
+  if version != 'master':
+    os.chdir('luminous-' + version)
+    ret = subprocess.call(['git', 'checkout', version])
+    if ret:
+      print ('Failed to checkout tag {0}, wrong version?'.format(version))
+      sys.exit(1)
+    os.chdir('..')
+
+def fetch(version):
   # fetch the tarball
   url_to_fetch = url.format(version)
   print('Fetching version {0} from {1}'.format(version, url_to_fetch))
@@ -199,8 +205,27 @@ def package(version):
   # move the distributions's root dir to something more sensibly named
   dirname_ = os.listdir('.')[0]
   dirname = 'luminous-{0}'.format(version)
-  os.rename(dirname_, dirname)
+  os.rename(dirname_, dirname)  
+  
+
+def package(version):
+  # move into the dist dir
+  os.chdir(sys.path[0])
+  if not os.path.exists('dist'): os.mkdir('dist')
+  os.chdir('dist')
+  
+  # Empty the tmp dir and move into it
+  if os.path.exists('tmp'): shutil.rmtree('tmp')
+  os.mkdir('tmp')
+  os.chdir('tmp')
+
+  # use git to clone if we can.
+  if subprocess.call(['which', 'git']):
+    fetch(version)
+  else: clone(version)
+  
   # move into the root dir and execute the functions
+  dirname = 'luminous-' + version
   os.chdir(dirname)
 
   p = Packagers()
@@ -209,7 +234,7 @@ def package(version):
   # now move back out of it and tar/zip it up
   os.chdir('..')  
   tarname = dirname + '.tar.bz2'
-  zipname = dirname + '.zip'  
+  zipname = dirname + '.zip'
   subprocess.call(['tar', '-cjf', tarname, dirname])
   subprocess.call(['zip', '-rq', zipname, dirname])
   # and move the resulting archives up a level (into the dist dir)
