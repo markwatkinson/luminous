@@ -24,6 +24,7 @@ luminous::set('max-height', 300);
 luminous::set('theme', 'geonyx');
 luminous::set('relative-root', '../');
 luminous::set('include-javascript', true);
+
 if (isset($_POST['theme'])) luminous::set('theme', $_POST['theme']);
 if (isset($_POST['format'])) luminous::set('format', $_POST['format']); 
 $line_numbers = true;
@@ -62,6 +63,11 @@ if (count($_POST)) {
     $t = microtime(true);
     $out = luminous::highlight($lang, $_POST['src'], false);
     $t1 = microtime(true);
+    if ($e = luminous::cache_errors()) {
+      echo '<pre>';
+      echo implode("<br/>", $e);
+      echo '</pre>';
+    }
     echo ($t1-$t) . 'seconds <br>';
     echo strlen($_POST['src']) . '<br>';
     echo $out;

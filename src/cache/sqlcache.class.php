@@ -49,19 +49,19 @@ class LuminousSQLCache extends LuminousCache {
   }
 
   private function _query($sql) {
-    if (!is_callable($this->sql_function)) {
-      throw new Exception('LuminousSQLCache does not have a callable SQL function');
-    }
-    else return call_user_func($this->sql_function, $sql);
+
+    return call_user_func($this->sql_function, $sql);
   }
 
-  protected function _create(&$s) {
+  protected function _create() {
     try {
+      if (!is_callable($this->sql_function)) 
+        throw new Exception('LuminousSQLCache does not have a callable SQL function');      
       $r = $this->_query(file_get_contents(dirname(__FILE__) . '/sql/cache.mysql'));
       if ($r === false)
         throw new Exception('Creation of cache table failed (query returned false)');
     } catch(Exception $e) {
-      $s = $e->getMessage();
+      $this->log_error($e->getMessage());
       return false;
     }
     return true;

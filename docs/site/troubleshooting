@@ -37,6 +37,10 @@ include(dirname(__FILE__) . '/luminous/luminous.php');
 }}}
 
 
+== Cache errors ==
+
+See the [cache cache] page.
+
 
 == Still doesn't work... ==
 

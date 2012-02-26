@@ -185,6 +185,8 @@ class LuminousOptions {
    */
   private $sql_function = null;
 
+  private $verbose = true;
+
   
 
   private static function check_type($value, $type, $nullable=false) {
@@ -246,6 +248,9 @@ class LuminousOptions {
     }
     elseif($name === 'sql_function') {
       if (self::check_type($value, 'func', true)) $this->$name = $value;
+    }
+    elseif ($name === 'verbose') {
+      $this->set_bool($name, $value);
     }
     else {
       throw new Exception('Unknown option: ' . $name);
@@ -326,6 +331,8 @@ class _Luminous {
   public $settings;
 
   public $scanners; ///< the scanner table
+
+  public $cache = null;
   
 
   public function __construct() {
@@ -545,6 +552,7 @@ class _Luminous {
    *    LuminousScanner instance, or if $source is not a string.
    */
   function highlight($scanner, $source, $use_cache=true) {
+    $this->cache = null;
     if (!is_string($source)) throw new InvalidArgumentException('Non-string '
         . 'supplied for $source');
     
@@ -555,19 +563,18 @@ class _Luminous {
       $scanner = $this->scanners->GetScanner($code);
       if ($scanner === null) throw new Exception("No known scanner for '$code' and no default set");
     }
-    $cache_obj = null;
     $cache_hit = true;
     $out = null;
-    if ($use_cache) {
+    if ($use_cache) {      
       $cache_id = $this->cache_id($scanner, $source);
       if ($this->settings->sql_function !== null) {
-        $cache_obj = new LuminousSQLCache($cache_id);
-        $cache_obj->set_sql_function($this->settings->sql_function);
+        $this->cache = new LuminousSQLCache($cache_id);
+        $this->cache->set_sql_function($this->settings->sql_function);
       } else {
-        $cache_obj = new LuminousFileSystemCache($cache_id);
+        $this->cache = new LuminousFileSystemCache($cache_id);
       }
-      $cache_obj->set_purge_time($this->settings->cache_age);
-      $out = $cache_obj->read();
+      $this->cache->set_purge_time($this->settings->cache_age);
+      $out = $this->cache->read();
     }
     if ($out === null) {
       $cache_hit = false;
@@ -577,8 +584,9 @@ class _Luminous {
     }
 
     if ($use_cache && !$cache_hit) {
-      $cache_obj->write($out);
+      $this->cache->write($out);
     }
+    
     return $out;
   }
 }
@@ -615,7 +623,15 @@ abstract class luminous {
   static function highlight($scanner, $source, $cache=true) {
     global $luminous_;
     try {
-      return $luminous_->highlight($scanner, $source, $cache);
+      $h = $luminous_->highlight($scanner, $source, $cache);
+      if ($luminous_->settings->verbose) {
+        $errs = self::cache_errors();
+        if (!empty($errs)) {
+          trigger_error("Luminous cache errors were encountered. \n" .
+            'See luminous::cache_errors() for details.');
+        }
+      }
+      return $h;
     } catch (InvalidArgumentException $e) {
       // this is a user error, let it bubble
       throw $e;
@@ -647,6 +663,19 @@ abstract class luminous {
    */
   static function highlight_file($scanner, $file, $cache=true) {
     return self::highlight($scanner, file_get_contents($file), $cache);
+  }
+
+  /**
+   * @brief Returns a list of cache errors encountered during the most recent highlight
+   *
+   * @return An array of errors the cache encountered (which may be empty),
+   *  or @c FALSE if the cache is not enabled
+   */
+  static function cache_errors() {
+    global $luminous_;
+    $c = $luminous_->cache;
+    if ($c === null) return FALSE;
+    return $c->errors();
   }
 
   /**

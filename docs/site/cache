@@ -44,6 +44,9 @@ The filesystem is used by default, but Luminous might not be able to create it.
 
 Luminous uses the directory luminous/cache, which you might have to create and assign writable permissions to (probably chmod 777, but your server might accept other values).
 
+
+
+
 == Enabling the SQL cache ==
 
 Using the SQL cache is a little more complex and some of the responsibility falls on the programmer. To enable the SQL cache a configuration setting 'sql_function' must be set, which must be a function that performs SQL queries. The reason that this is left to the programmer is that Luminous doesn't want to tie itself to one family of SQL functions (e.g. MySQL vs PostgreSQL), and doesn't want to have to worry about your passwords, database names and so on.
@@ -118,3 +121,43 @@ For an SQL cache, just empty the table.
 
 For the filesystem, remove everything in the luminous/cache/ directory. 
 
+
+
+== Troubleshooting ==
+
+
+If the cache fails for some reason, a PHP warning is generated so:
+
+{{{lang=plain
+Notice:  Luminous cache errors were encountered.
+See luminous::cache_errors() for details. in /home/mark/projects/luminous/src/luminous.php on line 631
+}}}
+
+and will be printed to your page (you can disable this warning by setting luminous::set('verbose', false), but you should only do this if you have some other error logging set up - keep reading).
+
+*Since 0.6.6* `luminous::cache_errors()` will contain more information:
+
+{{{lang=php_snippet
+$highlighted = luminous::highlight($lang, $code, true);
+if ($e = luminous::cache_errors()) {
+  echo '<pre>';
+  echo implode("<br/>", $e);
+  echo '</pre>';
+}
+}}}
+
+*NOTE*: `luminous::cache_errors()` returns either an array or, if the cache is disabled, `FALSE`. It will only keep information for the most recent highlight.
+
+Will print something similar to this:
+
+{{{lang=plain
+Error writing to "/home/mark/projects/luminous/cache/7a7b9073efe10b64c322de36db0f0a09"
+File exists: false
+Readable?: false
+Writable?: false
+Your cache dir ("/home/mark/projects/luminous/cache/") is not writable!
+}}}
+
+What does this mean? It shows that Luminous cannot write into a file in the cache directory. The file doesn't exist (and it's not readable or writable), but in this case the last line is more insightful, which shows the cache directory is not writable. The solution is to give the cache directory write permissions.
+
+If you don't want all this information being spammed out to your visitors, call `luminous::set('verbose', false)` to disable the warning, and set up your logging or email handler to create an entry when `luminous::cache_errors()` returns problems.

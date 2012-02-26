@@ -14,6 +14,8 @@ abstract class LuminousCache {
   private $use_cache = true;
   private $creation_check = false;
 
+  private $errors = array();
+
   public function __construct($id)  {
     $this->id = $id;
   }
@@ -29,7 +31,14 @@ abstract class LuminousCache {
     return $this->gz? gzuncompress($data) : $data;
   }
 
-  protected abstract function _create(&$err);
+  protected function log_error($msg) {
+    $this->errors[] = $msg;
+  }
+
+  public function has_errors() { return !empty($this->errrors); }
+  public function errors() { return $this->errors; }
+
+  protected abstract function _create();
   protected abstract function _read();
   protected abstract function _write($data);
   protected abstract function _update();
@@ -45,8 +54,7 @@ abstract class LuminousCache {
   private function create() {
     if ($this->creation_check) return;
     $this->creation_check = true;
-    if (!$this->_create($err)) {
-      trigger_error($err);
+    if (!$this->_create()) {
       $this->use_cache = false;
     } else {
       $this->purge();
