@@ -1,5 +1,9 @@
 <?php
-
+/**
+  * CSS scanner. 
+  * TODO: it would be nice if we could extend this somehow to handle
+  * CSS dialects which allow rule nesting. 
+  */
 class LuminousCSSScanner extends LuminousEmbeddedWebScript {
   
   
@@ -29,7 +33,6 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
   
   function init() {
     $this->expecting = null;
-    
   }
     
   
@@ -40,6 +43,7 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
     
     
     $this->start();
+    
     
     while (!$this->eos()) {
       
@@ -59,9 +63,9 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
       $m = null;
       $state = $this->state();
       $in_block = $state === 'block';
+      $in_media = $state === 'media';
       $get = false;
       $c = $this->peek();
-      
 
       if ($this->embedded_server && $this->check($this->server_tags)) {
         $this->interrupt = true;
@@ -79,10 +83,15 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
         $tok = 'NUMERIC';
       }
       elseif(!$in_block && $this->scan('/(?<=[#\.:])[\w\-]+/') !== null)
-        $tok = 'SELECTOR';      
+        $tok = 'SELECTOR';
+      elseif(!$in_block && !$in_media && $c === '@' && $this->scan('/@media\\b/')) {
+        $this->state_[] = 'media';
+        $tok = 'TAG';
+      }  
       elseif(( ctype_alpha($c) || $c === '!' || $c === '@' || $c === '_' || $c === '-' )
         &&  $this->scan('/(!?)[\-\w@]+/')) {
-        if (!$in_block || $this->match_group(1) !== '') $tok = 'TAG';
+        if ($in_media)  $tok = 'VALUE';
+        elseif (!$in_block || $this->match_group(1) !== '') $tok = 'TAG';
         elseif($this->expecting === 'key') $tok = 'KEY';
         elseif($this->expecting === 'value') {
           $m = $this->match();
@@ -97,13 +106,26 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
         $tok = 'ATTR_SELECTOR';
       
       elseif($c === '}' || $c === '{') {
+
         $get = true;
-        if ($c === '}' && $in_block)
+        if ($c === '}' && ($in_block || $in_media)) {
           array_pop($this->state_);
-        elseif (!$in_block && $c === '{') {
-          $this->state_[] = 'block';
-          $this->expecting = 'key';
+          if ($in_media) {
+            // @media adds a 'media' state, then the '{' begins a new global state.
+            // We've just popped global, now we need to pop media. 
+            array_pop($this->state_);
+          }
         }
+        elseif (!$in_block && $c === '{') {
+          if ($in_media) { 
+            $this->state_[] = 'global';
+          }
+          else {
+            $this->state_[] = 'block';
+            $this->expecting = 'key';
+          }
+        }
+        
       }
       elseif($c === '"' && $this->scan(LuminousTokenPresets::$DOUBLE_STR))
         $tok = 'DSTRING';      
@@ -131,9 +153,11 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
         $get = true;
       }
       
-     if ($this->server_break($tok)) break;
+      if ($this->server_break($tok)) break;
+     
       
-      $this->record($get? $this->get() : $this->match(), $tok);
+      $m = $get? $this->get() : $this->match();
+      $this->record($m, $tok);
       assert($this->pos() > $pos || $this->eos());
       
     }
