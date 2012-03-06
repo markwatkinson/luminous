@@ -1,7 +1,21 @@
 Luminous Changelog since 0.6.0
 ==============================
 
-## master (15/10/11):
+
+##v0.6.6 (26/02/12):
+
+Maintenance release
+- Fixed: 
+  - Parse errors on PHP 5.2.0 (due to using unescaped '$' in doubly quoted strings)
+
+- Improved: 
+  - Cache error behaviour is less ugly. Errors can more easily be detected
+    programmatically, and suppressed (or handled silently). See the cache's docs
+    on how to do this.
+  - Made testing/developing on Windows slightly more possible. Don't expect miracles.
+  
+
+##v0.6.5 (15/10/11):
 
 - New stuff:
   - kimono.css theme (based on the more famous Monokai theme)
@@ -31,6 +45,7 @@ Luminous Changelog since 0.6.0
     diffpretty. See the languages page for more aliases.). This is because 
     the pretty diff scanner is much slower and can encounter problems, so users
     may prefer a more reliable and faster but plain option.
+  - Some of the JS examples have been fixed.
 
 - Language fixes:
   - Support for Java annotations
