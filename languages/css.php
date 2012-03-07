@@ -19,13 +19,15 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
       'ATTR_SELECTOR' => 'OPERATOR',
       'SSTRING' => 'STRING',
       'DSTRING' => 'STRING',
+      'ROUND_BRACKET_SELECTOR' => 'OPERATOR',
     );
     
     $this->dirty_exit_recovery = array(
       'COMMENT' => '%.*?(?:\*/|$)%s',
       'SSTRING' => "/(?:[^\\\\']+|\\\\.)*(?:'|$)/",
       'DSTRING' => '/(?:[^\\\\"]+|\\\\.)*(?:"|$)/',
-      'ATTR_SELECTOR' => '/(?: [^\\]\\\\]+ | \\\\.)* (?:\]|$)/xs'
+      'ATTR_SELECTOR' => '/(?: [^\\]\\\\]+ | \\\\.)* (?:\]|$)/xs',
+      'ROUND_BRACKET_SELECTOR' => '/(?: [^\\)\\\\]+ | \\\\.)* (?:\)|$)/xs',
     );
     $this->state_ [] = 'global';
   }
@@ -104,7 +106,11 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
       elseif(!$in_block && $c === '[' 
         && $this->scan('/\[ (?> [^\\]\\\\]+ | \\\\.)* \]/sx'))
         $tok = 'ATTR_SELECTOR';
-      
+        
+      elseif(!$in_block && $c === '('
+        && $this->scan('/\( (?> [^\\)\\\\]+ | \\\\.)* \) /sx')) {
+        $tok = 'ROUND_BRACKET_SELECTOR';
+      }
       elseif($c === '}' || $c === '{') {
 
         $get = true;
