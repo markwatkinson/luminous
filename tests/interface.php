@@ -30,6 +30,12 @@ if (isset($_POST['format'])) luminous::set('format', $_POST['format']);
 $line_numbers = true;
 if (!empty($_POST) && !isset($_POST['line-numbers'])) 
   $line_numbers = false;
+$line_numbers_start = false;
+if (!empty($_POST) && isset($_POST['line-numbers-start'])) {
+  $line_numbers_start = (int)$_POST['line-numbers-start'];
+  if ($line_numbers_start > 0)
+    luminous::set('start-line', $line_numbers_start);
+}
 
 luminous::set('line-numbers', $line_numbers);
 ?>
@@ -103,11 +109,17 @@ if (count($_POST)) {
 
     }
 ?>  </select>
-  <br/>
-  <label>Line numbers</label>
-  <input type='checkbox' name='line-numbers'<?= $line_numbers? ' checked' : ''?>>
     <br/>
-
+    <label>Line numbers
+      <input type='checkbox' name='line-numbers'<?= $line_numbers? ' checked' : ''?>>
+    </label>
+    <br/>
+    <label>First line number
+      <input type='number' name='line-numbers-start' value='<?=
+        (int)$line_numbers_start > 0? $line_numbers_start : 1?>'
+        min=1 step=1>
+    </label>
+    <br/>
     <textarea rows=15 cols=75 name='src'><?php
     if (isset($_POST['src'])) echo htmlspecialchars($_POST['src']);
     ?></textarea>
