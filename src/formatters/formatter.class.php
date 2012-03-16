@@ -47,6 +47,8 @@ abstract class LuminousFormatter {
 
   /// Whether or not to add line numbering
   public $line_numbers = true;
+  /// Number of first line
+  public $start_line = 1;
 
   /// sets whether or not to link URIs.
   public $link = true;
