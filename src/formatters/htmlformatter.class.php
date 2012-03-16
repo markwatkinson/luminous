@@ -161,7 +161,8 @@ class LuminousFormatterHTML extends LuminousFormatter {
     $lineno = $this->start_line;
     foreach($lines_original as $line)  {
 
-      $linenos .= ($lineno % 5 === 0)? $line_no_emph_tag0
+      $linenos .= (($lineno - ($this->start_line - 1)) % 5 === 0)?
+        $line_no_emph_tag0
         : $line_no_plain_tag0;
       $linenos .= $lineno . $line_no_tag1;
 
