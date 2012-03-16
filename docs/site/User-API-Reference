@@ -84,6 +84,7 @@ Formatting options relate to the display of highlighted output.
   * auto-link (bool): if the formatter supports hyperlinking, URIs will be linked
   * html-strict (bool): Luminous uses the 'target' attribute of &lt;a&gt; tags. This is not valid for X/HTML4 strict, therefore it may be disabled. Note that this is purely academic: browsers don't care. Luminous produces valid HTML5 and HTML4 transitional output regardless.
   * line-numbers (bool): If the formatter supports line numbering, lines are numbered. (default: true)
+  * start-line (int): If the formatter supports line numbering, lines start from this number. (default: 1)
   * max-height (int): if the formatter can control its height, it will constrain itself to this many pixels (you may specify this as a string with units) (default: 500)
   * wrap-width (int): if the formatter supports line wrapping, lines will be wrapped at this number of characters (0 or -1 to disable) (default: -1)
   * format (string): Controls the output format:
