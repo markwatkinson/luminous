@@ -75,6 +75,14 @@ class LuminousOptions {
   private $line_numbers = true;
 
   /**
+   * @brief Line numbering
+   *
+   * If the formatter supports line numbering, this setting controls number
+   * of the first line
+   */
+  private $start_line = 1;
+
+  /**
    * @brief Hyperlinking
    *
    * If the formatter supports hyper-linking, this setting controls whether
@@ -236,6 +244,8 @@ class LuminousOptions {
       $this->set_bool($name, $value);
     elseif($name === 'line_numbers') 
       $this->set_bool($name, $value);
+    elseif($name === 'start_line') 
+      $this->set_start_line($value);
     elseif($name === 'max_height') 
       $this->set_height($value);
     elseif($name === 'relative_root') {
@@ -266,6 +276,14 @@ class LuminousOptions {
     if (self::check_type($value, 'string', $nullable)) {
       $this->$key = $value;
     }
+  }
+  
+  private function set_start_line($value) {
+      if (is_numeric($value) && $value > 0) {
+          $this->start_line = $value;
+      } else {
+          throw new InvalidArgumentException('Start line must be a positive number');
+      }
   }
 
   private function set_format($value) {
@@ -512,6 +530,7 @@ class _Luminous {
   private function set_formatter_options(&$formatter) {
     $formatter->wrap_length = $this->settings->wrap_width;
     $formatter->line_numbers = $this->settings->line_numbers;
+    $formatter->start_line = $this->settings->start_line;
     $formatter->link = $this->settings->auto_link;
     $formatter->height = $this->settings->max_height;
     $formatter->strict_standards = $this->settings->html_strict;
@@ -530,6 +549,7 @@ class _Luminous {
     // settings, the version, and scanner.
     $settings = array($this->settings->wrap_width,
       $this->settings->line_numbers,
+      $this->settings->start_line,
       $this->settings->auto_link,
       $this->settings->max_height,
       $this->settings->format,

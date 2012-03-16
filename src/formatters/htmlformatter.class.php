@@ -158,7 +158,7 @@ class LuminousFormatterHTML extends LuminousFormatter {
     $line_alt_tag0 = '<span class="line line_alt">';
     $line_tag1 = '</span>';
 
-    $lineno = 1;
+    $lineno = $this->start_line;
     foreach($lines_original as $line)  {
 
       $linenos .= ($lineno % 5 === 0)? $line_no_emph_tag0
