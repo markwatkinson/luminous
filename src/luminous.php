@@ -75,7 +75,7 @@ class LuminousOptions {
   private $line_numbers = true;
 
   /**
-   * @brief Line numbering
+   * @brief Line number of first line
    *
    * If the formatter supports line numbering, this setting controls number
    * of the first line
