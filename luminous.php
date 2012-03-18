@@ -6,8 +6,6 @@
  *
  * If we're running in CLI-mode then this handles the CLI interface.
  *
- * If you are including Luminous from a cli application then you should bypass
- * this file and include src/luminous.php.
  */
 
 require_once(dirname(__FILE__) . '/src/luminous.php');
