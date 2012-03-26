@@ -31,6 +31,19 @@ class LuminousFormatterHTML extends LuminousFormatter {
   <div class="code_container" %s>%s</div>
 </div>';
 
+  private static function template_cb($matches) {
+    return ($matches[0][0] === '<')? $matches[0] : '';
+  }
+
+  // strips out unnecessary whitespace from a template
+  private static function template($t, $vars=array()) {
+    $t = preg_replace_callback('/\s+|<[^>]++>/',
+      array('self', 'template_cb'),
+      $t);      
+    array_unshift($vars, $t);
+    $code = call_user_func_array('sprintf', $vars);
+    return $code;
+  }
 
   private function format_numberless($src) {
     $lines = array();
@@ -44,7 +57,7 @@ class LuminousFormatterHTML extends LuminousFormatter {
       $lines[] = $l;
     }
     $lines = implode("\n", $lines);
-    return sprintf($this->numberless_template, $lines);
+    return self::template($this->numberless_template, array($lines));
   }
   
   
@@ -76,7 +89,7 @@ class LuminousFormatterHTML extends LuminousFormatter {
     }
     else 
       $css = ' style="overflow:visible !important;"';
-    return sprintf($this->template, $css, $code_block);
+    return self::template($this->template, array($css, $code_block));
   }
   
   /**
@@ -176,7 +189,7 @@ class LuminousFormatterHTML extends LuminousFormatter {
       ++$lineno;
 
     }
-    return sprintf($this->numbered_template, $linenos, $lines);
+    return self::template($this->numbered_template, array($linenos, $lines));
   }
 }
 
