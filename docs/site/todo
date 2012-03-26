@@ -13,6 +13,9 @@ This is a list of things I'd like to see Luminous do in future but which I have 
   * I'd like to see the Ruby scanner improved, or at least tested, by someone who actually understands Ruby's grammar (I've written about 10 lines of Ruby, ever).
   * The CSS scanner should ideally handle dialects like [http://sass-lang.com/ SASS] and [http://sandbox.pocoo.org/clevercss/ CleverCSS]. (Note: SASS apparently has a legacy syntax which makes it very similar to CleverCSS).
   
+== Output ==
+  * The line numbered HTML output uses a somewhat overly complicated markup, utilising a table and having the line numbers and code in two adjacent cells. The reason for this is that it provides good control over both the code and numbering, and makes the numbering seem transparent (i.e. copying and pasting the code won't get the numbering too). There may be better ways to achieve this, and the markup could probably be made cleaner. 
+  
 == Other ==
   * Various mature syntax highlighting plugins exist for various blogging platforms, providing things like integration into the rich text editor. Most of these are hard coded to use a specific highlighter (SyntaxHighlighter and Geshi seem to be the most popular). License permitting it may be possible to abstract away their dependence on a particular highlighter.
   * The [/page/codeigniter-syntax-highlight-hook CodeIgniter plugin] ([https://github.com/markwatkinson/ci-syntax-highlight GitHub]) uses regular expressions to extract code blocks from the page's markup. We all know the dangers of parsing XML with regular expressions. A good alternative would be using xpath, however, it also recognises `[code] ... [/code]`, which is invisible to XML.
