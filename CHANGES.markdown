@@ -1,10 +1,23 @@
 Luminous Changelog since 0.6.0
 ==============================
 
+##master (18/03/12):
 
+- New stuff:
+  - Ability to set custom line number for first line in output, 
+    thanks [Martin Sikora](https://github.com/martinsik)
+  - Line highlighting (click with JS) uses CSS transitions
+
+- Fixes:
+  - CSS scanner won't break on @media { ... } rules
+  - CSS scanner will highlight round brackets in selectors (like :nth-child(n+1))
+  - HTML output now a tiny bit compressed
+  
+  
 ##v0.6.6 (26/02/12):
 
 Maintenance release
+
 - Fixed: 
   - Parse errors on PHP 5.2.0 (due to using unescaped '$' in doubly quoted strings)
 
