@@ -122,7 +122,7 @@ class LuminousFilters {
    */
   static function doxygenize($token) {
     $token = LuminousUtils::escape_token($token);
-    $token[1] = preg_replace_callback("/(^(?>[\/\*#\s]*))([\@\\\])([^\s]*)([ \t]+.*?)?$/m",
+    $token[1] = preg_replace_callback("/(^(?>[\/\*#\s\{]*))([\@\\\])([\\w]*)(\}|[ \t]+.*?)?$/m",
         array('LuminousFilters', 'doxygenize_cb'),   $token[1]);    
     return $token;
     
