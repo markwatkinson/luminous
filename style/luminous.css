@@ -18,71 +18,13 @@
  along with Luminous.  If not, see <http://www.gnu.org/licenses/>.
  
  */
-/*******************************************************************************
- * FONTS.
- * Historically we overrode fonts because some fonts caused problems with
- * line numbering becoming de-synchronised when there were italics on 
- * the line.
- * We have since changed to a pure CSS line numbering solution, but we'll
- * keep the fonts anyway
- */
-/* IE fonts */
-@font-face {
-  font-family: VeraMono;
-  src: url("../client/font/VeraMono.eot");
-  font-weight: normal;
-  font-style: normal; }
-
-@font-face {
-  font-family: VeraMono;
-  src: url("../client/font/VeraMoIt.eot");
-  font-weight: normal;
-  font-style: italic; }
-
-@font-face {
-  font-family: VeraMono;
-  src: url("../client/font/VeraMoBd.eot");
-  font-weight: bold;
-  font-style: normal; }
-
-@font-face {
-  font-family: VeraMono;
-  src: url("../client/font/VeraMoBI.eot");
-  font-weight: bold;
-  font-style: italic; }
-
-/* Others */
-@font-face {
-  font-family: VeraMono;
-  src: url("../client/font/VeraMono.ttf");
-  font-weight: normal;
-  font-style: normal; }
-
-@font-face {
-  font-family: VeraMono;
-  src: url("../client/font/VeraMoIt.ttf");
-  font-weight: normal;
-  font-style: italic; }
-
-@font-face {
-  font-family: VeraMono;
-  src: url("../client/font/VeraMoBd.ttf");
-  font-weight: bold;
-  font-style: normal; }
-
-@font-face {
-  font-family: VeraMono;
-  src: url("../client/font/VeraMoBI.ttf");
-  font-weight: bold;
-  font-style: italic; }
-
 .luminous {
   position: relative;
   font-size: inherit;
   text-align: left;
   min-width: 100%;
   max-width: 100%;
-  font-family: "DejaVu Sans Mono", "Consolas", monospace;
+  font-family: "Consolas", monospace;
   /* line numbers */ }
   .luminous.luminous_inline {
     min-width: 1px;
@@ -91,33 +33,25 @@
     .luminous.luminous_inline, .luminous.luminous_inline div, .luminous.luminous_inline pre {
       *display: inline;
       display: inline-block; }
-    .luminous.luminous_inline div.code {
-      padding-left: 0; }
   .luminous .link, .luminous .link:visited {
     text-decoration: underline; }
   .luminous .link:hover {
     text-decoration: none; }
-  .luminous pre, .luminous .code_container {
-    font-size: inherit;
-    font-family: inherit;
-    width: auto; }
   .luminous pre {
     max-height: 100%;
     margin: 0;
     position: relative;
-    padding: 0;
-    background: transparent none; }
-  .luminous .code_container {
-    overflow: auto;
-    max-width: 100%; }
-  .luminous div.code {
-    padding-left: 1em; }
-  .luminous .code.numbers {
+    padding: 0 0 0 1em;
+    background: transparent none;
+    font-size: inherit;
+    font-family: inherit;
+    width: auto; }
+  .luminous .numbers {
     counter-reset: term;
     margin-left: 0;
     padding-left: 0; }
-    .luminous .code.numbers .line {
-      padding: 0 0 0 0.5em;
+    .luminous .numbers .line {
+      padding: 0;
       border: none;
       margin: 0;
       display: block;
@@ -136,7 +70,7 @@
       -ms-transition-property: background-color;
       -ms-transition-duration: 0.5s;
       -ms-transition-timing-function: ease-in; }
-      .luminous .code.numbers .line:before {
+      .luminous .numbers .line:before {
         counter-increment: term !important;
         content: counter(term) !important;
         padding: 0 !important;
@@ -148,17 +82,17 @@
         -moz-user-select: none;
         -o-user-select: none;
         -ms-user-select: none; }
-      .luminous .code.numbers .line:nth-child(5n):before {
+      .luminous .numbers .line:nth-child(5n):before {
         font-weight: bold; }
-    .luminous .code.numbers .line-no-width-2 .line:before {
+    .luminous .numbers.line-no-width-2 .line:before {
       width: 2em !important; }
-    .luminous .code.numbers .line-no-width-3 .line:before {
+    .luminous .numbers.line-no-width-3 .line:before {
       width: 3em !important; }
-    .luminous .code.numbers .line-no-width-4 .line:before {
+    .luminous .numbers.line-no-width-4 .line:before {
       width: 4em !important; }
-    .luminous .code.numbers .line-no-width-5 .line:before {
+    .luminous .numbers.line-no-width-5 .line:before {
       width: 5em !important; }
-    .luminous .code.numbers .line-no-width-6 .line:before {
+    .luminous .numbers.line-no-width-6 .line:before {
       width: 6em !important; }
   .luminous div {
     border-radius: inherit; }

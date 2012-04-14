@@ -51,9 +51,6 @@
       *display: inline;
       display: inline-block;
     }
-    div.code {
-      padding-left: 0;
-    }
   }
   .link {
     &, &:visited {
@@ -63,39 +60,28 @@
       text-decoration: none;
     }
   }
-  
-  pre, .code_container {
-    font-size: inherit;
-    font-family: inherit;
-    width: auto;
-  }
+
   
   pre { 
     // I can't remember why this exists TODO check it's necessary
     max-height: 100%;
     margin: 0;
     position: relative;
-    padding: 0;
+    padding: 0 0 0 1em;
     background: transparent none;
-  }
-  
-  .code_container {
-    overflow: auto;
-    max-width: 100%;
-  }
-  
-  div.code {
-    padding-left: 1em;
+    font-size: inherit;
+    font-family: inherit;
+    width: auto;    
   }
   
   /* line numbers */
-  .code.numbers {
+  .numbers {
     counter-reset: term;
     margin-left: 0;
     padding-left: 0;
     
     .line {
-      padding: 0 0 0 0.5em;
+      padding: 0;
       border: none;
       margin: 0;
       display:block;
@@ -119,11 +105,11 @@
     // This enforces the width of all the numbers is consistent
     // i.e. '2' doesn't have a smaller width than '999' when there
     // are 3 digits of numbers. 
-    .line-no-width-2 .line:before { width: 2em !important; }
-    .line-no-width-3 .line:before { width: 3em !important; }
-    .line-no-width-4 .line:before { width: 4em !important; }
-    .line-no-width-5 .line:before { width: 5em !important; }
-    .line-no-width-6 .line:before { width: 6em !important; }
+    &.line-no-width-2 .line:before { width: 2em !important; }
+    &.line-no-width-3 .line:before { width: 3em !important; }
+    &.line-no-width-4 .line:before { width: 4em !important; }
+    &.line-no-width-5 .line:before { width: 5em !important; }
+    &.line-no-width-6 .line:before { width: 6em !important; }
   }
   
   div {

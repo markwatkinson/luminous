@@ -10,19 +10,27 @@ class LuminousFormatterHTML extends LuminousFormatter {
   public $strict_standards = false;
 
   /// line number-less
-  protected $numberless_template = '<div class="code">
-  <pre class="code">%s</pre>
-</div>';
+  protected $numberless_template = '<pre class="code" style="%s">%s</pre>';
 
   /// line numbered
-  protected $numbered_template = '<div class="code numbers">
-  <pre class="code line-no-width-%s" style="counter-increment: term %s;">%s</pre>
+  protected $numbered_template = '<pre class="code numbers line-no-width-%s" style="counter-increment: term %s; %s">%s</pre>';
+
+  /// container template
+  protected $template = '<div class="luminous">%s</div>
 </div>';
 
-  /// container template, placeholders are 1: inline style 2: code
-  protected $template = '<div class="luminous">
-  <div class="code_container" %s>%s</div>
-</div>';
+  private function height_css() {
+    $height = trim('' . $this->height);
+    $css = '';  
+    if (!empty($height) && (int)$height > 0) {
+      // look for units, use px is there are none
+      if (!preg_match('/\D$/', $height)) $height .= 'px';
+      $css = "max-height: {$height}; overflow: auto;";
+    }
+    else 
+      $css = 'overflow:visible !important;';  
+    return $css;
+   }
 
   private static function template_cb($matches) {
     return ($matches[0][0] === '<')? $matches[0] : '';
@@ -50,11 +58,12 @@ class LuminousFormatterHTML extends LuminousFormatter {
       $lines[] = $l;
     }
     $lines = implode("\n", $lines);
-    return self::template($this->numberless_template, array($lines));
+    return self::template($this->numberless_template, array($this->height_css(), $lines));
   }
   
   
   public function format($src) {
+  
     $line_numbers = false;
 
     if ($this->link)  $src = $this->linkify($src);
@@ -71,18 +80,10 @@ class LuminousFormatterHTML extends LuminousFormatter {
                           return "<span class=\'" . $m1 . "\'>";
                           ');
     $code_block = preg_replace_callback('/<([A-Z_0-9]+)>/', $cb, $code_block);
+
     
-    $height = trim('' . $this->height);
-    $css = '';
-    
-    if (!empty($height) && (int)$height > 0) {
-      // look for units, use px is there are none
-      if (!preg_match('/\D$/', $height)) $height .= 'px';
-      $css = " style='max-height: {$height};'";
-    }
-    else 
-      $css = ' style="overflow:visible !important;"';
-    return self::template($this->template, array($css, $code_block));
+
+    return self::template($this->template, array($code_block));
   }
   
   /**
@@ -159,6 +160,7 @@ class LuminousFormatterHTML extends LuminousFormatter {
     return self::template($this->numbered_template, array(
       strlen( (string)($this->start_line + $i) ), // max number of digits in the line
       $this->start_line-1, 
+      $this->height_css(),      
       $lines)
     );
   }
