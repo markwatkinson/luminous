@@ -44,6 +44,10 @@
   text-align:left;
   font-family: "Consolas", monospace;
   
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  
+  
   &.inline {
     min-width: 1px;
     max-width: none;

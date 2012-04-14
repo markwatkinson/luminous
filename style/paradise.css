@@ -24,6 +24,9 @@
  * Based on the 'Birds of Paradise' theme 
  * http://joebergantine.com/werkstatt/birds-of-paradise 
  */
+ 
+ 
+ .luminous { border-color: #666; }
 
 .luminous .character{color:#DCA3A3 !important;}
 .luminous .comment{color:#8F6843 !important; font-style:italic !important;}

@@ -1,4 +1,21 @@
 
+.luminous .code {
+  background-color: #EEEEED !important;
+}
+
+/* line numbers */
+.luminous .numbers .line:before {
+  background-color: #F0F0F0 !important;
+  border-right: 1px dashed #BBBBBB !important;
+  color: #555555;
+}
+
+.luminous .highlighted_line {
+  background-color: #A4C0E4;
+  background-color: rgba(164, 192, 228, 0.5);
+}
+
+
 .luminous .character { color: #9C0F0F !important; }
 .luminous .comment { color: #57401E !important; font-style: italic !important;}
 .luminous .comment_note { font-weight: bold !important; font-style:normal !important;}
@@ -33,23 +50,9 @@
 .luminous .value{ color: #555753 !important; }
 .luminous .variable { color: #00438A !important; }
 
-.luminous .code {
-  background-color: #EEEEED !important;
-}
-.luminous .line.alt {
-/*   background-color: #F5F5F4; */
-}
-/* line numbers */
-.luminous .numbers .line:before {
-  background-color: #F0F0F0 !important;
-  border-right: 1px dashed #BBBBBB !important;
-  color: #555555;
-}
 
-.luminous .highlighted_line {
-  background-color: #A4C0E4;
-  background-color: rgba(164, 192, 228, 0.5);
-}
+
+
 
 
 /* this stuff has to come after the other rules because it will probably

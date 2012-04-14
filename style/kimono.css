@@ -8,6 +8,7 @@
 
 .luminous  {
   color : #F8F8F2 !important;
+  border-color: #555;
 }
 .luminous .code{
   background-color: #272822 !important;

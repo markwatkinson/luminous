@@ -25,7 +25,7 @@
  * Colours largely taken from:
  https://spreadsheets.google.com/ccc?key=pKLGtBDTfcpZoRtJFr_eeAg&hl=en#gid=0
  */
-
+.luminous { border-color: #555; }
 .luminous .character{color:#DCA3A3 !important;}
 .luminous .comment{color:#7F9F7F !important;}
 .luminous .comment_note{color:#DFDFDF !important; 

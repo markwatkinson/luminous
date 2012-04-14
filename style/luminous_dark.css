@@ -19,6 +19,8 @@
  * 
  */
 
+.luminous { border-color: #444; }
+
 .luminous .character{color:#FF69B4 !important;}
 
 .luminous .comment{color:gray !important; font-style:italic !important;}
