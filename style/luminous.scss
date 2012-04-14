@@ -85,7 +85,7 @@
     padding-left: 0;
     
     .line {
-      padding: 0;
+      padding: 0 0 0 2em;
       border: none;
       margin: 0;
       display:block;
@@ -95,7 +95,7 @@
       &:before {
         counter-increment: term !important;
         content: counter(term) !important;
-        padding: 0 !important;
+        padding: 0;
         margin-right: 0.5em;
         display: inline-block;
         text-align: center;
