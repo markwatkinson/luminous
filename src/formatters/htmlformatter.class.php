@@ -16,7 +16,7 @@ class LuminousFormatterHTML extends LuminousFormatter {
 
   /// line numbered
   protected $numbered_template = '<div class="code numbers">
-  <pre class="code" style="counter-increment: term %s;">%s</pre>
+  <pre class="code line-no-width-%s" style="counter-increment: term %s;">%s</pre>
 </div>';
 
   /// container template, placeholders are 1: inline style 2: code
@@ -156,7 +156,11 @@ class LuminousFormatterHTML extends LuminousFormatter {
       if ($i % 2 === 0) $lines .= ' alt';
       $lines .= '">' . $line . '</span>';
     }
-    return self::template($this->numbered_template, array($this->start_line-1, $lines));
+    return self::template($this->numbered_template, array(
+      strlen( (string)($this->start_line + $i) ), // max number of digits in the line
+      $this->start_line-1, 
+      $lines)
+    );
   }
 }
 
