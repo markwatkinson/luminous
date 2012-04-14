@@ -19,10 +19,6 @@
  * 
  */
 
-/** NOTE: Don't override the monospace font -- some fonts' height will gain an 
- * extra pixel or two when italicised. This skews the line numbering and makes
- * it come out of sync.
- */
 
 .luminous .character{color:#FF69B4 !important;}
 
