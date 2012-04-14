@@ -168,9 +168,7 @@ class LuminousFormatterHTML extends LuminousFormatter {
 
 
 class LuminousFormatterHTMLInline extends LuminousFormatterHTML {
-  protected $template = '<div class="luminous luminous_inline">
-  <div class="code_container" %s>%s</div>
-</div>';
+  protected $template = '<div class="luminous inline">%s</div>';
 
   public function format($src) {
     $this->line_numbers = false;

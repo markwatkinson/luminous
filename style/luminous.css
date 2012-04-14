@@ -26,11 +26,12 @@
   max-width: 100%;
   font-family: "Consolas", monospace;
   /* line numbers */ }
-  .luminous.luminous_inline {
+  .luminous.inline {
     min-width: 1px;
     max-width: none;
     line-height: normal; }
-    .luminous.luminous_inline, .luminous.luminous_inline div, .luminous.luminous_inline pre {
+    .luminous.inline, .luminous.inline div, .luminous.inline pre {
+      padding: 0;
       *display: inline;
       display: inline-block; }
   .luminous .link, .luminous .link:visited {

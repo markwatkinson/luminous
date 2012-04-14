@@ -43,11 +43,12 @@
   max-width:100%;
   font-family: "Consolas", monospace;
   
-  &.luminous_inline {
+  &.inline {
     min-width: 1px;
     max-width: none;
     line-height: normal;  
     &, div, pre { 
+      padding: 0;
       *display: inline;
       display: inline-block;
     }
