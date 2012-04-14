@@ -91,11 +91,11 @@
 .luminous .whitespace_tab{background-color:#A1B6FF !important;}
 
 
-.luminous .line_number_bar
-{
+/* line numbers */
+.luminous .numbers .line:before{
   background-color:#F3EEFF !important;
   border-right:1px solid #BED6E1 !important;
-/*   color:  !important; */
+  color: #000066 !important;
 }
 .luminous .code
 {
@@ -108,10 +108,7 @@
   color:blue !important;
 }
 
-.luminous .line_number
-{
-  color:#000066 !important;
-}
+
 .luminous
 {
   color:black !important;
@@ -119,7 +116,7 @@
 
 
 
-.luminous .line_alt
+.luminous .line.alt
 {
   background-color:#FAF8FF;
 }

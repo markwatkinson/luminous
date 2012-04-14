@@ -99,14 +99,10 @@
   color:#FFC0FF !important;
 }
 
-.luminous .line_number_bar
-
-{
+/* line numbers */
+.luminous .numbers .line:before {
   background-color:#444444 !important;
   border-right:1px solid #5F5F5F !important;
-}
-.luminous .line_number
-{
   color: #A8A8A8 !important;
 }
 
@@ -117,15 +113,7 @@
   color:#DCDCCC !important;
 }
 
-.luminous .metabar_buttons_floating
-{
-  background-color:#D6CFFF !important;  
-  background-color:rgba(214, 207, 255, 0.50) !important;    
-}
-
-
-
-.luminous .line_alt
+.luminous .line.alt
 {
   background-color: #404040 !important;
 }

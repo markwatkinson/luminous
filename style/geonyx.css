@@ -36,10 +36,11 @@
 .luminous .code {
   background-color: #EEEEED !important;
 }
-.luminous .line_alt {
+.luminous .line.alt {
 /*   background-color: #F5F5F4; */
 }
-.luminous .line_number_bar {
+/* line numbers */
+.luminous .numbers .line:before {
   background-color: #F0F0F0 !important;
   border-right: 1px dashed #BBBBBB !important;
   color: #555555;

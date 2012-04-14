@@ -172,7 +172,7 @@
       &:before {
         counter-increment: term !important;
         content: counter(term) !important;
-        padding: 0 0em !important;
+        padding: 0 !important;
         margin-right: 0.5em;
         display: inline-block;
         text-align: center;

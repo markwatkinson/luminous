@@ -149,12 +149,6 @@
 }
 
 
-
-.luminous .line_number_bar
-{
-  background-color:#e0e0e0 !important;
-  border-right:1px solid black !important;
-}
 .luminous .code
 {
   background-color: #FCFCFC !important;
@@ -165,9 +159,11 @@
   color:blue !important;
 }
 
-.luminous .line_number
-{
+/* line numbers */
+.luminous .numbers .line:before{
   color:black !important;
+ background-color:#e0e0e0 !important;
+  border-right:1px solid black !important;  
 }
 .luminous
 {
@@ -176,7 +172,7 @@
 
 
 
-.luminous .line_alt
+.luminous .line.alt
 {
   background-color:#F3F3F3;
 }
@@ -184,12 +180,4 @@
 .luminous .highlighted_line
 {
   background-color:#DFDEF6;
-}
-
-.luminous .metabar_buttons_floating
-{
-  background-color: #C8C8C8 !important;
-  background-color:rgba(200, 200, 200, 0.50) !important;
-  border-color: #BEBEEF !important;
-  
 }
