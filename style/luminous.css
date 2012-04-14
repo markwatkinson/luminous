@@ -19,11 +19,8 @@
  
  */
 .luminous {
-  position: relative;
   font-size: inherit;
   text-align: left;
-  min-width: 100%;
-  max-width: 100%;
   font-family: "Consolas", monospace;
   /* line numbers */ }
   .luminous.inline {
@@ -41,7 +38,6 @@
   .luminous pre {
     max-height: 100%;
     margin: 0;
-    position: relative;
     padding: 0 0 0 1em;
     background: transparent none;
     font-size: inherit;
@@ -56,6 +52,7 @@
       border: none;
       margin: 0;
       display: block;
+      position: relative;
       transition-property: background-color;
       transition-duration: 0.5s;
       transition-timing-function: ease-in;
@@ -82,9 +79,25 @@
         -webkit-user-select: none;
         -moz-user-select: none;
         -o-user-select: none;
-        -ms-user-select: none; }
+        -ms-user-select: none;
+        width: 1em;
+        position: absolute;
+        height: 100%;
+        left: 0; }
+      .luminous .numbers .line:after {
+        content: " "; }
       .luminous .numbers .line:nth-child(5n):before {
         font-weight: bold; }
+    .luminous .numbers.line-no-width-2 .line {
+      padding-left: 3em; }
+    .luminous .numbers.line-no-width-3 .line {
+      padding-left: 4em; }
+    .luminous .numbers.line-no-width-4 .line {
+      padding-left: 5em; }
+    .luminous .numbers.line-no-width-5 .line {
+      padding-left: 6em; }
+    .luminous .numbers.line-no-width-6 .line {
+      padding-left: 7em; }
     .luminous .numbers.line-no-width-2 .line:before {
       width: 2em !important; }
     .luminous .numbers.line-no-width-3 .line:before {

@@ -36,11 +36,8 @@
 
 .luminous {
 
-  position:relative;
   font-size:inherit; 
   text-align:left;
-  min-width:100%;
-  max-width:100%;
   font-family: "Consolas", monospace;
   
   &.inline {
@@ -67,7 +64,6 @@
     // I can't remember why this exists TODO check it's necessary
     max-height: 100%;
     margin: 0;
-    position: relative;
     padding: 0 0 0 1em;
     background: transparent none;
     font-size: inherit;
@@ -86,9 +82,9 @@
       border: none;
       margin: 0;
       display:block;
-      
+      position:relative;
       @include transition(background-color);
-      
+
       &:before {
         counter-increment: term !important;
         content: counter(term) !important;
@@ -97,12 +93,30 @@
         display: inline-block;
         text-align: center;
         @include vendor-prefix(user-select, none);
+        width: 1em;
+        // necessary to ensure the heights of the line and the 
+        // number are the same
+        position: absolute;
+        height: 100%;
+        left: 0;
       }
-      
+      &:after {
+        // ensures that the browser won't collapse empty lines
+        content: " ";
+      }
       &:nth-child(5n):before {
         font-weight: bold;
       }
+      
     }
+    
+    &.line-no-width-2 .line { padding-left: 3em; }
+    &.line-no-width-3 .line { padding-left: 4em; }
+    &.line-no-width-4 .line { padding-left: 5em; }
+    &.line-no-width-5 .line { padding-left: 6em; }
+    &.line-no-width-6 .line { padding-left: 7em; }
+
+    
     // This enforces the width of all the numbers is consistent
     // i.e. '2' doesn't have a smaller width than '999' when there
     // are 3 digits of numbers. 
