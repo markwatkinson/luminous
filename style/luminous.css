@@ -36,7 +36,6 @@
   .luminous .link:hover {
     text-decoration: none; }
   .luminous pre {
-    max-height: 100%;
     margin: 0;
     padding: 0 0 0 1em;
     background: transparent none;

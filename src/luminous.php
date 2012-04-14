@@ -59,6 +59,14 @@ class LuminousOptions {
   private $cache_age = 7776000; // 90 days
 
   /**
+   * @brief Word wrapping
+   *
+   * If the formatter supports line wrapping, lines will be wrapped at
+   * this number of characters (0 or -1 to disable)
+   */
+  private $wrap_width = -1;
+
+  /**
    * @brief Line numbering
    *
    * If the formatter supports line numbering, this setting controls whether
@@ -88,7 +96,7 @@ class LuminousOptions {
    * If the formatter supports heigh constraint, this setting controls whether
    * or not to constrain the widget's height, and to what.
    */
-  private $max_height = 500;
+  private $max_height = -1;
 
   /**
    * @brief Output format
@@ -246,7 +254,7 @@ class LuminousOptions {
     elseif($name === 'theme')
       $this->set_theme($value);
     elseif($name === 'wrap_width') {
-      trigger_error('Luminous 0.7: wrap_width no longer has any effect', E_USER_NOTICE);
+      if (self::check_type($value, 'int')) $this->$name = $value;
     }
     elseif($name === 'sql_function') {
       if (self::check_type($value, 'func', true)) $this->$name = $value;
@@ -520,6 +528,7 @@ class _Luminous {
    * Sets up a formatter instance according to our current options/settings
    */
   private function set_formatter_options(&$formatter) {
+    $formatter->wrap_length = $this->settings->wrap_width;
     $formatter->line_numbers = $this->settings->line_numbers;
     $formatter->start_line = $this->settings->start_line;
     $formatter->link = $this->settings->auto_link;
@@ -538,7 +547,7 @@ class _Luminous {
     // md5 it. This gives us a unique (assuming no collisions) handle to
     // a cache file, which depends on the input source, the relevant formatter
     // settings, the version, and scanner.
-    $settings = array(
+    $settings = array($this->settings->wrap_width,
       $this->settings->line_numbers,
       $this->settings->start_line,
       $this->settings->auto_link,

@@ -1,3 +1,7 @@
+// This is the source file for luminous.css
+// If you want to edit it, you'll need SASS.
+// http://sass-lang.com/
+
 /*
  Copyright 2010 Mark Watkinson
  
@@ -60,9 +64,7 @@
   }
 
   
-  pre { 
-    // I can't remember why this exists TODO check it's necessary
-    max-height: 100%;
+  pre {
     margin: 0;
     padding: 0 0 0 1em;
     background: transparent none;
