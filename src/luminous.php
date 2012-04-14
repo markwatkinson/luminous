@@ -1008,12 +1008,10 @@ abstract class luminous {
     $script_template = "<script type='text/javascript' src='$relative_root/client/%s'></script>\n";
     $out .= sprintf($link_template, 'luminous.css', 'luminous-style');
     $out .= sprintf($link_template, $theme, 'luminous-theme');
-    if ($js || LUMINOUS_DEBUG) {
+    if ($js) {
       if ($jquery)
         $out .= sprintf($script_template, 'jquery-1.6.4.min.js');
       $out .= sprintf($script_template, 'luminous.js');
-      if (LUMINOUS_DEBUG) 
-        $out .= sprintf($script_template, 'lineheight.js');
     }
 
     return $out;
