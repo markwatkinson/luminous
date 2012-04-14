@@ -34,73 +34,6 @@
   }
 }
 
-
-
-
-
-/*******************************************************************************
- * FONTS.
- * Historically we overrode fonts because some fonts caused problems with
- * line numbering becoming de-synchronised when there were italics on 
- * the line.
- * We have since changed to a pure CSS line numbering solution, but we'll
- * keep the fonts anyway
- */ 
-
-/* IE fonts */
-
-@font-face { 
-  font-family: VeraMono;
-  src: url('../client/font/VeraMono.eot');  
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face { 
-  font-family: VeraMono;
-  src: url('../client/font/VeraMoIt.eot');  
-  font-weight: normal;
-  font-style: italic;
-}
-@font-face { 
-  font-family: VeraMono;
-  src: url('../client/font/VeraMoBd.eot');  
-  font-weight: bold;
-  font-style: normal;
-}
-@font-face { 
-  font-family: VeraMono;
-  src: url('../client/font/VeraMoBI.eot');  
-  font-weight: bold;
-  font-style: italic;
-}
-/* Others */
-@font-face { 
-  font-family: VeraMono;
-  src: url('../client/font/VeraMono.ttf');  
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face { 
-  font-family: VeraMono;
-  src: url('../client/font/VeraMoIt.ttf');  
-  font-weight: normal;
-  font-style: italic;
-}
-@font-face { 
-  font-family: VeraMono;
-  src: url('../client/font/VeraMoBd.ttf');  
-  font-weight: bold;
-  font-style: normal;
-}
-@font-face { 
-  font-family: VeraMono;
-  src: url('../client/font/VeraMoBI.ttf');  
-  font-weight: bold;
-  font-style: italic;
-}
-
-
-
 .luminous {
 
   position:relative;
@@ -108,7 +41,7 @@
   text-align:left;
   min-width:100%;
   max-width:100%;
-  font-family:  "DejaVu Sans Mono", "Consolas", monospace;
+  font-family: "Consolas", monospace;
   
   &.luminous_inline {
     min-width: 1px;
