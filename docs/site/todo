@@ -4,8 +4,13 @@ This is a list of things I'd like to see Luminous do in future but which I have 
 
 == Luminous's internals ==
 
-  * Luminous internally represents a token stream as an [Writing-a-formatter XML string]. This comes from the scanner and is passed to the formatter. This is a leftover from early versions and isn't ideal: it's not strictly necessary and the string conversion/parsing is ugly and probably slows things down for the formatter. The token stream is stored using PHP data structures until the very last point before the scanner hands over control. It would be simple to remove this were it not for the fact that [filters filters] sometimes go into the token structures and start nesting other tokens, by embedding XML. Therefore a better way of handling hierarchical tokens is needed as well. If I recall correctly, the stateful scanner may have something along these lines.
+  * Tokens:
+    # Luminous internally represents a token stream as an [Writing-a-formatter XML string]. This comes from the scanner and is passed to the formatter. This is a leftover from early versions and isn't ideal: it's not strictly necessary and the string conversion/parsing is ugly and probably slows things down for the formatter. The token stream is stored using PHP data structures until the very last point before the scanner hands over control. It would be simple to remove this were it not for the fact that [filters filters] sometimes go into the token structures and start nesting other tokens, by embedding XML. Therefore a better way of handling hierarchical tokens is needed as well. If I recall correctly, the stateful scanner may have something along these lines.
+    # The token structure in Luminous is pretty much non-existent. Tokens are just arbitrary strings. These could be pulled out into more central definitions and thereby form a half-way coherent specification of what CSS classes should be respected.
+    # It would be good to structure them better; at the moment tokens are entirely individual, whereas sometimes tokens can be seen as a kind of hierarchy - e.g. most programming languages have different classes of keywords such as keywords (e.g. 'if') and keyword operators (e.g. 'and'). These could be better transcribed into the css as .keyword and .keyword.operator.
   * The [cache cache] can use MySQL as a storage location, but no other RDBMS due to reliance on `INSERT IGNORE`. It may be that the queries or logic can be rewritten using standard SQL, or failing that, RDBMS specific queries and a settings parameter would be acceptable.
+  * Performance and optimisation: Luminous is slow. It 'seems' slower than it should be, but I haven't managed to identify any easily removable bottlenecks. Therefore performance improvements would be welcome (but not at the expense of code readability or quality).
+
 
 == Languages ==
 
