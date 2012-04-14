@@ -26,31 +26,13 @@ function luminous($) {
     $l = $(this);
     if ($l.data('luminoused')) return;
     $l.data('luminoused', true);
-    $lines = $('span.line', $l);
     
     var click_timer = null;
-    // we bind both a double and single click event. We distinguish between
-    // these with a timer
-    // this is the single-click highlight line event
-    $('.line_number', this).each(function(i) {
-      if (i >= $lines.length) return false;
-      $(this).click(function() {
-        clearTimeout(click_timer);
-        click_timer = setTimeout(function() {
-          $($lines.get(i)).toggleClass('highlighted_line');
-        }, 150); // is 150ms okay for double click?
-      });
+    
+    $l.find('.line').click(function(ev) {
+      $(this).toggleClass('highlighted_line');
+      console.log(ev.target);
     });
-    // ... and the double-click show/hide line numbers event
-    var line_nos_expanded = true;
-    $('td.line_number_bar', $l).dblclick(function() {
-      clearTimeout(click_timer);
-      if (line_nos_expanded) $(this).css({'overflow':'hidden', 
-        'max-width':'6px'});
-      else $(this).css('max-width', 'none');
-      line_nos_expanded = !line_nos_expanded;
-    });
-
   });
 }
 
