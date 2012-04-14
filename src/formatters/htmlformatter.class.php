@@ -28,7 +28,7 @@ class LuminousFormatterHTML extends LuminousFormatter {
       $css = "max-height: {$height}; overflow: auto;";
     }
     else 
-      $css = 'overflow:visible !important;';  
+      $css = '';  
     return $css;
    }
 

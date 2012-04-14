@@ -43,7 +43,8 @@
     background: transparent none;
     font-size: inherit;
     font-family: inherit;
-    width: auto; }
+    width: auto;
+    overflow: auto; }
   .luminous .numbers {
     counter-reset: term;
     margin-left: 0;
