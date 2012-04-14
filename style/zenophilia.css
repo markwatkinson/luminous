@@ -118,7 +118,7 @@
   background-color: #404040 !important;
 }
 
-.luminous .highlighted_line
+.luminous .line.highlighted_line
 {
   background-color:#6D6D6D !important;
 }

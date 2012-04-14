@@ -174,7 +174,7 @@
   background-color:#F3F3F3;
 }
 
-.luminous .highlighted_line
+.luminous .line.highlighted_line
 {
   background-color:#DFDEF6;
 }
