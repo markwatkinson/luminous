@@ -141,8 +141,7 @@
 
 
 
-.luminous .line_number_bar
-{
+.luminous .numbers .line:before {
   background-color:#ECECEC !important;
   color: #aaa !important;
   border-right:1px solid #ddd !important;

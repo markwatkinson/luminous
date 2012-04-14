@@ -15,16 +15,9 @@ class LuminousFormatterHTML extends LuminousFormatter {
 </div>';
 
   /// line numbered
-  protected $numbered_template = '<table class="code_container">
-  <tr>
-    <td class="line_number_bar">
-      <pre class="line_numbers">%s</pre>
-    </td>
-    <td class="code">
-      <pre class="code">%s</pre>
-    </td>
-  </tr>
-</table>';
+  protected $numbered_template = '<div class="code numbers">
+  <pre class="code" style="counter-increment: term %s;">%s</pre>
+</div>';
 
   /// container template, placeholders are 1: inline style 2: code
   protected $template = '<div class="luminous">
@@ -157,39 +150,13 @@ class LuminousFormatterHTML extends LuminousFormatter {
     $lines = '';
     
     $lines_original = explode("\n", $src);
-
-    // this seems to run a bit faster if we keep the literals out of
-    // the loop.
-
-    $line_no_plain_tag0 = '<span class="line_number">&nbsp;';
-    $line_no_emph_tag0 = '<span class="line_number line_number_emphasised">&nbsp;';
-    $line_no_tag1 = "&nbsp;\n</span>";
     
-    $wrap_line = "<span class='line_number'>&nbsp;|_\n</span>";
-    
-    $line_tag0 = '<span class="line">';
-    $line_alt_tag0 = '<span class="line line_alt">';
-    $line_tag1 = '</span>';
-
-    $lineno = $this->start_line;
-    foreach($lines_original as $line)  {
-
-      $linenos .= (($lineno - ($this->start_line - 1)) % 5 === 0)?
-        $line_no_emph_tag0
-        : $line_no_plain_tag0;
-      $linenos .= $lineno . $line_no_tag1;
-
-      $num = $this->wrap_line($line, $this->wrap_length);
-
-      for ($i=1; $i<$num; $i++)  $linenos .= $wrap_line;
-
-      $lines .= ($lineno % 2 === 0)? $line_alt_tag0 : $line_tag0;
-      $lines .= $line . $line_tag1;
-
-      ++$lineno;
-
+    foreach($lines_original as $i=>$line) {
+      $lines .= '<span class="line';
+      if ($i % 2 === 0) $lines .= ' alt';
+      $lines .= '">' . $line . '</span>';
     }
-    return self::template($this->numbered_template, array($linenos, $lines));
+    return self::template($this->numbered_template, array($this->start_line-1, $lines));
   }
 }
 

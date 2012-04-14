@@ -1,0 +1,184 @@
+/*
+ Copyright 2010 Mark Watkinson
+ 
+ This file is part of Luminous.
+ 
+ Luminous is free software: you can redistribute it and/or
+ modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ Luminous is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with Luminous.  If not, see <http://www.gnu.org/licenses/>.
+ 
+ */
+
+
+
+@mixin transition($properties, $duration: 0.5s, $easing: ease-in) {
+  @each $prefix in '', -webkit-, -moz-, -o-, -ms- {
+    #{$prefix}transition-property: $properties;
+    #{$prefix}transition-duration : $duration;
+    #{$prefix}transition-timing-function: $easing;
+  }
+}
+
+
+
+
+
+/*******************************************************************************
+ * FONTS.
+ * Historically we overrode fonts because some fonts caused problems with
+ * line numbering becoming de-synchronised when there were italics on 
+ * the line.
+ * We have since changed to a pure CSS line numbering solution, but we'll
+ * keep the fonts anyway
+ */ 
+
+/* IE fonts */
+
+@font-face { 
+  font-family: VeraMono;
+  src: url('../client/font/VeraMono.eot');  
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face { 
+  font-family: VeraMono;
+  src: url('../client/font/VeraMoIt.eot');  
+  font-weight: normal;
+  font-style: italic;
+}
+@font-face { 
+  font-family: VeraMono;
+  src: url('../client/font/VeraMoBd.eot');  
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face { 
+  font-family: VeraMono;
+  src: url('../client/font/VeraMoBI.eot');  
+  font-weight: bold;
+  font-style: italic;
+}
+/* Others */
+@font-face { 
+  font-family: VeraMono;
+  src: url('../client/font/VeraMono.ttf');  
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face { 
+  font-family: VeraMono;
+  src: url('../client/font/VeraMoIt.ttf');  
+  font-weight: normal;
+  font-style: italic;
+}
+@font-face { 
+  font-family: VeraMono;
+  src: url('../client/font/VeraMoBd.ttf');  
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face { 
+  font-family: VeraMono;
+  src: url('../client/font/VeraMoBI.ttf');  
+  font-weight: bold;
+  font-style: italic;
+}
+
+
+
+.luminous {
+
+  position:relative;
+  font-size:inherit; 
+  text-align:left;
+  min-width:100%;
+  max-width:100%;
+  font-family:  "DejaVu Sans Mono", "Consolas", monospace;
+  
+  &.luminous_inline {
+    min-width: 1px;
+    max-width: none;
+    line-height: normal;  
+    &, div, pre { 
+      *display: inline;
+      display: inline-block;
+    }
+    div.code {
+      padding-left: 0;
+    }
+  }
+  .link {
+    &, &:visited {
+      text-decoration: underline;
+    }
+    &:hover {
+      text-decoration: none;
+    }
+  }
+  
+  pre, .code_container {
+    font-size: inherit;
+    font-family: inherit;
+    width: auto;
+  }
+  
+  pre { 
+    // I can't remember why this exists TODO check it's necessary
+    max-height: 100%;
+    margin: 0;
+    position: relative;
+    padding: 0;
+    background: transparent none;
+  }
+  
+  .code_container {
+    overflow: auto;
+    max-width: 100%;
+  }
+  
+  div.code {
+    padding-left: 1em;
+  }
+  
+  /* line numbers */
+  .code.numbers {
+    counter-reset: term;
+    margin-left: 0;
+    padding-left: 0;
+    
+    .line {
+      padding: 0 0 0 0.5em;
+      border: none;
+      margin: 0;
+      display:block;
+      
+      @include transition(background-color);
+      
+      &:before {
+        counter-increment: term !important;
+        content: counter(term) !important;
+        padding: 0 0.5em !important;
+        margin-right: 0.5em;
+      }
+      
+      &:nth-child(5n):before {
+        font-weight: bold;
+      }
+    }
+  }
+  
+  div {
+    border-radius: inherit;
+  }
+    
+}

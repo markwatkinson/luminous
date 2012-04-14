@@ -18,244 +18,130 @@
  along with Luminous.  If not, see <http://www.gnu.org/licenses/>.
  
  */
-
-
-
-
-
-
-
 /*******************************************************************************
  * FONTS.
- * 
- * We override the fonts because the line numbering relies on a consistent
- * line-height. Unfortunately, some fonts, when italicised, gain a pixel or two
- * and this results in a drift which pushes the line numbers and lines out of
- * sync.
- */ 
-
+ * Historically we overrode fonts because some fonts caused problems with
+ * line numbering becoming de-synchronised when there were italics on 
+ * the line.
+ * We have since changed to a pure CSS line numbering solution, but we'll
+ * keep the fonts anyway
+ */
 /* IE fonts */
+@font-face {
+  font-family: VeraMono;
+  src: url("../client/font/VeraMono.eot");
+  font-weight: normal;
+  font-style: normal; }
 
-@font-face { 
+@font-face {
   font-family: VeraMono;
-  src: url('../client/font/VeraMono.eot');  
+  src: url("../client/font/VeraMoIt.eot");
   font-weight: normal;
-  font-style: normal;
-}
-@font-face { 
+  font-style: italic; }
+
+@font-face {
   font-family: VeraMono;
-  src: url('../client/font/VeraMoIt.eot');  
-  font-weight: normal;
-  font-style: italic;
-}
-@font-face { 
-  font-family: VeraMono;
-  src: url('../client/font/VeraMoBd.eot');  
+  src: url("../client/font/VeraMoBd.eot");
   font-weight: bold;
-  font-style: normal;
-}
-@font-face { 
+  font-style: normal; }
+
+@font-face {
   font-family: VeraMono;
-  src: url('../client/font/VeraMoBI.eot');  
+  src: url("../client/font/VeraMoBI.eot");
   font-weight: bold;
-  font-style: italic;
-}
+  font-style: italic; }
+
 /* Others */
-
-@font-face { 
+@font-face {
   font-family: VeraMono;
-  src: url('../client/font/VeraMono.ttf');  
+  src: url("../client/font/VeraMono.ttf");
   font-weight: normal;
-  font-style: normal;
-}
-@font-face { 
+  font-style: normal; }
+
+@font-face {
   font-family: VeraMono;
-  src: url('../client/font/VeraMoIt.ttf');  
+  src: url("../client/font/VeraMoIt.ttf");
   font-weight: normal;
-  font-style: italic;
-}
-@font-face { 
+  font-style: italic; }
+
+@font-face {
   font-family: VeraMono;
-  src: url('../client/font/VeraMoBd.ttf');  
+  src: url("../client/font/VeraMoBd.ttf");
   font-weight: bold;
-  font-style: normal;
-}
-@font-face { 
+  font-style: normal; }
+
+@font-face {
   font-family: VeraMono;
-  src: url('../client/font/VeraMoBI.ttf');  
+  src: url("../client/font/VeraMoBI.ttf");
   font-weight: bold;
-  font-style: italic;
-}
+  font-style: italic; }
 
-
-
-
-
-
-.luminous_inline, .luminous_inline div, .luminous_inline pre {
-  display:inline-block;
-  *display: inline; /* IE6 hack. */
-}
-
-
-
-.luminous .link, .link:visited {
-  text-decoration:underline !important;
-}
-.luminous .link:hover {
-  text-decoration:none !important;
-}
-
-.luminous pre, .luminous .code_container
-{
-  font-size:inherit !important;
-  font-family:inherit !important;
-  width:auto !important;
-}
-
-.luminous table.code_container {
-  max-height: 100%;
-}
-
-.luminous pre {
-  max-height:100% !important;
-}
-
-div.code_container
-{
-  overflow:auto;
-  max-width:100% !important;
-  /* Necessary for IE 7 */
-  position:relative !important;
-}
-
-
-div.luminous 
-{
-  position:relative !important;
-  font-size:inherit; 
-  text-align:left !important;
-  min-width:100% !important;
-  max-width:100% !important; 
-}
-div.luminous_inline {
-  min-width: 1px !important;
-  max-width: none !important;
-  line-height: normal !important;
-}
-
-
-
-
-/* IE < 8 needs it like this */
-div.luminous, .luminous .line, .luminous pre
-{
-  font-family:  "DejaVu Sans Mono", "Bitstream Vera Sans Mono",  VeraMono, 
-    "Andale Mono", "Lucida Sans Typewriter",  "FreeMono",  
-    "Liberation Mono",  "Consolas","Lucida Console", monospace !important;
-  font-size:inherit; 
-}
-
-.luminous .line
-{
-  padding:0px;
-  border:0px;
-  margin:0px;
-  padding-left:1em;
-  display:block;
-
-}
-
-.luminous pre.code, .luminous pre.line_numbers 
-{
-  font-size:inherit !important;
-  font-family:inherit !important;
-  
-  margin:0px !important;
-  position:relative;
-  padding:0px !important;
-  background:none !important;
-}
-
-
-div.luminous span.line_number {
-  margin:0px !important;
-  text-align:center !important;
-  -moz-user-select: none;
-  -khtml-user-select: none;
-}
-
-div.luminous .line_number_emphasised {
- font-weight:bold;
-}
-
-/* The table related rules only apply to the line numbered widget. */
-div.luminous td.line_number_bar {
-  padding:0px !important;
-  vertical-align:top !important;
-  border-left:0px !important;
-  border-top:0px !important;
-  border-bottom:0px !important;
-  text-align:right !important;
-  cursor: default;
-}
-
-div.luminous td.code
-{
-  padding:0px !important;
-  border:0px !important;
-  vertical-align:top !important;
-  width:100% !important;
-}
-
-div.luminous table
-{
-  border: 0px !important;
-  width:100% !important;
-  padding:0px !important;
-  border-collapse:collapse !important;
-  margin:0px !important;
-}
-
-/* None-line numbered widget */
-div.luminous div.code
-{
-  padding-left:1em !important;
-  position:relative !important;
-}
-div.luminous_inline div.code
-{
-  padding-left:0em !important;
-}
-
-/* Rounded border stuff. We need to make sure Luminous's sub-elements are
- * going to respect any border radiuses applied on the outer-most element.
- */
-
-/* Firefox and IE9 are happy with just this */
-div.luminous div, div.luminous table, div.luminous tbody, div.luminous tr {
-  border-radius: inherit;
-}
-/*
- * Chrome is very fussy and requires a lot more detail, otherwise these elements
- * will 'poke' out beyond the rounded borders of the luminous element
- */
-div.luminous td.line_number_bar {
-  border-top-left-radius: inherit;
-  border-bottom-left-radius: inherit;
-}
-div.luminous td.code, div.luminous pre.code {
-  border-top-right-radius: inherit;
-  border-bottom-right-radius: inherit;
-}
-
-div.luminous span.line:last-child {
-  border-bottom-right-radius: inherit;
-}
-
-.luminous .line {
-  -moz-transition: background-color 0.5s;
-  -webkit-transition: background-color 0.5s;
-  -o-transition: background-color 0.5s;
-  transition: background-color 0.5s;
-}
+.luminous {
+  position: relative;
+  font-size: inherit;
+  text-align: left;
+  min-width: 100%;
+  max-width: 100%;
+  font-family: "DejaVu Sans Mono", "Consolas", monospace;
+  /* line numbers */ }
+  .luminous.luminous_inline {
+    min-width: 1px;
+    max-width: none;
+    line-height: normal; }
+    .luminous.luminous_inline, .luminous.luminous_inline div, .luminous.luminous_inline pre {
+      *display: inline;
+      display: inline-block; }
+    .luminous.luminous_inline div.code {
+      padding-left: 0; }
+  .luminous .link, .luminous .link:visited {
+    text-decoration: underline; }
+  .luminous .link:hover {
+    text-decoration: none; }
+  .luminous pre, .luminous .code_container {
+    font-size: inherit;
+    font-family: inherit;
+    width: auto; }
+  .luminous pre {
+    max-height: 100%;
+    margin: 0;
+    position: relative;
+    padding: 0;
+    background: transparent none; }
+  .luminous .code_container {
+    overflow: auto;
+    max-width: 100%; }
+  .luminous div.code {
+    padding-left: 1em; }
+  .luminous .code.numbers {
+    counter-reset: term;
+    margin-left: 0;
+    padding-left: 0; }
+    .luminous .code.numbers .line {
+      padding: 0 0 0 0.5em;
+      border: none;
+      margin: 0;
+      display: block;
+      transition-property: background-color;
+      transition-duration: 0.5s;
+      transition-timing-function: ease-in;
+      -webkit-transition-property: background-color;
+      -webkit-transition-duration: 0.5s;
+      -webkit-transition-timing-function: ease-in;
+      -moz-transition-property: background-color;
+      -moz-transition-duration: 0.5s;
+      -moz-transition-timing-function: ease-in;
+      -o-transition-property: background-color;
+      -o-transition-duration: 0.5s;
+      -o-transition-timing-function: ease-in;
+      -ms-transition-property: background-color;
+      -ms-transition-duration: 0.5s;
+      -ms-transition-timing-function: ease-in; }
+      .luminous .code.numbers .line:before {
+        counter-increment: term !important;
+        content: counter(term) !important;
+        padding: 0 0.5em !important;
+        margin-right: 0.5em; }
+      .luminous .code.numbers .line:nth-child(5n):before {
+        font-weight: bold; }
+  .luminous div {
+    border-radius: inherit; }
