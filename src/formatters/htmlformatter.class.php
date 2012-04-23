@@ -87,8 +87,11 @@ class LuminousFormatterHTML extends LuminousFormatter {
       if (!preg_match('/\D$/', $height)) $height .= 'px';
       $css = " style='max-height: {$height};'";
     }
-    else 
-      $css = ' style="overflow:visible !important;"';
+    else {
+      // I think this overflow should only affect the x dimension
+      // as the height should be unconstrained
+      $css = ' style="overflow:scroll;"';
+    }
     return self::template($this->template, array($css, $code_block));
   }
   
