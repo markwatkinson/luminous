@@ -1,7 +1,10 @@
 Luminous Changelog since 0.6.0
 ==============================
 
-##master (18/03/12):
+##v0.6.7 (24/04/12):
+
+Likely to be the final release in 0.6 series. Further releases will be on the
+0.7 tree.
 
 - New stuff:
   - Ability to set custom line number for first line in output, 
@@ -9,9 +12,13 @@ Luminous Changelog since 0.6.0
   - Line highlighting (click with JS) uses CSS transitions
 
 - Fixes:
+  - Small improvements to JavaDoc-like comment highlighting  
   - CSS scanner won't break on @media { ... } rules
+  - CSS scanner won't break on @keyframe { ... } rules
   - CSS scanner will highlight round brackets in selectors (like :nth-child(n+1))
   - HTML output now a tiny bit compressed
+  - HTML output with unconstrained height will scroll horizontally instead of
+    spilling overflow.
   
   
 ##v0.6.6 (26/02/12):
