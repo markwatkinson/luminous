@@ -86,7 +86,13 @@ class LuminousCSSScanner extends LuminousEmbeddedWebScript {
       }
       elseif(!$in_block && $this->scan('/(?<=[#\.:])[\w\-]+/') !== null)
         $tok = 'SELECTOR';
-      elseif(!$in_block && !$in_media && $c === '@' && $this->scan('/@media\\b/')) {
+      // check for valid super-blocks, e.g. media {...} and @keyframes {}
+      elseif(!$in_block && !$in_media && $c === '@'
+        && $this->scan('/@
+          (-(moz|ms|webkit|o)-)?keyframes\\b
+          |
+          media\\b/x')
+      ) {
         $this->state_[] = 'media';
         $tok = 'TAG';
       }  
