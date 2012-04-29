@@ -32,6 +32,10 @@ class LuminousSassParser {
   
   public $token;
   
+  // SASS has two syntaxes: 'sass' and 'scss'.
+  // The former is whitespace dependent, the 
+  // latter uses braces
+  public $syntax = 'sass';
   
   /**
     * Finds the index of the next token with the 
@@ -64,7 +68,10 @@ class LuminousSassParser {
     return count($this->tokens)+1;
   }
   
-  private function _parse_rule() {
+  /**
+    * Parses a selector rule 
+    */
+  private function _parse_rule() {  
     $new_token = $this->token;
     $set = false;
     if ($this->index > 0) {
@@ -97,6 +104,62 @@ class LuminousSassParser {
   private function _parse_property_value() {
     
   }
+  
+  
+  
+  private function _sass_inject_pseudo_tokens() {
+    if ($this->syntax !== 'sass') return;
+    $new_tokens = array();
+    $indent_stack = array(0);
+    $len = count($this->tokens);
+    $bol = false;
+    
+    
+    // pseudo token template
+    // we add a data attribute so as not to risk overwriting
+    // anything in future
+    $pseudo_token_l = array(
+      0 => 'L_BRACE',
+      1 => '{',
+      2 => false,
+      'data' => array('pseudo' => true )
+    );
+    $pseudo_token_r = array(
+      0 => 'R_BRACE',
+      1 => '}',
+      2 => false,
+      'data' => array('pseudo' => true )
+    );    
+    $pseudo_token_s = array(
+      0 => 'SEMICOLON',
+      1 => ';',
+      2 => false,
+      'data' => array('pseudo' => true )
+    );    
+    
+    
+    $lines = array();
+    
+    $line_ = array('indent' => 0, 'tokens' => array(), 'children' => array());
+    $line = $line_;
+    foreach($this->tokens as $i=>$t) {
+      $type = $t[0];
+      $line['tokens'] [] = $t;
+      if ($type === 'EOL' || $i === count($this->tokens)-1) {
+        $bol = true;
+        $lines[] = $line;
+        continue;
+      }
+      if ($bol) {
+        $line = $line_;
+        if ($type === 'WHITESPACE') {
+          $indent_width = strlen($t[1]);
+          $line_['indent'] = $indent_width;
+        }
+      }
+    }
+    
+  }
     
   
   
@@ -104,6 +167,8 @@ class LuminousSassParser {
   public function parse() {
     $state = array();
     $prop_value = null;
+    
+    $this->_sass_inject_pseudo_tokens();
     
     for ($this->index = 0; $this->index < count($this->tokens); $this->index++) {
       $this->token = &$this->tokens[$this->index];
@@ -196,8 +261,13 @@ class LuminousSassParser {
     }
     
     foreach($this->tokens as $i=>$t) {
-      if ($t[0] === 'DELETE')
+      if ($t[0] === 'DELETE' /*|| 
+        (isset($t['data']) && isset($t['data']['pseudo'])
+          && $t['data']['pseudo'] === true
+        )*/
+      ) {
         unset($this->tokens[$i]);
+      }
     }  
     // reindex the array
     $this->tokens = array_values($this->tokens);
@@ -214,7 +284,7 @@ class LuminousSassScanner extends LuminousScanner {
 
   protected $regexen = array();
   
-  
+  /*
   public $rule_tag_map = array(
     'PROPERTY' => 'TYPE',
     'COMMENT_SL' => 'COMMENT',
@@ -226,7 +296,7 @@ class LuminousSassScanner extends LuminousScanner {
     'ID_SELECTOR' => 'VARIABLE',
     'PSEUDO_SELECTOR' => 'VARIABLE',
     'ATTR_SELECTOR' => 'OPERATOR',
-  );
+  ); */
   
   
   public function init() {
@@ -300,12 +370,8 @@ class LuminousSassScanner extends LuminousScanner {
     $parser = new LuminousSassParser();
     $parser->tokens = $this->tokens;
     $this->tokens = $parser->parse();
-    
-    
-    
-    
-    
-    
   }
   
 }
+
+
