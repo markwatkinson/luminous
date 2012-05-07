@@ -97,6 +97,9 @@
   *display: inline; /* IE6 hack. */
 }
 
+.luminous_inline .code_container {
+  overflow: auto!important;
+}
 
 
 .luminous .link, .link:visited {
