@@ -1,6 +1,10 @@
 Luminous Changelog since 0.6.0
 ==============================
 
+##v0.6.7-1 (19/05/12):
+
+  - Fixed a regression which introduced scrollbars on inline code
+
 ##v0.6.7 (24/04/12):
 
 Likely to be the final release in 0.6 series. Further releases will be on the
