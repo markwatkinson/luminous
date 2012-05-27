@@ -113,7 +113,7 @@
   color:#DCDCCC !important;
 }
 
-.luminous .line.alt
+.luminous .line:nth-child(2n)
 {
   background-color: #404040 !important;
 }

@@ -169,7 +169,7 @@
 
 
 
-.luminous .line.alt
+.luminous .line:nth-child(2n)
 {
   background-color:#F3F3F3;
 }

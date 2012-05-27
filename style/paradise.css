@@ -118,7 +118,7 @@ font-weight:bold !important;}
 
 
 
-.luminous .line.alt
+.luminous .line:nth-child(2n)
 {
   background-color: #3E2C29 !important;
 }

@@ -101,7 +101,7 @@ font-style:normal !important;}
   color:#FFFDCC !important;
 }
 
-.luminous .line.alt
+.luminous .line:nth-child(2n)
 {
   background-color: #232323;
 }

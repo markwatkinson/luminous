@@ -153,7 +153,6 @@ class LuminousFormatterHTML extends LuminousFormatter {
     
     foreach($lines_original as $i=>$line) {
       $lines .= '<span class="line';
-      if ($i % 2 === 0) $lines .= ' alt';
       $lines .= '">' . $line . '</span>';
     }
     return self::template($this->numbered_template, array(

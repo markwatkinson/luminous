@@ -112,7 +112,7 @@
 
 
 
-.luminous .line.alt
+.luminous .line:nth-child(2n)
 {
   background-color:#FAF8FF;
 }
