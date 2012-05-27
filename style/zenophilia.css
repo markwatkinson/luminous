@@ -100,7 +100,7 @@
 }
 
 /* line numbers */
-.luminous .numbers .line:before {
+.luminous .numbers > span:before {
   background-color:#444444 !important;
   border-right:1px solid #5F5F5F !important;
   color: #A8A8A8 !important;
@@ -113,12 +113,12 @@
   color:#DCDCCC !important;
 }
 
-.luminous .line:nth-child(2n)
+.luminous .code > span:nth-child(2n)
 {
   background-color: #404040 !important;
 }
 
-.luminous .line.highlighted_line
+.luminous .code > span.highlighted_line
 {
   background-color:#6D6D6D !important;
 }

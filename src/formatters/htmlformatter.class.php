@@ -145,20 +145,16 @@ class LuminousFormatterHTML extends LuminousFormatter {
   
   
   private function format_numbered($src) {
-
-    $linenos = '';
-    $lines = '';
+  
+    $lines = '<span>' .
+      str_replace("\n", "</span><span>", $src, $num_replacements) .
+      '</span>';
+    $num_lines = $num_replacements + 1;
     
-    $lines_original = explode("\n", $src);
-    
-    foreach($lines_original as $i=>$line) {
-      $lines .= '<span class="line';
-      $lines .= '">' . $line . '</span>';
-    }
     return self::template($this->numbered_template, array(
-      strlen( (string)($this->start_line + $i) ), // max number of digits in the line
+      strlen( (string)($this->start_line) + $num_lines ), // max number of digits in the line
       $this->start_line-1, 
-      $this->height_css(),      
+      $this->height_css(),
       $lines)
     );
   }

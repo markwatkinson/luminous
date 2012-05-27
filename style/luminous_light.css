@@ -156,7 +156,7 @@
 }
 
 /* line numbers */
-.luminous .numbers .line:before{
+.luminous .numbers > span:before{
   color:black !important;
  background-color:#e0e0e0 !important;
   border-right:1px solid black !important;  
@@ -169,12 +169,12 @@
 
 
 
-.luminous .line:nth-child(2n)
+.luminous .code > span:nth-child(2n)
 {
   background-color:#F3F3F3;
 }
 
-.luminous .line.highlighted_line
+.luminous .code > span.highlighted_line
 {
   background-color:#DFDEF6;
 }

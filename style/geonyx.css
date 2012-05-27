@@ -4,7 +4,7 @@
 }
 
 /* line numbers */
-.luminous .numbers .line:before {
+.luminous .numbers > span:before {
   background-color: #F0F0F0 !important;
   border-right: 1px dashed #BBBBBB !important;
   color: #555555;

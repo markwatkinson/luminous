@@ -88,7 +88,7 @@
 
 
 /* line numbers */
-.luminous .numbers .line:before{
+.luminous .numbers > span:before{
   background-color:#F3EEFF !important;
   border-right:1px solid #BED6E1 !important;
   color: #000066 !important;
@@ -112,12 +112,12 @@
 
 
 
-.luminous .line:nth-child(2n)
+.luminous .code > span:nth-child(2n)
 {
   background-color:#FAF8FF;
 }
 
-.luminous .line.highlighted_line
+.luminous .code > span.highlighted_line
 {
   background-color:#BED6E1;
 }
