@@ -21,7 +21,7 @@
 .luminous {
   font-size: inherit;
   text-align: left;
-  font-family: "Consolas", monospace;
+  font-family: "Consolas", "DejaVu Sans Mono", monospace;
   border: 2px solid #ddd;
   border-radius: 5px;
   /* line numbers */ }
@@ -51,7 +51,7 @@
     padding-left: 0;
     /* each line */ }
     .luminous .numbers > span {
-      padding: 0 0 0 2em;
+      padding: 0 0 0 3em;
       border: none;
       margin: 0;
       display: block;
@@ -83,7 +83,7 @@
         -moz-user-select: none;
         -o-user-select: none;
         -ms-user-select: none;
-        width: 1em;
+        width: 2em;
         position: absolute;
         height: 100%;
         left: 0; }

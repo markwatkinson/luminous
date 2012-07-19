@@ -42,7 +42,7 @@
 
   font-size:inherit; 
   text-align:left;
-  font-family: "Consolas", monospace;
+  font-family: "Consolas", "DejaVu Sans Mono", monospace;
   
   border: 2px solid #ddd;
   border-radius: 5px;
@@ -86,7 +86,7 @@
     
     /* each line */
     & > span {
-      padding: 0 0 0 2em;
+      padding: 0 0 0 3em;
       border: none;
       margin: 0;
       display:block;
@@ -101,7 +101,7 @@
         display: inline-block;
         text-align: center;
         @include vendor-prefix(user-select, none);
-        width: 1em;
+        width: 2em;
         // necessary to ensure the heights of the line and the 
         // number are the same
         position: absolute;
