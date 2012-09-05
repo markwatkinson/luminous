@@ -17,28 +17,100 @@
  * You should have received a copy of the GNU General Public License
  * along with Luminous.  If not, see <http://www.gnu.org/licenses/>.
  */
+ 
+ 
+ 
+ /**
+   * This simply adds some extras to Luminous elements via a jQUery
+   * plugin. The extras are currently a toggleable line-highlighting
+   * on click
+   */
+ 
+(function($) {
+    "use strict";
+    
+    if (typeof $ === 'undefined') { return; }
+    
+    /****************************************************************
+     * UTILITY FUNCTIONS *
+     ****************************************************************/
+    
+    // determines if the given element is a line element of luminous
+    function isLine($line) {
+        return $line.is('pre > span') && $line.parents('.luminous').length > 0;
+    }
+    
+    function highlightLine($line) {
+        // FIXME this 'highlighted_line' class needs to be renamed    
+        $line.toggleClass('highlighted_line');
+    }
+    
+    function highlightLineByIndex($luminous, index) {
+        var $line = $luminous.find('pre > span').eq(index);
+        highlightLine($line);
+    }
+    
+    function highlightLineByNumber($luminous, number) {
+        // the line's index must take into account the initial line number
+        var offset = parseInt($luminous.find('>pre').data('startline'), 10);
+        if (isNaN(offset)) offset = 0;
+        highlightLineByIndex($luminous, number - offset);
+    }
+    
+    // binds the event handlers to a luminous element
+    function bindLuminousExtras($element) {
+        if (!$element.is('.luminous')) { return false; }
+        else if ($element.is('.bound')) { return true; }
+        
+        $element.click(function(ev) {
+            var $t = $(ev.target);
+            var $lines = $t.parents().add($t).
+                    filter(function() { return isLine($(this)); }),
+                 $line;
+            if ($lines.length > 0) {
+                $line = $lines.eq(0);
+                highlightLine($line);
+            }
+        });
+    }
+    
+    
+    
+    /****************************************************************
+     * JQUERY PLUGIN *
+     ***************************************************************/
 
-function luminous($) {
-  // we bind a couple of things:
-  // 1) A single click event on the line numbers to highlight a line
-  // 2) a double click event on the line numbers to hide the line number bar
-  $('.luminous').each(function() {
-    $l = $(this);
-    if ($l.data('luminoused')) return;
-    $l.data('luminoused', true);
+    $.fn.luminous = function(optionsOrCommand /* variadic */) {
     
-    var click_timer = null;
-    
-    $l.find('.line').click(function(ev) {
-      $(this).toggleClass('highlighted_line');
-      console.log(ev.target);
+        var args = Array.prototype.slice.call(arguments);
+        
+        return $(this).each(function() {
+            var $luminous = $(this);
+            
+            // no instructions - bind everything 
+            if (!optionsOrCommand) {
+                bindLuminousExtras($luminous);
+                return;
+            }
+            
+            // $('.luminous').luminous('highlightLine', [2, 3]);
+            if (optionsOrCommand === 'highlightLine') {
+                var lineNumbers = args[1];
+                if (!$.isArray(lineNumbers)) 
+                    lineNumbers = [lineNumbers];
+                
+                $.each(lineNumbers, function(index, el) {
+                    highlightLineByNumber($luminous, el);
+                });
+                
+                return;
+            }
+            
+        });
+    };
+
+    $(document).ready(function() {
+        $('.luminous').luminous();
     });
-  });
-}
-
-if (typeof jQuery !== 'undefined') {
-  jQuery(document).ready(function() {
-    luminous(jQuery);
-  });
-}
-
+  
+}(jQuery));
