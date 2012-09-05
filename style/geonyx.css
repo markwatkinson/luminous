@@ -10,7 +10,7 @@
   color: #555555;
 }
 
-.luminous .highlighted_line {
+.luminous .highlight {
   background-color: #A4C0E4;
   background-color: rgba(164, 192, 228, 0.5);
 }

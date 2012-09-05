@@ -42,7 +42,7 @@
     
     function highlightLine($line) {
         // FIXME this 'highlighted_line' class needs to be renamed    
-        $line.toggleClass('highlighted_line');
+        $line.toggleClass('highlight');
     }
     
     function highlightLineByIndex($luminous, index) {

@@ -118,7 +118,7 @@
   background-color: #404040 !important;
 }
 
-.luminous .code > span.highlighted_line
+.luminous .code > span.highlight
 {
   background-color:#6D6D6D !important;
 }

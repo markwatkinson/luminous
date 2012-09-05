@@ -123,7 +123,7 @@ font-weight:bold !important;}
   background-color: #3E2C29 !important;
 }
 
-.luminous .code > span.highlighted_line
+.luminous .code > span.highlight
 {
   background-color:#1F1611 !important;
 }
