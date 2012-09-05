@@ -62,6 +62,8 @@
         if (!$element.is('.luminous')) { return false; }
         else if ($element.is('.bound')) { return true; }
         
+        $element.addClass('bound');
+        
         $element.click(function(ev) {
             var $t = $(ev.target);
             var $lines = $t.parents().add($t).
