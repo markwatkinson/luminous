@@ -1,5 +1,4 @@
 <?php
-global $luminous_csharp_type_list;
 $luminous_csharp_type_list = array(
 // system
 'ArgIterator',

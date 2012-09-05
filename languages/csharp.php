@@ -1,5 +1,4 @@
 <?php
-require_once(dirname(__FILE__) . '/include/csharp_list.php');
 class LuminousCSharpScanner extends LuminousSimpleScanner {
 
   public function init() {
@@ -28,6 +27,8 @@ class LuminousCSharpScanner extends LuminousSimpleScanner {
       'try', 'typeof', 'unchecked', 'unsafe', 'using', 'var', 'virtual',
       'volatile', 'while', 'yield'));
 
+    require(dirname(__FILE__) . '/include/csharp_list.php');
+
     $this->add_identifier_mapping('TYPE', array_merge(array(
       // primatives
       'bool', 'byte', 'char',
@@ -35,7 +36,7 @@ class LuminousCSharpScanner extends LuminousSimpleScanner {
       'sbyte', 'short', 'string', 'uint', 'ulong', 'ushort',
       'void'
       ),
-      $GLOBALS['luminous_csharp_type_list']));
+      $luminous_csharp_type_list));
   }
 
   static function guess_language($src, $info) {
