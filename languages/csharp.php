@@ -21,7 +21,7 @@ class LuminousCSharpScanner extends LuminousSimpleScanner {
       'delegate', 'do', 'event', 'explicit', 'extern', 'else', 'finally',
       'false', 'fixed', 'for', 'foreach', 'goto', 'if', 'implicit', 'in',
       'interface', 'internal', 'is', 'lock', 'new', 'null', 'namespace',
-      'object', 'operator', 'out', 'override', 'params', 'private',
+      'operator', 'out', 'override', 'params', 'private',
       'protected', 'public', 'readonly', 'ref', 'return', 'struct', 'switch',
       'sealed', 'sizeof', 'stackalloc', 'static', 'this', 'throw', 'true',
       'try', 'typeof', 'unchecked', 'unsafe', 'using', 'var', 'virtual',
@@ -33,10 +33,12 @@ class LuminousCSharpScanner extends LuminousSimpleScanner {
       // primatives
       'bool', 'byte', 'char',
       'const', 'double', 'decimal', 'enum', 'float', 'int', 'long',
+      'object',
       'sbyte', 'short', 'string', 'uint', 'ulong', 'ushort',
       'void'
       ),
-      $luminous_csharp_type_list));
+      $luminous_csharp_type_list)
+    );
   }
 
   static function guess_language($src, $info) {
