@@ -32,7 +32,9 @@ class LuminousCSharpScanner extends LuminousSimpleScanner {
       // primatives
       'bool', 'byte', 'char',
       'const', 'double', 'decimal', 'enum', 'float', 'int', 'long',
-      'sbyte', 'short', 'string', 'uint', 'ulong', 'ushort'),
+      'sbyte', 'short', 'string', 'uint', 'ulong', 'ushort',
+      'void'
+      ),
       $GLOBALS['luminous_csharp_type_list']));
   }
 
