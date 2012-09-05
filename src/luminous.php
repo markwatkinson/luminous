@@ -81,6 +81,15 @@ class LuminousOptions {
    * of the first line
    */
   private $start_line = 1;
+  
+  
+  /**
+    * @brief Highlighting of lines
+    *
+    * If the formatter supports highlighting lines, this setting allows
+    * the caller to specify the set of line numbers to highlight
+    */
+  private $highlight_lines = array(1, 2);
 
   /**
    * @brief Hyperlinking
@@ -205,6 +214,7 @@ class LuminousOptions {
     elseif($type === 'numeric') $func = 'is_numeric';
     elseif($type === 'bool') $func = 'is_bool';
     elseif($type === 'func') $func = 'is_callable';
+    elseif($type === 'array') $func = 'is_array';
     else {
       assert(0);
       return true;
@@ -246,6 +256,10 @@ class LuminousOptions {
       $this->set_bool($name, $value);
     elseif($name === 'start_line') 
       $this->set_start_line($value);
+    elseif($name === 'highlight_lines') {
+      if (self::check_type($value, 'array'))
+        $this->highlight_lines = $value;
+    }
     elseif($name === 'max_height') 
       $this->set_height($value);
     elseif($name === 'relative_root') {
@@ -539,6 +553,7 @@ class _Luminous {
     $formatter->height = $this->settings->max_height;
     $formatter->strict_standards = $this->settings->html_strict;
     $formatter->set_theme(luminous::theme($this->settings->theme));
+    $formatter->highlight_lines = $this->settings->highlight_lines;
   }
 
   /**
@@ -836,7 +851,7 @@ abstract class luminous {
       $opt = str_replace('-', '_', $opt);
       $luminous_->settings->$opt = $val;
     }
-  }
+  }  
 
   /**
    * @brief Gets a list of registered scanners

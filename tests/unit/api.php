@@ -46,7 +46,8 @@ function test_set() {
     'max_height' => array(-1, 0, 1, 2, 3, 100, '100', '200px', '250%'),
     'relative_root' => array(null, '', 'xyz', '/path/to/somewhere/'),
     'theme' => luminous::themes(),
-    'wrap_width' => array(-1, 0, 2, 3, 100, 10000000, 999999999)
+    'wrap_width' => array(-1, 0, 2, 3, 100, 10000000, 999999999),
+    'highlight_lines' => array(  array(0, 1, 2) )
   );
 
   foreach($legal_vals as $k=>$vs) {
@@ -69,7 +70,9 @@ function test_set() {
     'max_height' => array(null, true, false, array()),
     'relative_root' => array(1, 0, true, false, array()),
     'theme' => array('mytheme', null, true, false, 1, array()),
-    'wrap_width' => array('wide', 1.5, true, false, null, array())
+    'wrap_width' => array('wide', 1.5, true, false, null, array()),
+    'highlight_lines' => array(1, 2, 3)
+    
   );
 
   foreach($illegal_vals as $k=>$vs) {

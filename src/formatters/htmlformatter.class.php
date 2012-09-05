@@ -13,7 +13,7 @@ class LuminousFormatterHTML extends LuminousFormatter {
   protected $numberless_template = '<pre class="code" style="%s">%s</pre>';
 
   /// line numbered
-  protected $numbered_template = '<pre class="code numbers line-no-width-%s" style="counter-increment: term %s; %s" data-startline="%d">%s</pre>';
+  protected $numbered_template = '<pre class="code numbers line-no-width-%s" style="counter-increment: term %s; %s" data-startline="%d" data-highlightlines="%s">%s</pre>';
 
   /// container template
   protected $template = '<div class="luminous">%s</div>';
@@ -156,6 +156,7 @@ class LuminousFormatterHTML extends LuminousFormatter {
       $this->start_line-1, 
       $this->height_css(),
       $this->start_line,
+      implode(',', $this->highlight_lines),
       $lines)
     );
   }

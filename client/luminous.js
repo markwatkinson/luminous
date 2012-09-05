@@ -59,6 +59,7 @@
     
     // binds the event handlers to a luminous element
     function bindLuminousExtras($element) {
+        var highlightLinesData, highlightLines;
         if (!$element.is('.luminous')) { return false; }
         else if ($element.is('.bound')) { return true; }
         
@@ -74,6 +75,17 @@
                 highlightLine($line);
             }
         });
+        
+        // highlight all the initial lines
+        highlightLinesData = $element.find('>pre').data('highlightlines') || "";
+        highlightLines = highlightLinesData.split(",");
+        $.each(highlightLines, function(i, element) {
+             var lineNo = parseInt(element, 10);
+             if (!isNaN(lineNo)) {
+                 highlightLineByNumber($element, lineNo);
+            }
+        });
+        
     }
     
     
