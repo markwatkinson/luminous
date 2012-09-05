@@ -13,7 +13,7 @@ class LuminousFormatterHTML extends LuminousFormatter {
   protected $numberless_template = '<pre class="code" style="%s">%s</pre>';
 
   /// line numbered
-  protected $numbered_template = '<pre class="code numbers line-no-width-%s" style="counter-increment: term %s; %s">%s</pre>';
+  protected $numbered_template = '<pre class="code numbers line-no-width-%s" style="counter-increment: term %s; %s" data-startline="%d">%s</pre>';
 
   /// container template
   protected $template = '<div class="luminous">%s</div>';
@@ -152,9 +152,10 @@ class LuminousFormatterHTML extends LuminousFormatter {
     $num_lines = $num_replacements + 1;
     
     return self::template($this->numbered_template, array(
-      strlen( (string)($this->start_line) + $num_lines ), // max number of digits in the line
+      strlen( (string)($this->start_line) + $num_lines ), // max number of digits in the line - this is used by the CSS
       $this->start_line-1, 
       $this->height_css(),
+      $this->start_line,
       $lines)
     );
   }
