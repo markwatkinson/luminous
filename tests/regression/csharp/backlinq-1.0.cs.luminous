@@ -804,12 +804,12 @@
         <DOCCOMMENT>/// Creates a &lt;see cref="List{T}"/&gt; from an &lt;see cref="IEnumerable{T}"/&gt;.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> List<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> ToList<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>List</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> ToList<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(
             <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source)
         {
             CheckNotNull(source<OPERATOR>,</OPERATOR> <STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
 
-            <KEYWORD>return</KEYWORD> <KEYWORD>new</KEYWORD> List<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(source)<OPERATOR>;</OPERATOR>
+            <KEYWORD>return</KEYWORD> <KEYWORD>new</KEYWORD> <TYPE>List</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>(source)<OPERATOR>;</OPERATOR>
         }
 
         <DOCCOMMENT>/// &lt;summary&gt;</DOCCOMMENT>
@@ -851,7 +851,7 @@
             <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR>
             <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> comparer)
         {
-            <KEYWORD>var</KEYWORD> set <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> Dictionary<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <KEYWORD>object</KEYWORD><OPERATOR>&gt;</OPERATOR>(comparer)<OPERATOR>;</OPERATOR>
+            <KEYWORD>var</KEYWORD> set <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <TYPE>Dictionary</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>object</TYPE><OPERATOR>&gt;</OPERATOR>(comparer)<OPERATOR>;</OPERATOR>
 
             <KEYWORD>foreach</KEYWORD> (<KEYWORD>var</KEYWORD> item <KEYWORD>in</KEYWORD> source)
             {
@@ -1266,7 +1266,7 @@
                     <KEYWORD>return</KEYWORD> <OBJ>collection</OBJ><OPERATOR>.</OPERATOR><OO>Contains</OO>(value)<OPERATOR>;</OPERATOR>
             }
 
-            comparer <OPERATOR>=</OPERATOR> comparer <OPERATOR>??</OPERATOR> EqualityComparer<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;.</OPERATOR>Default<OPERATOR>;</OPERATOR>
+            comparer <OPERATOR>=</OPERATOR> comparer <OPERATOR>??</OPERATOR> <TYPE>EqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;.</OPERATOR>Default<OPERATOR>;</OPERATOR>
             <KEYWORD>return</KEYWORD> <OBJ>source</OBJ><OPERATOR>.</OPERATOR><OO>Any</OO>(item <OPERATOR>=&gt;</OPERATOR> <OBJ>comparer</OBJ><OPERATOR>.</OPERATOR><OO>Equals</OO>(item<OPERATOR>,</OPERATOR> value))<OPERATOR>;</OPERATOR>
         }
 
@@ -1295,7 +1295,7 @@
             CheckNotNull(first<OPERATOR>,</OPERATOR> <STRING>"frist"</STRING>)<OPERATOR>;</OPERATOR>
             CheckNotNull(second<OPERATOR>,</OPERATOR> <STRING>"second"</STRING>)<OPERATOR>;</OPERATOR>
 
-            comparer <OPERATOR>=</OPERATOR> comparer <OPERATOR>??</OPERATOR> EqualityComparer<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;.</OPERATOR>Default<OPERATOR>;</OPERATOR>
+            comparer <OPERATOR>=</OPERATOR> comparer <OPERATOR>??</OPERATOR> <TYPE>EqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;.</OPERATOR>Default<OPERATOR>;</OPERATOR>
 
             <KEYWORD>using</KEYWORD> (<TYPE>IEnumerator</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> lhs <OPERATOR>=</OPERATOR> <OBJ>first</OBJ><OPERATOR>.</OPERATOR><OO>GetEnumerator</OO>()<OPERATOR>,</OPERATOR> 
                                         rhs <OPERATOR>=</OPERATOR> <OBJ>second</OBJ><OPERATOR>.</OPERATOR><OO>GetEnumerator</OO>())
@@ -1527,8 +1527,8 @@
             CheckNotNull(first<OPERATOR>,</OPERATOR> <STRING>"first"</STRING>)<OPERATOR>;</OPERATOR>
             CheckNotNull(second<OPERATOR>,</OPERATOR> <STRING>"second"</STRING>)<OPERATOR>;</OPERATOR>
 
-            <KEYWORD>var</KEYWORD> keys <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> List<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>()<OPERATOR>;</OPERATOR>
-            <KEYWORD>var</KEYWORD> flags <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> Dictionary<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR>(comparer)<OPERATOR>;</OPERATOR>
+            <KEYWORD>var</KEYWORD> keys <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <TYPE>List</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR>()<OPERATOR>;</OPERATOR>
+            <KEYWORD>var</KEYWORD> flags <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <TYPE>Dictionary</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE><OPERATOR>&gt;</OPERATOR>(comparer)<OPERATOR>;</OPERATOR>
 
             <KEYWORD>foreach</KEYWORD> (<KEYWORD>var</KEYWORD> item <KEYWORD>in</KEYWORD> <OBJ>first</OBJ><OPERATOR>.</OPERATOR><OO>Where</OO>(k <OPERATOR>=&gt;</OPERATOR> <OPERATOR>!</OPERATOR><OBJ>flags</OBJ><OPERATOR>.</OPERATOR><OO>ContainsKey</OO>(k)))
             {
@@ -1603,7 +1603,7 @@
         <DOCCOMMENT>/// selector function.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> Dictionary<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TSource<OPERATOR>&gt;</OPERATOR> ToDictionary<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>Dictionary</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TSource<OPERATOR>&gt;</OPERATOR> ToDictionary<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
             <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector)
         {
@@ -1616,7 +1616,7 @@
         <DOCCOMMENT>/// selector function and key comparer.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> Dictionary<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TSource<OPERATOR>&gt;</OPERATOR> ToDictionary<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>Dictionary</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TSource<OPERATOR>&gt;</OPERATOR> ToDictionary<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR>(
             <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> 
             <TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
@@ -1630,7 +1630,7 @@
         <DOCCOMMENT>/// selector and element selector functions.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
         
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> Dictionary<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> ToDictionary<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR>(
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>Dictionary</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> ToDictionary<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR>(
             <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> elementSelector)
@@ -1644,7 +1644,7 @@
         <DOCCOMMENT>/// selector function, a comparer, and an element selector function.</DOCCOMMENT>
         <DOCCOMMENT>/// &lt;/summary&gt;</DOCCOMMENT>
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> Dictionary<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> ToDictionary<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR>(
+        <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>Dictionary</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> ToDictionary<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR>(
             <KEYWORD>this</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TKey<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>TSource<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> elementSelector<OPERATOR>,</OPERATOR> 
@@ -1654,7 +1654,7 @@
             CheckNotNull(keySelector<OPERATOR>,</OPERATOR> <STRING>"keySelector"</STRING>)<OPERATOR>;</OPERATOR>
             CheckNotNull(elementSelector<OPERATOR>,</OPERATOR> <STRING>"elementSelector"</STRING>)<OPERATOR>;</OPERATOR>
 
-            <KEYWORD>var</KEYWORD> dict <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> Dictionary<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR>(comparer)<OPERATOR>;</OPERATOR>
+            <KEYWORD>var</KEYWORD> dict <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <TYPE>Dictionary</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR>(comparer)<OPERATOR>;</OPERATOR>
 
             <KEYWORD>foreach</KEYWORD> (<KEYWORD>var</KEYWORD> item <KEYWORD>in</KEYWORD> source)
             {
@@ -1761,7 +1761,7 @@
         }
         
         [DebuggerStepThrough]
-        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> void CheckNotNull<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR>(T value<OPERATOR>,</OPERATOR> <TYPE>string</TYPE> name) where T <OPERATOR>:</OPERATOR> <KEYWORD>class</KEYWORD>
+        <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>void</TYPE> CheckNotNull<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR>(T value<OPERATOR>,</OPERATOR> <TYPE>string</TYPE> name) where T <OPERATOR>:</OPERATOR> <KEYWORD>class</KEYWORD>
         {
             <KEYWORD>if</KEYWORD> (value <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD>) 
                 <KEYWORD>throw</KEYWORD> <KEYWORD>new</KEYWORD> <TYPE>ArgumentNullException</TYPE>(name)<OPERATOR>;</OPERATOR>
@@ -1772,7 +1772,7 @@
             <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> <KEYWORD>readonly</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> Empty <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> T[<NUMERIC>0</NUMERIC>]<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>private</KEYWORD> <KEYWORD>sealed</KEYWORD> <KEYWORD>class</KEYWORD> Grouping<OPERATOR>&lt;</OPERATOR>K<OPERATOR>,</OPERATOR> V<OPERATOR>&gt;</OPERATOR> <OPERATOR>:</OPERATOR> List<OPERATOR>&lt;</OPERATOR>V<OPERATOR>&gt;,</OPERATOR> IGrouping<OPERATOR>&lt;</OPERATOR>K<OPERATOR>,</OPERATOR> V<OPERATOR>&gt;</OPERATOR>
+        <KEYWORD>private</KEYWORD> <KEYWORD>sealed</KEYWORD> <KEYWORD>class</KEYWORD> Grouping<OPERATOR>&lt;</OPERATOR>K<OPERATOR>,</OPERATOR> V<OPERATOR>&gt;</OPERATOR> <OPERATOR>:</OPERATOR> <TYPE>List</TYPE><OPERATOR>&lt;</OPERATOR>V<OPERATOR>&gt;,</OPERATOR> IGrouping<OPERATOR>&lt;</OPERATOR>K<OPERATOR>,</OPERATOR> V<OPERATOR>&gt;</OPERATOR>
         {
             <KEYWORD>internal</KEYWORD> Grouping(K key)
             {
@@ -2918,14 +2918,14 @@
 
     <KEYWORD>sealed</KEYWORD> <KEYWORD>class</KEYWORD> Lookup<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> <OPERATOR>:</OPERATOR> ILookup<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR>
     {
-        <KEYWORD>private</KEYWORD> <KEYWORD>readonly</KEYWORD> Dictionary<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;&gt;</OPERATOR> _map<OPERATOR>;</OPERATOR>
+        <KEYWORD>private</KEYWORD> <KEYWORD>readonly</KEYWORD> <TYPE>Dictionary</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;&gt;</OPERATOR> _map<OPERATOR>;</OPERATOR>
 
         <KEYWORD>internal</KEYWORD> Lookup(<TYPE>IEqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>&gt;</OPERATOR> comparer)
         {
-            _map <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> Dictionary<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;&gt;</OPERATOR>(comparer)<OPERATOR>;</OPERATOR>
+            _map <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <TYPE>Dictionary</TYPE><OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;&gt;</OPERATOR>(comparer)<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>internal</KEYWORD> void Add(IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> item)
+        <KEYWORD>internal</KEYWORD> <TYPE>void</TYPE> Add(IGrouping<OPERATOR>&lt;</OPERATOR>TKey<OPERATOR>,</OPERATOR> TElement<OPERATOR>&gt;</OPERATOR> item)
         {
             <OBJ>_map</OBJ><OPERATOR>.</OPERATOR><OO>Add</OO>(<OBJ>item</OBJ><OPERATOR>.</OPERATOR><OO>Key</OO><OPERATOR>,</OPERATOR> item)<OPERATOR>;</OPERATOR>
         }
@@ -3014,13 +3014,13 @@
     <KEYWORD>internal</KEYWORD> <KEYWORD>sealed</KEYWORD> <KEYWORD>class</KEYWORD> OrderedEnumerable<OPERATOR>&lt;</OPERATOR>T<OPERATOR>,</OPERATOR> K<OPERATOR>&gt;</OPERATOR> <OPERATOR>:</OPERATOR> IOrderedEnumerable<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR>
     {
         <KEYWORD>private</KEYWORD> <KEYWORD>readonly</KEYWORD> <TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> _source<OPERATOR>;</OPERATOR>
-        <KEYWORD>private</KEYWORD> <KEYWORD>readonly</KEYWORD> List<OPERATOR>&lt;</OPERATOR>Comparison<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;&gt;</OPERATOR> _comparisons<OPERATOR>;</OPERATOR>
+        <KEYWORD>private</KEYWORD> <KEYWORD>readonly</KEYWORD> <TYPE>List</TYPE><OPERATOR>&lt;</OPERATOR>Comparison<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;&gt;</OPERATOR> _comparisons<OPERATOR>;</OPERATOR>
 
         <KEYWORD>public</KEYWORD> OrderedEnumerable(<TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> 
             Func<OPERATOR>&lt;</OPERATOR>T<OPERATOR>,</OPERATOR> K<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> <TYPE>IComparer</TYPE><OPERATOR>&lt;</OPERATOR>K<OPERATOR>&gt;</OPERATOR> comparer<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE> descending) <OPERATOR>:</OPERATOR>
             <KEYWORD>this</KEYWORD>(source<OPERATOR>,</OPERATOR> <KEYWORD>null</KEYWORD><OPERATOR>,</OPERATOR> keySelector<OPERATOR>,</OPERATOR> comparer<OPERATOR>,</OPERATOR> descending) {}
 
-        <KEYWORD>private</KEYWORD> OrderedEnumerable(<TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> List<OPERATOR>&lt;</OPERATOR>Comparison<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;&gt;</OPERATOR> comparisons<OPERATOR>,</OPERATOR>
+        <KEYWORD>private</KEYWORD> OrderedEnumerable(<TYPE>IEnumerable</TYPE><OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;</OPERATOR> source<OPERATOR>,</OPERATOR> <TYPE>List</TYPE><OPERATOR>&lt;</OPERATOR>Comparison<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;&gt;</OPERATOR> comparisons<OPERATOR>,</OPERATOR>
             Func<OPERATOR>&lt;</OPERATOR>T<OPERATOR>,</OPERATOR> K<OPERATOR>&gt;</OPERATOR> keySelector<OPERATOR>,</OPERATOR> <TYPE>IComparer</TYPE><OPERATOR>&lt;</OPERATOR>K<OPERATOR>&gt;</OPERATOR> comparer<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE> descending)
         {
             <KEYWORD>if</KEYWORD> (source <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD>) <KEYWORD>throw</KEYWORD> <KEYWORD>new</KEYWORD> <TYPE>ArgumentNullException</TYPE>(<STRING>"source"</STRING>)<OPERATOR>;</OPERATOR>
@@ -3031,7 +3031,7 @@
             comparer <OPERATOR>=</OPERATOR> comparer <OPERATOR>??</OPERATOR> <TYPE>Comparer</TYPE><OPERATOR>&lt;</OPERATOR>K<OPERATOR>&gt;.</OPERATOR>Default<OPERATOR>;</OPERATOR>
 
             <KEYWORD>if</KEYWORD> (comparisons <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD>)
-                comparisons <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> List<OPERATOR>&lt;</OPERATOR>Comparison<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;&gt;</OPERATOR>(<COMMENT>/* capacity */</COMMENT> <NUMERIC>4</NUMERIC>)<OPERATOR>;</OPERATOR>
+                comparisons <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <TYPE>List</TYPE><OPERATOR>&lt;</OPERATOR>Comparison<OPERATOR>&lt;</OPERATOR>T<OPERATOR>&gt;&gt;</OPERATOR>(<COMMENT>/* capacity */</COMMENT> <NUMERIC>4</NUMERIC>)<OPERATOR>;</OPERATOR>
 
             <OBJ>comparisons</OBJ><OPERATOR>.</OPERATOR><OO>Add</OO>((x<OPERATOR>,</OPERATOR> y) 
                 <OPERATOR>=&gt;</OPERATOR> (descending <OPERATOR>?</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC> <OPERATOR>:</OPERATOR> <NUMERIC>1</NUMERIC>) <OPERATOR>*</OPERATOR> <OBJ>comparer</OBJ><OPERATOR>.</OPERATOR><OO>Compare</OO>(keySelector(x)<OPERATOR>,</OPERATOR> keySelector(y)))<OPERATOR>;</OPERATOR>
@@ -3116,7 +3116,7 @@
             Second <OPERATOR>=</OPERATOR> second<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>public</KEYWORD> <KEYWORD>override</KEYWORD> <TYPE>bool</TYPE> Equals(<KEYWORD>object</KEYWORD> obj)
+        <KEYWORD>public</KEYWORD> <KEYWORD>override</KEYWORD> <TYPE>bool</TYPE> Equals(<TYPE>object</TYPE> obj)
         {
             <KEYWORD>return</KEYWORD> obj <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD> 
                    <OPERATOR>&amp;&amp;</OPERATOR> obj <KEYWORD>is</KEYWORD> <TYPE>Tuple</TYPE><OPERATOR>&lt;</OPERATOR>TFirst<OPERATOR>,</OPERATOR> TSecond<OPERATOR>&gt;</OPERATOR> 
@@ -3125,15 +3125,15 @@
 
         <KEYWORD>public</KEYWORD> <TYPE>bool</TYPE> Equals(<TYPE>Tuple</TYPE><OPERATOR>&lt;</OPERATOR>TFirst<OPERATOR>,</OPERATOR> TSecond<OPERATOR>&gt;</OPERATOR> other)
         {
-            <KEYWORD>return</KEYWORD> EqualityComparer<OPERATOR>&lt;</OPERATOR>TFirst<OPERATOR>&gt;.</OPERATOR><OBJ>Default</OBJ><OPERATOR>.</OPERATOR><OO>Equals</OO>(<OBJ>other</OBJ><OPERATOR>.</OPERATOR><OO>First</OO><OPERATOR>,</OPERATOR> First) 
-                   <OPERATOR>&amp;&amp;</OPERATOR> EqualityComparer<OPERATOR>&lt;</OPERATOR>TSecond<OPERATOR>&gt;.</OPERATOR><OBJ>Default</OBJ><OPERATOR>.</OPERATOR><OO>Equals</OO>(<OBJ>other</OBJ><OPERATOR>.</OPERATOR><OO>Second</OO><OPERATOR>,</OPERATOR> Second)<OPERATOR>;</OPERATOR>
+            <KEYWORD>return</KEYWORD> <TYPE>EqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TFirst<OPERATOR>&gt;.</OPERATOR><OBJ>Default</OBJ><OPERATOR>.</OPERATOR><OO>Equals</OO>(<OBJ>other</OBJ><OPERATOR>.</OPERATOR><OO>First</OO><OPERATOR>,</OPERATOR> First) 
+                   <OPERATOR>&amp;&amp;</OPERATOR> <TYPE>EqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TSecond<OPERATOR>&gt;.</OPERATOR><OBJ>Default</OBJ><OPERATOR>.</OPERATOR><OO>Equals</OO>(<OBJ>other</OBJ><OPERATOR>.</OPERATOR><OO>Second</OO><OPERATOR>,</OPERATOR> Second)<OPERATOR>;</OPERATOR>
         }
 
         <KEYWORD>public</KEYWORD> <KEYWORD>override</KEYWORD> <TYPE>int</TYPE> GetHashCode()
         {
             <KEYWORD>var</KEYWORD> num <OPERATOR>=</OPERATOR> <NUMERIC>0x7a2f0b42</NUMERIC><OPERATOR>;</OPERATOR>
-            num <OPERATOR>=</OPERATOR> (<OPERATOR>-</OPERATOR><NUMERIC>1521134295</NUMERIC> <OPERATOR>*</OPERATOR> num) <OPERATOR>+</OPERATOR> EqualityComparer<OPERATOR>&lt;</OPERATOR>TFirst<OPERATOR>&gt;.</OPERATOR><OBJ>Default</OBJ><OPERATOR>.</OPERATOR><OO>GetHashCode</OO>(First)<OPERATOR>;</OPERATOR>
-            <KEYWORD>return</KEYWORD> (<OPERATOR>-</OPERATOR><NUMERIC>1521134295</NUMERIC> <OPERATOR>*</OPERATOR> num) <OPERATOR>+</OPERATOR> EqualityComparer<OPERATOR>&lt;</OPERATOR>TSecond<OPERATOR>&gt;.</OPERATOR><OBJ>Default</OBJ><OPERATOR>.</OPERATOR><OO>GetHashCode</OO>(Second)<OPERATOR>;</OPERATOR>
+            num <OPERATOR>=</OPERATOR> (<OPERATOR>-</OPERATOR><NUMERIC>1521134295</NUMERIC> <OPERATOR>*</OPERATOR> num) <OPERATOR>+</OPERATOR> <TYPE>EqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TFirst<OPERATOR>&gt;.</OPERATOR><OBJ>Default</OBJ><OPERATOR>.</OPERATOR><OO>GetHashCode</OO>(First)<OPERATOR>;</OPERATOR>
+            <KEYWORD>return</KEYWORD> (<OPERATOR>-</OPERATOR><NUMERIC>1521134295</NUMERIC> <OPERATOR>*</OPERATOR> num) <OPERATOR>+</OPERATOR> <TYPE>EqualityComparer</TYPE><OPERATOR>&lt;</OPERATOR>TSecond<OPERATOR>&gt;.</OPERATOR><OBJ>Default</OBJ><OPERATOR>.</OPERATOR><OO>GetHashCode</OO>(Second)<OPERATOR>;</OPERATOR>
         }
 
         <KEYWORD>public</KEYWORD> <KEYWORD>override</KEYWORD> <TYPE>string</TYPE> ToString()

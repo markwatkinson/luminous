@@ -22,7 +22,7 @@
         <TYPE>DateTime</TYPE> loadtime<OPERATOR>;</OPERATOR>
 
 
-        void load_dataset(<TYPE>bool</TYPE> update)
+        <TYPE>void</TYPE> load_dataset(<TYPE>bool</TYPE> update)
         {
             
             <KEYWORD>if</KEYWORD> (update)
@@ -44,7 +44,7 @@
             <OBJ>Label4</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO> <OPERATOR>=</OPERATOR> <STRING>"Last refreshed at: "</STRING> <OPERATOR>+</OPERATOR> <OBJ>loadtime</OBJ><OPERATOR>.</OPERATOR><OO>ToString</OO>()<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>protected</KEYWORD> void bind()
+        <KEYWORD>protected</KEYWORD> <TYPE>void</TYPE> bind()
         {
             <OBJ>GridView1</OBJ><OPERATOR>.</OPERATOR><OO>DataSource</OO> <OPERATOR>=</OPERATOR> ds1<OPERATOR>;</OPERATOR>
             <OBJ>GridView1</OBJ><OPERATOR>.</OPERATOR><OO>DataBind</OO>()<OPERATOR>;</OPERATOR>
@@ -52,7 +52,7 @@
 
 
 
-        <KEYWORD>protected</KEYWORD> void Page_Load(<KEYWORD>object</KEYWORD> sender<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> e)
+        <KEYWORD>protected</KEYWORD> <TYPE>void</TYPE> Page_Load(<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> e)
         {
             <OBJ>response</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO> <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
             <OBJ>Label4</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO> <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
@@ -103,7 +103,7 @@
             <KEYWORD>return</KEYWORD> task<OPERATOR>;</OPERATOR>
         }
 
-        <KEYWORD>protected</KEYWORD> void Button1_Click(<KEYWORD>object</KEYWORD> sender<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> e)
+        <KEYWORD>protected</KEYWORD> <TYPE>void</TYPE> Button1_Click(<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> e)
         {
             <TYPE>String</TYPE> name <OPERATOR>=</OPERATOR> <OBJ>tb_name</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO><OPERATOR>;</OPERATOR>
             <TYPE>String</TYPE> due <OPERATOR>=</OPERATOR> <OBJ>tb_due</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO><OPERATOR>;</OPERATOR>
@@ -121,7 +121,7 @@
         }
 
         <COMMENT>// modify button</COMMENT>
-        <KEYWORD>protected</KEYWORD> void Button2_Click(<KEYWORD>object</KEYWORD> sender<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> e)
+        <KEYWORD>protected</KEYWORD> <TYPE>void</TYPE> Button2_Click(<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> e)
         {
             <TYPE>String</TYPE> name <OPERATOR>=</OPERATOR> <OBJ>tb_name</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO><OPERATOR>;</OPERATOR>
             <TYPE>String</TYPE> due <OPERATOR>=</OPERATOR> <OBJ>tb_due</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO><OPERATOR>;</OPERATOR>
@@ -138,13 +138,13 @@
         }
 
         <COMMENT>//refresh button</COMMENT>
-        <KEYWORD>protected</KEYWORD> void Button3_Click(<KEYWORD>object</KEYWORD> sender<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> e)
+        <KEYWORD>protected</KEYWORD> <TYPE>void</TYPE> Button3_Click(<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> e)
         {
             load_dataset(<KEYWORD>true</KEYWORD>)<OPERATOR>;</OPERATOR>
         }
 
         <COMMENT>// remove button</COMMENT>
-        <KEYWORD>protected</KEYWORD> void Button4_Click(<KEYWORD>object</KEYWORD> sender<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> e)
+        <KEYWORD>protected</KEYWORD> <TYPE>void</TYPE> Button4_Click(<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> e)
         {
             <TYPE>String</TYPE> name <OPERATOR>=</OPERATOR> <OBJ>tb_name</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO><OPERATOR>;</OPERATOR>
             <TYPE>String</TYPE> Error <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>

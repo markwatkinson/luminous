@@ -120,7 +120,7 @@
                 <COMMENT>//     array bl_count contains the frequencies for each bit length.</COMMENT>
                 <COMMENT>//     The length opt_len is updated; static_len is also updated if stree is</COMMENT>
                 <COMMENT>//     not null.</COMMENT>
-                <KEYWORD>internal</KEYWORD> void  gen_bitlen(Deflate s)
+                <KEYWORD>internal</KEYWORD> <TYPE>void</TYPE>  gen_bitlen(Deflate s)
                 {
                         <TYPE>short</TYPE>[] tree <OPERATOR>=</OPERATOR> dyn_tree<OPERATOR>;</OPERATOR>
                         <TYPE>short</TYPE>[] stree <OPERATOR>=</OPERATOR> <OBJ>stat_desc</OBJ><OPERATOR>.</OPERATOR><OO>static_tree</OO><OPERATOR>;</OPERATOR>
@@ -207,7 +207,7 @@
                 <COMMENT>// OUT assertions: the fields len and code are set to the optimal bit length</COMMENT>
                 <COMMENT>//     and corresponding code. The length opt_len is updated; static_len is</COMMENT>
                 <COMMENT>//     also updated if stree is not null. The field max_code is set.</COMMENT>
-                <KEYWORD>internal</KEYWORD> void  build_tree(Deflate s)
+                <KEYWORD>internal</KEYWORD> <TYPE>void</TYPE>  build_tree(Deflate s)
                 {
                         <TYPE>short</TYPE>[] tree <OPERATOR>=</OPERATOR> dyn_tree<OPERATOR>;</OPERATOR>
                         <TYPE>short</TYPE>[] stree <OPERATOR>=</OPERATOR> <OBJ>stat_desc</OBJ><OPERATOR>.</OPERATOR><OO>static_tree</OO><OPERATOR>;</OPERATOR>
@@ -300,7 +300,7 @@
                 <COMMENT>// the given tree and the field len is set for all tree elements.</COMMENT>
                 <COMMENT>// OUT assertion: the field code is set for all tree elements of non</COMMENT>
                 <COMMENT>//     zero code length.</COMMENT>
-                <KEYWORD>internal</KEYWORD> <KEYWORD>static</KEYWORD> void  gen_codes(<TYPE>short</TYPE>[] tree<OPERATOR>,</OPERATOR> <TYPE>int</TYPE> max_code<OPERATOR>,</OPERATOR> <TYPE>short</TYPE>[] bl_count)
+                <KEYWORD>internal</KEYWORD> <KEYWORD>static</KEYWORD> <TYPE>void</TYPE>  gen_codes(<TYPE>short</TYPE>[] tree<OPERATOR>,</OPERATOR> <TYPE>int</TYPE> max_code<OPERATOR>,</OPERATOR> <TYPE>short</TYPE>[] bl_count)
                 {
                         <TYPE>short</TYPE>[] next_code <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <TYPE>short</TYPE>[<CONSTANT>MAX_BITS</CONSTANT> <OPERATOR>+</OPERATOR> <NUMERIC>1</NUMERIC>]<OPERATOR>;</OPERATOR> <COMMENT>// next code value for each bit length</COMMENT>
                         <TYPE>short</TYPE> code <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR> <COMMENT>// running code value</COMMENT>
