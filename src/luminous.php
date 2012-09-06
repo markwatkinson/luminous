@@ -89,7 +89,7 @@ class LuminousOptions {
     * If the formatter supports highlighting lines, this setting allows
     * the caller to specify the set of line numbers to highlight
     */
-  private $highlight_lines = array(1, 2);
+  private $highlight_lines = array();
 
   /**
    * @brief Hyperlinking
