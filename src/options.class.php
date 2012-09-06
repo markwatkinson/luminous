@@ -177,6 +177,24 @@ class LuminousOptions {
   private $verbose = true;
 
   
+  public function LuminousOptions($opts=null) {
+    if (is_array($opts)) {
+      $this->set($opts);
+    }
+  }
+  
+  public function set($nameOrArray, $value=null) {
+    $array = $nameOrArray;
+    if (!is_array($array)) {
+      $array = array($nameOrArray => $value);
+    }
+    foreach($array as $option => $value) {
+      // for backwards compatibility we need to do this here
+      $option = str_replace('-', '_', $option);
+      $this->__set($option, $value);
+    }
+  }
+  
 
   private static function check_type($value, $type, $nullable=false) {
     if ($nullable && $value === null) return true;

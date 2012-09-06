@@ -524,18 +524,14 @@ abstract class luminous {
    *
    * Options are stored in LuminousOptions, which provides documentation of
    * each option.
-   * @see LuminousOptions
+   * 
+   * @note as of 0.7 this is a thin wrapper around LuminousOptions::set()
+   * 
+   * @see LuminousOptions::set
    */
   static function set($option, $value=null) {
     global $luminous_;
-    if (!is_array($option)) $option = array($option => $value);
-
-    foreach($option as $opt=>$val) {
-      // we switched from storing objects as a keyed array to an actual object
-      // for backwards compatability, we change '-' to '_'
-      $opt = str_replace('-', '_', $opt);
-      $luminous_->settings->$opt = $val;
-    }
+    $luminous_->settings->set($option, $value);
   }  
 
   /**
