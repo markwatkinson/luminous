@@ -2,7 +2,7 @@
 
 /*
  * This is a horrible routine to register all the default
- * scanners. The code is distrating at best so it's been factored into this one
+ * scanners. The code is distracting at best so it's been factored into this one
  * file.
  * 
  * We include it into the main program with a require statement, which 
