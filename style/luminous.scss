@@ -133,6 +133,12 @@
     &.line-no-width-4 > span:before { width: 4em !important; }
     &.line-no-width-5 > span:before { width: 5em !important; }
     &.line-no-width-6 > span:before { width: 6em !important; }
+    
+    &.line-no-hidden > span { 
+        padding-left: 0;
+        &::before { display: none; }
+    }
+    
   }
   
   div {

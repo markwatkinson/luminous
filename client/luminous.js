@@ -72,6 +72,21 @@
         $elem.html(toSetCode);
     }
     
+    
+    function toggleLineNumbers($luminous, forceState) {
+        var className = 'line-no-hidden', 
+            $element = $luminous.find('>.code'),
+            hasNumbers = $element.hasClass(className),
+            show = !hasNumbers;
+
+        if (forceState === true || forceState === false) show = forceState;
+        if (show) {
+            $element.removeClass(className);
+        } else {
+            $element.addClass(className);
+        }
+    }
+    
     // binds the event handlers to a luminous element
     function bindLuminousExtras($element) {
         var highlightLinesData, highlightLines, data = {};
@@ -153,8 +168,10 @@
             }
             else if (optionsOrCommand === 'show') {
                 // args[1] should be 'highlighted' or 'plain'
-                if (args[1])
-                    toggleHighlightAndPlain($luminous, args[1]);
+                toggleHighlightAndPlain($luminous, args[1]);
+            }
+            else if (optionsOrCommand === 'showLineNumbers') {
+                toggleLineNumbers($luminous, args[1]);
             }
             
         });

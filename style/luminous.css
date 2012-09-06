@@ -111,5 +111,9 @@
       width: 5em !important; }
     .luminous .numbers.line-no-width-6 > span:before {
       width: 6em !important; }
+    .luminous .numbers.line-no-hidden > span {
+      padding-left: 0; }
+      .luminous .numbers.line-no-hidden > span::before {
+        display: none; }
   .luminous div {
     border-radius: inherit; }
