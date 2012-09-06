@@ -51,8 +51,8 @@
   &.inline {
     min-width: 1px;
     max-width: none;
-    line-height: normal;  
-    &, div, pre { 
+    line-height: normal;
+    &, div, pre {
       padding: 0;
       *display: inline;
       display: inline-block;
@@ -134,7 +134,7 @@
     &.line-no-width-5 > span:before { width: 5em !important; }
     &.line-no-width-6 > span:before { width: 6em !important; }
     
-    &.line-no-hidden > span { 
+    &.line-no-hidden > span {
         padding-left: 0;
         &::before { display: none; }
     }
