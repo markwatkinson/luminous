@@ -41,7 +41,7 @@
     }
     
     function highlightLine($line) {
-        // FIXME this 'highlighted_line' class needs to be renamed    
+        // FIXME this 'highlighted_line' class needs to be renamed
         $line.toggleClass('highlight');
     }
     
@@ -57,9 +57,24 @@
         highlightLineByIndex($luminous, number - offset);
     }
     
+    function toggleHighlightAndPlain($luminous, forceState) {
+        var data = $luminous.data('luminous'),
+            state = data.code.active,
+            $elem = $luminous.find('>pre'),
+            toSetCode, toSetState;
+        
+        if (forceState === 'plain') state = 'highlighted';
+        else if (forceState === 'highlighted') state = 'plain';
+        
+        toSetCode = (state === 'plain')? data.code.highlighted : data.code.plain;
+        toSetState = (state === 'plain')? 'highlighted' : 'plain';
+        
+        $elem.html(toSetCode);
+    }
+    
     // binds the event handlers to a luminous element
     function bindLuminousExtras($element) {
-        var highlightLinesData, highlightLines;
+        var highlightLinesData, highlightLines, data = {};
         if (!$element.is('.luminous')) { return false; }
         else if ($element.is('.bound')) { return true; }
         
@@ -85,6 +100,23 @@
                  highlightLineByNumber($element, lineNo);
             }
         });
+
+        data.code = {};
+        data.code.highlighted = $element.find('>pre').html();
+        
+        data.code.plain = '';
+        $element.find('>pre>span').each(function(i, e) {
+            var line = $(e).text();
+            line = line
+                    .replace(/&/g, '&amp')
+                    .replace(/>/g, '&gt;')
+                    .replace(/</g, '&lt;');
+        
+            data.code.plain += '<span>' + line + '</span>';
+        });
+        data.code.active = 'highlighted';
+        
+        $element.data('luminous', data);
         
     }
     
@@ -118,6 +150,11 @@
                 });
                 
                 return;
+            }
+            else if (optionsOrCommand === 'show') {
+                // args[1] should be 'highlighted' or 'plain'
+                if (args[1])
+                    toggleHighlightAndPlain($luminous, args[1]);
             }
             
         });
