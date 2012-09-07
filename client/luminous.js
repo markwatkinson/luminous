@@ -41,7 +41,6 @@
     }
     
     function highlightLine($line) {
-        // FIXME this 'highlighted_line' class needs to be renamed
         $line.toggleClass('highlight');
     }
     
@@ -140,6 +139,7 @@
     /****************************************************************
      * JQUERY PLUGIN *
      ***************************************************************/
+
 
     $.fn.luminous = function(optionsOrCommand /* variadic */) {
     
