@@ -51,6 +51,13 @@ class _Luminous {
 
   public $cache = null;
   
+  /**
+   * The language is passed to the formatter which may choose to do something
+   * interesting with it. If you use the scanners table this can be figured out
+   * automatically, but if you pass in your own scanner, you will need to 
+   * give a language name if you want the formatter to consider it.
+   */
+  public $language = null;
 
   public function __construct() {
     $this->scanners = new LuminousScanners();
@@ -113,6 +120,8 @@ class _Luminous {
     $formatter->strict_standards = $this->settings->html_strict;
     $formatter->set_theme(luminous::theme($this->settings->theme));
     $formatter->highlight_lines = $this->settings->highlight_lines;
+    $formatter->language = $this->language;
+
   }
 
   /**
@@ -150,20 +159,23 @@ class _Luminous {
    *    LuminousScanner instance, or if $source is not a string.
    */
   function highlight($scanner, $source, $use_cache=true) {
+    $should_reset_language = false;
     $this->cache = null;
     if (!is_string($source)) throw new InvalidArgumentException('Non-string '
         . 'supplied for $source');
     
     if (!($scanner instanceof LuminousScanner)) {
       if (!is_string($scanner)) throw new InvalidArgumentException('Non-string
-        or LuminousScanner instance supllied for $scanner');
+        or LuminousScanner instance supplied for $scanner');
       $code = $scanner;
       $scanner = $this->scanners->GetScanner($code);
       if ($scanner === null) throw new Exception("No known scanner for '$code' and no default set");
+      $should_reset_language = true;
+      $this->language = $this->scanners->GetDescription($code);
     }
     $cache_hit = true;
     $out = null;
-    if ($use_cache) {      
+    if ($use_cache) {
       $cache_id = $this->cache_id($scanner, $source);
       if ($this->settings->sql_function !== null) {
         $this->cache = new LuminousSQLCache($cache_id);
@@ -184,7 +196,7 @@ class _Luminous {
     if ($use_cache && !$cache_hit) {
       $this->cache->write($out);
     }
-    
+    if ($should_reset_language) $this->language = null;
     return $out;
   }
 }

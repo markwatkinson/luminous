@@ -65,6 +65,12 @@ abstract class LuminousFormatter {
    */
   public $height = 0;
   
+  
+  /**
+   * The language of the source code being highlighted. Formatters may choose
+   * to do something with this.
+   */
+  public $language = null;
 
 
   /**

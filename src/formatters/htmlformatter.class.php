@@ -16,7 +16,7 @@ class LuminousFormatterHTML extends LuminousFormatter {
   protected $numbered_template = '<pre class="code numbers line-no-width-%s" style="counter-increment: term %s; %s" data-startline="%d" data-highlightlines="%s">%s</pre>';
 
   /// container template
-  protected $template = '<div class="luminous">%s</div>';
+  protected $template = '<div class="luminous" data-language="%s">%s</div>';
 
   private function height_css() {
     $height = trim('' . $this->height);
@@ -82,7 +82,10 @@ class LuminousFormatterHTML extends LuminousFormatter {
 
     
 
-    return self::template($this->template, array($code_block));
+    return self::template($this->template, array(
+        ($this->language === null)? '' : htmlentities($this->language),
+        $code_block
+    ));
   }
   
   /**
