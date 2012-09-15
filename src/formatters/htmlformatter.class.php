@@ -1,5 +1,76 @@
 <?php
 /// @cond ALL
+
+/**
+  * Collection of templates and templating utilities
+  */
+class LuminousHTMLTemplates {
+
+    // NOTE Don't worry about whitespace in the templates - it gets stripped from the innerHTML,
+    // so the <pre>s aren't affected. Make it readable :)
+    
+    /// Container
+    const container_template = '
+      <div 
+        class="luminous" 
+        data-language="{language}"
+      >
+        {subelement}
+      </div>';
+    /// line number-less
+    const numberless_template = '
+      <pre 
+        class="code" 
+        style="{height_css}"
+      >
+        {code}
+      </pre>';
+    
+    /// line numbered
+    const numbered_template = '
+      <pre 
+        class="code numbers line-no-width-{line_number_digits}" 
+        style="counter-increment: term {start_line}; {height_css}" 
+        data-startline="{start_line}" 
+        data-highlightlines="{highlight_lines}"
+      >
+        {code}
+      </pre>';
+    
+    
+    private static function _strip_template_whitespace_cb($matches) {
+        return ($matches[0][0] === '<')? $matches[0] : '';
+    }
+    private static function _strip_template_whitespace($string) {
+        return preg_replace_callback('/\s+|<[^>]++>/',
+          array('self', '_strip_template_whitespace_cb'),
+          $string);
+    }
+    
+    /**
+      * Formats a string with a given set of values
+      * The format syntax uses {xyz} as a placeholder, which will be 
+      * substituted from the 'xyz' key from $variables
+      *
+      * @param $template The template string
+      * @param $variables An associative (keyed) array of values to be substituted
+      * @param $strip_whitespace_from_template If @c TRUE, the template's whitespace is removed.
+      *   This allows templates to be written to be easeier to read, without having to worry about
+      *   the pre element inherting any unintended whitespace
+      */
+    public static function format($template, $variables, $strip_whitespace_from_template = true) {
+    
+        if ($strip_whitespace_from_template) {
+            $template = self::_strip_template_whitespace($template);
+        }
+    
+        foreach($variables as $search => $replace) {
+            $template = str_replace("{" . $search . "}", $replace, $template);
+        }
+        return $template;
+    }
+}
+
 class LuminousFormatterHTML extends LuminousFormatter {
 
   public $height = 0;
@@ -8,15 +79,6 @@ class LuminousFormatterHTML extends LuminousFormatter {
    * \since  0.5.7
    */
   public $strict_standards = false;
-
-  /// line number-less
-  protected $numberless_template = '<pre class="code" style="%s">%s</pre>';
-
-  /// line numbered
-  protected $numbered_template = '<pre class="code numbers line-no-width-%s" style="counter-increment: term %s; %s" data-startline="%d" data-highlightlines="%s">%s</pre>';
-
-  /// container template
-  protected $template = '<div class="luminous" data-language="%s">%s</div>';
 
   private function height_css() {
     $height = trim('' . $this->height);
@@ -32,7 +94,7 @@ class LuminousFormatterHTML extends LuminousFormatter {
    }
 
   private static function template_cb($matches) {
-    return ($matches[0][0] === '<')? $matches[0] : '';
+    
   }
 
   // strips out unnecessary whitespace from a template
@@ -57,7 +119,14 @@ class LuminousFormatterHTML extends LuminousFormatter {
       $lines[] = $l;
     }
     $lines = implode("\n", $lines);
-    return self::template($this->numberless_template, array($this->height_css(), $lines));
+    
+    return LuminousHTMLTemplates::format(
+      LuminousHTMLTemplates::numberless_template,
+      array(
+        'height_css' => $this->height_css(),
+        'code' => $lines
+      )
+    );
   }
   
   
@@ -81,11 +150,14 @@ class LuminousFormatterHTML extends LuminousFormatter {
     $code_block = preg_replace_callback('/<([A-Z_0-9]+)>/', $cb, $code_block);
 
     
-
-    return self::template($this->template, array(
-        ($this->language === null)? '' : htmlentities($this->language),
-        $code_block
-    ));
+    $format_data = array(
+      'language' => ($this->language === null)? '' : htmlentities($this->language),
+      'subelement' => $code_block
+    );
+    return LuminousHTMLTemplates::format(
+      LuminousHTMLTemplates::container_template,
+      $format_data
+    );
   }
   
   /**
@@ -154,14 +226,19 @@ class LuminousFormatterHTML extends LuminousFormatter {
       '</span>';
     $num_lines = $num_replacements + 1;
     
-    return self::template($this->numbered_template, array(
-      strlen( (string)($this->start_line) + $num_lines ), // max number of digits in the line - this is used by the CSS
-      $this->start_line-1, 
-      $this->height_css(),
-      $this->start_line,
-      implode(',', $this->highlight_lines),
-      $lines)
+    $format_data = array(
+      'line_number_digits' => strlen( (string)($this->start_line) + $num_lines ), // max number of digits in the line - this is used by the CSS
+      'start_line' => $this->start_line-1,
+      'height_css' => $this->height_css(),
+      'highlight_lines' => implode(',', $this->highlight_lines),
+      'code' => $lines
     );
+    
+    return LuminousHTMLTemplates::format(
+      LuminousHTMLTemplates::numbered_template,
+      $format_data
+    );
+    
   }
 }
 
