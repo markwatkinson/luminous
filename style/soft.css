@@ -112,26 +112,15 @@
 
 
 
-.luminous .code > span:nth-child(2n)
+.luminous .code li:nth-child(2n)
 {
   background-color:#FAF8FF;
 }
 
-.luminous .code > span.highlight
+.luminous .code li.highlight
 {
   background-color:#BED6E1;
 }
-
-.luminous .metabar_buttons_floating
-{
-  background-color: #C8C8C8 !important;
-  background-color:rgba(200, 200, 200, 0.50) !important;
-  border-color: #BEBEEF !important;
-  
-}
-
-
-
 
 
 /* this stuff has to come after the other rules because it will probably

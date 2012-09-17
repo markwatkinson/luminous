@@ -30,7 +30,7 @@
 }
 
 /* line numbers */
-.luminous .numbers > span:before {
+.luminous .numbers li:before {
   background-color:#ECECEC !important;
   color: #aaa !important;
   border-right:1px solid #ddd !important;

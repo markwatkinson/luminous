@@ -221,9 +221,9 @@ class LuminousFormatterHTML extends LuminousFormatter {
   
   private function format_numbered($src) {
   
-    $lines = '<span>' .
-      str_replace("\n", "</span><span>", $src, $num_replacements) .
-      '</span>';
+    $lines = '<ol><li>' .
+      str_replace("\n", "</li><li>", $src, $num_replacements) .
+      '</li></ol>';
     $num_lines = $num_replacements + 1;
     
     $format_data = array(

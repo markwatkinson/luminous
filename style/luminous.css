@@ -49,12 +49,20 @@
     counter-reset: term;
     margin-left: 0;
     padding-left: 0;
+    /* We're using a list for the lines, so we'll have to hide 
+       that a bit */
     /* each line */ }
-    .luminous .numbers > span {
+    .luminous .numbers > ol {
+      list-style: none;
+      padding: 0;
+      margin: 0; }
+      .luminous .numbers > ol > li {
+        padding: 0;
+        margin: 0; }
+    .luminous .numbers > ol > li {
       padding: 0 0 0 3em;
       border: none;
       margin: 0;
-      display: block;
       position: relative;
       transition-property: background-color;
       transition-duration: 0.5s;
@@ -71,7 +79,7 @@
       -ms-transition-property: background-color;
       -ms-transition-duration: 0.5s;
       -ms-transition-timing-function: ease-in; }
-      .luminous .numbers > span:before {
+      .luminous .numbers > ol > li:before {
         counter-increment: term !important;
         content: counter(term) !important;
         padding: 0;
@@ -87,9 +95,9 @@
         position: absolute;
         height: 100%;
         left: 0; }
-      .luminous .numbers > span:after {
+      .luminous .numbers > ol > li:after {
         content: " "; }
-      .luminous .numbers > span:nth-child(5n):before {
+      .luminous .numbers > ol > li:nth-child(5n):before {
         font-weight: bold; }
     .luminous .numbers.line-no-width-2 > span {
       padding-left: 3em; }

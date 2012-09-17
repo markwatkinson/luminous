@@ -88,7 +88,7 @@ font-style:normal !important;}
 }
 
 /* line numbers */
-.luminous .numbers > span:before{
+.luminous .numbers li:before{
   background-color:#1E1E1E !important;
   border-right:1px solid #5F5F5F !important;
   color:#BCFFBC !important;
@@ -101,12 +101,12 @@ font-style:normal !important;}
   color:#FFFDCC !important;
 }
 
-.luminous .code > span:nth-child(2n)
+.luminous .code li:nth-child(2n)
 {
   background-color: #232323;
 }
 
-.luminous .code > span.highlight
+.luminous .code .highlight
 {
   background-color:#404040;
 }

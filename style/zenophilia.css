@@ -100,25 +100,23 @@
 }
 
 /* line numbers */
-.luminous .numbers > span:before {
+.luminous .numbers li:before {
   background-color:#444444 !important;
   border-right:1px solid #5F5F5F !important;
   color: #A8A8A8 !important;
 }
 
 
-.luminous .code
-{
+.luminous .code {
   background-color:#3a3a3a !important;
   color:#DCDCCC !important;
 }
 
-.luminous .code > span:nth-child(2n)
-{
+.luminous .code li:nth-child(2n) {
   background-color: #404040 !important;
 }
 
-.luminous .code > span.highlight
+.luminous .code li.highlight
 {
   background-color:#6D6D6D !important;
 }

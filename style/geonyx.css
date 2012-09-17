@@ -4,13 +4,13 @@
 }
 
 /* line numbers */
-.luminous .numbers > span:before {
+.luminous .numbers li:before {
   background-color: #F0F0F0 !important;
   border-right: 1px dashed #BBBBBB !important;
   color: #555555;
 }
 
-.luminous .highlight {
+.luminous .code li.highlight {
   background-color: #A4C0E4;
   background-color: rgba(164, 192, 228, 0.5);
 }

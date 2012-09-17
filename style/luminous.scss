@@ -84,12 +84,24 @@
     margin-left: 0;
     padding-left: 0;
     
+    /* We're using a list for the lines, so we'll have to hide 
+       that a bit */
+    & > ol {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      & > li { 
+        padding: 0;
+        margin: 0;
+      }
+    }
     /* each line */
-    & > span {
+    
+    & > ol > li {
       padding: 0 0 0 3em;
       border: none;
       margin: 0;
-      display:block;
+      //display:block;
       position:relative;
       @include transition(background-color);
 

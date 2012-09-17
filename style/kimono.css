@@ -14,7 +14,7 @@
   background-color: #272822 !important;
 }
 /* line numbers */
-.luminous .numbers > span:before{
+.luminous .numbers li:before{
   border-right: 1px solid #d0d0d0 !important;
   background-color: #272822 !important;
   color : #F8F8F2 !important;

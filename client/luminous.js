@@ -29,6 +29,8 @@
 (function($) {
     "use strict";
     
+    var LINE_SELECTOR = 'pre > ol > li';
+    
     if (typeof $ === 'undefined') { return; }
     
     /****************************************************************
@@ -37,7 +39,7 @@
     
     // determines if the given element is a line element of luminous
     function isLine($line) {
-        return $line.is('pre > span') && $line.parents('.luminous').length > 0;
+        return $line.is(LINE_SELECTOR) && $line.parents('.luminous').length > 0;
     }
     
     function highlightLine($line) {
@@ -45,7 +47,7 @@
     }
     
     function highlightLineByIndex($luminous, index) {
-        var $line = $luminous.find('pre > span').eq(index);
+        var $line = $luminous.find(LINE_SELECTOR).eq(index);
         highlightLine($line);
     }
     
@@ -119,7 +121,7 @@
         data.code.highlighted = $element.find('>pre').html();
         
         data.code.plain = '';
-        $element.find('>pre>span').each(function(i, e) {
+        $element.find('pre > ul > li').each(function(i, e) {
             var line = $(e).text();
             line = line
                     .replace(/&/g, '&amp')
