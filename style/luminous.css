@@ -33,6 +33,8 @@
       padding: 0;
       *display: inline;
       display: inline-block; }
+    .luminous.inline pre {
+      overflow: visible; }
   .luminous .link, .luminous .link:visited {
     text-decoration: underline; }
   .luminous .link:hover {

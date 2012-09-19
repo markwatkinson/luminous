@@ -9,7 +9,7 @@ class LuminousHTMLTemplates {
     // NOTE Don't worry about whitespace in the templates - it gets stripped from the innerHTML,
     // so the <pre>s aren't affected. Make it readable :)
     
-    /// Container
+    /// Normal container 
     const container_template = '
       <div 
         class="luminous" 
@@ -17,6 +17,16 @@ class LuminousHTMLTemplates {
       >
         {subelement}
       </div>';
+      
+    /// Inline code container
+    const inline_template = '
+        <div 
+          class="luminous inline"
+          data-language="{language}"
+        >
+          {subelement}
+        </div>';
+
     /// line number-less
     const numberless_template = '
       <pre 
@@ -36,6 +46,8 @@ class LuminousHTMLTemplates {
       >
         {code}
       </pre>';
+    
+
     
     
     private static function _strip_template_whitespace_cb($matches) {
@@ -73,6 +85,8 @@ class LuminousHTMLTemplates {
 
 class LuminousFormatterHTML extends LuminousFormatter {
 
+  // overridden by inline formatter
+  protected $inline = false;
   public $height = 0;
   /** 
    * strict HTML standards: the target attribute won't be used in links
@@ -106,8 +120,8 @@ class LuminousFormatterHTML extends LuminousFormatter {
     $code = call_user_func_array('sprintf', $vars);
     return $code;
   }
-
-  private function format_numberless($src) {
+  
+  private function lines_numberless($src) {
     $lines = array();
     $lines_original = explode("\n", $src);
     foreach($lines_original as $line) {
@@ -119,12 +133,15 @@ class LuminousFormatterHTML extends LuminousFormatter {
       $lines[] = $l;
     }
     $lines = implode("\n", $lines);
-    
+    return $lines;
+  }
+
+  private function format_numberless($src) {
     return LuminousHTMLTemplates::format(
       LuminousHTMLTemplates::numberless_template,
       array(
         'height_css' => $this->height_css(),
-        'code' => $lines
+        'code' => $this->lines_numberless($src)
       )
     );
   }
@@ -136,8 +153,13 @@ class LuminousFormatterHTML extends LuminousFormatter {
 
     if ($this->link)  $src = $this->linkify($src);
     
-    $code_block = $this->line_numbers? $this->format_numbered($src)
-      : $this->format_numberless($src);
+    $code_block = null;
+    if ($this->line_numbers) {
+        $code_block = $this->format_numbered($src);
+    }
+    else {
+        $code_block = $this->format_numberless($src);
+    }
 
     // convert </ABC> to </span>
     $code_block = preg_replace('/(?<=<\/)[A-Z_0-9]+(?=>)/S', 'span',
@@ -148,14 +170,14 @@ class LuminousFormatterHTML extends LuminousFormatter {
                           return "<span class=\'" . $m1 . "\'>";
                           ');
     $code_block = preg_replace_callback('/<([A-Z_0-9]+)>/', $cb, $code_block);
-
     
     $format_data = array(
       'language' => ($this->language === null)? '' : htmlentities($this->language),
       'subelement' => $code_block
     );
     return LuminousHTMLTemplates::format(
-      LuminousHTMLTemplates::container_template,
+      $this->inline? LuminousHTMLTemplates::inline_template : 
+        LuminousHTMLTemplates::container_template,
       $format_data
     );
   }
@@ -244,11 +266,11 @@ class LuminousFormatterHTML extends LuminousFormatter {
 
 
 class LuminousFormatterHTMLInline extends LuminousFormatterHTML {
-  protected $template = '<div class="luminous inline">%s</div>';
 
   public function format($src) {
     $this->line_numbers = false;
     $this->height = 0;
+    $this->inline = true;
     return parent::format($src);
   }
 

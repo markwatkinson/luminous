@@ -57,6 +57,12 @@
       *display: inline;
       display: inline-block;
     }
+    pre {
+      // this would otherwise get 'overflow auto', but auto seems to
+      // cause it to sit a bit out of line with the text. So does 'hidden'.
+      // in any case, this shouldn't overflow.
+      overflow: visible;
+    }
   }
   .link {
     &, &:visited {
