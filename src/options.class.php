@@ -19,6 +19,12 @@
  * replaced with dashed in the call.
  */
 class LuminousOptions {
+    
+  /**
+   * @brief Whether to use the built-in cache
+   */
+  private $cache = true;
+  
   /**
    * @brief Maximum age of cache files in seconds
    * 
@@ -229,6 +235,9 @@ class LuminousOptions {
   public function __set($name, $value) {
     if ($name === 'auto_link')
       $this->set_bool($name, $value);
+    else if ($name === 'cache') {
+      $this->set_bool($name, $value);
+    }
     elseif($name === 'cache_age') {
       if (self::check_type($value, 'int')) $this->$name = $value;
     }

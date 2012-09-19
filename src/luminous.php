@@ -66,10 +66,8 @@ class _Luminous {
 
   /// registers builtin scanners
   private function register_default_scanners() {
-
     $this->settings = new LuminousOptions();
     require dirname(__FILE__) . '/load_scanners.php';
-
   }
 
 
@@ -121,7 +119,6 @@ class _Luminous {
     $formatter->set_theme(luminous::theme($this->settings->theme));
     $formatter->highlight_lines = $this->settings->highlight_lines;
     $formatter->language = $this->language;
-
   }
 
   /**
@@ -158,7 +155,17 @@ class _Luminous {
    * @throw InvalidArgumentException if $scanner is not either a string or a
    *    LuminousScanner instance, or if $source is not a string.
    */
-  function highlight($scanner, $source, $use_cache=true) {
+  function highlight($scanner, $source, $settings = null) {
+    $old_settings = null;
+    if ($settings !== null) {
+      if (!is_array($settings)) {
+          throw new Exception('Luminous internal error: Settings is not an array');
+      }
+      $old_settings = clone $this->settings;
+      foreach($settings as $k=>$v) {
+        $this->settings->set($k, $v);
+      }
+    }
     $should_reset_language = false;
     $this->cache = null;
     if (!is_string($source)) throw new InvalidArgumentException('Non-string '
@@ -175,7 +182,7 @@ class _Luminous {
     }
     $cache_hit = true;
     $out = null;
-    if ($use_cache) {
+    if ($this->settings->cache) {
       $cache_id = $this->cache_id($scanner, $source);
       if ($this->settings->sql_function !== null) {
         $this->cache = new LuminousSQLCache($cache_id);
@@ -193,10 +200,13 @@ class _Luminous {
       $out = $formatter->format($out_raw);
     }
 
-    if ($use_cache && !$cache_hit) {
+    if ($this->settings->cache && !$cache_hit) {
       $this->cache->write($out);
     }
     if ($should_reset_language) $this->language = null;
+    if ($old_settings !== null) {
+      $this->settings = $old_settings;
+    }
     return $out;
   }
 }
@@ -230,10 +240,16 @@ abstract class luminous {
    *
    * To specify different output formats or other options, see set().
    */
-  static function highlight($scanner, $source, $cache=true) {
+  static function highlight($scanner, $source, $cache_or_settings=null) {
     global $luminous_;
     try {
-      $h = $luminous_->highlight($scanner, $source, $cache);
+      $settings = null;
+      if (is_bool($cache_or_settings)) {
+          $settings = array('cache' => $cache_or_settings);
+      } else if (is_array($cache_or_settings)) {
+        $settings = $cache_or_settings;
+      }
+      $h = $luminous_->highlight($scanner, $source, $settings);
       if ($luminous_->settings->verbose) {
         $errs = self::cache_errors();
         if (!empty($errs)) {
@@ -244,6 +260,8 @@ abstract class luminous {
       return $h;
     } catch (InvalidArgumentException $e) {
       // this is a user error, let it bubble
+      //FIXME how do we let it bubble without throwing? the stack trace will
+      // be wrong.
       throw $e;
     }
     catch (Exception $e) {
@@ -271,8 +289,8 @@ abstract class luminous {
    * 
    * To specify different output formats or other options, see set().
    */
-  static function highlight_file($scanner, $file, $cache=true) {
-    return self::highlight($scanner, file_get_contents($file), $cache);
+  static function highlight_file($scanner, $file, $cache_or_settings=null) {
+    return self::highlight($scanner, file_get_contents($file), $cache_or_settings);
   }
 
   /**
