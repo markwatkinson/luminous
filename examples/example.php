@@ -66,11 +66,6 @@ $use_cache = !isset($_GET['nocache'])
 ?>
 </p>
 
-<p style='margin-top:3em'> 
-An unconstrained, uncontained code display. If you want to use it like this, 
-set style='padding:0px; margin:0px;' on the body element to remove the white 
-border to the left.
-</p>
 <?php echo luminous::highlight('cpp', <<<EOF
 #include <stdio.h>
 int main()
@@ -80,38 +75,10 @@ int main()
 }
 EOF
 , $use_cache); ?>
-  
-  
-<p>
 
-But you'll find if you only want to display a short code excerpt, it looks a lot better like this, wrapped in a div with 
-style= 'margin-left:auto; margin-right:auto; border:1px solid black;'. The margins make it centred. 
-
-</p>
-
-<div style='width:50%; margin-left:auto;margin-right:auto; border:1px solid black;'>
+<p> You can also set specific runtime options in the highlight call (here we set 'max-height' = 250), which will be
+forgotten at the next highlight.
 <?php
-echo luminous::highlight('cpp', <<<EOF
-#include <stdio.h>
-int main()
-{
-  printf("hello, world");
-  return 0;
-}
-EOF
-, $use_cache);
-  ?>
-</div>
-
-
-<p>
-The style for the container div is: style='width:50%; height: 250px;  margin-left:auto; margin-right:auto; border:1px solid black; overflow:auto'.
-You could also set the height using the max-height setting. Note that if you plan to restrict the height with containers, you should set
-max-height=0 (Luminous will try to size itself by default).
-</p>
-<div style='width:50%; height: 250px; margin-left:auto; margin-right:auto; border:1px solid black; overflow:auto'>
-<?php
-luminous::set('max-height', 0);
 echo luminous::highlight('php', <<<EOF
 <?php
 /**
@@ -145,8 +112,42 @@ function pcre_error_decode(\$errcode)
   }
 }
 EOF
-, $use_cache);
+, array('cache' => $use_cache, 'max-height' => '250'));
   ?>
-</div>
+<p> See:
+<?php echo luminous::highlight('php', <<<EOF
+<?php
+/**
+ * \\ingroup LuminousUtils
+ * \\internal
+ * \\brief Decodes a PCRE error code into a string
+ * \\param errcode The error code to decode (integer)
+ * \\return A string which is simply the name of the constant which matches the
+ *      error code (e.g. 'PREG_BACKTRACK_LIMIT_ERROR')
+ * 
+ * \\todo this should all be namespaced
+ */ 
+function pcre_error_decode(\$errcode)
+{
+  switch (\$errcode)
+  {
+    case PREG_NO_ERROR:
+      return 'PREG_NO_ERROR';
+    case PREG_INTERNAL_ERROR:
+      return 'PREG_INTERNAL_ERROR';
+    case PREG_BACKTRACK_LIMIT_ERROR:
+      return 'PREG_BACKTRACK_LIMIT_ERROR';
+    case PREG_RECURSION_LIMIT_ERROR:
+      return 'PREG_RECURSION_LIMIT_ERROR';
+    case PREG_BAD_UTF8_ERROR:
+      return 'PREG_BAD_UTF8_ERROR';
+    case PREG_BAD_UTF8_OFFSET_ERROR:
+      return 'PREG_BAD_UTF8_OFFSET_ERROR';
+    default:
+      return 'Unknown error code';
+  }
+}
+EOF
+, $use_cache); ?>
 </body>
 </html>
