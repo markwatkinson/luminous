@@ -18,7 +18,6 @@
  along with Luminous.  If not, see <http://www.gnu.org/licenses/>.
  
  */
-
 .luminous {
   font-size: inherit;
   text-align: left;
@@ -102,29 +101,29 @@
         content: " "; }
       .luminous .numbers > ol > li:nth-child(5n):before {
         font-weight: bold; }
-    .luminous .numbers.line-no-width-2 > span {
+    .luminous .numbers.line-no-width-2 li {
       padding-left: 3em; }
-    .luminous .numbers.line-no-width-3 > span {
+    .luminous .numbers.line-no-width-3 li {
       padding-left: 4em; }
-    .luminous .numbers.line-no-width-4 > span {
+    .luminous .numbers.line-no-width-4 li {
       padding-left: 5em; }
-    .luminous .numbers.line-no-width-5 > span {
+    .luminous .numbers.line-no-width-5 li {
       padding-left: 6em; }
-    .luminous .numbers.line-no-width-6 > span {
+    .luminous .numbers.line-no-width-6 li {
       padding-left: 7em; }
-    .luminous .numbers.line-no-width-2 > span:before {
+    .luminous .numbers.line-no-width-2 li:before {
       width: 2em !important; }
-    .luminous .numbers.line-no-width-3 > span:before {
+    .luminous .numbers.line-no-width-3 li:before {
       width: 3em !important; }
-    .luminous .numbers.line-no-width-4 > span:before {
+    .luminous .numbers.line-no-width-4 li:before {
       width: 4em !important; }
-    .luminous .numbers.line-no-width-5 > span:before {
+    .luminous .numbers.line-no-width-5 li:before {
       width: 5em !important; }
-    .luminous .numbers.line-no-width-6 > span:before {
+    .luminous .numbers.line-no-width-6 li:before {
       width: 6em !important; }
-    .luminous .numbers.line-no-hidden > span {
+    .luminous .numbers.line-no-hidden li {
       padding-left: 0; }
-      .luminous .numbers.line-no-hidden > span::before {
+      .luminous .numbers.line-no-hidden li::before {
         display: none; }
   .luminous div {
     border-radius: inherit; }
