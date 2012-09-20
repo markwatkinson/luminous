@@ -99,16 +99,19 @@ def unit_tests():
   """ Runs unit tests, i.e. those in unit/"""
   output ('Begin unit tests', 1)
   os.chdir(root_path + '/unit/')
+  ret = 0
   for t in glob.iglob('*.php'):
-    test(t)
-  
+    if not test(t): ret = 1
+  return ret
 
 def fuzz_test():
   """ execute the fuzz tester """
   output ('Begin fuzz test (this may take some time)', 1)
   os.chdir('fuzz')
-  test('ifuzz.php')
-  test('fuzz.php')
+  ret = 0
+  if not test('ifuzz.php'): ret = 1
+  if not test('fuzz.php'): ret = 1
+  return ret
   
 def regression_tests():
   output ('Begin regression tests', 1)
@@ -116,11 +119,16 @@ def regression_tests():
   files = glob.glob('*/*')
   files = filter(lambda s: not s.endswith('.luminous') and not s.startswith('.') and not s.endswith('~'), files)
   files.sort()
+  ret = 0
   for f in files:
-    test('test.php', f)
+    if not test('test.php', f): ret = 1
+  return ret
 
 if __name__ == '__main__':
   init()
+  ret = 0
   for func in tests:
-    func()
+    r = func()
+    if r: ret = r
     os.chdir(root_path)
+  sys.exit(ret)
