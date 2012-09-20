@@ -13,7 +13,12 @@ php:
 
 # execute any number of scripts before the test run, custom env's are available as variables
 before_script:
+  mkdir cache
+  chmod 777 cache
   chmod +x ./tests/runtests.py
 
 # omitting "script:" will default to phpunit
 script: tests/runtests.py --unit --regression
+
+after_script:
+  cat tests/log/runtests.out
