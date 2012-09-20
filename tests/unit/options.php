@@ -13,12 +13,15 @@ include dirname(__FILE__) . '/helper.inc';
     
 $data = array(
     'auto_link' => true, 
-    'cache_age' => 0xDEADBEEF,
+    'cache_age' => 123456,
     'format' => 'latex',
     'html_strict' => true
 );
 $o = new LuminousOptions($data);
 
 foreach($data as $opt => $val) {
-    assert($o->$opt === $val);
+    if ($o->$opt !== $val) {
+       echo "Options: o->$opt !== $val\n";
+       assert(0);
+    }
 }

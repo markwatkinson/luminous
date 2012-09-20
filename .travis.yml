@@ -17,7 +17,5 @@ before_script:
   chmod +x ./tests/runtests.py;
 
 # omitting "script:" will default to phpunit
-script: tests/runtests.py --unit --regression
+script: tests/runtests.py --unit --regression --print-fail-log --quiet
 
-after_script:
-  cat tests/log/runtests.out
