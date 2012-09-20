@@ -1,7 +1,40 @@
 <?php
-
+/**
+ * The SCSS scanner is quite complex, having to deal with nested rules
+ * and so forth and some disambiguation is non-trivial, so we are employing
+ * a two-pass approach here - we first tokenize the source as normal with a 
+ * scanner, then we parse the token stream with a parser to figure out
+ * what various things really are.
+ */
 class LuminousSCSSScanner extends LuminousScanner {
     private $regexen = array();
+    
+    public $rule_tag_map = array(
+        'PROPERTY' => 'TYPE',
+        'COMMENT_SL' => 'COMMENT',
+        'COMMENT_ML' => 'COMMENT',
+        'ELEMENT_SELECTOR' => 'KEYWORD',
+        'STRING_S' => 'STRING',
+        'STRING_D' => 'STRING',
+        'CLASS_SELECTOR' => 'VARIABLE',
+        'ID_SELECTOR' => 'VARIABLE',
+        'PSEUDO_SELECTOR' => 'OPERATOR',
+        'ATTR_SELECTOR' => 'OPERATOR',
+        'WHITESPACE' => null,
+        'COLON' => 'OPERATOR',
+        'SEMICOLON' => 'OPERATOR',
+        'COMMA' => 'OPERATOR',
+        'R_BRACE' => 'OPERATOR', 
+        'R_BRACKET' => 'OPERATOR',
+        'R_SQ_BRACKET' => 'OPERATOR',
+        'L_BRACE' => 'OPERATOR', 
+        'L_BRACKET' => 'OPERATOR',
+        'L_SQ_BRACKET' => 'OPERATOR',
+        'OTHER_OPERATOR' => 'OPERATOR',
+        'GENERIC_IDENTIFIER' => null,
+        'AT_IDENTIFIER' => 'KEYWORD',
+        'IMPORTANT' => 'KEYWORD',
+    );
     
     public function init() {
         $this->regexen = array(
@@ -18,13 +51,14 @@ class LuminousSCSSScanner extends LuminousScanner {
             // This is generic - it may be a selector fragment, a rule, or
             // even a hex colour.
             'GENERIC_IDENTIFIER' => '@
-                [a-fA-F0-9]{3}[a-fA-F0-9]{3}?
+                \\#[a-fA-F0-9]{3}(?:[a-fA-F0-9]{3})?
                 |
-                [0-9]+(\.[0-9]+)?(%|in|cm|mm|em|ex|pt|pc|px|s)?
+                [0-9]+(\.[0-9]+)?(\w+|%|in|cm|mm|em|ex|pt|pc|px|s)?
                 |
                 -?[a-zA-Z_\-0-9]+[a-zA-Z_\-0-9]*
                 |&
             @x',
+            'IMPORTANT' => '/!important/',
             'L_BRACE' => '/\{/',
             'R_BRACE' => '/\}/',
             'L_SQ_BRACKET' => '/\[/',
@@ -67,7 +101,9 @@ class LuminousSCSSScanner extends LuminousScanner {
         $this->tokens = $parser->tokens;
     }
 }
-    
+/**
+ * The parsing class 
+ */
 class LuminousSASSParser {
     
     public $tokens;
@@ -75,6 +111,10 @@ class LuminousSASSParser {
     public $stack;
     static $delete_token = 'delete';
     
+    /**
+     * Returns true if the next token is the given token name
+     * optionally skipping whitespace
+     */
     function next_is($token_name, $ignore_whitespace = false) {
         $i = $this->index+1;
         $len = count($this->tokens);
@@ -89,7 +129,10 @@ class LuminousSASSParser {
         }
         return false;
     }
-    
+    /**
+     * Returns the index of the next match of the sequence of tokens
+     * given, optionally ignoring ertain tokens
+     */
     function next_sequence($sequence, $ignore=array()) {
         $i = $this->index+1;
         $len = count($this->tokens);
@@ -116,7 +159,9 @@ class LuminousSASSParser {
         return $len;
     }
 
-    
+    /**
+     * Returns the first token which occurs out of the set of given tokens
+     */
     function next_of($token_names) {
         $i = $this->index+1;
         $len = count($this->tokens);
@@ -130,7 +175,9 @@ class LuminousSASSParser {
         return null;
         
     }
-
+    /**
+     * Returns the index of the next token with the given token name
+     */
     function next_of_type($token_name) {
         $i = $this->index+1;
         $len = count($this->tokens);
@@ -185,6 +232,10 @@ class LuminousSASSParser {
         $this->tokens[$this->index] = $new_token;
     }
     
+    /**
+     * Cleans up the token stream by deleting any tokens marked for 
+     * deletion, and makes sure the array is continuous afterwards.
+     */
     private function _cleanup() {
         foreach($this->tokens as $i=>$t) {
             if ($t[0] === self::$delete_token) {
@@ -193,7 +244,9 @@ class LuminousSASSParser {
         }
         $this->tokens = array_values($this->tokens);
     }
-    
+    /**
+     * Main parsing function
+     */
     public function parse() {
         $new_tokens = array();
         $len = count($this->tokens);
