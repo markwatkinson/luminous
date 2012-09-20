@@ -49,6 +49,10 @@ abstract class LuminousFormatter {
   public $line_numbers = true;
   /// Number of first line
   public $start_line = 1;
+  
+  /// An array of lines to be highlighted initially, if the formatter supports
+  /// it
+  public $highlight_lines = array();
 
   /// sets whether or not to link URIs.
   public $link = true;
@@ -60,6 +64,13 @@ abstract class LuminousFormatter {
    * Use 0 or -1 for no limit.
    */
   public $height = 0;
+  
+  
+  /**
+   * The language of the source code being highlighted. Formatters may choose
+   * to do something with this.
+   */
+  public $language = null;
 
 
   /**

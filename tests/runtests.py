@@ -26,11 +26,12 @@ log_path = '{0}/log/'.format(root_path)
 log_file = '{0}/runtests.out'.format(log_path)
 old_log_file = '{0}/runtests.out.1'.format(log_path)
 
+print_fail_log = False
 
 
 def init():
   """ set up the options, read arguments, etc """
-  global verbose, tests
+  global verbose, tests, print_fail_log
   if not os.path.exists(log_path): os.mkdir(log_path)
   if (os.path.exists(log_file)):
     if os.path.exists(old_log_file): os.remove(old_log_file)
@@ -48,6 +49,7 @@ def init():
 
   for arg in sys.argv[1:]:
     if arg == '--quiet': verbose = False
+    elif arg == '--print-fail-log': print_fail_log = True
     elif arg.startswith('--') and arg[2:] in test_defs.keys():
       tests.append( test_defs[arg[2:]] )
     elif arg == '--help':
@@ -56,6 +58,7 @@ Valid options:
   --<test> \t where test may be: {1}
   
   --quiet  \t Only print failures and warnings
+  --print-fail-log\t Prints a full log at the end if a test fails
   '''.format(sys.argv[0], ', '.join([name for name in test_defs]))
       sys.exit()
     else:
@@ -99,16 +102,19 @@ def unit_tests():
   """ Runs unit tests, i.e. those in unit/"""
   output ('Begin unit tests', 1)
   os.chdir(root_path + '/unit/')
+  ret = 0
   for t in glob.iglob('*.php'):
-    test(t)
-  
+    if not test(t): ret = 1
+  return ret
 
 def fuzz_test():
   """ execute the fuzz tester """
   output ('Begin fuzz test (this may take some time)', 1)
   os.chdir('fuzz')
-  test('ifuzz.php')
-  test('fuzz.php')
+  ret = 0
+  if not test('ifuzz.php'): ret = 1
+  if not test('fuzz.php'): ret = 1
+  return ret
   
 def regression_tests():
   output ('Begin regression tests', 1)
@@ -116,11 +122,20 @@ def regression_tests():
   files = glob.glob('*/*')
   files = filter(lambda s: not s.endswith('.luminous') and not s.startswith('.') and not s.endswith('~'), files)
   files.sort()
+  ret = 0
   for f in files:
-    test('test.php', f)
+    if not test('test.php', f): ret = 1
+  return ret
 
 if __name__ == '__main__':
   init()
+  ret = 0
   for func in tests:
-    func()
+    r = func()
+    if r: ret = r
     os.chdir(root_path)
+  if ret and print_fail_log: 
+    with open(log_file) as f:
+      print f.read()
+
+  sys.exit(ret)

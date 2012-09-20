@@ -69,8 +69,9 @@ class LuminousScanners
     
     $insert = array('scanner'=>$scanner,
                     'file'=>$file, 
-                    'dependencies'=>$d,        
-                    );
+                    'dependencies'=>$d,
+                    'description'=>$lang_description
+    );
     if (!is_array($language_name))
       $language_name = array($language_name);
     foreach($language_name as $l) {
@@ -168,6 +169,7 @@ class LuminousScanners
     }
     return $g;
   }
+  
 
   /**
    * Returns a scanner for a language
@@ -186,6 +188,15 @@ class LuminousScanners
       return $instance? new $g['scanner'] : $g['scanner'];
     }
     return null;
+  }
+  
+  function GetDescription($language_name) {
+    $resolved_dependencies = array();
+    $g = $this->GetScannerArray($language_name, true);
+    $resolved_dependencies = array();
+    if ($g !== false) {
+        return $g['description'];
+    } else return null;
   }
   /**
    * Returns a list of known aliases for scanners.

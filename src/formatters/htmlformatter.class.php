@@ -1,7 +1,92 @@
 <?php
 /// @cond ALL
+
+/**
+  * Collection of templates and templating utilities
+  */
+class LuminousHTMLTemplates {
+
+    // NOTE Don't worry about whitespace in the templates - it gets stripped from the innerHTML,
+    // so the <pre>s aren't affected. Make it readable :)
+    
+    /// Normal container 
+    const container_template = '
+      <div 
+        class="luminous" 
+        data-language="{language}"
+      >
+        {subelement}
+      </div>';
+      
+    /// Inline code container
+    const inline_template = '
+        <div 
+          class="luminous inline"
+          data-language="{language}"
+        >
+          {subelement}
+        </div>';
+
+    /// line number-less
+    const numberless_template = '
+      <pre 
+        class="code" 
+        style="{height_css}"
+      >
+        {code}
+      </pre>';
+    
+    /// line numbered
+    const numbered_template = '
+      <pre 
+        class="code numbers line-no-width-{line_number_digits}" 
+        style="counter-increment: term {start_line}; {height_css}" 
+        data-startline="{start_line}" 
+        data-highlightlines="{highlight_lines}"
+      >
+        {code}
+      </pre>';
+    
+
+    
+    
+    private static function _strip_template_whitespace_cb($matches) {
+        return ($matches[0][0] === '<')? $matches[0] : '';
+    }
+    private static function _strip_template_whitespace($string) {
+        return preg_replace_callback('/\s+|<[^>]++>/',
+          array('self', '_strip_template_whitespace_cb'),
+          $string);
+    }
+    
+    /**
+      * Formats a string with a given set of values
+      * The format syntax uses {xyz} as a placeholder, which will be 
+      * substituted from the 'xyz' key from $variables
+      *
+      * @param $template The template string
+      * @param $variables An associative (keyed) array of values to be substituted
+      * @param $strip_whitespace_from_template If @c TRUE, the template's whitespace is removed.
+      *   This allows templates to be written to be easeier to read, without having to worry about
+      *   the pre element inherting any unintended whitespace
+      */
+    public static function format($template, $variables, $strip_whitespace_from_template = true) {
+    
+        if ($strip_whitespace_from_template) {
+            $template = self::_strip_template_whitespace($template);
+        }
+    
+        foreach($variables as $search => $replace) {
+            $template = str_replace("{" . $search . "}", $replace, $template);
+        }
+        return $template;
+    }
+}
+
 class LuminousFormatterHTML extends LuminousFormatter {
 
+  // overridden by inline formatter
+  protected $inline = false;
   public $height = 0;
   /** 
    * strict HTML standards: the target attribute won't be used in links
@@ -9,30 +94,21 @@ class LuminousFormatterHTML extends LuminousFormatter {
    */
   public $strict_standards = false;
 
-  /// line number-less
-  protected $numberless_template = '<div class="code">
-  <pre class="code">%s</pre>
-</div>';
-
-  /// line numbered
-  protected $numbered_template = '<table class="code_container">
-  <tr>
-    <td class="line_number_bar">
-      <pre class="line_numbers">%s</pre>
-    </td>
-    <td class="code">
-      <pre class="code">%s</pre>
-    </td>
-  </tr>
-</table>';
-
-  /// container template, placeholders are 1: inline style 2: code
-  protected $template = '<div class="luminous">
-  <div class="code_container" %s>%s</div>
-</div>';
+  private function height_css() {
+    $height = trim('' . $this->height);
+    $css = '';  
+    if (!empty($height) && (int)$height > 0) {
+      // look for units, use px is there are none
+      if (!preg_match('/\D$/', $height)) $height .= 'px';
+      $css = "max-height: {$height}; overflow: auto;";
+    }
+    else 
+      $css = '';  
+    return $css;
+   }
 
   private static function template_cb($matches) {
-    return ($matches[0][0] === '<')? $matches[0] : '';
+    
   }
 
   // strips out unnecessary whitespace from a template
@@ -44,8 +120,8 @@ class LuminousFormatterHTML extends LuminousFormatter {
     $code = call_user_func_array('sprintf', $vars);
     return $code;
   }
-
-  private function format_numberless($src) {
+  
+  private function lines_numberless($src) {
     $lines = array();
     $lines_original = explode("\n", $src);
     foreach($lines_original as $line) {
@@ -57,17 +133,33 @@ class LuminousFormatterHTML extends LuminousFormatter {
       $lines[] = $l;
     }
     $lines = implode("\n", $lines);
-    return self::template($this->numberless_template, array($lines));
+    return $lines;
+  }
+
+  private function format_numberless($src) {
+    return LuminousHTMLTemplates::format(
+      LuminousHTMLTemplates::numberless_template,
+      array(
+        'height_css' => $this->height_css(),
+        'code' => $this->lines_numberless($src)
+      )
+    );
   }
   
   
   public function format($src) {
+  
     $line_numbers = false;
 
     if ($this->link)  $src = $this->linkify($src);
     
-    $code_block = $this->line_numbers? $this->format_numbered($src)
-      : $this->format_numberless($src);
+    $code_block = null;
+    if ($this->line_numbers) {
+        $code_block = $this->format_numbered($src);
+    }
+    else {
+        $code_block = $this->format_numberless($src);
+    }
 
     // convert </ABC> to </span>
     $code_block = preg_replace('/(?<=<\/)[A-Z_0-9]+(?=>)/S', 'span',
@@ -79,17 +171,15 @@ class LuminousFormatterHTML extends LuminousFormatter {
                           ');
     $code_block = preg_replace_callback('/<([A-Z_0-9]+)>/', $cb, $code_block);
     
-    $height = trim('' . $this->height);
-    $css = '';
-    
-    if (!empty($height) && (int)$height > 0) {
-      // look for units, use px is there are none
-      if (!preg_match('/\D$/', $height)) $height .= 'px';
-      $css = " style='max-height: {$height};'";
-    }
-    else {
-    }
-    return self::template($this->template, array($css, $code_block));
+    $format_data = array(
+      'language' => ($this->language === null)? '' : htmlentities($this->language),
+      'subelement' => $code_block
+    );
+    return LuminousHTMLTemplates::format(
+      $this->inline? LuminousHTMLTemplates::inline_template : 
+        LuminousHTMLTemplates::container_template,
+      $format_data
+    );
   }
   
   /**
@@ -152,56 +242,35 @@ class LuminousFormatterHTML extends LuminousFormatter {
   
   
   private function format_numbered($src) {
-
-    $linenos = '';
-    $lines = '';
+  
+    $lines = '<ol><li>' .
+      str_replace("\n", "</li><li>", $src, $num_replacements) .
+      '</li></ol>';
+    $num_lines = $num_replacements + 1;
     
-    $lines_original = explode("\n", $src);
-
-    // this seems to run a bit faster if we keep the literals out of
-    // the loop.
-
-    $line_no_plain_tag0 = '<span class="line_number">&nbsp;';
-    $line_no_emph_tag0 = '<span class="line_number line_number_emphasised">&nbsp;';
-    $line_no_tag1 = "&nbsp;\n</span>";
+    $format_data = array(
+      'line_number_digits' => strlen( (string)($this->start_line) + $num_lines ), // max number of digits in the line - this is used by the CSS
+      'start_line' => $this->start_line-1,
+      'height_css' => $this->height_css(),
+      'highlight_lines' => implode(',', $this->highlight_lines),
+      'code' => $lines
+    );
     
-    $wrap_line = "<span class='line_number'>&nbsp;|_\n</span>";
+    return LuminousHTMLTemplates::format(
+      LuminousHTMLTemplates::numbered_template,
+      $format_data
+    );
     
-    $line_tag0 = '<span class="line">';
-    $line_alt_tag0 = '<span class="line line_alt">';
-    $line_tag1 = '</span>';
-
-    $lineno = $this->start_line;
-    foreach($lines_original as $line)  {
-
-      $linenos .= (($lineno - ($this->start_line - 1)) % 5 === 0)?
-        $line_no_emph_tag0
-        : $line_no_plain_tag0;
-      $linenos .= $lineno . $line_no_tag1;
-
-      $num = $this->wrap_line($line, $this->wrap_length);
-
-      for ($i=1; $i<$num; $i++)  $linenos .= $wrap_line;
-
-      $lines .= ($lineno % 2 === 0)? $line_alt_tag0 : $line_tag0;
-      $lines .= $line . $line_tag1;
-
-      ++$lineno;
-
-    }
-    return self::template($this->numbered_template, array($linenos, $lines));
   }
 }
 
 
 class LuminousFormatterHTMLInline extends LuminousFormatterHTML {
-  protected $template = '<div class="luminous luminous_inline">
-  <div class="code_container" %s>%s</div>
-</div>';
 
   public function format($src) {
     $this->line_numbers = false;
     $this->height = 0;
+    $this->inline = true;
     return parent::format($src);
   }
 

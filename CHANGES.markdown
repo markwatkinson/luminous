@@ -1,6 +1,36 @@
 Luminous Changelog since 0.6.0
 ==============================
 
+##v0.7-dev (16/09/12):
+
+- Major changes to markup/CSS:
+  - luminous.css is now compiled from luminous.scss (SCSS)
+  - Markup has been minimised and modernised, 
+    it no longer contains tables - just a div wrapping a pre
+  - Line numbers are generated automatically in CSS
+  - CSS selectors favoured over superfluous classes, e.g. nth-child instead of
+    an alternating class, ".code > span" instead of a line class.
+  - Bundled fonts (dejavu) have been removed - we now reference Consolas, 
+    Deja Vu and fall back to plain old 'monospace'.
+  - Luminous elements have theme specific borders by default
+
+- Misc:
+  - Preliminary JavaScript API for manipulating Luminous elements
+  - Height unconstrained elements are now the default in the HTML formatter
+  - Filesystem cache now uses subdirectories; the cache items are
+    organised into directories using the first two digits of the
+    cache ID (a hex string). This makes things neater by reducing the
+    number of items in a single directory, and may improve performance 
+    slightly on some filesystems.
+    
+- Removed support for:
+  - Word wrapping in HTML - nobody used this anyway and it's incompatible with
+    the new markup. Furthermore there was no gaurantee that wrapped code would
+    actually be syntactically valid.
+
+- Language fixes:
+  - C#: added missing 'void' keyword, added a lot of types
+  
 ##v0.6.7-2 (10/6/12):
   - Fixed another problem with unnecessary scrollbars
 

@@ -1,6 +1,8 @@
 Luminous - a Syntax Highlighter for PHP
 =======================================
 
+[![Build Status](https://secure.travis-ci.org/markwatkinson/luminous.png)](http://travis-ci.org/markwatkinson/luminous)
+
 Luminous is an accurate and style-able syntax highlighter for PHP which 
 supports a bunch of common languages and output to HTML and LaTeX.
 
@@ -80,5 +82,4 @@ separate.
       projects, which is used only as test data. It is all GPL-compatible, but
       is distributed under its own license. This directory is only present in
       the git repository and is not part of any stable distribution archives.
-  - We also include jQuery and the vera-mono font family (client/font/). 
-    These are provided under their own licenses.
+  - We also include jQuery which is provided under its own license.

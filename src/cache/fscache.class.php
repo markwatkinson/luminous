@@ -1,13 +1,49 @@
 <?php
 /// @cond ALL
+
+/**
+ * File system cache driver
+ * @brief The FS cache driver handles storing the cache on the filesystem
+ *
+ * The general structure of the cache is as follows:
+ * @c /cache_dir/prefix/cache_id
+ *
+ * @c cache_dir is the root cache directory (normally luminous/cache),
+ * @c prefix is used to separate things out into multiple locations - we take
+ * the first two characters of the @c cache_id just to reduce the number of
+ * files in any one directory (and maybe on some filesystems this allows
+ * slightly faster lookups?).
+ * @c cache_id is the unique identifier of the input string (with its first
+ * two character missing, for @c prefix).
+ *
+ * This driver implements necessary functions for reading/writing the cache
+ * and performing maintenance.
+ *
+ */
 class LuminousFileSystemCache extends LuminousCache {
 
+  /// root cache directory
   private $dir = null;
+  
+  /// full path to the cached file (for convenience)
   private $path = null;
+
+  /// subdir within the cache - we factor out the first two
+  /// characters of the filename, this reduces the number of files in
+  /// any one folder.
+  private $subdir = null;
+
+  /// the base filename of the cached file
+  private $filename = null;
 
   public function __construct($id) {
     $this->dir = luminous::root() . '/cache/';
-    $this->path = rtrim($this->dir, '/') . '/' . $id;
+    $this->subdir = substr($id, 0, 2);
+    $this->filename = substr($id, 2);
+    
+    $this->path = rtrim($this->dir, '/') . '/' .
+      $this->subdir . '/' . $this->filename;
+
     parent::__construct($id);
   }
 
@@ -24,8 +60,9 @@ class LuminousFileSystemCache extends LuminousCache {
   }
 
   protected function _create() {
-    if (!@mkdir($this->dir, 0777, true) && !is_dir($this->dir)) {
-     $this->_log_error($this->dir, "%s does not exist, and cannot create.");
+    $target = $this->dir . '/' . $this->subdir;
+    if (!@mkdir($target, 0777, true) && !is_dir($target)) {
+     $this->_log_error($target, "%s does not exist, and cannot create.");
       return false;
     }
     return true;
@@ -53,6 +90,35 @@ class LuminousFileSystemCache extends LuminousCache {
     }
   }
 
+
+  /**
+   * Purges the contents of a directory recursively
+   */
+  private function _purge_recurse($dir) {
+    $base = $dir . '/';
+    $time = time();
+    if (substr($dir, 0, strlen($this->dir)) !== $this->dir) {
+      // uh oh, we somehow tried to escape from the cache directory
+      assert(0);
+      return;
+    }
+    foreach(scandir($dir) as $f) {
+      $fn = $base . $f;
+      
+      if ($f[0] === '.') continue;
+      
+      if (is_dir($fn)) {
+        $this->_purge_recurse($fn);
+      }
+      else {
+        $update = filemtime($fn);
+        if ($time - $update > $this->timeout) {
+          unlink($fn);
+        }
+      }
+    }
+  }
+
   protected function _purge() {
     if ($this->timeout <= 0) return;
     $purge_file = $this->dir . '/.purgedata';
@@ -74,12 +140,7 @@ class LuminousFileSystemCache extends LuminousCache {
         ftruncate($fh, 0);
         rewind($fh);
         fwrite($fh, $time);
-        foreach(scandir($this->dir) as $file) {
-          if ($file[0] === '.') continue;
-          $mtime = filemtime($this->dir . '/' . $file);
-          if ($time - $mtime > $this->timeout)
-            unlink($this->dir . '/' . $file);
-        }
+        $this->_purge_recurse($this->dir);
       }
       flock($fh, LOCK_UN);
       fclose($fh);

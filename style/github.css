@@ -18,11 +18,37 @@
  * along with Luminous.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
+ 
+ 
+.luminous {
+  color:black !important;
+  border-color: #ddd;
+}
 
-/** NOTE: Don't override the monospace font -- some fonts' height will gain an 
- * extra pixel or two when italicised. This skews the line numbering and makes
- * it come out of sync.
- */
+.luminous .highlight {
+  background-color:#FFFFCC;
+}
+
+/* line numbers */
+.luminous .numbers li:before {
+  background-color:#ECECEC !important;
+  color: #aaa !important;
+  border-right:1px solid #ddd !important;
+}
+.luminous .code {
+  background-color: #FFFFFF !important;
+}
+
+.luminous a.link, .luminous a.link:visited {
+  color:blue !important;
+}
+
+
+
+
+
+ 
+ 
 
 .luminous .character{color:#DD1144 !important;}
 
@@ -140,40 +166,3 @@
 }
 
 
-
-.luminous .line_number_bar
-{
-  background-color:#ECECEC !important;
-  color: #aaa !important;
-  border-right:1px solid #ddd !important;
-}
-.luminous .code
-{
-  background-color: #FFFFFF !important;
-}
-
-.luminous a.link, .luminous a.link:visited
-{
-  color:blue !important;
-}
-
-
-.luminous
-{
-  color:black !important;
-}
-
-
-
-.luminous .highlighted_line
-{
-  background-color:#FFFFCC;
-}
-
-.luminous .metabar_buttons_floating
-{
-  background-color: #C8C8C8 !important;
-  background-color:rgba(200, 200, 200, 0.50) !important;
-  border-color: #BEBEEF !important;
-  
-}

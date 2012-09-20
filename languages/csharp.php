@@ -1,5 +1,4 @@
 <?php
-require_once(dirname(__FILE__) . '/include/csharp_list.php');
 class LuminousCSharpScanner extends LuminousSimpleScanner {
 
   public function init() {
@@ -22,18 +21,24 @@ class LuminousCSharpScanner extends LuminousSimpleScanner {
       'delegate', 'do', 'event', 'explicit', 'extern', 'else', 'finally',
       'false', 'fixed', 'for', 'foreach', 'goto', 'if', 'implicit', 'in',
       'interface', 'internal', 'is', 'lock', 'new', 'null', 'namespace',
-      'object', 'operator', 'out', 'override', 'params', 'private',
+      'operator', 'out', 'override', 'params', 'private',
       'protected', 'public', 'readonly', 'ref', 'return', 'struct', 'switch',
       'sealed', 'sizeof', 'stackalloc', 'static', 'this', 'throw', 'true',
       'try', 'typeof', 'unchecked', 'unsafe', 'using', 'var', 'virtual',
       'volatile', 'while', 'yield'));
 
+    require(dirname(__FILE__) . '/include/csharp_list.php');
+
     $this->add_identifier_mapping('TYPE', array_merge(array(
       // primatives
       'bool', 'byte', 'char',
       'const', 'double', 'decimal', 'enum', 'float', 'int', 'long',
-      'sbyte', 'short', 'string', 'uint', 'ulong', 'ushort'),
-      $GLOBALS['luminous_csharp_type_list']));
+      'object',
+      'sbyte', 'short', 'string', 'uint', 'ulong', 'ushort',
+      'void'
+      ),
+      $luminous_csharp_type_list)
+    );
   }
 
   static function guess_language($src, $info) {

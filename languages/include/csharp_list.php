@@ -1,5 +1,4 @@
 <?php
-global $luminous_csharp_type_list;
 $luminous_csharp_type_list = array(
 // system
 'ArgIterator',
@@ -189,6 +188,37 @@ $luminous_csharp_type_list = array(
 'SortedList',
 'Stack',
 'StructuralComparisons',
+
+// System.Collections.Generic
+'Comparer',
+'Dictionary',
+'EqualityComparer',
+'HashSet',
+'ICollection',
+'IComparer',
+'IDictionary',
+'IEnumerable',
+'IEnumerator',
+'IEqualityComparer',
+'IList',
+'IReadOnlyCollection',
+'IReadOnlyDictionary',
+'IReadOnlyList',
+'ISet',
+'KeyedByTypeCollection',
+'KeyNotFoundException',
+'KeyValuePair',
+'LinkedList',
+'LinkedListNode',
+'List',
+'Queue',
+'SortedDictionary',
+'SortedList',
+'SortedSet',
+'Stack',
+'SynchronizedCollection',
+'SynchronizedKeyedCollection',
+'SynchronizedReadOnlyCollection',
 
 // system.io
 'BinaryReader',

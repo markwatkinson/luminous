@@ -49,7 +49,7 @@
                         <KEYWORD>return</KEYWORD> proxy<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>private</KEYWORD> void MarkChanged()
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> MarkChanged()
                 {
                         smugmug_proxy <OPERATOR>=</OPERATOR> <KEYWORD>null</KEYWORD><OPERATOR>;</OPERATOR>
                         connected <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
@@ -99,7 +99,7 @@
                 <KEYWORD>private</KEYWORD> <TYPE>const</TYPE> <TYPE>string</TYPE> keyring_item_name <OPERATOR>=</OPERATOR> <STRING>"SmugMug Account"</STRING><OPERATOR>;</OPERATOR>
                 <TYPE>ArrayList</TYPE> accounts<OPERATOR>;</OPERATOR>
 
-                <KEYWORD>public</KEYWORD> <KEYWORD>delegate</KEYWORD> void AccountListChangedHandler (SmugMugAccountManager manager<OPERATOR>,</OPERATOR> SmugMugAccount changed_account)<OPERATOR>;</OPERATOR>
+                <KEYWORD>public</KEYWORD> <KEYWORD>delegate</KEYWORD> <TYPE>void</TYPE> AccountListChangedHandler (SmugMugAccountManager manager<OPERATOR>,</OPERATOR> SmugMugAccount changed_account)<OPERATOR>;</OPERATOR>
                 <KEYWORD>public</KEYWORD> <KEYWORD>event</KEYWORD> AccountListChangedHandler AccountListChanged<OPERATOR>;</OPERATOR>
 
                 <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> SmugMugAccountManager GetInstance ()
@@ -117,12 +117,12 @@
                         ReadAccounts ()<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>public</KEYWORD> void MarkChanged ()
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> MarkChanged ()
                 {
                         MarkChanged (<KEYWORD>true</KEYWORD><OPERATOR>,</OPERATOR> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>public</KEYWORD> void MarkChanged (<TYPE>bool</TYPE> write<OPERATOR>,</OPERATOR> SmugMugAccount changed_account)
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> MarkChanged (<TYPE>bool</TYPE> write<OPERATOR>,</OPERATOR> SmugMugAccount changed_account)
                 {
                         <KEYWORD>if</KEYWORD> (write)
                                 WriteAccounts ()<OPERATOR>;</OPERATOR>
@@ -136,18 +136,18 @@
                         <KEYWORD>return</KEYWORD> accounts<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>public</KEYWORD> void AddAccount (SmugMugAccount account)
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> AddAccount (SmugMugAccount account)
                 {
                         AddAccount (account<OPERATOR>,</OPERATOR> <KEYWORD>true</KEYWORD>)<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>public</KEYWORD> void AddAccount (SmugMugAccount account<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE> write)
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> AddAccount (SmugMugAccount account<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE> write)
                 {
                         <OBJ>accounts</OBJ><OPERATOR>.</OPERATOR><OO>Add</OO> (account)<OPERATOR>;</OPERATOR>
                         MarkChanged (write<OPERATOR>,</OPERATOR> account)<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>public</KEYWORD> void RemoveAccount (SmugMugAccount account)
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> RemoveAccount (SmugMugAccount account)
                 {
                         <TYPE>string</TYPE> keyring <OPERATOR>=</OPERATOR> <OBJ>Ring</OBJ><OPERATOR>.</OPERATOR><OO>GetDefaultKeyring</OO>()<OPERATOR>;</OPERATOR>
                         <TYPE>Hashtable</TYPE> request_attributes <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <TYPE>Hashtable</TYPE>()<OPERATOR>;</OPERATOR>
@@ -164,7 +164,7 @@
                         MarkChanged ()<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>public</KEYWORD> void WriteAccounts ()
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> WriteAccounts ()
                 {
                         <TYPE>string</TYPE> keyring <OPERATOR>=</OPERATOR> <OBJ>Ring</OBJ><OPERATOR>.</OPERATOR><OO>GetDefaultKeyring</OO>()<OPERATOR>;</OPERATOR>
                         <KEYWORD>foreach</KEYWORD> (SmugMugAccount account <KEYWORD>in</KEYWORD> accounts) {
@@ -176,7 +176,7 @@
                         }
                 }
 
-                <KEYWORD>private</KEYWORD> void ReadAccounts ()
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> ReadAccounts ()
                 {
 
                         <TYPE>Hashtable</TYPE> request_attributes <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <TYPE>Hashtable</TYPE>()<OPERATOR>;</OPERATOR>
@@ -240,7 +240,7 @@
                         HandleChanged (<KEYWORD>null</KEYWORD><OPERATOR>,</OPERATOR> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>private</KEYWORD> void HandleChanged (<KEYWORD>object</KEYWORD> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> HandleChanged (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
                 {
                         password <OPERATOR>=</OPERATOR> <OBJ>password_entry</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO><OPERATOR>;</OPERATOR>
                         username <OPERATOR>=</OPERATOR> <OBJ>username_entry</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO><OPERATOR>;</OPERATOR>
@@ -249,7 +249,7 @@
                 }
 
                 [<OBJ>GLib</OBJ><OPERATOR>.</OPERATOR><OO>ConnectBefore</OO>]
-                <KEYWORD>protected</KEYWORD> void HandleAddResponse (<KEYWORD>object</KEYWORD> sender<OPERATOR>,</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseArgs</OO> args)
+                <KEYWORD>protected</KEYWORD> <TYPE>void</TYPE> HandleAddResponse (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseArgs</OO> args)
                 {
                         <KEYWORD>if</KEYWORD> (<OBJ>args</OBJ><OPERATOR>.</OPERATOR><OO>ResponseId</OO> <OPERATOR>==</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseType</OO><OPERATOR>.</OPERATOR><OO>Ok</OO>) {
                                 SmugMugAccount account <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> SmugMugAccount (username<OPERATOR>,</OPERATOR> password)<OPERATOR>;</OPERATOR>
@@ -258,7 +258,7 @@
                         <OBJ>Dialog</OBJ><OPERATOR>.</OPERATOR><OO>Destroy</OO> ()<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>protected</KEYWORD> void HandleEditResponse (<KEYWORD>object</KEYWORD> sender<OPERATOR>,</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseArgs</OO> args)
+                <KEYWORD>protected</KEYWORD> <TYPE>void</TYPE> HandleEditResponse (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseArgs</OO> args)
                 {
                         <KEYWORD>if</KEYWORD> (<OBJ>args</OBJ><OPERATOR>.</OPERATOR><OO>ResponseId</OO> <OPERATOR>==</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseType</OO><OPERATOR>.</OPERATOR><OO>Ok</OO>) {
                                 <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>Username</OO> <OPERATOR>=</OPERATOR> username<OPERATOR>;</OPERATOR>
@@ -324,7 +324,7 @@
                         HandleChanged (<KEYWORD>null</KEYWORD><OPERATOR>,</OPERATOR> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>private</KEYWORD> void HandleChanged (<KEYWORD>object</KEYWORD> sender<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> args)
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> HandleChanged (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> args)
                 {
                         title <OPERATOR>=</OPERATOR> <OBJ>title_entry</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO><OPERATOR>;</OPERATOR>
                         public_album <OPERATOR>=</OPERATOR> <OBJ>public_check</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO><OPERATOR>;</OPERATOR>
@@ -336,7 +336,7 @@
                 }
 
                 [<OBJ>GLib</OBJ><OPERATOR>.</OPERATOR><OO>ConnectBefore</OO>]
-                <KEYWORD>protected</KEYWORD> void HandleAddResponse (<KEYWORD>object</KEYWORD> sender<OPERATOR>,</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseArgs</OO> args)
+                <KEYWORD>protected</KEYWORD> <TYPE>void</TYPE> HandleAddResponse (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseArgs</OO> args)
                 {
                         <KEYWORD>if</KEYWORD> (<OBJ>args</OBJ><OPERATOR>.</OPERATOR><OO>ResponseId</OO> <OPERATOR>==</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseType</OO><OPERATOR>.</OPERATOR><OO>Ok</OO>) {
                                 <OBJ>smugmug</OBJ><OPERATOR>.</OPERATOR><OO>CreateAlbum</OO> (title<OPERATOR>,</OPERATOR> CurrentCategoryId<OPERATOR>,</OPERATOR> <OBJ>public_check</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO>)<OPERATOR>;</OPERATOR>
@@ -345,13 +345,13 @@
                         <OBJ>Dialog</OBJ><OPERATOR>.</OPERATOR><OO>Destroy</OO> ()<OPERATOR>;</OPERATOR>
                 }
 
-                void CategoryDataFunc (CellLayout layout<OPERATOR>,</OPERATOR> CellRenderer renderer<OPERATOR>,</OPERATOR> TreeModel model<OPERATOR>,</OPERATOR> TreeIter iter)
+                <TYPE>void</TYPE> CategoryDataFunc (CellLayout layout<OPERATOR>,</OPERATOR> CellRenderer renderer<OPERATOR>,</OPERATOR> TreeModel model<OPERATOR>,</OPERATOR> TreeIter iter)
                 {
                         <TYPE>string</TYPE> name <OPERATOR>=</OPERATOR> (<TYPE>string</TYPE>)<OBJ>model</OBJ><OPERATOR>.</OPERATOR><OO>GetValue</OO> (iter<OPERATOR>,</OPERATOR> <NUMERIC>1</NUMERIC>)<OPERATOR>;</OPERATOR>
                         (renderer <KEYWORD>as</KEYWORD> CellRendererText)<OPERATOR>.</OPERATOR><OO>Text</OO> <OPERATOR>=</OPERATOR> name<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>protected</KEYWORD> void PopulateCategoryCombo ()
+                <KEYWORD>protected</KEYWORD> <TYPE>void</TYPE> PopulateCategoryCombo ()
                 {
                         <OBJ>SmugMugNet</OBJ><OPERATOR>.</OPERATOR><OO>Category</OO>[] categories <OPERATOR>=</OPERATOR> <OBJ>smugmug</OBJ><OPERATOR>.</OPERATOR><OO>GetCategories</OO> ()<OPERATOR>;</OPERATOR>
 
@@ -466,7 +466,7 @@
                 <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Threading</OO><OPERATOR>.</OPERATOR><OO>Thread</OO> command_thread<OPERATOR>;</OPERATOR>
 
 
-                <KEYWORD>private</KEYWORD> void HandleResponse (<KEYWORD>object</KEYWORD> sender<OPERATOR>,</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseArgs</OO> args)
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> HandleResponse (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseArgs</OO> args)
                 {
                         <KEYWORD>if</KEYWORD> (<OBJ>args</OBJ><OPERATOR>.</OPERATOR><OO>ResponseId</OO> <OPERATOR>!=</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseType</OO><OPERATOR>.</OPERATOR><OO>Ok</OO>) {
                                 <OBJ>Dialog</OBJ><OPERATOR>.</OPERATOR><OO>Destroy</OO> ()<OPERATOR>;</OPERATOR>
@@ -504,12 +504,12 @@
                         }
                 }
 
-                <KEYWORD>public</KEYWORD> void HandleSizeActive (<KEYWORD>object</KEYWORD> sender<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> args)
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> HandleSizeActive (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> args)
                 {
                         <OBJ>size_spin</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <OBJ>scale_check</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO><OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>private</KEYWORD> void Upload ()
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> Upload ()
                 {
                         sent_bytes <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
                         approx_size <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
@@ -583,12 +583,12 @@
                         }
                 }
 
-                <KEYWORD>private</KEYWORD> void HandleScaleCheckToggled (<KEYWORD>object</KEYWORD> o<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> e)
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> HandleScaleCheckToggled (<TYPE>object</TYPE> o<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> e)
                 {
                         <OBJ>rotate_check</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <OPERATOR>!</OPERATOR><OBJ>scale_check</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO><OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>private</KEYWORD> void PopulateSmugMugOptionMenu (SmugMugAccountManager manager<OPERATOR>,</OPERATOR> SmugMugAccount changed_account)
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> PopulateSmugMugOptionMenu (SmugMugAccountManager manager<OPERATOR>,</OPERATOR> SmugMugAccount changed_account)
                 {
                         <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Menu</OO> menu <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Menu</OO> ()<OPERATOR>;</OPERATOR>
                         <OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>account</OO> <OPERATOR>=</OPERATOR> changed_account<OPERATOR>;</OPERATOR>
@@ -619,17 +619,17 @@
                         <OBJ>gallery_optionmenu</OBJ><OPERATOR>.</OPERATOR><OO>SetHistory</OO> ((<TYPE>uint</TYPE>)pos)<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>private</KEYWORD> void Connect ()
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> Connect ()
                 {
                         Connect (<KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>private</KEYWORD> void Connect (SmugMugAccount selected)
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> Connect (SmugMugAccount selected)
                 {
                         Connect (selected<OPERATOR>,</OPERATOR> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>private</KEYWORD> void Connect (SmugMugAccount selected<OPERATOR>,</OPERATOR> <TYPE>string</TYPE> text)
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> Connect (SmugMugAccount selected<OPERATOR>,</OPERATOR> <TYPE>string</TYPE> text)
                 {
                         <KEYWORD>try</KEYWORD> {
                                 <KEYWORD>if</KEYWORD> (<OBJ>accounts</OBJ><OPERATOR>.</OPERATOR><OO>Count</OO> <OPERATOR>!=</OPERATOR> <NUMERIC>0</NUMERIC> <OPERATOR>&amp;&amp;</OPERATOR> connect) {
@@ -659,12 +659,12 @@
                         }
                 }
 
-                <KEYWORD>private</KEYWORD> void HandleAccountSelected (<KEYWORD>object</KEYWORD> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> HandleAccountSelected (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
                 {
                         Connect ()<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>public</KEYWORD> void HandleAlbumAdded (<TYPE>string</TYPE> title) {
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> HandleAlbumAdded (<TYPE>string</TYPE> title) {
                         SmugMugAccount account <OPERATOR>=</OPERATOR> (SmugMugAccount) accounts [<OBJ>gallery_optionmenu</OBJ><OPERATOR>.</OPERATOR><OO>History</OO>]<OPERATOR>;</OPERATOR>
                         PopulateAlbumOptionMenu (<OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>SmugMug</OO>)<OPERATOR>;</OPERATOR>
 
@@ -677,7 +677,7 @@
                         }
                 }
 
-                <KEYWORD>private</KEYWORD> void PopulateAlbumOptionMenu (SmugMugApi smugmug)
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> PopulateAlbumOptionMenu (SmugMugApi smugmug)
                 {
                         Album[] albums <OPERATOR>=</OPERATOR> <KEYWORD>null</KEYWORD><OPERATOR>;</OPERATOR>
                         <KEYWORD>if</KEYWORD> (smugmug <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>) {
@@ -726,17 +726,17 @@
                         <OBJ>album_optionmenu</OBJ><OPERATOR>.</OPERATOR><OO>Menu</OO> <OPERATOR>=</OPERATOR> menu<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>public</KEYWORD> void HandleAddGallery (<KEYWORD>object</KEYWORD> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> HandleAddGallery (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
                 {
                         gallery_add <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> SmugMugAccountDialog (<OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>Dialog</OO>)<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>public</KEYWORD> void HandleEditGallery (<KEYWORD>object</KEYWORD> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> HandleEditGallery (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
                 {
                         gallery_add <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> SmugMugAccountDialog (<OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>Dialog</OO><OPERATOR>,</OPERATOR> account)<OPERATOR>;</OPERATOR>
                 }
 
-                <KEYWORD>public</KEYWORD> void HandleAddAlbum (<KEYWORD>object</KEYWORD> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> HandleAddAlbum (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
                 {
                         <KEYWORD>if</KEYWORD> (account <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD>)
                                 <KEYWORD>throw</KEYWORD> <KEYWORD>new</KEYWORD> <TYPE>Exception</TYPE> (<OBJ>Catalog</OBJ><OPERATOR>.</OPERATOR><OO>GetString</OO> (<STRING>"No account selected"</STRING>))<OPERATOR>;</OPERATOR>
@@ -744,9 +744,9 @@
                         album_add <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> SmugMugAddAlbum (<KEYWORD>this</KEYWORD><OPERATOR>,</OPERATOR> <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>SmugMug</OO>)<OPERATOR>;</OPERATOR>
                 }
 
-                void LoadPreference (<TYPE>string</TYPE> key)
+                <TYPE>void</TYPE> LoadPreference (<TYPE>string</TYPE> key)
                 {
-                        <KEYWORD>object</KEYWORD> val <OPERATOR>=</OPERATOR> <OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>Get</OO> (key)<OPERATOR>;</OPERATOR>
+                        <TYPE>object</TYPE> val <OPERATOR>=</OPERATOR> <OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>Get</OO> (key)<OPERATOR>;</OPERATOR>
 
                         <KEYWORD>if</KEYWORD> (val <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD>)
                                 <KEYWORD>return</KEYWORD><OPERATOR>;</OPERATOR>
@@ -777,7 +777,7 @@
                         }
                 }
 
-                <KEYWORD>protected</KEYWORD> void HandleCloseEvent (<KEYWORD>object</KEYWORD> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
+                <KEYWORD>protected</KEYWORD> <TYPE>void</TYPE> HandleCloseEvent (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
                 {
                         <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>SmugMug</OO><OPERATOR>.</OPERATOR><OO>Logout</OO> ()<OPERATOR>;</OPERATOR>
                 }

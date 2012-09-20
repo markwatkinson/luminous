@@ -24,6 +24,9 @@
  * Based on the 'Birds of Paradise' theme 
  * http://joebergantine.com/werkstatt/birds-of-paradise 
  */
+ 
+ 
+ .luminous { border-color: #666; }
 
 .luminous .character{color:#DCA3A3 !important;}
 .luminous .comment{color:#8F6843 !important; font-style:italic !important;}
@@ -99,14 +102,10 @@ font-weight:bold !important;}
   color:#FFC0FF !important;
 }
 
-.luminous .line_number_bar
-
-{
+/* line numbers */
+.luminous .numbers li:before {
   background-color:#3E2C29 !important;
   border-right:1px solid #F5AEA3 !important;
-}
-.luminous .line_number
-{
   color: #CA7A2A !important;
 }
 
@@ -117,20 +116,14 @@ font-weight:bold !important;}
   color:#E6E1C4 !important;
 }
 
-.luminous .metabar_buttons_floating
-{
-  background-color:#808080 !important;  
-  background-color:rgba(255, 220, 168, 0.50) !important;    
-}
 
 
-
-.luminous .line_alt
+.luminous .code li:nth-child(2n)
 {
   background-color: #3E2C29 !important;
 }
 
-.luminous .highlighted_line
+.luminous .code li.highlight
 {
   background-color:#1F1611 !important;
 }

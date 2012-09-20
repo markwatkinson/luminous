@@ -25,7 +25,7 @@
  * Colours largely taken from:
  https://spreadsheets.google.com/ccc?key=pKLGtBDTfcpZoRtJFr_eeAg&hl=en#gid=0
  */
-
+.luminous { border-color: #555; }
 .luminous .character{color:#DCA3A3 !important;}
 .luminous .comment{color:#7F9F7F !important;}
 .luminous .comment_note{color:#DFDFDF !important; 
@@ -99,38 +99,24 @@
   color:#FFC0FF !important;
 }
 
-.luminous .line_number_bar
-
-{
+/* line numbers */
+.luminous .numbers li:before {
   background-color:#444444 !important;
   border-right:1px solid #5F5F5F !important;
-}
-.luminous .line_number
-{
   color: #A8A8A8 !important;
 }
 
 
-.luminous .code
-{
+.luminous .code {
   background-color:#3a3a3a !important;
   color:#DCDCCC !important;
 }
 
-.luminous .metabar_buttons_floating
-{
-  background-color:#D6CFFF !important;  
-  background-color:rgba(214, 207, 255, 0.50) !important;    
-}
-
-
-
-.luminous .line_alt
-{
+.luminous .code li:nth-child(2n) {
   background-color: #404040 !important;
 }
 
-.luminous .highlighted_line
+.luminous .code li.highlight
 {
   background-color:#6D6D6D !important;
 }

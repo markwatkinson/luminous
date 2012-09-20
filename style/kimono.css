@@ -6,16 +6,22 @@
  * Some colours stolen from http://www.eclipsecolorthemes.org/?view=theme&id=52
  */
 
-.luminous , .luminous .line_number {
+.luminous  {
   color : #F8F8F2 !important;
+  border-color: #555;
 }
-.luminous .code, .luminous .line_number_bar {
+.luminous .code{
   background-color: #272822 !important;
 }
-.luminous .line_number_bar {
+/* line numbers */
+.luminous .numbers li:before{
   border-right: 1px solid #d0d0d0 !important;
+  background-color: #272822 !important;
+  color : #F8F8F2 !important;
+  
+  
 }
-.luminous .highlighted_line {
+.luminous .highlight {
   background-color: #3E3D32 !important;
 }
 

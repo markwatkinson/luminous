@@ -19,10 +19,6 @@
  * 
  */
 
-/** NOTE: Don't override the monospace font -- some fonts' height will gain an 
- * extra pixel or two when italicised. This skews the line numbering and makes
- * it come out of sync.
- */
 
 .luminous .character{color:#FF69B4 !important;}
 
@@ -149,12 +145,6 @@
 }
 
 
-
-.luminous .line_number_bar
-{
-  background-color:#e0e0e0 !important;
-  border-right:1px solid black !important;
-}
 .luminous .code
 {
   background-color: #FCFCFC !important;
@@ -165,31 +155,26 @@
   color:blue !important;
 }
 
-.luminous .line_number
-{
+/* line numbers */
+.luminous .numbers li:before{
   color:black !important;
+ background-color:#e0e0e0 !important;
+  border-right:1px solid black !important;  
 }
 .luminous
 {
   color:black !important;
+  border-color: #999;
 }
 
 
 
-.luminous .line_alt
+.luminous .code li:nth-child(2n)
 {
   background-color:#F3F3F3;
 }
 
-.luminous .highlighted_line
+.luminous .code li.highlight
 {
   background-color:#DFDEF6;
-}
-
-.luminous .metabar_buttons_floating
-{
-  background-color: #C8C8C8 !important;
-  background-color:rgba(200, 200, 200, 0.50) !important;
-  border-color: #BEBEEF !important;
-  
 }

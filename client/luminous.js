@@ -17,46 +17,170 @@
  * You should have received a copy of the GNU General Public License
  * along with Luminous.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-function luminous($) {
-  // we bind a couple of things:
-  // 1) A single click event on the line numbers to highlight a line
-  // 2) a double click event on the line numbers to hide the line number bar
-  $('.luminous').each(function() {
-    $l = $(this);
-    if ($l.data('luminoused')) return;
-    $l.data('luminoused', true);
-    $lines = $('span.line', $l);
+ 
+ 
+ 
+ /**
+   * This simply adds some extras to Luminous elements via a jQUery
+   * plugin. The extras are currently a toggleable line-highlighting
+   * on click
+   */
+ 
+(function($) {
+    "use strict";
     
-    var click_timer = null;
-    // we bind both a double and single click event. We distinguish between
-    // these with a timer
-    // this is the single-click highlight line event
-    $('.line_number', this).each(function(i) {
-      if (i >= $lines.length) return false;
-      $(this).click(function() {
-        clearTimeout(click_timer);
-        click_timer = setTimeout(function() {
-          $($lines.get(i)).toggleClass('highlighted_line');
-        }, 150); // is 150ms okay for double click?
-      });
+    var LINE_SELECTOR = 'pre > ol > li';
+    
+    if (typeof $ === 'undefined') { return; }
+    
+    /****************************************************************
+     * UTILITY FUNCTIONS *
+     ****************************************************************/
+    
+    // determines if the given element is a line element of luminous
+    function isLine($line) {
+        return $line.is(LINE_SELECTOR) && $line.parents('.luminous').length > 0;
+    }
+    
+    function highlightLine($line) {
+        $line.toggleClass('highlight');
+    }
+    
+    function highlightLineByIndex($luminous, index) {
+        var $line = $luminous.find(LINE_SELECTOR).eq(index);
+        highlightLine($line);
+    }
+    
+    function highlightLineByNumber($luminous, number) {
+        // the line's index must take into account the initial line number
+        var offset = parseInt($luminous.find('>pre').data('startline'), 10);
+        if (isNaN(offset)) offset = 0;
+        highlightLineByIndex($luminous, number - offset);
+    }
+    
+    function toggleHighlightAndPlain($luminous, forceState) {
+        var data = $luminous.data('luminous'),
+            state = data.code.active,
+            $elem = $luminous.find('>pre'),
+            toSetCode, toSetState;
+        
+        if (forceState === 'plain') state = 'highlighted';
+        else if (forceState === 'highlighted') state = 'plain';
+        
+        toSetCode = (state === 'plain')? data.code.highlighted : data.code.plain;
+        toSetState = (state === 'plain')? 'highlighted' : 'plain';
+        
+        $elem.html(toSetCode);
+    }
+    
+    
+    function toggleLineNumbers($luminous, forceState) {
+        var className = 'line-no-hidden', 
+            $element = $luminous.find('>.code'),
+            hasNumbers = $element.hasClass(className),
+            show = !hasNumbers;
+
+        if (forceState === true || forceState === false) show = forceState;
+        if (show) {
+            $element.removeClass(className);
+        } else {
+            $element.addClass(className);
+        }
+    }
+    
+    // binds the event handlers to a luminous element
+    function bindLuminousExtras($element) {
+        var highlightLinesData, highlightLines, data = {};
+        if (!$element.is('.luminous')) { return false; }
+        else if ($element.is('.bound')) { return true; }
+        
+        $element.addClass('bound');
+        
+        $element.click(function(ev) {
+            var $t = $(ev.target);
+            var $lines = $t.parents().add($t).
+                    filter(function() { return isLine($(this)); }),
+                 $line;
+            if ($lines.length > 0) {
+                $line = $lines.eq(0);
+                highlightLine($line);
+            }
+        });
+        
+        // highlight all the initial lines
+        highlightLinesData = $element.find('>pre').data('highlightlines') || "";
+        highlightLines = highlightLinesData.split(",");
+        $.each(highlightLines, function(i, element) {
+             var lineNo = parseInt(element, 10);
+             if (!isNaN(lineNo)) {
+                 highlightLineByNumber($element, lineNo);
+            }
+        });
+
+        data.code = {};
+        data.code.highlighted = $element.find('>pre').html();
+        
+        data.code.plain = '';
+        $element.find('pre > ul > li').each(function(i, e) {
+            var line = $(e).text();
+            line = line
+                    .replace(/&/g, '&amp')
+                    .replace(/>/g, '&gt;')
+                    .replace(/</g, '&lt;');
+        
+            data.code.plain += '<span>' + line + '</span>';
+        });
+        data.code.active = 'highlighted';
+        
+        $element.data('luminous', data);
+        
+    }
+    
+    
+    
+    /****************************************************************
+     * JQUERY PLUGIN *
+     ***************************************************************/
+
+
+    $.fn.luminous = function(optionsOrCommand /* variadic */) {
+    
+        var args = Array.prototype.slice.call(arguments);
+        
+        return $(this).each(function() {
+            var $luminous = $(this);
+            
+            // no instructions - bind everything 
+            if (!optionsOrCommand) {
+                bindLuminousExtras($luminous);
+                return;
+            }
+            
+            // $('.luminous').luminous('highlightLine', [2, 3]);
+            if (optionsOrCommand === 'highlightLine') {
+                var lineNumbers = args[1];
+                if (!$.isArray(lineNumbers)) 
+                    lineNumbers = [lineNumbers];
+                
+                $.each(lineNumbers, function(index, el) {
+                    highlightLineByNumber($luminous, el);
+                });
+                
+                return;
+            }
+            else if (optionsOrCommand === 'show') {
+                // args[1] should be 'highlighted' or 'plain'
+                toggleHighlightAndPlain($luminous, args[1]);
+            }
+            else if (optionsOrCommand === 'showLineNumbers') {
+                toggleLineNumbers($luminous, args[1]);
+            }
+            
+        });
+    };
+
+    $(document).ready(function() {
+        $('.luminous').luminous();
     });
-    // ... and the double-click show/hide line numbers event
-    var line_nos_expanded = true;
-    $('td.line_number_bar', $l).dblclick(function() {
-      clearTimeout(click_timer);
-      if (line_nos_expanded) $(this).css({'overflow':'hidden', 
-        'max-width':'6px'});
-      else $(this).css('max-width', 'none');
-      line_nos_expanded = !line_nos_expanded;
-    });
-
-  });
-}
-
-if (typeof jQuery !== 'undefined') {
-  jQuery(document).ready(function() {
-    luminous(jQuery);
-  });
-}
-
+  
+}(jQuery));
