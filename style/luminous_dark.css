@@ -1,22 +1,22 @@
 /*
  * Copyright 2010 Mark Watkinson
- * 
+ *
  * This file is part of Luminous.
- * 
+ *
  * Luminous is free software: you can redistribute it and/or
  * modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Luminous is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Luminous.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  */
 
 .luminous { border-color: #444; }
@@ -26,15 +26,15 @@
 .luminous .comment{color:gray !important; font-style:italic !important;}
 
 /* NOTE: TODO: etc. */
-.luminous .comment_note{background-color:#E0FE37 !important; 
-color:black !important; 
+.luminous .comment_note{background-color:#E0FE37 !important;
+color:black !important;
 font-style:normal !important;}
 .luminous .constant{color:#0073AD !important; font-weight:bold !important;}
-.luminous .delimiter{ font-weight:bold !important;} 
+.luminous .delimiter{ font-weight:bold !important;}
 .luminous .esc{color:#478CA3 !important;}
 .luminous .function{color:#99D1FF !important;}
 .luminous .heredoc{color:#FF6767 !important;}
-.luminous .htmltag{font-weight:bold !important; color:#66FFCC !important;}  
+.luminous .htmltag{font-weight:bold !important; color:#66FFCC !important;}
 .luminous .keyword{font-weight:bold !important; color:#00FF00 !important;}
 .luminous .numeric {color:#B1B1FF !important;}
 .luminous .operator{color:#68FF68 !important;}
@@ -111,7 +111,10 @@ font-style:normal !important;}
   background-color:#404040;
 }
 
-
+.luminous .code .highlight:nth-child(2n)
+{
+  background-color:#454545;
+}
 
 /* this stuff has to come after the other rules because it will probably
  * override some of them
