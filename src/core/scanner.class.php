@@ -86,14 +86,8 @@ class Scanner {
    * @return The rest of the string, which has not yet been consumed
    */
   function rest() {
-    static $pos = -1;
-    static $rest = null;
-    if ($pos !== $this->index) {
-      $pos = $this->index;
-      $rest = substr($this->src, $pos);
-      // this returns false sometimes, I think when in the eos position
-      if ($rest === false) $rest = '';
-    }
+    $rest = substr($this->src, $this->index);
+    if ($rest === false) $rest = '';
     return $rest;
   }
   

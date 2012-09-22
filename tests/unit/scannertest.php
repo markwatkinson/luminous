@@ -241,6 +241,12 @@ $s->pos_shift(1);
 $out = $s->get_next_named($rules);
 assert($out === array('digit', 2, array('23')));
 
-
+// rest() had a problem being independent on two scanners
+$s2 = new Scanner('123');
+$s3 = new Scanner('456');
+assert($s2->rest() === '123');
+assert($s3->rest() === '456');
+assert($s2->rest() === $s2->string());
+assert($s3->rest() === $s3->string());
 
 
