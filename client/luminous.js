@@ -79,22 +79,32 @@
     
     
     function toggleLineNumbers($luminous, forceState) {
-        var className = 'line-no-hidden', 
-            $element = $luminous.find('.code'),
-            hasNumbers = $element.hasClass(className),
-            show = !hasNumbers;
-
-        if (forceState === true || forceState === false) show = forceState;
-        if (show) {
-            $element.removeClass(className);
+        var data = $luminous.data('luminous'),
+            show = (typeof forceState !== 'undefined')? forceState : 
+                !data.lineNumbers.visible;
+        
+        data.lineNumbers.visible = show;
+        
+        
+        var $numberContainer = $luminous.find('.line-numbers'),
+            $control = $luminous.find('.line-number-control');
+        
+        if (!show) {
+            $numberContainer.addClass('collapsed');
+            $control.addClass('show-line-numbers');
         } else {
-            $element.addClass(className);
+            $numberContainer.removeClass('collapsed');
+            $control.removeClass('show-line-numbers');
         }
+        $luminous.data('luminous', data);
     }
     
     // binds the event handlers to a luminous element
     function bindLuminousExtras($element) {
-        var highlightLinesData, highlightLines, data = {};
+        var highlightLinesData, highlightLines, data = {},
+            hasLineNumbers = $element.find('td .line-numbers').length > 0,
+            schedule = [];
+
         if (!$element.is('.luminous')) { return false; }
         else if ($element.is('.bound')) { return true; }
         
@@ -105,13 +115,15 @@
             var $t = $(ev.target);
             var $lines = $t.parents().add($t).
                     filter(function() { return isLine($(this)); }),
-                 $line;
+                 $line
+                 ;
+
             if ($lines.length > 0) {
                 $line = $lines.eq(0);
                 highlightLine($line);
             }
         });
-        // highlight lines on clicking the line number
+        // highlight lines on clicking the line number        
         $element.find('td .line-numbers').click(function(ev) {
             var $t = $(ev.target),
                  index;
@@ -120,6 +132,40 @@
                 highlightLineByIndex($element, index);
             }
         });
+        
+        data.lineNumbers = {visible: false};
+        
+        if (hasLineNumbers) {
+            var $control, controlHeight;
+            
+            data.lineNumbers.visible = true;
+            data.lineNumbers.setControlPosition = function() {
+                var scrollOffset = $element.scrollTop(),
+                    scrollHeight = $element.height();
+                $control.css('top', scrollOffset + (scrollHeight/2) - (controlHeight/2) + 'px');
+            }
+            
+            $control = $('<a class="line-number-control"></a>');
+            $control.click(function() {
+                $element.luminous('showLineNumbers');
+            });
+            
+            $control.appendTo($element.find('.line-numbers-wrapper'));
+            $control.show();
+            controlHeight = $control.outerHeight();
+            $control.hide();
+            $element.find('.line-numbers-wrapper').hover(function() {
+                $control.stop(true, true).fadeIn('fast');
+            }, function() {
+                $control.stop(true, true).fadeOut('fast');
+            });
+                       
+            data.lineNumbers.setControlPosition();
+            $element.scroll(data.lineNumbers.setControlPosition);
+            
+            
+            schedule.push(function() { $element.luminous('showLineNumbers', true); });
+        }
         
         // highlight all the initial lines
         highlightLinesData = $element.find('.code').data('highlightlines') || "";
@@ -147,6 +193,10 @@
         data.code.active = 'highlighted';
         
         $element.data('luminous', data);
+        
+        $.each(schedule, function(i, f) {
+            f();
+        });
         
     }
     

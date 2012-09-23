@@ -56,7 +56,8 @@
     .luminous table td {
       padding: 0;
       margin: 0;
-      vertical-align: top; }
+      vertical-align: top;
+      position: relative; }
     .luminous table .code > span {
       padding: 0 0 0 1em;
       display: block;
@@ -75,6 +76,9 @@
       -ms-transition-property: background-color;
       -ms-transition-duration: 0.5s;
       -ms-transition-timing-function: ease-in; }
+    .luminous table .line-numbers-wrapper {
+      position: relative;
+      min-width: 18px; }
     .luminous table .line-numbers {
       padding: 0 0.5em;
       cursor: default;
@@ -83,5 +87,22 @@
         display: block; }
         .luminous table .line-numbers span:nth-child(5n) {
           font-weight: bold; }
+      .luminous table .line-numbers.collapsed {
+        border: none;
+        width: 0;
+        padding: 0;
+        overflow: hidden; }
+    .luminous table .line-number-control {
+      height: 26px;
+      width: 18px;
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 1;
+      cursor: pointer;
+      background: transparent url(icons/chevron-left.png); }
+      .luminous table .line-number-control.show-line-numbers {
+        background: transparent url(icons/chevron-right.png); }
   .luminous div {
     border-radius: inherit; }

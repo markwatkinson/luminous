@@ -44,9 +44,11 @@ class LuminousHTMLTemplates {
         <tbody>
           <tr>
             <td>
-              <pre class="line-numbers">
-                {line_numbers}
-              </pre>
+              <div class="line-numbers-wrapper">              
+                <pre class="line-numbers">
+                  {line_numbers}
+                </pre>
+              </div>
             </td>
             
             <td>

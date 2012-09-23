@@ -98,8 +98,8 @@
         padding: 0;
         margin: 0;
         vertical-align: top;
+        position: relative;
       }
-      
       .code {
           & > span {
               padding: 0 0 0 1em;
@@ -107,6 +107,10 @@
               @include transition(background-color);
           }
       }
+      .line-numbers-wrapper {
+          position: relative;
+          min-width: 18px;
+       }
       .line-numbers {
           padding: 0 0.5em;
           cursor: default;
@@ -116,6 +120,31 @@
                 &:nth-child(5n) {
                   font-weight: bold;
               }
+          }
+          
+          &.collapsed {
+              border: none;
+              width: 0;
+              padding: 0;
+              overflow: hidden;
+          }
+          
+          
+      }
+      .line-number-control {
+          height: 26px;
+          width: 18px;
+          display: block;
+          position: absolute;
+          top: 0;
+          right: 0;
+          z-index: 1;
+          cursor: pointer;
+          // default: line numbers are shown
+          background: transparent url(icons/chevron-left.png);
+          &.show-line-numbers {
+              // override: line numbers are hidden
+              background: transparent url(icons/chevron-right.png);              
           }
       }
   }
