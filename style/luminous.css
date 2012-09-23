@@ -60,42 +60,58 @@
       vertical-align: top; }
       .luminous table td.code-container {
         width: 100%; }
-    .luminous table .code > span {
-      padding: 0 0 0 1em;
-      display: block;
-      transition-property: background-color;
+    .luminous table .code {
+      transition-property: padding-left;
       transition-duration: 0.5s;
       transition-timing-function: ease-in;
-      -webkit-transition-property: background-color;
+      -webkit-transition-property: padding-left;
       -webkit-transition-duration: 0.5s;
       -webkit-transition-timing-function: ease-in;
-      -moz-transition-property: background-color;
+      -moz-transition-property: padding-left;
       -moz-transition-duration: 0.5s;
       -moz-transition-timing-function: ease-in;
-      -o-transition-property: background-color;
+      -o-transition-property: padding-left;
       -o-transition-duration: 0.5s;
       -o-transition-timing-function: ease-in;
-      -ms-transition-property: background-color;
+      -ms-transition-property: padding-left;
       -ms-transition-duration: 0.5s;
       -ms-transition-timing-function: ease-in; }
+      .luminous table .code > span {
+        padding: 0 0 0 1em;
+        display: block;
+        transition-property: background-color;
+        transition-duration: 0.2s;
+        transition-timing-function: ease-in;
+        -webkit-transition-property: background-color;
+        -webkit-transition-duration: 0.2s;
+        -webkit-transition-timing-function: ease-in;
+        -moz-transition-property: background-color;
+        -moz-transition-duration: 0.2s;
+        -moz-transition-timing-function: ease-in;
+        -o-transition-property: background-color;
+        -o-transition-duration: 0.2s;
+        -o-transition-timing-function: ease-in;
+        -ms-transition-property: background-color;
+        -ms-transition-duration: 0.2s;
+        -ms-transition-timing-function: ease-in; }
     .luminous table .line-numbers {
       cursor: default;
       text-align: center;
       max-width: 60px;
       transition-property: max-width;
-      transition-duration: 0.5s;
+      transition-duration: 0.2s;
       transition-timing-function: ease-in;
       -webkit-transition-property: max-width;
-      -webkit-transition-duration: 0.5s;
+      -webkit-transition-duration: 0.2s;
       -webkit-transition-timing-function: ease-in;
       -moz-transition-property: max-width;
-      -moz-transition-duration: 0.5s;
+      -moz-transition-duration: 0.2s;
       -moz-transition-timing-function: ease-in;
       -o-transition-property: max-width;
-      -o-transition-duration: 0.5s;
+      -o-transition-duration: 0.2s;
       -o-transition-timing-function: ease-in;
       -ms-transition-property: max-width;
-      -ms-transition-duration: 0.5s;
+      -ms-transition-duration: 0.2s;
       -ms-transition-timing-function: ease-in; }
       .luminous table .line-numbers span {
         padding: 0 0.5em;

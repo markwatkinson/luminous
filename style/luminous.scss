@@ -92,6 +92,7 @@
   
   /* line numbers */
   table {
+      $transition-duration: 0.2s;
       width: 100%;
       vertical-align: top;
       border-collapse: collapse;
@@ -104,10 +105,11 @@
       }
       
       .code {
+          @include transition(padding-left);
           & > span {
               padding: 0 0 0 1em;
               display: block;
-              @include transition(background-color);
+              @include transition(background-color, $transition-duration);
           }
       }
       .line-numbers {
@@ -121,7 +123,7 @@
               }
           }
           max-width: 60px;
-          @include transition(max-width);
+          @include transition(max-width, $transition-duration);
           
           &.collapsed {
               border: none;
