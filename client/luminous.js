@@ -92,11 +92,13 @@
         if (!show) {
             $numberContainer.addClass('collapsed');
             $control.addClass('show-line-numbers');
+            $luminous.addClass('collapsed-line-numbers');
         } else {
             $numberContainer.removeClass('collapsed');
             $control.removeClass('show-line-numbers');
         }
         $luminous.data('luminous', data);
+        
     }
     
     // binds the event handlers to a luminous element
@@ -136,7 +138,8 @@
         data.lineNumbers = {visible: false};
         
         if (hasLineNumbers) {
-            var $control, controlHeight;
+            var $control, controlHeight, controlWidth, gutterWidth, 
+              controlIsVisible = false;
             
             data.lineNumbers.visible = true;
             data.lineNumbers.setControlPosition = function() {
@@ -148,22 +151,38 @@
             $control = $('<a class="line-number-control"></a>');
             $control.click(function() {
                 $element.luminous('showLineNumbers');
+                if ($element.data('luminous').lineNumbers.visible) {
+                    $control.css('left', gutterWidth - controlWidth + 'px')
+                }
+                else {
+                    $control.css('left', '0px');
+                }
             });
             
-            $control.appendTo($element.find('.line-numbers-wrapper'));
+            $control.appendTo($element);
             $control.show();
+            controlWidth = $control.outerWidth();
             controlHeight = $control.outerHeight();
+            gutterWidth = $element.find('.line-numbers').outerWidth();
+            $control.css('left', gutterWidth - controlWidth + 'px');
+            
             $control.hide();
-            $element.find('.line-numbers-wrapper').hover(function() {
-                $control.stop(true, true).fadeIn('fast');
-            }, function() {
-                $control.stop(true, true).fadeOut('fast');
+            $element.mousemove(function(ev) {
+                if (ev.pageX < gutterWidth) {
+                    if (!controlIsVisible) { 
+                        $control.stop(true, true).fadeIn('fast');
+                        controlIsVisible = true;
+                    }
+                } else {
+                    if (controlIsVisible) { 
+                        $control.stop(true, true).fadeOut('fast'); 
+                        controlIsVisible = false;
+                    } 
+                }
             });
                        
             data.lineNumbers.setControlPosition();
             $element.scroll(data.lineNumbers.setControlPosition);
-            
-            
             schedule.push(function() { $element.luminous('showLineNumbers', true); });
         }
         

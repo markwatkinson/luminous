@@ -47,6 +47,7 @@
   border: 2px solid #ddd;
   border-radius: 5px;
   
+  position: relative;
   
   &.inline {
     min-width: 1px;
@@ -87,6 +88,7 @@
   & > pre {    
     padding-left: 1em;
   }
+
   
   /* line numbers */
   table {
@@ -98,8 +100,9 @@
         padding: 0;
         margin: 0;
         vertical-align: top;
-        position: relative;
+        &.code-container { width: 100%; }
       }
+      
       .code {
           & > span {
               padding: 0 0 0 1em;
@@ -107,31 +110,35 @@
               @include transition(background-color);
           }
       }
-      .line-numbers-wrapper {
-          position: relative;
-          min-width: 18px;
-       }
       .line-numbers {
-          padding: 0 0.5em;
           cursor: default;
           text-align: center;
           span {
-                display: block;
+                padding: 0 0.5em;          
+                display: block; 
                 &:nth-child(5n) {
                   font-weight: bold;
               }
           }
+          max-width: 60px;
+          @include transition(max-width);
           
           &.collapsed {
               border: none;
-              width: 0;
-              padding: 0;
+              max-width: 0;
               overflow: hidden;
           }
-          
-          
       }
-      .line-number-control {
+      
+  }
+  
+  
+  div {
+    border-radius: inherit;
+  }
+  
+  .line-number-control {
+          @include transition(left);
           height: 26px;
           width: 18px;
           display: block;
@@ -146,12 +153,6 @@
               // override: line numbers are hidden
               background: transparent url(icons/chevron-right.png);              
           }
-      }
-  }
-  
-  
-  div {
-    border-radius: inherit;
-  }
+      }  
     
 }

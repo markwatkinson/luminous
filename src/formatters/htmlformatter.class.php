@@ -44,14 +44,12 @@ class LuminousHTMLTemplates {
         <tbody>
           <tr>
             <td>
-              <div class="line-numbers-wrapper">              
                 <pre class="line-numbers">
                   {line_numbers}
                 </pre>
-              </div>
             </td>
             
-            <td>
+            <td class="code-container">
               <pre class="code numbered"
                 data-startline="{start_line}"
                 data-highlightlines="{highlight_lines}"

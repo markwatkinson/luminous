@@ -24,6 +24,7 @@
   font-family: "Consolas", "DejaVu Sans Mono", monospace;
   border: 2px solid #ddd;
   border-radius: 5px;
+  position: relative;
   /* line numbers */ }
   .luminous.inline {
     min-width: 1px;
@@ -56,8 +57,9 @@
     .luminous table td {
       padding: 0;
       margin: 0;
-      vertical-align: top;
-      position: relative; }
+      vertical-align: top; }
+      .luminous table td.code-container {
+        width: 100%; }
     .luminous table .code > span {
       padding: 0 0 0 1em;
       display: block;
@@ -76,33 +78,60 @@
       -ms-transition-property: background-color;
       -ms-transition-duration: 0.5s;
       -ms-transition-timing-function: ease-in; }
-    .luminous table .line-numbers-wrapper {
-      position: relative;
-      min-width: 18px; }
     .luminous table .line-numbers {
-      padding: 0 0.5em;
       cursor: default;
-      text-align: center; }
+      text-align: center;
+      max-width: 60px;
+      transition-property: max-width;
+      transition-duration: 0.5s;
+      transition-timing-function: ease-in;
+      -webkit-transition-property: max-width;
+      -webkit-transition-duration: 0.5s;
+      -webkit-transition-timing-function: ease-in;
+      -moz-transition-property: max-width;
+      -moz-transition-duration: 0.5s;
+      -moz-transition-timing-function: ease-in;
+      -o-transition-property: max-width;
+      -o-transition-duration: 0.5s;
+      -o-transition-timing-function: ease-in;
+      -ms-transition-property: max-width;
+      -ms-transition-duration: 0.5s;
+      -ms-transition-timing-function: ease-in; }
       .luminous table .line-numbers span {
+        padding: 0 0.5em;
         display: block; }
         .luminous table .line-numbers span:nth-child(5n) {
           font-weight: bold; }
       .luminous table .line-numbers.collapsed {
         border: none;
-        width: 0;
-        padding: 0;
+        max-width: 0;
         overflow: hidden; }
-    .luminous table .line-number-control {
-      height: 26px;
-      width: 18px;
-      display: block;
-      position: absolute;
-      top: 0;
-      right: 0;
-      z-index: 1;
-      cursor: pointer;
-      background: transparent url(icons/chevron-left.png); }
-      .luminous table .line-number-control.show-line-numbers {
-        background: transparent url(icons/chevron-right.png); }
   .luminous div {
     border-radius: inherit; }
+  .luminous .line-number-control {
+    transition-property: left;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-in;
+    -webkit-transition-property: left;
+    -webkit-transition-duration: 0.5s;
+    -webkit-transition-timing-function: ease-in;
+    -moz-transition-property: left;
+    -moz-transition-duration: 0.5s;
+    -moz-transition-timing-function: ease-in;
+    -o-transition-property: left;
+    -o-transition-duration: 0.5s;
+    -o-transition-timing-function: ease-in;
+    -ms-transition-property: left;
+    -ms-transition-duration: 0.5s;
+    -ms-transition-timing-function: ease-in;
+    height: 26px;
+    width: 18px;
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    cursor: pointer;
+    background: transparent url(icons/chevron-left.png); }
+    .luminous .line-number-control.show-line-numbers {
+      background: transparent url(icons/chevron-right.png); }
