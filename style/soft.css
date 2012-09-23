@@ -88,7 +88,7 @@
 
 
 /* line numbers */
-.luminous .numbers > span:before{
+.luminous .line-numbers{
   background-color:#F3EEFF !important;
   border-right:1px solid #BED6E1 !important;
   color: #000066 !important;
@@ -107,21 +107,25 @@
 
 .luminous
 {
+  background-color: #fff;
   color:black !important;
 }
 
 
 
-.luminous .code li:nth-child(2n)
+.luminous .code.numbered > span:nth-child(2n)
 {
   background-color:#FAF8FF;
 }
 
-.luminous .code li.highlight
+.luminous .code .highlight
 {
   background-color:#BED6E1;
 }
-
+.luminous .code.numbered .highlight:nth-child(2n)
+{
+  background-color:#BED6E1;
+}
 
 /* this stuff has to come after the other rules because it will probably
  * override some of them

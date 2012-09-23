@@ -100,25 +100,28 @@
 }
 
 /* line numbers */
-.luminous .numbers li:before {
+.luminous .line-numbers {
   background-color:#444444 !important;
   border-right:1px solid #5F5F5F !important;
   color: #A8A8A8 !important;
 }
 
 
-.luminous .code {
+.luminous {
   background-color:#3a3a3a !important;
   color:#DCDCCC !important;
 }
 
-.luminous .code li:nth-child(2n) {
-  background-color: #404040 !important;
+.luminous .code.numbered > span:nth-child(2n) {
+  background-color: #404040;
 }
 
-.luminous .code li.highlight
+.luminous .code .highlight
 {
-  background-color:#6D6D6D !important;
+  background-color:#6D6D6D;
+}
+.luminous .code.numbered .highlight:nth-child(2n) {
+  background-color: #6D6D6D ;
 }
 
 /* this stuff has to come after the other rules because it will probably         

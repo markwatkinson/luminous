@@ -88,20 +88,20 @@ font-style:normal !important;}
 }
 
 /* line numbers */
-.luminous .numbers li:before{
+.luminous .line-numbers {
   background-color:#1E1E1E !important;
   border-right:1px solid #5F5F5F !important;
   color:#BCFFBC !important;
 }
 
 
-.luminous .code
+.luminous
 {
   background-color:#1E1E1E !important;
   color:#FFFDCC !important;
 }
 
-.luminous .code li:nth-child(2n)
+.luminous .code.numbered > span:nth-child(2n)
 {
   background-color: #232323;
 }
@@ -111,7 +111,7 @@ font-style:normal !important;}
   background-color:#404040;
 }
 
-.luminous .code .highlight:nth-child(2n)
+.luminous .code.numbered .highlight:nth-child(2n)
 {
   background-color:#454545;
 }

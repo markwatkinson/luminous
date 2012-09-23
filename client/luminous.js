@@ -29,7 +29,7 @@
 (function($) {
     "use strict";
     
-    var LINE_SELECTOR = 'pre > ol > li';
+    var LINE_SELECTOR = 'td .code > span ';
     
     if (typeof $ === 'undefined') { return; }
     
@@ -40,6 +40,10 @@
     // determines if the given element is a line element of luminous
     function isLine($line) {
         return $line.is(LINE_SELECTOR) && $line.parents('.luminous').length > 0;
+    }
+    
+    function isLineNumber($element) {
+        return $element.is('.luminous .line-numbers span');
     }
     
     function highlightLine($line) {
@@ -53,7 +57,7 @@
     
     function highlightLineByNumber($luminous, number) {
         // the line's index must take into account the initial line number
-        var offset = parseInt($luminous.find('>pre').data('startline'), 10);
+        var offset = parseInt($luminous.find('.code').data('startline'), 10);
         if (isNaN(offset)) offset = 0;
         highlightLineByIndex($luminous, number - offset);
     }
@@ -61,7 +65,7 @@
     function toggleHighlightAndPlain($luminous, forceState) {
         var data = $luminous.data('luminous'),
             state = data.code.active,
-            $elem = $luminous.find('>pre'),
+            $elem = $luminous.find('.code'),
             toSetCode, toSetState;
         
         if (forceState === 'plain') state = 'highlighted';
@@ -76,7 +80,7 @@
     
     function toggleLineNumbers($luminous, forceState) {
         var className = 'line-no-hidden', 
-            $element = $luminous.find('>.code'),
+            $element = $luminous.find('.code'),
             hasNumbers = $element.hasClass(className),
             show = !hasNumbers;
 
@@ -96,7 +100,8 @@
         
         $element.addClass('bound');
         
-        $element.click(function(ev) {
+        // highlight lines on click
+        $element.find('td .code').click(function(ev) {
             var $t = $(ev.target);
             var $lines = $t.parents().add($t).
                     filter(function() { return isLine($(this)); }),
@@ -106,9 +111,18 @@
                 highlightLine($line);
             }
         });
+        // highlight lines on clicking the line number
+        $element.find('td .line-numbers').click(function(ev) {
+            var $t = $(ev.target),
+                 index;
+            if ($t.is('span')) {
+                index = $t.prevAll().length;
+                highlightLineByIndex($element, index);
+            }
+        });
         
         // highlight all the initial lines
-        highlightLinesData = $element.find('>pre').data('highlightlines') || "";
+        highlightLinesData = $element.find('.code').data('highlightlines') || "";
         highlightLines = highlightLinesData.split(",");
         $.each(highlightLines, function(i, element) {
              var lineNo = parseInt(element, 10);
@@ -118,10 +132,10 @@
         });
 
         data.code = {};
-        data.code.highlighted = $element.find('>pre').html();
+        data.code.highlighted = $element.find('.code').html();
         
         data.code.plain = '';
-        $element.find('pre > ul > li').each(function(i, e) {
+        $element.find(LINE_SELECTOR).each(function(i, e) {
             var line = $(e).text();
             line = line
                     .replace(/&/g, '&amp')

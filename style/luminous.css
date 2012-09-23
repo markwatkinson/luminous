@@ -41,31 +41,25 @@
     text-decoration: none; }
   .luminous pre {
     margin: 0;
-    padding: 0 0 0 1em;
+    padding: 0;
     background: transparent none;
     font-size: inherit;
     font-family: inherit;
-    width: auto;
-    overflow: auto; }
-  .luminous .numbers {
-    counter-reset: term;
-    margin-left: 0;
-    padding-left: 0;
-    /* We're using a list for the lines, so we'll have to hide 
-       that a bit */
-    /* each line */ }
-    .luminous .numbers > ol {
-      list-style: none;
+    width: auto; }
+  .luminous > pre {
+    padding-left: 1em; }
+  .luminous table {
+    width: 100%;
+    vertical-align: top;
+    border-collapse: collapse;
+    border-spacing: 0; }
+    .luminous table td {
       padding: 0;
-      margin: 0; }
-      .luminous .numbers > ol > li {
-        padding: 0;
-        margin: 0; }
-    .luminous .numbers > ol > li {
-      padding: 0 0 0 3em;
-      border: none;
       margin: 0;
-      position: relative;
+      vertical-align: top; }
+    .luminous table .code > span {
+      padding: 0 0 0 1em;
+      display: block;
       transition-property: background-color;
       transition-duration: 0.5s;
       transition-timing-function: ease-in;
@@ -81,49 +75,13 @@
       -ms-transition-property: background-color;
       -ms-transition-duration: 0.5s;
       -ms-transition-timing-function: ease-in; }
-      .luminous .numbers > ol > li:before {
-        counter-increment: term !important;
-        content: counter(term) !important;
-        padding: 0;
-        margin-right: 0.5em;
-        display: inline-block;
-        text-align: center;
-        user-select: none;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -o-user-select: none;
-        -ms-user-select: none;
-        width: 2em;
-        position: absolute;
-        height: 100%;
-        left: 0; }
-      .luminous .numbers > ol > li:after {
-        content: " "; }
-      .luminous .numbers > ol > li:nth-child(5n):before {
-        font-weight: bold; }
-    .luminous .numbers.line-no-width-2 li {
-      padding-left: 3em; }
-    .luminous .numbers.line-no-width-3 li {
-      padding-left: 4em; }
-    .luminous .numbers.line-no-width-4 li {
-      padding-left: 5em; }
-    .luminous .numbers.line-no-width-5 li {
-      padding-left: 6em; }
-    .luminous .numbers.line-no-width-6 li {
-      padding-left: 7em; }
-    .luminous .numbers.line-no-width-2 li:before {
-      width: 2em !important; }
-    .luminous .numbers.line-no-width-3 li:before {
-      width: 3em !important; }
-    .luminous .numbers.line-no-width-4 li:before {
-      width: 4em !important; }
-    .luminous .numbers.line-no-width-5 li:before {
-      width: 5em !important; }
-    .luminous .numbers.line-no-width-6 li:before {
-      width: 6em !important; }
-    .luminous .numbers.line-no-hidden li {
-      padding-left: 0; }
-      .luminous .numbers.line-no-hidden li::before {
-        display: none; }
+    .luminous table .line-numbers {
+      padding: 0 0.5em;
+      cursor: default;
+      text-align: center; }
+      .luminous table .line-numbers span {
+        display: block; }
+        .luminous table .line-numbers span:nth-child(5n) {
+          font-weight: bold; }
   .luminous div {
     border-radius: inherit; }

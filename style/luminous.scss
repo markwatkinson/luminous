@@ -76,88 +76,50 @@
   
   pre {
     margin: 0;
-    padding: 0 0 0 1em;
+    padding: 0;
     background: transparent none;
     font-size: inherit;
     font-family: inherit;
     width: auto;
-    overflow: auto;
+  }
+  
+  // non-line numbered, directly inside the .luminous
+  & > pre {    
+    padding-left: 1em;
   }
   
   /* line numbers */
-  .numbers {
-    counter-reset: term;
-    margin-left: 0;
-    padding-left: 0;
-    
-    /* We're using a list for the lines, so we'll have to hide 
-       that a bit */
-    & > ol {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      & > li { 
+  table {
+      width: 100%;
+      vertical-align: top;
+      border-collapse: collapse;
+      border-spacing: 0;
+      td {
         padding: 0;
         margin: 0;
-      }
-    }
-    /* each line */
-    
-    & > ol > li {
-      padding: 0 0 0 3em;
-      border: none;
-      margin: 0;
-      //display:block;
-      position:relative;
-      @include transition(background-color);
-
-      &:before {
-        counter-increment: term !important;
-        content: counter(term) !important;
-        padding: 0;
-        margin-right: 0.5em;
-        display: inline-block;
-        text-align: center;
-        @include vendor-prefix(user-select, none);
-        width: 2em;
-        // necessary to ensure the heights of the line and the 
-        // number are the same
-        position: absolute;
-        height: 100%;
-        left: 0;
-      }
-      &:after {
-        // ensures that the browser won't collapse empty lines
-        content: " ";
-      }
-      &:nth-child(5n):before {
-        font-weight: bold;
+        vertical-align: top;
       }
       
-    }
-    
-    &.line-no-width-2 li { padding-left: 3em; }
-    &.line-no-width-3 li { padding-left: 4em; }
-    &.line-no-width-4 li { padding-left: 5em; }
-    &.line-no-width-5 li { padding-left: 6em; }
-    &.line-no-width-6 li { padding-left: 7em; }
-
-    
-    // This enforces the width of all the numbers is consistent
-    // i.e. '2' doesn't have a smaller width than '999' when there
-    // are 3 digits of numbers. 
-    &.line-no-width-2 li:before { width: 2em !important; }
-    &.line-no-width-3 li:before { width: 3em !important; }
-    &.line-no-width-4 li:before { width: 4em !important; }
-    &.line-no-width-5 li:before { width: 5em !important; }
-    &.line-no-width-6 li:before { width: 6em !important; }
-    
-    &.line-no-hidden li {
-        padding-left: 0;
-        &::before { display: none; }
-    }
-    
+      .code {
+          & > span {
+              padding: 0 0 0 1em;
+              display: block;
+              @include transition(background-color);
+          }
+      }
+      .line-numbers {
+          padding: 0 0.5em;
+          cursor: default;
+          text-align: center;
+          span {
+                display: block;
+                &:nth-child(5n) {
+                  font-weight: bold;
+              }
+          }
+      }
   }
+  
   
   div {
     border-radius: inherit;

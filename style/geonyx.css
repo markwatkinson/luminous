@@ -1,16 +1,16 @@
 
-.luminous .code {
-  background-color: #EEEEED !important;
+.luminous {
+  background-color: #EEEEED;
 }
 
 /* line numbers */
-.luminous .numbers li:before {
+.luminous .line-numbers {
   background-color: #F0F0F0 !important;
   border-right: 1px dashed #BBBBBB !important;
   color: #555555;
 }
 
-.luminous .code li.highlight {
+.luminous .code .highlight {
   background-color: #A4C0E4;
   background-color: rgba(164, 192, 228, 0.5);
 }

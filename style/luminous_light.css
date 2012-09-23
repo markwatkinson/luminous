@@ -156,25 +156,30 @@
 }
 
 /* line numbers */
-.luminous .numbers li:before{
+.luminous .line-numbers{
   color:black !important;
- background-color:#e0e0e0 !important;
+  background-color:#e0e0e0 !important;
   border-right:1px solid black !important;  
 }
 .luminous
 {
   color:black !important;
   border-color: #999;
+  background-color: #fff;
 }
 
 
 
-.luminous .code li:nth-child(2n)
+.luminous .code.numbered > span:nth-child(2n)
 {
   background-color:#F3F3F3;
 }
 
-.luminous .code li.highlight
+.luminous .code .highlight
+{
+  background-color:#DFDEF6;
+}
+.luminous .code.numbered .highlight:nth-child(2n)
 {
   background-color:#DFDEF6;
 }

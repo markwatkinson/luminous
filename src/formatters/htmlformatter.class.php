@@ -14,6 +14,7 @@ class LuminousHTMLTemplates {
       <div 
         class="luminous" 
         data-language="{language}"
+        style="{height_css}"
       >
         {subelement}
       </div>';
@@ -31,21 +32,34 @@ class LuminousHTMLTemplates {
     const numberless_template = '
       <pre 
         class="code" 
-        style="{height_css}"
       >
         {code}
       </pre>';
     
     /// line numbered
+    // NOTE: there's a good reason we use tables here and that's because
+    // nothing else works reliably.
     const numbered_template = '
-      <pre 
-        class="code numbers line-no-width-{line_number_digits}" 
-        style="counter-increment: term {start_line}; {height_css}" 
-        data-startline="{start_line}" 
-        data-highlightlines="{highlight_lines}"
-      >
-        {code}
-      </pre>';
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <pre class="line-numbers">
+                {line_numbers}
+              </pre>
+            </td>
+            
+            <td>
+              <pre class="code numbered"
+                data-startline="{start_line}"
+                data-highlightlines="{highlight_lines}"
+              >
+                {code}
+              </pre>
+            </td>
+          </tr>
+        </tbody>
+      </table>';
     
 
     
@@ -173,7 +187,8 @@ class LuminousFormatterHTML extends LuminousFormatter {
     
     $format_data = array(
       'language' => ($this->language === null)? '' : htmlentities($this->language),
-      'subelement' => $code_block
+      'subelement' => $code_block,
+      'height_css' => $this->height_css()
     );
     return LuminousHTMLTemplates::format(
       $this->inline? LuminousHTMLTemplates::inline_template : 
@@ -243,17 +258,23 @@ class LuminousFormatterHTML extends LuminousFormatter {
   
   private function format_numbered($src) {
   
-    $lines = '<ol><li>' .
-      str_replace("\n", "</li><li>", $src, $num_replacements) .
-      '</li></ol>';
+    $lines = '<span>' .
+      str_replace("\n", "\n</span><span>", $src, $num_replacements) .
+      "\n</span>";
     $num_lines = $num_replacements + 1;
+    
+    $line_numbers = '<span>' . implode('</span><span>',      
+      range($this->start_line, $this->start_line + $num_lines - 1, 1)
+    ) . '</span>';
+    
     
     $format_data = array(
       'line_number_digits' => strlen( (string)($this->start_line) + $num_lines ), // max number of digits in the line - this is used by the CSS
-      'start_line' => $this->start_line-1,
+      'start_line' => $this->start_line,
       'height_css' => $this->height_css(),
       'highlight_lines' => implode(',', $this->highlight_lines),
-      'code' => $lines
+      'code' => $lines,
+      'line_numbers' => $line_numbers
     );
     
     return LuminousHTMLTemplates::format(
