@@ -138,6 +138,16 @@
         data.lineNumbers = {visible: false};
         
         if (hasLineNumbers) {
+            /** 
+              * Line numbering is semi complicated because we can make it better
+              * with javascript!
+              * TODO: probably refactor this into a sub-function
+              */
+            
+            // the control is a show/hide line numbers, we can fade it
+            // in/out when the user hovers over the line numbers.
+            // We can also fix the line numbers so they move left 
+            // as the widget is hoz-scrolled.
             var $control, controlHeight, controlWidth, gutterWidth, 
               controlIsVisible = false,
               $lineNumbers = $element.find('pre.line-numbers'),
