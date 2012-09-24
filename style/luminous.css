@@ -62,41 +62,42 @@
         width: 100%; }
     .luminous table .code {
       transition-property: padding-left;
-      transition-duration: 0.5s;
+      transition-duration: 0.2s;
       transition-timing-function: ease-in;
       -webkit-transition-property: padding-left;
-      -webkit-transition-duration: 0.5s;
+      -webkit-transition-duration: 0.2s;
       -webkit-transition-timing-function: ease-in;
       -moz-transition-property: padding-left;
-      -moz-transition-duration: 0.5s;
+      -moz-transition-duration: 0.2s;
       -moz-transition-timing-function: ease-in;
       -o-transition-property: padding-left;
-      -o-transition-duration: 0.5s;
+      -o-transition-duration: 0.2s;
       -o-transition-timing-function: ease-in;
       -ms-transition-property: padding-left;
-      -ms-transition-duration: 0.5s;
+      -ms-transition-duration: 0.2s;
       -ms-transition-timing-function: ease-in; }
       .luminous table .code > span {
         padding: 0 0 0 1em;
         display: block;
         transition-property: background-color;
-        transition-duration: 0.2s;
+        transition-duration: 0.5s;
         transition-timing-function: ease-in;
         -webkit-transition-property: background-color;
-        -webkit-transition-duration: 0.2s;
+        -webkit-transition-duration: 0.5s;
         -webkit-transition-timing-function: ease-in;
         -moz-transition-property: background-color;
-        -moz-transition-duration: 0.2s;
+        -moz-transition-duration: 0.5s;
         -moz-transition-timing-function: ease-in;
         -o-transition-property: background-color;
-        -o-transition-duration: 0.2s;
+        -o-transition-duration: 0.5s;
         -o-transition-timing-function: ease-in;
         -ms-transition-property: background-color;
-        -ms-transition-duration: 0.2s;
+        -ms-transition-duration: 0.5s;
         -ms-transition-timing-function: ease-in; }
     .luminous table .line-numbers {
       cursor: default;
       text-align: center;
+      overflow: hidden;
       max-width: 60px;
       transition-property: max-width;
       transition-duration: 0.2s;
@@ -120,25 +121,24 @@
           font-weight: bold; }
       .luminous table .line-numbers.collapsed {
         border: none;
-        max-width: 0;
-        overflow: hidden; }
+        max-width: 0; }
   .luminous div {
     border-radius: inherit; }
   .luminous .line-number-control {
     transition-property: left;
-    transition-duration: 0.5s;
+    transition-duration: 0.2s;
     transition-timing-function: ease-in;
     -webkit-transition-property: left;
-    -webkit-transition-duration: 0.5s;
+    -webkit-transition-duration: 0.2s;
     -webkit-transition-timing-function: ease-in;
     -moz-transition-property: left;
-    -moz-transition-duration: 0.5s;
+    -moz-transition-duration: 0.2s;
     -moz-transition-timing-function: ease-in;
     -o-transition-property: left;
-    -o-transition-duration: 0.5s;
+    -o-transition-duration: 0.2s;
     -o-transition-timing-function: ease-in;
     -ms-transition-property: left;
-    -ms-transition-duration: 0.5s;
+    -ms-transition-duration: 0.2s;
     -ms-transition-timing-function: ease-in;
     height: 26px;
     width: 18px;

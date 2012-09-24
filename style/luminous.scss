@@ -92,7 +92,6 @@
   
   /* line numbers */
   table {
-      $transition-duration: 0.2s;
       width: 100%;
       vertical-align: top;
       border-collapse: collapse;
@@ -105,16 +104,17 @@
       }
       
       .code {
-          @include transition(padding-left);
           & > span {
               padding: 0 0 0 1em;
               display: block;
-              @include transition(background-color, $transition-duration);
+              @include transition(background-color);
           }
+          @include transition(padding-left, 0.2s);
       }
       .line-numbers {
           cursor: default;
           text-align: center;
+          overflow: hidden;
           span {
                 padding: 0 0.5em;          
                 display: block; 
@@ -123,12 +123,11 @@
               }
           }
           max-width: 60px;
-          @include transition(max-width, $transition-duration);
+          @include transition(max-width, 0.2s);
           
           &.collapsed {
               border: none;
               max-width: 0;
-              overflow: hidden;
           }
       }
       
@@ -140,7 +139,7 @@
   }
   
   .line-number-control {
-          @include transition(left);
+          @include transition(left, 0.2s);
           height: 26px;
           width: 18px;
           display: block;
