@@ -12,7 +12,6 @@ if (!empty($_GET))
   <head>
     <title>Theme Switcher Example</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <script type='text/javascript' src='../client/jquery-1.4.2.min.js'></script>
     <?php echo luminous::head_html(); ?>
     
     <script type='text/javascript'>
