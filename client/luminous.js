@@ -152,6 +152,7 @@
               controlIsVisible = false,
               $lineNumbers = $element.find('pre.line-numbers'),
               defaultLineNumberWidth = $lineNumbers.outerWidth(),
+              mouseY = 0,
               controlCalculateLeftCss = function() {
                   var visible = $element.data('luminous').lineNumbers.visible,
                       base = visible? gutterWidth - controlWidth : 0,
@@ -163,9 +164,8 @@
             
             data.lineNumbers.visible = true;
             data.lineNumbers.setControlPosition = function() {
-                var scrollOffset = $element.scrollTop(),
-                    scrollHeight = $element.height();
-                $control.css('top', scrollOffset + (scrollHeight/2) - (controlHeight/2) + 'px');
+                console.log(mouseY);
+                $control.css('top', Math.max(0, mouseY - (controlHeight/2)) + 'px');
             }
             
             $control = $('<a class="line-number-control"></a>');
@@ -190,8 +190,10 @@
             $control.hide();
             $element.mousemove(function(ev) {
                 var scrollLeft = $element.scrollLeft();
+                mouseY = ev.pageY - $(this).offset().top;
                 if (ev.pageX < gutterWidth) {
                     if (!controlIsVisible) { 
+                        data.lineNumbers.setControlPosition();
                         $control.stop(true, true).fadeIn('fast');
                         controlIsVisible = true;
                     }
