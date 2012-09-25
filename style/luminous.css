@@ -22,6 +22,7 @@
   font-size: inherit;
   text-align: left;
   font-family: "Consolas", "DejaVu Sans Mono", monospace;
+  overflow: auto;
   border: 2px solid #ddd;
   border-radius: 5px;
   position: relative;

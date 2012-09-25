@@ -114,7 +114,7 @@ class LuminousFormatterHTML extends LuminousFormatter {
     if (!empty($height) && (int)$height > 0) {
       // look for units, use px is there are none
       if (!preg_match('/\D$/', $height)) $height .= 'px';
-      $css = "max-height: {$height}; overflow: auto;";
+      $css = "max-height: {$height};";
     }
     else 
       $css = '';  
