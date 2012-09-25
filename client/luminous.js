@@ -138,8 +138,28 @@
         data.lineNumbers = {visible: false};
         
         if (hasLineNumbers) {
+            /** 
+              * Line numbering is semi complicated because we can make it better
+              * with javascript!
+              * TODO: probably refactor this into a sub-function
+              */
+            
+            // the control is a show/hide line numbers, we can fade it
+            // in/out when the user hovers over the line numbers.
+            // We can also fix the line numbers so they move left 
+            // as the widget is hoz-scrolled.
             var $control, controlHeight, controlWidth, gutterWidth, 
-              controlIsVisible = false;
+              controlIsVisible = false,
+              $lineNumbers = $element.find('pre.line-numbers'),
+              defaultLineNumberWidth = $lineNumbers.outerWidth(),
+              controlCalculateLeftCss = function() {
+                  var visible = $element.data('luminous').lineNumbers.visible,
+                      base = visible? gutterWidth - controlWidth : 0,
+                      total = 0;
+                  total = $element.scrollLeft() + base;
+                  return total + 'px';
+                  
+              };
             
             data.lineNumbers.visible = true;
             data.lineNumbers.setControlPosition = function() {
@@ -151,12 +171,13 @@
             $control = $('<a class="line-number-control"></a>');
             $control.click(function() {
                 $element.luminous('showLineNumbers');
-                if ($element.data('luminous').lineNumbers.visible) {
-                    $control.css('left', gutterWidth - controlWidth + 'px')
+                $control.css('left', controlCalculateLeftCss());
+                if (!$element.data('luminous').lineNumbers.visible) {
+                    $element.find('pre.code').css('padding-left', '');
+                } else {
+                    $element.find('pre.code').css('padding-left', defaultLineNumberWidth + 'px');
                 }
-                else {
-                    $control.css('left', '0px');
-                }
+
             });
             
             $control.appendTo($element);
@@ -168,6 +189,7 @@
             
             $control.hide();
             $element.mousemove(function(ev) {
+                var scrollLeft = $element.scrollLeft();
                 if (ev.pageX < gutterWidth) {
                     if (!controlIsVisible) { 
                         $control.stop(true, true).fadeIn('fast');
@@ -182,7 +204,17 @@
             });
                        
             data.lineNumbers.setControlPosition();
-            $element.scroll(data.lineNumbers.setControlPosition);
+            $element.find('pre.code').css('padding-left', $lineNumbers.outerWidth() + 'px');
+            $lineNumbers.css({
+              position: 'absolute',
+              top: 0,
+              left: 0
+            });
+            $element.scroll(function() {
+                data.lineNumbers.setControlPosition();
+                $control.css('left', controlCalculateLeftCss());
+                $lineNumbers.css('left', $element.scrollLeft() + 'px');
+            });
             schedule.push(function() { $element.luminous('showLineNumbers', true); });
         }
         
