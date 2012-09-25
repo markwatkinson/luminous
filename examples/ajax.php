@@ -36,7 +36,6 @@ if (!empty($_POST)) {
     <?php 
     echo luminous::head_html();
     ?>
-    <script type='text/javascript' src='../client/jquery-1.4.2.min.js'></script>
     <script type='text/javascript'>
     $(document).ready(function() {
       $('pre.code_eg').each(function(i, e) {
