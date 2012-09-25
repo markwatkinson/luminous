@@ -16,10 +16,12 @@ The functions in this namespace interact with a theoretically private singleton 
 
 The two main highlighting functions are:
 
-    `luminous::highlight($language, $source, $cache=true)`
-    `luminous::highlight_file($language, $path, $cache=true)`
+    `luminous::highlight($language, $source, $options=array())`
+    `luminous::highlight_file($language, $path, $options=array())`
+    
+Note: in versions prior to 0.7, the third parameter was a boolean flag to switch on/off caching. This behaviour is preserved in 0.7 - you can still use a boolean flag instead of the options array. For options, keep reading this page.
 
-Note that $language can be a language code (open supported.php in a browser to see a list of what you have available), or your own instance of LuminousScanner.
+$language can be a language code (open supported.php in a browser to see a list of what you have available), or your own instance of LuminousScanner.
 
 Since 0.6.2 you can ask Luminous to guess the language of a piece of source code with the function:
 
@@ -67,14 +69,18 @@ Returns the value currently set for the given setting. An exception is raised if
 
 As with php, setting an integer setting to 0 or -1 will disable it. As of 0.6.2 some validation is applied to these options and exceptions will be thrown if you try to do something nonsensical.
 
+====Cache====
+  * cache (bool): Whether to use the built-in cache (default: `TRUE`)
+  * cache-age (int): age (seconds) at which to remove cached files (age is determined by mtime -- cache hits trigger a 'touch', so this setting removes cached files which have not been accessed for the given time.), 0 or -1 to disable. (default: 777600 : 90 days)
+  * sql-function: See the [[cache]] page.
+
 ====Misc====
 
-  * cache-age (int): age (seconds) at which to remove cached files (age is determined by mtime -- cache hits trigger a 'touch', so this setting removes cached files which have not been accessed for the given time.), 0 or -1 to disable. (default: 777600 : 90 days)
+ 
   * include-javascript (bool): controls whether luminous::head_html() outputs the javascript 'extras'.
-  * include-jquery (bool): controls whether luminous::head_html() outputs jquery; this is ignored if include-javascript is false.
+  * include-jquery (bool): controls whether luminous::head_html() outputs jquery; this is ignored if include-javascript is false. You do not need this if your page already has jQuery!
   * relative-root (str): luminous::head_html() has to know the location of the luminous directory relative to the location of the document root. It tries to figure this out, but may fail if you are using symlinks. You may override it here.
   * theme: Sets the internal theme. The LaTeX and html-full formatters read this, and luminous::head_html observes this.
-  * sql-function: See the [[cache]] page.
   * verbose (bool): Since 0.6.6. If `TRUE`, Luminous generates PHP warnings on problems (currently only cache problems which require attention from the caller). (default: `TRUE`)
 
 ====Formatter====
@@ -86,7 +92,6 @@ Formatting options relate to the display of highlighted output.
   * line-numbers (bool): If the formatter supports line numbering, lines are numbered. (default: true)
   * start-line (int): If the formatter supports line numbering, lines start from this number. (default: 1)
   * max-height (int): if the formatter can control its height, it will constrain itself to this many pixels (you may specify this as a string with units) (default: 500)
-  * wrap-width (int): if the formatter supports line wrapping, lines will be wrapped at this number of characters (0 or -1 to disable) (default: -1)
   * format (string): Controls the output format:
     # 'html' (default): HTML. The HTML is contained in a &lt;div&gt; element. CSS must be included on the same page.
     # 'html-full': A full HTML page. The page is a valid and self-contained HTML document and includes all necessary CSS.

@@ -1,34 +1,44 @@
 Luminous Changelog since 0.6.0
 ==============================
 
-##v0.7-dev (16/09/12):
+##v0.7-dev (25/09/12):
 
-- Major changes to markup/CSS:
+- Changes to markup/CSS:
   - luminous.css is now compiled from luminous.scss (SCSS)
-  - Markup has been minimised and modernised, 
-    it no longer contains tables - just a div wrapping a pre
-  - Line numbers are generated automatically in CSS
+  - Markup has been modernised and cleaned a bit
   - CSS selectors favoured over superfluous classes, e.g. nth-child instead of
     an alternating class, ".code > span" instead of a line class.
   - Bundled fonts (dejavu) have been removed - we now reference Consolas, 
     Deja Vu and fall back to plain old 'monospace'.
   - Luminous elements have theme specific borders by default
+  
+- Misc backwardly incompatible changes:
+  - The 'include-jquery' setting defaults to 'false' - most people now
+    have jQuery on their sites anyway and including a second version of it
+    isn't a great idea.
+  - Height unconstrained elements are now the default in the HTML formatter
+  - Removed support for word-wrapping, nobody used this and it would mangle
+    source code to be syntactically invalid anyway. HTML is not generous to
+    this problem.
 
 - Misc:
-  - Preliminary JavaScript API for manipulating Luminous elements
-  - Height unconstrained elements are now the default in the HTML formatter
+  - Support one-time option setting via third parameter of 
+    luminous::highlight()
+  - HTML output with JavaScript fixes line numbers to the left of the 
+    widget regardless of how it's horizontally scrolled.
+  - HTML output with JavaScript allows toggling the line numbers 
+    (hover over the line numbers to show the control)
+  - Preliminary JavaScript API for manipulating Luminous elements (not 
+    documented or properly tested yet...)
   - Filesystem cache now uses subdirectories; the cache items are
     organised into directories using the first two digits of the
     cache ID (a hex string). This makes things neater by reducing the
     number of items in a single directory, and may improve performance 
     slightly on some filesystems.
-    
-- Removed support for:
-  - Word wrapping in HTML - nobody used this anyway and it's incompatible with
-    the new markup. Furthermore there was no gaurantee that wrapped code would
-    actually be syntactically valid.
+  - examples/index.php example browser
 
-- Language fixes:
+- Language additions:
+  - Support for SCSS language
   - C#: added missing 'void' keyword, added a lot of types
   
 ##v0.6.7-2 (10/6/12):
