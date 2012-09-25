@@ -154,7 +154,7 @@ class LuminousOptions {
    * for the JavaScript extras. This has no effect if $include_javascript is
    * false.
    */
-  private $include_jquery = true;
+  private $include_jquery = false;
 
 
   /**

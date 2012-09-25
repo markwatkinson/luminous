@@ -11,6 +11,7 @@ $files = array(
 );
 
 if(isset($_GET['file']) && in_array($_GET['file'], $files)) {
+    luminous::set('include-jquery', true);
     $source = luminous::highlight('php', 
     file_get_contents(dirname(__FILE__) . '/' . $_GET['file']));
     luminous::set('theme', 'github');

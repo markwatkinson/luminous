@@ -10,3 +10,4 @@ $http_path = '../';
 $use_cache = false;
 
 luminous::set('relative-root', $http_path);
+luminous::set('include-jquery', true);
