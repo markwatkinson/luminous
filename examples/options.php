@@ -29,5 +29,6 @@ $language = 'js';
        <?= luminous::highlight($language, $code, array('auto-link' => true, 'start-line' => 1)) ?>
        <p> When we next call highlight(), the options will be back to their global states:
        <?= luminous::highlight($language, $code); ?>
+       <p> We can get the current value for an option by calling setting(): auto-link is: <?=var_dump(luminous::setting('auto-link')) ?>.
     </body>
 </html>
