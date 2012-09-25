@@ -23,6 +23,7 @@ if (get_magic_quotes_gpc()) {
 luminous::set('max-height', 300);
 luminous::set('theme', 'geonyx');
 luminous::set('relative-root', '../');
+luminous::set('include-jquery', true);
 luminous::set('include-javascript', true);
 
 if (isset($_POST['theme'])) luminous::set('theme', $_POST['theme']);
