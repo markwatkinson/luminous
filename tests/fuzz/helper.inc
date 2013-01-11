@@ -44,6 +44,11 @@ function random_source($size=102400) {
  */
 function randomise_source($source) {
   global $symbols;
+  // a change in php5.4 makes everything bork in this 
+  // function only with some of the source files. This seems to suppress it. 
+  // Probably not ideal. FWIW the command line file reading option keeps
+  // everything intact when highlighting, so it's not a big deal, I think...
+  $source = iconv('utf-8', 'ascii//translit', $source);
   $s = str_split($symbols);
   for ($i=0; $i<strlen($source); $i++) {
     if (rand() % 5 === 0) {
@@ -76,6 +81,7 @@ function randomish_source($languages) {
   if (empty($candidates)) return false;
   $candidates = array_values($candidates);
   $src = $candidates[rand(0, count($candidates)-1)];
+$src = $path . '/actionscript/JPEGEncoder.as';
   return randomise_source(file_get_contents($src));
 }
 
