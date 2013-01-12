@@ -1,4 +1,5 @@
 <?php
+if (php_sapi_name() !== 'cli') die('This must be run from the command line');
 require_once(dirname(__FILE__) . '/../../src/luminous.php');
 require_once(dirname(__FILE__) . '/../extern/php-diff/lib/Diff.php');
 require_once(dirname(__FILE__) . '/../extern/php-diff/lib/Diff/Renderer/Text/Unified.php');

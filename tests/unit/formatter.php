@@ -1,5 +1,5 @@
 <?php
-
+if (php_sapi_name() !== 'cli') die('This must be run from the command line');
 /*
  * Basic test of LuminousFormatter's methods (it currently only has one)
  */

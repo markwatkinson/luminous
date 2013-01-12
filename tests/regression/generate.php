@@ -1,5 +1,6 @@
 #!/usr/bin/php
 <?php
+if (php_sapi_name() !== 'cli') die('This must be run from the command line');
 include 'functions.php';
 
 if ($argc == 1)

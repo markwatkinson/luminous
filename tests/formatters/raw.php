@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-
+if (php_sapi_name() !== 'cli') die('This must be run from the command line');
 /**
  * Raw formatter test.
  * Luminous raw output is pretty much XML, so we test it's properly formed

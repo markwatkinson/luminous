@@ -1,5 +1,5 @@
 <?php
-
+if (php_sapi_name() !== 'cli') die('This must be run from the command line');
 /* 
  * Very simple check to ensure that each scanner is okay, and does not
  * contain any syntax errors which prevent PHP compilation, or any errors 

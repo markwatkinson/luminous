@@ -1,5 +1,5 @@
 <?php
-
+if (php_sapi_name() !== 'cli') die('This must be run from the command line');
 /*
  * API test - tests the various configuration options
  */

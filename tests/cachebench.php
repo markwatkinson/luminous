@@ -1,5 +1,5 @@
 <?php
-
+if (php_sapi_name() !== 'cli') die('This must be run from the command line');
 include dirname(__FILE__) . '/../src/luminous.php';
 
 $mysql = mysql_connect('localhost', 'testuser') or die(mysql_error());

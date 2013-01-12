@@ -1,5 +1,5 @@
 <?php
-
+if (php_sapi_name() !== 'cli') die('This must be run from the command line');
 /// this test is broken
 
 require_once(dirname(__FILE__) . '/../../src/luminous.php');

@@ -1,5 +1,6 @@
 #!/usr/bin/php
 <?php
+if (php_sapi_name() !== 'cli') die('This must be run from the command line');
 // TODO: this no longer works, rewrite it for the new testing structure.
 
 
