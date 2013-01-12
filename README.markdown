@@ -6,9 +6,9 @@ Luminous - a Syntax Highlighter for PHP
 Luminous is an accurate and style-able syntax highlighter for PHP which 
 supports a bunch of common languages and output to HTML and LaTeX.
 
-If you simply want to use Luminous as a library, __please don't clone this 
-repository__. Or if you do, make sure you delete luminous/tests afterwards. 
-Do not expose luminous/tests on a public machine. It is recommended to get a 
+If you simply want to use Luminous as a library, __please don't clone this
+repository__. Or if you do, make sure you delete luminous/tests afterwards.
+Do not expose luminous/tests on a public machine. It is recommended to get a
 packaged version from the links below.
 
 ##Links:
@@ -23,8 +23,20 @@ packaged version from the links below.
 
 Installation
 ============
+
 Extract your tarball, zip, whatever, into some directory where it's going to be
 used (i.e. probably your web-server).  We'll assume it's called `luminous/'
+
+## Alternatively, Composer:
+Luminous is also available via Packagist as a Composer package:
+```json
+{
+        "require": {
+                "luminous/luminous": "0.7.*"
+        }
+}
+```
+
 
 Quick Usage 
 ===========
@@ -43,6 +55,26 @@ echo luminous::highlight('c', 'printf("hello world\n");');
 
 Useful examples can be found in luminous/examples/. If you have problems,
 check that luminous/examples/example.php works.
+
+## Autoloading, PSR-0 and stuff.
+
+Luminous's entire public interface is in the Luminous class, and this is
+autoloadable, if you want.
+
+```php
+<?php
+// via SplClassLoader
+$classLoader = new SplClassLoader(null, 'luminous');
+$classLoader->register();
+echo luminous::highlight('c', 'printf("hello world")'); // works
+
+// alternatively, via Composer's autoload:
+<?php
+require 'vendor/autoload.php';
+echo luminous::highlight('c', 'printf("hello world")');  // works
+```
+
+
 
 
 Command Line Usage
