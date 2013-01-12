@@ -1,6 +1,5 @@
 <?php
 
-*/
 /**
  * \file example.php
  * \brief A short example for calling Luminous
