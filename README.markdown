@@ -8,7 +8,7 @@ supports a bunch of common languages and output to HTML and LaTeX.
 
 If you simply want to use Luminous as a library, __please don't clone this 
 repository__. Or if you do, make sure you delete luminous/tests afterwards. 
-Do not expose luminous/tests on a public machine. It is recommened to get a 
+Do not expose luminous/tests on a public machine. It is recommended to get a 
 packaged version from the links below.
 
 ##Links:
