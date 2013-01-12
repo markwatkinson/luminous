@@ -1,7 +1,14 @@
 Luminous Changelog since 0.6.0
 ==============================
 
-##v0.7-dev (25/09/12):
+##v0.7.0 (12/01/13):
+
+- Important stuff (maybe):
+    - License change: GPL to LGPL.
+    - Luminous is a composer package.
+
+- New stuff:
+    - SCSS scanner.
 
 - Changes to markup/CSS:
   - luminous.css is now compiled from luminous.scss (SCSS)
@@ -36,9 +43,11 @@ Luminous Changelog since 0.6.0
     number of items in a single directory, and may improve performance 
     slightly on some filesystems.
   - examples/index.php example browser
+  - Security improvements to testing files, should you have them on your
+    server.
+  - Fix broken tests on PHP5.4.
 
-- Language additions:
-  - Support for SCSS language
+- Misc language fixes:
   - C#: added missing 'void' keyword, added a lot of types
   
 ##v0.6.7-2 (10/6/12):
