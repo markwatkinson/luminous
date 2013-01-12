@@ -1,31 +1,9 @@
-/*
- * Copyright 2010 Mark Watkinson
- * 
- * This file is part of Luminous.
- * 
- * Luminous is free software: you can redistribute it and/or
- * modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * Luminous is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with Luminous.  If not, see <http://www.gnu.org/licenses/>.
- */
- 
- 
- 
- /**
-   * This simply adds some extras to Luminous elements via a jQUery
-   * plugin. The extras are currently a toggleable line-highlighting
-   * on click
-   */
- 
+/**
+* This simply adds some extras to Luminous elements via a jQUery
+* plugin. The extras are currently a toggleable line-highlighting
+* on click
+*/
+
 (function($) {
     "use strict";
     
@@ -164,7 +142,6 @@
             
             data.lineNumbers.visible = true;
             data.lineNumbers.setControlPosition = function() {
-                console.log(mouseY);
                 $control.css('top', Math.max(0, mouseY - (controlHeight/2)) + 'px');
             }
             
@@ -186,7 +163,6 @@
             controlHeight = $control.outerHeight();
             gutterWidth = $element.find('.line-numbers').outerWidth();
             $control.css('left', gutterWidth - controlWidth + 'px');
-            
             $control.hide();
             $element.mousemove(function(ev) {
                 var scrollLeft = $element.scrollLeft();
@@ -218,6 +194,8 @@
                 $lineNumbers.css('left', $element.scrollLeft() + 'px');
             });
             schedule.push(function() { $element.luminous('showLineNumbers', true); });
+            $element.find('.line-numbers').parent().css({width: 0, maxWidth: 0});
+            
         }
         
         // highlight all the initial lines
