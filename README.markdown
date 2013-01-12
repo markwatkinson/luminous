@@ -6,10 +6,10 @@ Luminous - a Syntax Highlighter for PHP
 Luminous is an accurate and style-able syntax highlighter for PHP which 
 supports a bunch of common languages and output to HTML and LaTeX.
 
-__Please don't clone the repo unless you have a good reason to.__ 
-Instead, get a packaged version from the site linked below - this will ensure
-you don't get masses of testing code and won't risk publicly exposing
-resource heavy testing scripts and stuff.
+If you simply want to use Luminous as a library, __please don't clone this 
+repository__. Or if you do, make sure you delete luminous/tests afterwards. 
+Do not expose luminous/tests on a public machine. It is recommened to get a 
+packaged version from the links below.
 
 ##Links:
 
@@ -58,13 +58,14 @@ $ php luminous.php --help
 Polite Warning
 ================
 
-Luminous is pretty slow. It's perfectly usable for highlighting several-KB
-snippets on a blog or similar, and it also caches so highlighting is a
-one-time overhead. Throughput is roughly 50-200 KB/s depending on the
-language. In *most* use cases, this is easily fast enough, especially once you
-consider that highlights are cached and therefore there is no real penalty
-most of the time. You may need to run your own tests to decide whether or not
-it is suitable for you.
+Luminous is fairly slow. But it caches! So it's not slow. Or is it?
+
+It depends on your use-case, is the simple answer. Most people should make sure
+the cache works (create luminous/cache with appropriate permissions), and after
+that, Luminous will almost certainly have negligable impact on their 
+performance.
+
+Optimizations are welcome, but not at the expense of maintainability.
 
 ## Caching 
 The cache can be stored either directly on the file system or in a MySQL table
@@ -74,7 +75,7 @@ check out the [cache documentation](http://luminous.asgaard.co.uk/index.php/docs
 Licensing
 =========
 
-Luminous is distributed under the GPL3 but includes a bunch of stuff which is
+Luminous is distributed under the LGPL but includes a bunch of stuff which is
 separate.
 
   - Everything under src/ and languages/ is part of Luminous.

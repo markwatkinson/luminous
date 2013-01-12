@@ -7,7 +7,7 @@
 # the placeholder is for the version
 url_tarball = 'https://github.com/markwatkinson/luminous/tarball/{0}'
 url_clone = 'git://github.com/markwatkinson/luminous.git'
-
+url_clone = '/home/mark/projects/luminous'
 import re
 import os
 import shutil
