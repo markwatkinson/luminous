@@ -1,9 +1,0 @@
-
-
-x <OPERATOR>=</OPERATOR> <STRING>" and I said <ESC>\"</ESC>hello<ESC>\"</ESC> to him"</STRING>
-x <OPERATOR>=</OPERATOR> <STRING>" and I said <ESC>\\</ESC>"</STRING> oops
-
-x <OPERATOR>=</OPERATOR> <STRING>' and I said <ESC>\'</ESC>hello<ESC>\'</ESC> to him'</STRING>
-x <OPERATOR>=</OPERATOR> <STRING>' and I said <ESC>\\</ESC>'</STRING> oops
-
-<STRING>'''       <ESC>\'</ESC>'''</STRING>
