@@ -1,4 +1,4 @@
-WP Luminous
+WP Luminous [See original Luminous](https://github.com/markwatkinson/luminous)
 ======
 
 Description
