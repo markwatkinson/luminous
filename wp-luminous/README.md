@@ -10,7 +10,7 @@ Installation
 1. Upload `wp-luminous` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the `Plugins` menu in WordPress.
 3. Optionall select a theme from the plugin settings page in `settings/WP Luminous`.
-4. Place code inside <pre lang=''> </pre> blocks All languages are supported from the Luminous
+4. Place code inside ````<pre lang=''> </pre>```` blocks All languages are supported from the Luminous
 
 for example:
 ````php
