@@ -1,0 +1,93 @@
+<COMMENT>/*</COMMENT>
+<COMMENT> * Simple drag functionality for jQuery.</COMMENT>
+<COMMENT> * </COMMENT>
+<COMMENT> * Usage:</COMMENT>
+<COMMENT> * </COMMENT>
+<COMMENT> * $('#yourelement').dragify();</COMMENT>
+<COMMENT> * </COMMENT>
+<COMMENT> * element will now respond to drag.</COMMENT>
+<COMMENT> * </COMMENT>
+<COMMENT> * User may optionally specify the actual dragger (if it is different to the element</COMMENT>
+<COMMENT> * as the first argument of dragify, i.e.</COMMENT>
+<COMMENT> * </COMMENT>
+<COMMENT> * $('#content_box').dragify('#dragger');</COMMENT>
+<COMMENT> * </COMMENT>
+<COMMENT> * The second argument may be a callback which is fired when the element is dropped.</COMMENT>
+<COMMENT> * It receives the mouseup event and its 'this' context is the element.</COMMENT>
+<COMMENT> * </COMMENT>
+<COMMENT> * I realise this is implemented in some form in jQuery UI but it seems like</COMMENT>
+<COMMENT> * a big dependency for the sake of 40 lines of code.</COMMENT>
+<COMMENT> */</COMMENT>
+
+
+<COMMENT>/*</COMMENT>
+<COMMENT>  Copyright (c) 2010, Mark Watkinson</COMMENT>
+<COMMENT>All rights reserved.</COMMENT>
+<COMMENT></COMMENT>
+<COMMENT>Redistribution and use in source and binary forms, with or without</COMMENT>
+<COMMENT>modification, are permitted provided that the following conditions are met:</COMMENT>
+<COMMENT>    * Redistributions of source code must retain the above copyright</COMMENT>
+<COMMENT>      notice, this list of conditions and the following disclaimer.</COMMENT>
+<COMMENT>    * Redistributions in binary form must reproduce the above copyright</COMMENT>
+<COMMENT>      notice, this list of conditions and the following disclaimer in the</COMMENT>
+<COMMENT>      documentation and/or other materials provided with the distribution.</COMMENT>
+<COMMENT>    * Neither the name of the &lt;organization&gt; nor the</COMMENT>
+<COMMENT>      names of its contributors may be used to endorse or promote products</COMMENT>
+<COMMENT>      derived from this software without specific prior written permission.</COMMENT>
+<COMMENT></COMMENT>
+<COMMENT>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND</COMMENT>
+<COMMENT>ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</COMMENT>
+<COMMENT>WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</COMMENT>
+<COMMENT>DISCLAIMED. IN NO EVENT SHALL Mark Watkinson BE LIABLE FOR ANY</COMMENT>
+<COMMENT>DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES</COMMENT>
+<COMMENT>(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</COMMENT>
+<COMMENT>LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND</COMMENT>
+<COMMENT>ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT</COMMENT>
+<COMMENT>(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS</COMMENT>
+<COMMENT>SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</COMMENT>
+<COMMENT>*/</COMMENT>
+
+(<KEYWORD>function</KEYWORD>(<FUNCTION>$</FUNCTION>){
+  <OBJ>$</OBJ><OPERATOR>.</OPERATOR><OO>fn</OO><OPERATOR>.</OPERATOR><OO>dragify</OO> <OPERATOR>=</OPERATOR> <KEYWORD>function</KEYWORD>(dragger<OPERATOR>,</OPERATOR> drop_callback){
+    <KEYWORD>var</KEYWORD> $el <OPERATOR>=</OPERATOR> <FUNCTION>$</FUNCTION>(<KEYWORD>this</KEYWORD>)<OPERATOR>;</OPERATOR>
+    dragger <OPERATOR>=</OPERATOR> (<KEYWORD>typeof</KEYWORD> dragger <OPERATOR>!=</OPERATOR> <STRING>'undefined'</STRING>)<OPERATOR>?</OPERATOR> dragger <OPERATOR>:</OPERATOR> $el<OPERATOR>;</OPERATOR>
+      
+    <KEYWORD>var</KEYWORD> document_mouseup_cb <OPERATOR>=</OPERATOR> <KEYWORD>function</KEYWORD>(e){
+      <OBJ>dragger</OBJ><OPERATOR>.</OPERATOR><OO>trigger</OO>(<STRING>'mouseup'</STRING>)<OPERATOR>;</OPERATOR>
+    }<OPERATOR>;</OPERATOR>
+      
+    <KEYWORD>var</KEYWORD> drag_handler <OPERATOR>=</OPERATOR> <KEYWORD>function</KEYWORD>(e){
+      <KEYWORD>var</KEYWORD> old_coords <OPERATOR>=</OPERATOR> <OBJ>$el</OBJ><OPERATOR>.</OPERATOR><OO>data</OO>(<STRING>'drag_coords'</STRING>)<OPERATOR>;</OPERATOR>
+      <KEYWORD>var</KEYWORD> new_coords <OPERATOR>=</OPERATOR> {x<OPERATOR>:</OPERATOR><OBJ>e</OBJ><OPERATOR>.</OPERATOR><OO>pageX</OO><OPERATOR>,</OPERATOR> y<OPERATOR>:</OPERATOR><OBJ>e</OBJ><OPERATOR>.</OPERATOR><OO>pageY</OO>}<OPERATOR>;</OPERATOR>
+      <KEYWORD>var</KEYWORD> dx <OPERATOR>=</OPERATOR> <OBJ>new_coords</OBJ><OPERATOR>.</OPERATOR><OO>x</OO> <OPERATOR>-</OPERATOR> <OBJ>old_coords</OBJ><OPERATOR>.</OPERATOR><OO>x</OO><OPERATOR>;</OPERATOR>
+      <KEYWORD>var</KEYWORD> dy <OPERATOR>=</OPERATOR> <OBJ>new_coords</OBJ><OPERATOR>.</OPERATOR><OO>y</OO> <OPERATOR>-</OPERATOR> <OBJ>old_coords</OBJ><OPERATOR>.</OPERATOR><OO>y</OO><OPERATOR>;</OPERATOR>
+      
+      <KEYWORD>var</KEYWORD> offset <OPERATOR>=</OPERATOR> <OBJ>$el</OBJ><OPERATOR>.</OPERATOR><OO>offset</OO>()<OPERATOR>;</OPERATOR>
+      
+      <OBJ>offset</OBJ><OPERATOR>.</OPERATOR><OO>top</OO><OPERATOR>+=</OPERATOR>dy<OPERATOR>;</OPERATOR>
+      <OBJ>offset</OBJ><OPERATOR>.</OPERATOR><OO>left</OO><OPERATOR>+=</OPERATOR>dx<OPERATOR>;</OPERATOR>
+      <OBJ>$el</OBJ><OPERATOR>.</OPERATOR><OO>offset</OO>(offset)<OPERATOR>;</OPERATOR>  
+      <OBJ>$el</OBJ><OPERATOR>.</OPERATOR><OO>offset</OO>(offset)<OPERATOR>;</OPERATOR>  <COMMENT>/* workaround for chrome bug, if the element has a </COMMENT>
+<COMMENT>                              css position, then $el.offset(offset) != offset </COMMENT>
+<COMMENT>                              the first time it is set. (at least in chromium</COMMENT>
+<COMMENT>                              8.0.552.215 (67652) x64 linux)</COMMENT>
+<COMMENT>                              */</COMMENT>
+      <OBJ>$el</OBJ><OPERATOR>.</OPERATOR><OO>data</OO>(<STRING>'drag_coords'</STRING><OPERATOR>,</OPERATOR> new_coords)<OPERATOR>;</OPERATOR>
+      <KEYWORD>return</KEYWORD> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+    }<OPERATOR>;</OPERATOR>
+    
+    <OBJ>dragger</OBJ><OPERATOR>.</OPERATOR><OO>mousedown</OO>(<KEYWORD>function</KEYWORD>(e){
+      <OBJ>$el</OBJ><OPERATOR>.</OPERATOR><OO>data</OO>(<STRING>'drag_coords'</STRING><OPERATOR>,</OPERATOR> {x<OPERATOR>:</OPERATOR> <OBJ>e</OBJ><OPERATOR>.</OPERATOR><OO>pageX</OO><OPERATOR>,</OPERATOR> y<OPERATOR>:</OPERATOR> <OBJ>e</OBJ><OPERATOR>.</OPERATOR><OO>pageY</OO>})<OPERATOR>;</OPERATOR>   
+      <FUNCTION>$</FUNCTION>(<TYPE>document</TYPE>)<OPERATOR>.</OPERATOR><OO>mousemove</OO>(drag_handler)<OPERATOR>.</OPERATOR><OO>mouseup</OO>(document_mouseup_cb)<OPERATOR>;</OPERATOR>   
+    })<OPERATOR>;</OPERATOR>
+  
+    <OBJ>dragger</OBJ><OPERATOR>.</OPERATOR><OO>mouseup</OO>(<KEYWORD>function</KEYWORD>(e){
+      <FUNCTION>$</FUNCTION>(<TYPE>document</TYPE>)<OPERATOR>.</OPERATOR><OO>unbind</OO>(<STRING>'mousemove'</STRING><OPERATOR>,</OPERATOR> drag_handler)
+        <OPERATOR>.</OPERATOR><OO>unbind</OO>(<STRING>'mouseup'</STRING><OPERATOR>,</OPERATOR> document_mouseup_cb)<OPERATOR>;</OPERATOR>
+        
+      <KEYWORD>if</KEYWORD> (<KEYWORD>typeof</KEYWORD> drop_callback <OPERATOR>!=</OPERATOR> <STRING>'undefined'</STRING>)
+        <OBJ>drop_callback</OBJ><OPERATOR>.</OPERATOR><OO>call</OO>($el<OPERATOR>,</OPERATOR> e)<OPERATOR>;</OPERATOR>
+    })<OPERATOR>;</OPERATOR>    
+    <KEYWORD>return</KEYWORD> <KEYWORD>this</KEYWORD><OPERATOR>;</OPERATOR>
+  }<OPERATOR>;</OPERATOR>
+})(<FUNCTION>jQuery</FUNCTION>)<OPERATOR>;</OPERATOR>

@@ -1,0 +1,19 @@
+<COMMENT>&lt;![CDATA[</COMMENT>
+<COMMENT>HERE IS SOME CDATA</COMMENT>
+<COMMENT>]]&gt;</COMMENT>
+
+this isn't
+
+<COMMENT>&lt;![CDATA[</COMMENT>
+<COMMENT>HERE IS SOME MORE </COMMENT>
+<COMMENT>]]&gt;</COMMENT>
+
+This isn't
+
+<COMMENT>&lt;![CDATA[</COMMENT>
+<COMMENT>  this is ] also &gt; CDATA ]] </COMMENT>
+<COMMENT>  and it ends here ]]&gt;</COMMENT>
+
+  this is not
+
+

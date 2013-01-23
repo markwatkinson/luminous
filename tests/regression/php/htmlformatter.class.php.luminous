@@ -1,0 +1,181 @@
+<DELIMITER>&lt;?php</DELIMITER>
+
+<KEYWORD>class</KEYWORD> <USER_FUNCTION>LuminousFormatterHTML</USER_FUNCTION> <KEYWORD>extends</KEYWORD> <USER_FUNCTION>LuminousFormatter</USER_FUNCTION>
+{   
+  <KEYWORD>public</KEYWORD> <VARIABLE>$height</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+  
+  <KEYWORD>private</KEYWORD> <KEYWORD>function</KEYWORD> <USER_FUNCTION>Format_NoLineNumbers</USER_FUNCTION>(<VARIABLE>$src</VARIABLE>)
+  {
+    <VARIABLE>$lines</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>''</STRING><OPERATOR>;</OPERATOR>
+    <VARIABLE>$lines_a</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>explode</FUNCTION>(<STRING>"<ESC>\n</ESC>"</STRING><OPERATOR>,</OPERATOR> <VARIABLE>$src</VARIABLE>)<OPERATOR>;</OPERATOR>
+    <VARIABLE>$lines_untagged</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>explode</FUNCTION>(<STRING>"<ESC>\n</ESC>"</STRING><OPERATOR>,</OPERATOR> <FUNCTION>strip_tags</FUNCTION>(<VARIABLE>$lines</VARIABLE>))<OPERATOR>;</OPERATOR>
+    
+    <KEYWORD>foreach</KEYWORD>(<VARIABLE>$lines_a</VARIABLE> <KEYWORD>as</KEYWORD> <VARIABLE>$index</VARIABLE><OPERATOR>=&gt;&amp;</OPERATOR><VARIABLE>$line</VARIABLE>)
+    {
+      <VARIABLE>$l</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$line</VARIABLE><OPERATOR>;</OPERATOR>
+      <VARIABLE>$num</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>WrapLine</OO>(<VARIABLE>$l</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>wrap_length</OO>)<OPERATOR>;</OPERATOR>
+      <VARIABLE>$lines</VARIABLE> <OPERATOR>.=</OPERATOR> <VARIABLE>$l</VARIABLE><OPERATOR>;</OPERATOR>
+    }
+    
+    <KEYWORD>return</KEYWORD> <STRING>"&lt;div class='code'&gt;&lt;pre class='code'&gt;<VARIABLE>$lines</VARIABLE>&lt;/pre&gt;&lt;/div&gt;"</STRING><OPERATOR>;</OPERATOR>
+  }
+  
+  <KEYWORD>public</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>Format</USER_FUNCTION>(<VARIABLE>$src</VARIABLE>)
+  {
+    <VARIABLE>$line_numbers</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+    
+    
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>tab_width</OO> <OPERATOR>-</OPERATOR> <NUMERIC>1</NUMERIC> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>)
+    {
+      <VARIABLE>$tab_rep</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+      <KEYWORD>for</KEYWORD>(<VARIABLE>$i</VARIABLE><OPERATOR>=</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR> <VARIABLE>$i</VARIABLE><OPERATOR>&lt;</OPERATOR><VARIABLE>$this</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>tab_width</OO><OPERATOR>;</OPERATOR> <VARIABLE>$i</VARIABLE><OPERATOR>++</OPERATOR>)
+        <VARIABLE>$tab_rep</VARIABLE> <OPERATOR>.=</OPERATOR> <STRING>" "</STRING><OPERATOR>;</OPERATOR>
+      <VARIABLE>$src</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>str_replace</FUNCTION>(<STRING>"<ESC>\t</ESC>"</STRING><OPERATOR>,</OPERATOR> <VARIABLE>$tab_rep</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$src</VARIABLE>)<OPERATOR>;</OPERATOR>
+    }
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>link</OO>)
+      <VARIABLE>$src</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Linkify</OO>(<VARIABLE>$src</VARIABLE>)<OPERATOR>;</OPERATOR>
+    
+    <VARIABLE>$lines</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+    <KEYWORD>if</KEYWORD> (<VARIABLE>$this</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>line_numbers</OO>)
+      <VARIABLE>$lines</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Format_LineNumbers</OO>(<VARIABLE>$src</VARIABLE>)<OPERATOR>;</OPERATOR>
+    <KEYWORD>else</KEYWORD>
+      <VARIABLE>$lines</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Format_NoLineNumbers</OO>(<VARIABLE>$src</VARIABLE>)<OPERATOR>;</OPERATOR>
+    
+    
+    <VARIABLE>$lines</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>preg_replace</FUNCTION>(<STRING>'/(?&lt;=&lt;<ESC>\/</ESC>)[A-Z_0-9]+(?=&gt;)/'</STRING><OPERATOR>,</OPERATOR> <STRING>'span'</STRING><OPERATOR>,</OPERATOR> <VARIABLE>$lines</VARIABLE>)<OPERATOR>;</OPERATOR>
+    
+    <VARIABLE>$cb</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>create_function</FUNCTION>(<STRING>'$matches'</STRING><OPERATOR>,</OPERATOR> 
+                          <STRING>'$m1 = strtolower($matches[1]);</STRING>
+<STRING>                          return "&lt;span class=<ESC>\'</ESC>" . $m1 . "<ESC>\'</ESC>&gt;";</STRING>
+<STRING>                          '</STRING>)<OPERATOR>;</OPERATOR>
+    
+    <VARIABLE>$lines</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>preg_replace_callback</FUNCTION>(<STRING>'/&lt;([A-Z_0-9]+)&gt;/'</STRING><OPERATOR>,</OPERATOR> <VARIABLE>$cb</VARIABLE><OPERATOR>,</OPERATOR> 
+                                   <VARIABLE>$lines</VARIABLE>)<OPERATOR>;</OPERATOR>
+    <VARIABLE>$markup</VARIABLE> <OPERATOR>=</OPERATOR>  <VARIABLE>$lines</VARIABLE> <OPERATOR>;</OPERATOR> 
+    <VARIABLE>$h</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING> <OPERATOR>.</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>height</OO><OPERATOR>;</OPERATOR>
+    <VARIABLE>$h</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>trim</FUNCTION>(<VARIABLE>$h</VARIABLE>)<OPERATOR>;</OPERATOR>
+    <VARIABLE>$css</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+    
+    <KEYWORD>if</KEYWORD> (<FUNCTION>strlen</FUNCTION>(<VARIABLE>$h</VARIABLE>) <OPERATOR>&amp;&amp;</OPERATOR> (int)<VARIABLE>$h</VARIABLE> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>)
+    {
+      <VARIABLE>$units</VARIABLE> <OPERATOR>=</OPERATOR> <OPERATOR>!</OPERATOR><FUNCTION>ctype_digit</FUNCTION>(<VARIABLE>$h</VARIABLE>[<FUNCTION>strlen</FUNCTION>(<VARIABLE>$h</VARIABLE>)<OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>])<OPERATOR>;</OPERATOR>
+      <VARIABLE>$css</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>" style=<ESC>\"</ESC>max-height:"</STRING><OPERATOR>;</OPERATOR>
+      <VARIABLE>$css</VARIABLE> <OPERATOR>.=</OPERATOR> <VARIABLE>$h</VARIABLE><OPERATOR>;</OPERATOR>
+      <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><VARIABLE>$units</VARIABLE>)
+        <VARIABLE>$css</VARIABLE> <OPERATOR>.=</OPERATOR> <STRING>"px"</STRING><OPERATOR>;</OPERATOR>
+      <VARIABLE>$css</VARIABLE> <OPERATOR>.=</OPERATOR> <STRING>";<ESC>\"</ESC> "</STRING><OPERATOR>;</OPERATOR>
+    }
+    
+    <KEYWORD>return</KEYWORD> <STRING>"&lt;div class=<ESC>\"</ESC>luminous<ESC>\"</ESC>&gt;"</STRING> 
+           <OPERATOR>.</OPERATOR> <STRING>"&lt;div class=<ESC>\"</ESC>code_container<ESC>\"</ESC> <VARIABLE>$css</VARIABLE>&gt;"</STRING>
+             <OPERATOR>.</OPERATOR> <STRING>"<VARIABLE>$markup</VARIABLE>&lt;/div&gt;&lt;/div&gt;"</STRING><OPERATOR>;</OPERATOR>
+  }
+  
+  <KEYWORD>protected</KEYWORD> <KEYWORD>function</KEYWORD> <USER_FUNCTION>Linkify</USER_FUNCTION>(<VARIABLE>$src</VARIABLE>)
+  {    
+    <KEYWORD>if</KEYWORD> (<FUNCTION>stripos</FUNCTION>(<VARIABLE>$src</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"http://"</STRING>) <OPERATOR>===</OPERATOR> <KEYWORD>false</KEYWORD> <OPERATOR>&amp;&amp;</OPERATOR> <FUNCTION>stripos</FUNCTION>(<VARIABLE>$src</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"www."</STRING>) <OPERATOR>===</OPERATOR> <KEYWORD>false</KEYWORD>)
+        <KEYWORD>return</KEYWORD> <VARIABLE>$src</VARIABLE><OPERATOR>;</OPERATOR>
+    
+    <VARIABLE>$cb</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>create_function</FUNCTION>(<STRING>'$matches'</STRING><OPERATOR>,</OPERATOR> <STRING>' </STRING>
+<STRING>      $uri = (isset($matches[1]) &amp;&amp; strlen(trim($matches[1])))? $matches[0] : </STRING>
+<STRING>      "http://" . $matches[0];</STRING>
+<STRING>      </STRING>
+<STRING>      // we dont want to link if it would cause malformed HTML</STRING>
+<STRING>      $open_tags = array();</STRING>
+<STRING>      $close_tags = array();</STRING>
+<STRING>      preg_match_all("/&lt;(?!<ESC>\/</ESC>)([^<ESC>\s</ESC>&gt;]*).*?&gt;/", $matches[0], $open_tags, PREG_SET_ORDER);</STRING>
+<STRING>      preg_match_all("/&lt;<ESC>\/</ESC>([^<ESC>\s</ESC>&gt;]*).*?&gt;/", $matches[0], $close_tags, PREG_SET_ORDER);</STRING>
+<STRING>      </STRING>
+<STRING>      if (count($open_tags) != count($close_tags))</STRING>
+<STRING>        return $matches[0];</STRING>
+<STRING>      if (isset($open_tags[0]) &amp;&amp; trim($open_tags[0][1]) !== trim($close_tags[0][1]))</STRING>
+<STRING>        return $matches[0];</STRING>
+<STRING>      </STRING>
+<STRING>      $uri = strip_tags($uri);</STRING>
+<STRING>      </STRING>
+<STRING>      return "&lt;a href=<ESC>\"</ESC>$uri<ESC>\"</ESC> class=<ESC>\"</ESC>link<ESC>\"</ESC> target=<ESC>\"</ESC>_blank<ESC>\"</ESC>&gt;$matches[0]&lt;/a&gt;";</STRING>
+<STRING>      '</STRING>)<OPERATOR>;</OPERATOR>
+    
+    <VARIABLE>$chars</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"0-9a-zA-Z<ESC>\$</ESC><ESC>\-</ESC>_<ESC>\.</ESC>+!<ESC>\*</ESC>,%"</STRING><OPERATOR>;</OPERATOR>
+    <COMMENT>// everyone stand back, I know regular expressions</COMMENT>
+    <VARIABLE>$src</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>preg_replace_callback</FUNCTION>(
+      <STRING>"@(?&lt;![<ESC>\w</ESC>])</STRING>
+<STRING>      (?:(https?://(?:www[0-9]*<ESC>\.</ESC>)?) | (?:www<ESC>\d</ESC>*<ESC>\.</ESC>)   )</STRING>
+<STRING>      </STRING>
+<STRING>      # domain and tld</STRING>
+<STRING>      (?:[<VARIABLE>$chars</VARIABLE>]+)+<ESC>\.</ESC>[<VARIABLE>$chars</VARIABLE>]{2,}</STRING>
+<STRING>      # we don't include tags at the EOL because these are likely to be </STRING>
+<STRING>      # line-enclosing tags.</STRING>
+<STRING>      # same for quotes.</STRING>
+<STRING>      (?:[/<VARIABLE>$chars</VARIABLE>/?=<ESC>\#</ESC>;]+|&amp;amp;|&lt;[^&gt;]+&gt;(?!$)|'(?!<ESC>\s</ESC>))*</STRING>
+<STRING>      @xm"</STRING><OPERATOR>,</OPERATOR>
+      <VARIABLE>$cb</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$src</VARIABLE>)<OPERATOR>;</OPERATOR>
+      
+    <KEYWORD>return</KEYWORD> <VARIABLE>$src</VARIABLE><OPERATOR>;</OPERATOR>
+  }
+  
+  <COMMENT>// this is what we're using now for line numbering.</COMMENT>
+  <KEYWORD>private</KEYWORD> 
+  <KEYWORD>function</KEYWORD> <USER_FUNCTION>Format_LineNumbers</USER_FUNCTION>(<VARIABLE>$src</VARIABLE>)
+  {    
+    
+    <VARIABLE>$lineno</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>1</NUMERIC><OPERATOR>;</OPERATOR>
+    <VARIABLE>$linenos</VARIABLE><OPERATOR>=</OPERATOR><STRING>''</STRING><OPERATOR>;</OPERATOR>
+    <VARIABLE>$lines</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>''</STRING><OPERATOR>;</OPERATOR>
+    
+    <VARIABLE>$lines_a</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>explode</FUNCTION>(<STRING>"<ESC>\n</ESC>"</STRING><OPERATOR>,</OPERATOR> <VARIABLE>$src</VARIABLE>)<OPERATOR>;</OPERATOR>
+    <VARIABLE>$lines_untagged</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>explode</FUNCTION>(<STRING>"<ESC>\n</ESC>"</STRING><OPERATOR>,</OPERATOR> <FUNCTION>strip_tags</FUNCTION>(<VARIABLE>$lines</VARIABLE>))<OPERATOR>;</OPERATOR>
+    
+    <VARIABLE>$id</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>rand</FUNCTION>()<OPERATOR>;</OPERATOR>    
+    
+    <COMMENT>// this seems to run a bit faster if we keep the literals out of</COMMENT>
+    <COMMENT>// the loop.</COMMENT>
+    
+    <VARIABLE>$class</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"line_number"</STRING><OPERATOR>;</OPERATOR>
+    <VARIABLE>$class_emph</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>" line_number_emphasised"</STRING><OPERATOR>;</OPERATOR>
+    
+    <VARIABLE>$line_no_tag0</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>'&lt;a id="lineno_'</STRING> <OPERATOR>.</OPERATOR> <VARIABLE>$id</VARIABLE> <OPERATOR>.</OPERATOR> <STRING>'_'</STRING><OPERATOR>;</OPERATOR>
+    <VARIABLE>$line_no_tag1</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>'" class="'</STRING> <OPERATOR>.</OPERATOR> <VARIABLE>$class</VARIABLE><OPERATOR>;</OPERATOR>
+    <VARIABLE>$line_no_tag2</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>'"&gt;&lt;span class="line_number"&gt;&amp;nbsp;'</STRING><OPERATOR>;</OPERATOR>
+    <VARIABLE>$line_no_tag3</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"&amp;nbsp;<ESC>\n</ESC>&lt;/span&gt;&lt;/a&gt;"</STRING><OPERATOR>;</OPERATOR>
+    
+    <VARIABLE>$wrap_line</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"&lt;span class='line_number'&gt;&amp;nbsp;|_<ESC>\n</ESC>&lt;/span&gt;"</STRING><OPERATOR>;</OPERATOR>
+    
+    <VARIABLE>$line_tag0</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>'&lt;span id="line_'</STRING> <OPERATOR>.</OPERATOR> <VARIABLE>$id</VARIABLE> <OPERATOR>.</OPERATOR> <STRING>'_'</STRING><OPERATOR>;</OPERATOR>
+    <VARIABLE>$line_tag1</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>'" class="line'</STRING><OPERATOR>;</OPERATOR>
+    <VARIABLE>$class_alt</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>' line_alt'</STRING><OPERATOR>;</OPERATOR>
+    <VARIABLE>$line_tag2</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>'"&gt;'</STRING><OPERATOR>;</OPERATOR>
+    <VARIABLE>$line_tag3</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>'&lt;/span&gt;'</STRING><OPERATOR>;</OPERATOR>
+    
+    <VARIABLE>$line_delta</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>3</NUMERIC><OPERATOR>;</OPERATOR>
+    <KEYWORD>foreach</KEYWORD>(<VARIABLE>$lines_a</VARIABLE> <KEYWORD>as</KEYWORD> <VARIABLE>$line</VARIABLE>)
+    {      
+      
+      <VARIABLE>$linenos</VARIABLE> <OPERATOR>.=</OPERATOR> <VARIABLE>$line_no_tag0</VARIABLE> <OPERATOR>.</OPERATOR> <VARIABLE>$lineno</VARIABLE> <OPERATOR>.</OPERATOR> <VARIABLE>$line_no_tag1</VARIABLE><OPERATOR>;</OPERATOR>
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$lineno</VARIABLE> <OPERATOR>%</OPERATOR> <NUMERIC>5</NUMERIC> <OPERATOR>===</OPERATOR> <NUMERIC>0</NUMERIC>)
+        <VARIABLE>$linenos</VARIABLE> <OPERATOR>.=</OPERATOR> <VARIABLE>$class_emph</VARIABLE><OPERATOR>;</OPERATOR>
+      <VARIABLE>$linenos</VARIABLE> <OPERATOR>.=</OPERATOR> <VARIABLE>$line_no_tag2</VARIABLE> <OPERATOR>.</OPERATOR> <VARIABLE>$lineno</VARIABLE> <OPERATOR>.</OPERATOR> <VARIABLE>$line_no_tag3</VARIABLE><OPERATOR>;</OPERATOR>
+      
+      
+      <VARIABLE>$num</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>WrapLine</OO>(<VARIABLE>$line</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$this</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>wrap_length</OO>)<OPERATOR>;</OPERATOR>  
+      
+      <KEYWORD>for</KEYWORD> (<VARIABLE>$i</VARIABLE><OPERATOR>=</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>;</OPERATOR> <VARIABLE>$i</VARIABLE><OPERATOR>&lt;</OPERATOR><VARIABLE>$num</VARIABLE><OPERATOR>;</OPERATOR> <VARIABLE>$i</VARIABLE><OPERATOR>++</OPERATOR>)
+        <VARIABLE>$linenos</VARIABLE> <OPERATOR>.=</OPERATOR> <VARIABLE>$wrap_line</VARIABLE><OPERATOR>;</OPERATOR>
+      
+      
+      <VARIABLE>$lines</VARIABLE> <OPERATOR>.=</OPERATOR> <VARIABLE>$line_tag0</VARIABLE> <OPERATOR>.</OPERATOR> <VARIABLE>$lineno</VARIABLE> <OPERATOR>.</OPERATOR> <VARIABLE>$line_tag1</VARIABLE><OPERATOR>;</OPERATOR>
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$lineno</VARIABLE> <OPERATOR>%</OPERATOR> <NUMERIC>2</NUMERIC> <OPERATOR>===</OPERATOR> <NUMERIC>0</NUMERIC>)
+        <VARIABLE>$lines</VARIABLE> <OPERATOR>.=</OPERATOR> <VARIABLE>$class_alt</VARIABLE><OPERATOR>;</OPERATOR>
+      <VARIABLE>$lines</VARIABLE> <OPERATOR>.=</OPERATOR> <VARIABLE>$line_tag2</VARIABLE> <OPERATOR>.</OPERATOR> <VARIABLE>$line</VARIABLE> <OPERATOR>.</OPERATOR> <VARIABLE>$line_tag3</VARIABLE><OPERATOR>;</OPERATOR>
+      
+      <OPERATOR>++</OPERATOR><VARIABLE>$lineno</VARIABLE><OPERATOR>;</OPERATOR>
+      
+    }
+    
+    <KEYWORD>return</KEYWORD> <STRING>"&lt;table class='code_container'&gt;&lt;tr&gt;&lt;td class='line_number_bar'&gt;"</STRING> 
+           <OPERATOR>.</OPERATOR> <STRING>"&lt;pre class='line_numbers' style=''&gt;<VARIABLE>$linenos</VARIABLE>&lt;/pre&gt;&lt;/td&gt;"</STRING>
+             <OPERATOR>.</OPERATOR> <STRING>"<ESC>\n</ESC>&lt;td class='code'&gt;&lt;pre class='code'&gt;<VARIABLE>$lines</VARIABLE>&lt;/pre&gt;"</STRING>
+               <OPERATOR>.</OPERATOR> <STRING>"&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;"</STRING><OPERATOR>;</OPERATOR>
+  }      
+}

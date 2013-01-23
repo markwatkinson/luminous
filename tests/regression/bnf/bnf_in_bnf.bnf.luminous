@@ -1,0 +1,9 @@
+ &lt;<VALUE>syntax</VALUE>&gt; <OPERATOR>::=</OPERATOR> &lt;<VALUE>rule</VALUE>&gt; <OPERATOR>|</OPERATOR> &lt;<VALUE>rule</VALUE>&gt; &lt;<VALUE>syntax</VALUE>&gt;
+ &lt;<VALUE>rule</VALUE>&gt;   <OPERATOR>::=</OPERATOR> &lt;<VALUE>opt-whitespace</VALUE>&gt; <STRING>"&lt;"</STRING> &lt;<VALUE>rule-name</VALUE>&gt; <STRING>"&gt;"</STRING> &lt;<VALUE>opt-whitespace</VALUE>&gt; <STRING>"::="</STRING> 
+                 &lt;<VALUE>opt-whitespace</VALUE>&gt; &lt;<VALUE>expression</VALUE>&gt; &lt;<VALUE>line-end</VALUE>&gt;
+ &lt;<VALUE>opt-whitespace</VALUE>&gt; <OPERATOR>::=</OPERATOR> <STRING>" "</STRING> &lt;<VALUE>opt-whitespace</VALUE>&gt; <OPERATOR>|</OPERATOR> <STRING>""</STRING>  <COMMENT>&lt;!-- "" is empty string, i.e. no whitespace --&gt;</COMMENT>
+ &lt;<VALUE>expression</VALUE>&gt;     <OPERATOR>::=</OPERATOR> &lt;<VALUE>list</VALUE>&gt; <OPERATOR>|</OPERATOR> &lt;<VALUE>list</VALUE>&gt; <STRING>"|"</STRING> &lt;<VALUE>expression</VALUE>&gt;
+ &lt;<VALUE>line-end</VALUE>&gt;       <OPERATOR>::=</OPERATOR> &lt;<VALUE>opt-whitespace</VALUE>&gt; &lt;<VALUE>EOL</VALUE>&gt; <OPERATOR>|</OPERATOR> &lt;<VALUE>line-end</VALUE>&gt; &lt;<VALUE>line-end</VALUE>&gt;
+ &lt;<VALUE>list</VALUE>&gt;    <OPERATOR>::=</OPERATOR> &lt;<VALUE>term</VALUE>&gt; <OPERATOR>|</OPERATOR> &lt;<VALUE>term</VALUE>&gt; &lt;<VALUE>opt-whitespace</VALUE>&gt; &lt;<VALUE>list</VALUE>&gt;
+ &lt;<VALUE>term</VALUE>&gt;    <OPERATOR>::=</OPERATOR> &lt;<VALUE>literal</VALUE>&gt; <OPERATOR>|</OPERATOR> <STRING>"&lt;"</STRING> &lt;<VALUE>rule-name</VALUE>&gt; <STRING>"&gt;"</STRING>
+ &lt;<VALUE>literal</VALUE>&gt; <OPERATOR>::=</OPERATOR> <STRING>'"'</STRING> &lt;<VALUE>text</VALUE>&gt; <STRING>'"'</STRING> <OPERATOR>|</OPERATOR> <STRING>"'"</STRING> &lt;<VALUE>text</VALUE>&gt; <STRING>"'"</STRING> <COMMENT>&lt;!-- actually, the original BNF did not use quotes --&gt;</COMMENT>

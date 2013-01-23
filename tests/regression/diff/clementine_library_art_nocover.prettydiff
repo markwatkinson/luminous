@@ -1,0 +1,67 @@
+Index: src/library/librarymodel.h
+===================================================================
+--- src/library/librarymodel.h	(revision 2552)
++++ src/library/librarymodel.h	(working copy)
+@@ -243,10 +243,14 @@
+ 
+   QIcon artist_icon_;
+   QIcon album_icon_;
++  // used as a generic icon to show when no cover art is found,
++  // fixed to the same size as the artwork (32x32)
++  QImage no_cover_icon_pretty_;
+   QIcon no_cover_icon_;
+   QIcon playlists_dir_icon_;
+   QIcon playlist_icon_;
+   
++  QSize pretty_cover_size_;
+   bool use_pretty_covers_;
+ };
+ 
+Index: src/library/librarymodel.cpp
+===================================================================
+--- src/library/librarymodel.cpp	(revision 2552)
++++ src/library/librarymodel.cpp	(working copy)
+@@ -62,6 +62,7 @@
+     no_cover_icon_(":nocover.png"),
+     playlists_dir_icon_(IconLoader::Load("folder-sound")),
+     playlist_icon_(":/icons/22x22/x-clementine-albums.png"),
++    pretty_cover_size_(32, 32),
+     use_pretty_covers_(false)
+ {
+   root_->lazy_loaded = true;
+@@ -69,6 +70,11 @@
+   group_by_[0] = GroupBy_Artist;
+   group_by_[1] = GroupBy_Album;
+   group_by_[2] = GroupBy_None;
++  
++  no_cover_icon_pretty_ = QImage(":nocover.png").scaled(pretty_cover_size_,
++                                                    Qt::KeepAspectRatio,
++                                                    Qt::SmoothTransformation);
++
+ }
+ 
+ LibraryModel::~LibraryModel() {
+@@ -352,7 +358,7 @@
+   // Cache the art in the item's metadata field
+   LibraryItem* item = IndexToItem(index);
+   if (!item)
+-    return album_icon_;
++    return no_cover_icon_pretty_;
+   if (!item->metadata.image().isNull())
+     return item->metadata.image();
+   
+@@ -364,12 +370,12 @@
+ 
+     if (!pixmap.isNull()) {
+       QImage image = pixmap.toImage().scaled(
+-            32, 32, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
++            pretty_cover_size_, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+       item->metadata.set_image(image);
+       return image;
+     }
+   }
+-  return album_icon_;
++  return no_cover_icon_pretty_;
+ }
+ 
+ QVariant LibraryModel::data(const QModelIndex& index, int role) const {

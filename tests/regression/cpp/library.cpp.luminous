@@ -1,0 +1,167 @@
+<COMMENT>/* This file is part of Clementine.</COMMENT>
+<COMMENT>   Copyright 2010, David Sansome &lt;me@davidsansome.com&gt;</COMMENT>
+<COMMENT></COMMENT>
+<COMMENT>   Clementine is free software: you can redistribute it and/or modify</COMMENT>
+<COMMENT>   it under the terms of the GNU General Public License as published by</COMMENT>
+<COMMENT>   the Free Software Foundation, either version 3 of the License, or</COMMENT>
+<COMMENT>   (at your option) any later version.</COMMENT>
+<COMMENT></COMMENT>
+<COMMENT>   Clementine is distributed in the hope that it will be useful,</COMMENT>
+<COMMENT>   but WITHOUT ANY WARRANTY; without even the implied warranty of</COMMENT>
+<COMMENT>   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</COMMENT>
+<COMMENT>   GNU General Public License for more details.</COMMENT>
+<COMMENT></COMMENT>
+<COMMENT>   You should have received a copy of the GNU General Public License</COMMENT>
+<COMMENT>   along with Clementine.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</COMMENT>
+<COMMENT>*/</COMMENT>
+
+<PREPROCESSOR>#include <STRING>"library.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"librarymodel.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"librarybackend.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"core/database.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"smartplaylists/generator.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"smartplaylists/querygenerator.h"</STRING></PREPROCESSOR>
+<PREPROCESSOR>#include <STRING>"smartplaylists/search.h"</STRING></PREPROCESSOR>
+
+<KEYWORD>const</KEYWORD> <TYPE>char</TYPE><OPERATOR>*</OPERATOR> <OBJ>Library</OBJ><OPERATOR>::</OPERATOR><OO>kSongsTable</OO> <OPERATOR>=</OPERATOR> <STRING>"songs"</STRING>;
+<KEYWORD>const</KEYWORD> <TYPE>char</TYPE><OPERATOR>*</OPERATOR> <OBJ>Library</OBJ><OPERATOR>::</OPERATOR><OO>kDirsTable</OO> <OPERATOR>=</OPERATOR> <STRING>"directories"</STRING>;
+<KEYWORD>const</KEYWORD> <TYPE>char</TYPE><OPERATOR>*</OPERATOR> <OBJ>Library</OBJ><OPERATOR>::</OPERATOR><OO>kSubdirsTable</OO> <OPERATOR>=</OPERATOR> <STRING>"subdirectories"</STRING>;
+<KEYWORD>const</KEYWORD> <TYPE>char</TYPE><OPERATOR>*</OPERATOR> <OBJ>Library</OBJ><OPERATOR>::</OPERATOR><OO>kFtsTable</OO> <OPERATOR>=</OPERATOR> <STRING>"songs_fts"</STRING>;
+
+<OBJ>Library</OBJ><OPERATOR>::</OPERATOR><OO>Library</OO>(BackgroundThread<OPERATOR>&lt;</OPERATOR>Database<OPERATOR>&gt;*</OPERATOR> db_thread, TaskManager<OPERATOR>*</OPERATOR> task_manager,
+                 QObject <OPERATOR>*</OPERATOR>parent)
+  <OPERATOR>:</OPERATOR> QObject(parent),
+    task_manager_(task_manager),
+    backend_(<KEYWORD>NULL</KEYWORD>),
+    model_(<KEYWORD>NULL</KEYWORD>),
+    watcher_factory_(<KEYWORD>new</KEYWORD> BackgroundThreadFactoryImplementation<OPERATOR>&lt;</OPERATOR>LibraryWatcher, LibraryWatcher<OPERATOR>&gt;</OPERATOR>),
+    watcher_(<KEYWORD>NULL</KEYWORD>)
+{
+  backend_ <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> LibraryBackend;
+  backend()<OPERATOR>-&gt;</OPERATOR><OO>moveToThread</OO>(db_thread);
+
+  <OBJ>backend_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>Init</OO>(<OBJ>db_thread</OBJ><OPERATOR>-&gt;</OPERATOR><OO>Worker</OO>(), kSongsTable, kDirsTable, kSubdirsTable, kFtsTable);
+
+  <KEYWORD>using</KEYWORD> <OBJ>smart_playlists</OBJ><OPERATOR>::</OPERATOR><OO>Generator</OO>;
+  <KEYWORD>using</KEYWORD> <OBJ>smart_playlists</OBJ><OPERATOR>::</OPERATOR><OO>GeneratorPtr</OO>;
+  <KEYWORD>using</KEYWORD> <OBJ>smart_playlists</OBJ><OPERATOR>::</OPERATOR><OO>QueryGenerator</OO>;
+  <KEYWORD>using</KEYWORD> <OBJ>smart_playlists</OBJ><OPERATOR>::</OPERATOR><OO>Search</OO>;
+  <KEYWORD>using</KEYWORD> <OBJ>smart_playlists</OBJ><OPERATOR>::</OPERATOR><OO>SearchTerm</OO>;
+
+  model_ <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> LibraryModel(backend_, <KEYWORD>this</KEYWORD>);
+  <OBJ>model_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>set_show_smart_playlists</OO>(<KEYWORD>true</KEYWORD>);
+  <OBJ>model_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>set_default_smart_playlists</OO>(<OBJ>LibraryModel</OBJ><OPERATOR>::</OPERATOR><OO>DefaultGenerators</OO>()
+    <OPERATOR>&lt;&lt;</OPERATOR> (<OBJ>LibraryModel</OBJ><OPERATOR>::</OPERATOR><OO>GeneratorList</OO>()
+      <OPERATOR>&lt;&lt;</OPERATOR> GeneratorPtr(<KEYWORD>new</KEYWORD> QueryGenerator(tr(<STRING>"50 random tracks"</STRING>), Search(
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Type_All</OO>, <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>TermList</OO>(),
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Sort_Random</OO>, <OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Field_Title</OO>, <NUMERIC>50</NUMERIC>)))
+      <OPERATOR>&lt;&lt;</OPERATOR> GeneratorPtr(<KEYWORD>new</KEYWORD> QueryGenerator(tr(<STRING>"Ever played"</STRING>), Search(
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Type_And</OO>, <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>TermList</OO>()
+                    <OPERATOR>&lt;&lt;</OPERATOR> SearchTerm(<OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Field_PlayCount</OO>, <OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Op_GreaterThan</OO>, <NUMERIC>0</NUMERIC>),
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Sort_Random</OO>, <OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Field_Title</OO>)))
+      <OPERATOR>&lt;&lt;</OPERATOR> GeneratorPtr(<KEYWORD>new</KEYWORD> QueryGenerator(tr(<STRING>"Never played"</STRING>), Search(
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Type_And</OO>, <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>TermList</OO>()
+                    <OPERATOR>&lt;&lt;</OPERATOR> SearchTerm(<OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Field_PlayCount</OO>, <OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Op_Equals</OO>, <NUMERIC>0</NUMERIC>),
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Sort_Random</OO>, <OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Field_Title</OO>)))
+      <OPERATOR>&lt;&lt;</OPERATOR> GeneratorPtr(<KEYWORD>new</KEYWORD> QueryGenerator(tr(<STRING>"Last played"</STRING>), Search(
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Type_All</OO>, <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>TermList</OO>(),
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Sort_FieldDesc</OO>, <OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Field_LastPlayed</OO>)))
+      <OPERATOR>&lt;&lt;</OPERATOR> GeneratorPtr(<KEYWORD>new</KEYWORD> QueryGenerator(tr(<STRING>"Most played"</STRING>), Search(
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Type_All</OO>, <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>TermList</OO>(),
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Sort_FieldDesc</OO>, <OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Field_PlayCount</OO>)))
+      <OPERATOR>&lt;&lt;</OPERATOR> GeneratorPtr(<KEYWORD>new</KEYWORD> QueryGenerator(tr(<STRING>"Favourite tracks"</STRING>), Search(
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Type_All</OO>, <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>TermList</OO>(),
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Sort_FieldDesc</OO>, <OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Field_Score</OO>)))
+      <OPERATOR>&lt;&lt;</OPERATOR> GeneratorPtr(<KEYWORD>new</KEYWORD> QueryGenerator(tr(<STRING>"Newest tracks"</STRING>), Search(
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Type_All</OO>, <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>TermList</OO>(),
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Sort_FieldDesc</OO>, <OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Field_DateCreated</OO>)))
+    ) <OPERATOR>&lt;&lt;</OPERATOR> (<OBJ>LibraryModel</OBJ><OPERATOR>::</OPERATOR><OO>GeneratorList</OO>()
+      <OPERATOR>&lt;&lt;</OPERATOR> GeneratorPtr(<KEYWORD>new</KEYWORD> QueryGenerator(tr(<STRING>"All tracks"</STRING>), Search(
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Type_All</OO>, <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>TermList</OO>(),
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Sort_FieldAsc</OO>, <OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Field_Artist</OO>, <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>)))
+      <OPERATOR>&lt;&lt;</OPERATOR> GeneratorPtr(<KEYWORD>new</KEYWORD> QueryGenerator(tr(<STRING>"Least favourite tracks"</STRING>), Search(
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Type_Or</OO>, <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>TermList</OO>()
+                    <OPERATOR>&lt;&lt;</OPERATOR> SearchTerm(<OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Field_Rating</OO>, <OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Op_LessThan</OO>, <NUMERIC>0.6</NUMERIC>)
+                    <OPERATOR>&lt;&lt;</OPERATOR> SearchTerm(<OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Field_SkipCount</OO>, <OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Op_GreaterThan</OO>, <NUMERIC>4</NUMERIC>),
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Sort_FieldDesc</OO>, <OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Field_SkipCount</OO>)))
+    ) <OPERATOR>&lt;&lt;</OPERATOR> (<OBJ>LibraryModel</OBJ><OPERATOR>::</OPERATOR><OO>GeneratorList</OO>()
+      <OPERATOR>&lt;&lt;</OPERATOR> GeneratorPtr(<KEYWORD>new</KEYWORD> QueryGenerator(tr(<STRING>"Dynamic random mix"</STRING>), Search(
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Type_All</OO>, <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>TermList</OO>(),
+                  <OBJ>Search</OBJ><OPERATOR>::</OPERATOR><OO>Sort_Random</OO>, <OBJ>SearchTerm</OBJ><OPERATOR>::</OPERATOR><OO>Field_Title</OO>), <KEYWORD>true</KEYWORD>))
+    )
+  );
+}
+
+<TYPE>void</TYPE> <OBJ>Library</OBJ><OPERATOR>::</OPERATOR><OO>set_watcher_factory</OO>(BackgroundThreadFactory<OPERATOR>&lt;</OPERATOR>LibraryWatcher<OPERATOR>&gt;*</OPERATOR> factory) {
+  <OBJ>watcher_factory_</OBJ><OPERATOR>.</OPERATOR><OO>reset</OO>(factory);
+}
+
+<TYPE>void</TYPE> <OBJ>Library</OBJ><OPERATOR>::</OPERATOR><OO>Init</OO>() {
+  watcher_ <OPERATOR>=</OPERATOR> <OBJ>watcher_factory_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>GetThread</OO>(<KEYWORD>this</KEYWORD>);
+  <KEYWORD>connect</KEYWORD>(watcher_, <KEYWORD>SIGNAL</KEYWORD>(Initialised()), <KEYWORD>SLOT</KEYWORD>(WatcherInitialised()));
+}
+
+<TYPE>void</TYPE> <OBJ>Library</OBJ><OPERATOR>::</OPERATOR><OO>StartThreads</OO>() {
+  <CONSTANT>Q_ASSERT</CONSTANT>(watcher_);
+
+  <OBJ>watcher_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>set_io_priority</OO>(<OBJ>BackgroundThreadBase</OBJ><OPERATOR>::</OPERATOR><OO>IOPRIO_CLASS_IDLE</OO>);
+  <OBJ>watcher_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>set_cpu_priority</OO>(<OBJ>QThread</OBJ><OPERATOR>::</OPERATOR><OO>IdlePriority</OO>);
+  <OBJ>watcher_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>Start</OO>();
+
+  <OBJ>model_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>Init</OO>();
+}
+
+<TYPE>void</TYPE> <OBJ>Library</OBJ><OPERATOR>::</OPERATOR><OO>WatcherInitialised</OO>() {
+  LibraryWatcher<OPERATOR>*</OPERATOR> watcher <OPERATOR>=</OPERATOR> <OBJ>watcher_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>Worker</OO>()<OPERATOR>.</OPERATOR><OO>get</OO>();
+
+  <OBJ>watcher</OBJ><OPERATOR>-&gt;</OPERATOR><OO>set_backend</OO>(backend_);
+  <OBJ>watcher</OBJ><OPERATOR>-&gt;</OPERATOR><OO>set_task_manager</OO>(task_manager_);
+
+  <KEYWORD>connect</KEYWORD>(backend_, <KEYWORD>SIGNAL</KEYWORD>(DirectoryDiscovered(Directory,SubdirectoryList)),
+          watcher,  <KEYWORD>SLOT</KEYWORD>(AddDirectory(Directory,SubdirectoryList)));
+  <KEYWORD>connect</KEYWORD>(backend_, <KEYWORD>SIGNAL</KEYWORD>(DirectoryDeleted(Directory)),
+          watcher,  <KEYWORD>SLOT</KEYWORD>(RemoveDirectory(Directory)));
+  <KEYWORD>connect</KEYWORD>(watcher,  <KEYWORD>SIGNAL</KEYWORD>(NewOrUpdatedSongs(SongList)),
+          backend_, <KEYWORD>SLOT</KEYWORD>(AddOrUpdateSongs(SongList)));
+  <KEYWORD>connect</KEYWORD>(watcher,  <KEYWORD>SIGNAL</KEYWORD>(SongsMTimeUpdated(SongList)),
+          backend_, <KEYWORD>SLOT</KEYWORD>(UpdateMTimesOnly(SongList)));
+  <KEYWORD>connect</KEYWORD>(watcher,  <KEYWORD>SIGNAL</KEYWORD>(SongsDeleted(SongList)),
+          backend_, <KEYWORD>SLOT</KEYWORD>(DeleteSongs(SongList)));
+  <KEYWORD>connect</KEYWORD>(watcher,  <KEYWORD>SIGNAL</KEYWORD>(SubdirsDiscovered(SubdirectoryList)),
+          backend_, <KEYWORD>SLOT</KEYWORD>(AddOrUpdateSubdirs(SubdirectoryList)));
+  <KEYWORD>connect</KEYWORD>(watcher,  <KEYWORD>SIGNAL</KEYWORD>(SubdirsMTimeUpdated(SubdirectoryList)),
+          backend_, <KEYWORD>SLOT</KEYWORD>(AddOrUpdateSubdirs(SubdirectoryList)));
+  <KEYWORD>connect</KEYWORD>(watcher, <KEYWORD>SIGNAL</KEYWORD>(CompilationsNeedUpdating()),
+          backend_, <KEYWORD>SLOT</KEYWORD>(UpdateCompilations()));
+
+  <COMMENT>// This will start the watcher checking for updates</COMMENT>
+  <OBJ>backend_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>LoadDirectoriesAsync</OO>();
+}
+
+<TYPE>void</TYPE> <OBJ>Library</OBJ><OPERATOR>::</OPERATOR><OO>IncrementalScan</OO>() {
+  <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><OBJ>watcher_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>Worker</OO>())
+    <KEYWORD>return</KEYWORD>;
+
+  <OBJ>watcher_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>Worker</OO>()<OPERATOR>-&gt;</OPERATOR><OO>IncrementalScanAsync</OO>();
+}
+
+<TYPE>void</TYPE> <OBJ>Library</OBJ><OPERATOR>::</OPERATOR><OO>PauseWatcher</OO>() {
+  <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><OBJ>watcher_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>Worker</OO>())
+    <KEYWORD>return</KEYWORD>;
+
+  <OBJ>watcher_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>Worker</OO>()<OPERATOR>-&gt;</OPERATOR><OO>SetRescanPausedAsync</OO>(<KEYWORD>true</KEYWORD>);
+}
+
+<TYPE>void</TYPE> <OBJ>Library</OBJ><OPERATOR>::</OPERATOR><OO>ResumeWatcher</OO>() {
+  <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><OBJ>watcher_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>Worker</OO>())
+    <KEYWORD>return</KEYWORD>;
+
+  <OBJ>watcher_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>Worker</OO>()<OPERATOR>-&gt;</OPERATOR><OO>SetRescanPausedAsync</OO>(<KEYWORD>false</KEYWORD>);
+}
+
+<TYPE>void</TYPE> <OBJ>Library</OBJ><OPERATOR>::</OPERATOR><OO>ReloadSettings</OO>() {
+  <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><OBJ>watcher_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>Worker</OO>())
+    <KEYWORD>return</KEYWORD>;
+
+  <OBJ>watcher_</OBJ><OPERATOR>-&gt;</OPERATOR><OO>Worker</OO>()<OPERATOR>-&gt;</OPERATOR><OO>ReloadSettingsAsync</OO>();
+}
