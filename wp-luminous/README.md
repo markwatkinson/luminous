@@ -13,11 +13,11 @@ Installation
 4. Place code inside <pre lang=''> </pre> blocks All languages are supported from the Luminous
 
 for example:
-''''php
+````php
 <pre lang='php'>
   <?php echo date('jS M Y', strtotime($date)); ?>
 </pre>
-''''
+````
 
 Manifest
 ------
