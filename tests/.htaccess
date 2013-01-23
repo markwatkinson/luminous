@@ -1,3 +1,0 @@
-deny from all
-allow from localhost
-allow from ::1

@@ -1,9 +1,0 @@
-
-<!--malformed -->
-<tag <nottag> nottag>
-weare="not inside a tag"
-  <colons:and-dashes:are-fine-as:tag-names>
- 
-<!-- technically this is an error, but browsers will terminate the string at the '>' -->
-<tag x="hello>
-

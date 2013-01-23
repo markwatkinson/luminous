@@ -1,4 +1,0 @@
-allow from localhost
-allow from ::1
-
-options +Indexes
