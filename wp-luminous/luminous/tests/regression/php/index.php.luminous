@@ -1,0 +1,132 @@
+<DELIMITER>&lt;?php</DELIMITER>
+  <FUNCTION>require_once</FUNCTION>(<STRING>"sql.class.php"</STRING>)<OPERATOR>;</OPERATOR>
+  <FUNCTION>require_once</FUNCTION>(<STRING>"markupwrapper.php"</STRING>)<OPERATOR>;</OPERATOR>
+  
+  <FUNCTION>date_default_timezone_set</FUNCTION>(<STRING>'Europe/London'</STRING>)<OPERATOR>;</OPERATOR>
+
+  <VARIABLE>$tabs</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$SQL</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>GetTabs</OO>()<OPERATOR>;</OPERATOR>
+  <VARIABLE>$TAB_VIEW</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD><OPERATOR>;</OPERATOR>
+<DELIMITER>?&gt;</DELIMITER>&lt;<KEYWORD>!DOCTYPE</KEYWORD> <TYPE>html</TYPE>&gt;
+
+&lt;<HTMLTAG>html</HTMLTAG>&gt;
+
+&lt;<HTMLTAG>head</HTMLTAG>&gt;
+&lt;<HTMLTAG>meta</HTMLTAG> <TYPE>http-equiv</TYPE>=<STRING>"Content-Type"</STRING> <TYPE>content</TYPE>=<STRING>"text/html; charset=utf-8"</STRING>&gt;
+&lt;<HTMLTAG>title</HTMLTAG>&gt;Asgaard.co.uk&lt;<HTMLTAG>/title</HTMLTAG>&gt;
+&lt;<HTMLTAG>link</HTMLTAG> <TYPE>rel</TYPE>=<STRING>"alternate"</STRING> <TYPE>title</TYPE>=<STRING>"RSS"</STRING> <TYPE>href</TYPE>=<STRING>"rss.php"</STRING> <TYPE>type</TYPE>=<STRING>"application/rss+xml"</STRING>&gt;
+
+&lt;<HTMLTAG>link</HTMLTAG> <TYPE>rel</TYPE>=<STRING>'stylesheet'</STRING> <TYPE>type</TYPE>=<STRING>"text/css"</STRING> <TYPE>href</TYPE>=<STRING>"/style/tabs.css"</STRING>&gt;
+&lt;<HTMLTAG>link</HTMLTAG> <TYPE>rel</TYPE>=<STRING>"stylesheet"</STRING> <TYPE>type</TYPE>=<STRING>"text/css"</STRING> <TYPE>href</TYPE>=<STRING>"/style/markup.css"</STRING>&gt;
+
+&lt;<HTMLTAG>link</HTMLTAG> <TYPE>rel</TYPE>=<STRING>"stylesheet"</STRING> <TYPE>type</TYPE>=<STRING>"text/css"</STRING> <TYPE>href</TYPE>=<STRING>"/style/style.css"</STRING>&gt;
+&lt;<HTMLTAG>link</HTMLTAG> <TYPE>rel</TYPE>=<STRING>"stylesheet"</STRING> <TYPE>type</TYPE>=<STRING>"text/css"</STRING> <TYPE>href</TYPE>=<STRING>"/style/index.css"</STRING>&gt;
+
+
+&lt;<HTMLTAG>script</HTMLTAG> <TYPE>type</TYPE>=<STRING>"text/javascript"</STRING> <TYPE>src</TYPE>=<STRING>"https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"</STRING>&gt;&lt;<HTMLTAG>/script</HTMLTAG>&gt;
+
+&lt;<HTMLTAG>script</HTMLTAG> <TYPE>type</TYPE>=<STRING>"text/javascript"</STRING> <TYPE>src</TYPE>=<STRING>"/js/tabify_jquery.js"</STRING>&gt;&lt;<HTMLTAG>/script</HTMLTAG>&gt;
+
+&lt;<HTMLTAG>style</HTMLTAG> <TYPE>type</TYPE>=<STRING>'text/css'</STRING>&gt;
+<OPERATOR>.</OPERATOR><VARIABLE>tab</VARIABLE> {<TYPE>height</TYPE><OPERATOR>:</OPERATOR><NUMERIC>100%</NUMERIC><OPERATOR>;</OPERATOR>}
+<OPERATOR>.</OPERATOR><VARIABLE>tab_title</VARIABLE>{<TYPE>border-top-left-radius</TYPE><OPERATOR>:</OPERATOR><NUMERIC>0.5em</NUMERIC><OPERATOR>;</OPERATOR> <TYPE>border-bottom-left-radius</TYPE><OPERATOR>:</OPERATOR><NUMERIC>0.5em</NUMERIC><OPERATOR>;</OPERATOR>}
+<OPERATOR>.</OPERATOR><VARIABLE>tab_content</VARIABLE>
+{
+  <TYPE>background-color</TYPE><OPERATOR>:</OPERATOR><VALUE>white</VALUE><OPERATOR>;</OPERATOR>
+  <TYPE>border</TYPE><OPERATOR>:</OPERATOR> <NUMERIC>1px</NUMERIC> <VALUE>solid</VALUE> <NUMERIC>#B5CFFF</NUMERIC><OPERATOR>;</OPERATOR>
+  <TYPE>padding</TYPE><OPERATOR>:</OPERATOR> <NUMERIC>1em</NUMERIC><OPERATOR>;</OPERATOR>    
+  <TYPE>border-radius</TYPE><OPERATOR>:</OPERATOR><NUMERIC>1em</NUMERIC><OPERATOR>;</OPERATOR>
+}
+<OPERATOR>.</OPERATOR><VARIABLE>tab_bar</VARIABLE>
+{
+  <TYPE>text-align</TYPE><OPERATOR>:</OPERATOR><VALUE>left</VALUE><OPERATOR>;</OPERATOR>
+  <TYPE>margin-top</TYPE><OPERATOR>:</OPERATOR><NUMERIC>1em</NUMERIC><OPERATOR>;</OPERATOR>
+}
+<OPERATOR>.</OPERATOR><VARIABLE>tab_bar</VARIABLE> <OPERATOR>&gt;</OPERATOR> <KEYWORD>div</KEYWORD>
+{
+  <TYPE>padding-right</TYPE><OPERATOR>:</OPERATOR><NUMERIC>0.25em</NUMERIC><OPERATOR>;</OPERATOR>
+}
+&lt;<HTMLTAG>/style</HTMLTAG>&gt;
+&lt;<HTMLTAG>script</HTMLTAG> <TYPE>type</TYPE>=<STRING>'text/javascript'</STRING>&gt;
+<FUNCTION>$</FUNCTION>(<TYPE>document</TYPE>)<OPERATOR>.</OPERATOR><OO>ready</OO>(<KEYWORD>function</KEYWORD>(){
+  
+  <FUNCTION>$</FUNCTION>(<STRING>'.tab_clicker'</STRING>)<OPERATOR>.</OPERATOR><OO>each</OO>(<KEYWORD>function</KEYWORD>(){ <FUNCTION>$</FUNCTION>(<KEYWORD>this</KEYWORD>)<OPERATOR>.</OPERATOR><OO>replaceWith</OO>(<FUNCTION>$</FUNCTION>(<KEYWORD>this</KEYWORD>)<OPERATOR>.</OPERATOR><OO>html</OO>())<OPERATOR>;</OPERATOR>})<OPERATOR>;</OPERATOR>
+  
+  <KEYWORD>var</KEYWORD> tabs <OPERATOR>=</OPERATOR> <FUNCTION>$</FUNCTION>(<STRING>'.tab_content'</STRING>)<OPERATOR>;</OPERATOR>
+  
+  <OBJ>tabs</OBJ><OPERATOR>.</OPERATOR><OO>tabify</OO>(<FUNCTION>$</FUNCTION>(<STRING>'.tab_bar'</STRING>)<OPERATOR>,</OPERATOR> <KEYWORD>true</KEYWORD>)<OPERATOR>;</OPERATOR>
+  
+  <COMMENT>// if the view width is too low we'll get a float drop occurring, in which</COMMENT>
+  <COMMENT>// case we revert to a horizontal menu</COMMENT>
+  <KEYWORD>var</KEYWORD> t <OPERATOR>=</OPERATOR> <FUNCTION>setInterval</FUNCTION>(<KEYWORD>function</KEYWORD>(){
+    <KEYWORD>var</KEYWORD> x <OPERATOR>=</OPERATOR> <FUNCTION>$</FUNCTION>(<STRING>'.tab_bar'</STRING>)[<NUMERIC>0</NUMERIC>]<OPERATOR>.</OPERATOR><OO>offsetTop</OO><OPERATOR>;</OPERATOR>
+    <KEYWORD>var</KEYWORD> y <OPERATOR>=</OPERATOR> <FUNCTION>$</FUNCTION>(<STRING>'.tab_content'</STRING>)[<NUMERIC>0</NUMERIC>]<OPERATOR>.</OPERATOR><OO>offsetTop</OO><OPERATOR>;</OPERATOR>
+    <KEYWORD>if</KEYWORD> (x <OPERATOR>&lt;</OPERATOR> y)
+    {
+      <FUNCTION>$</FUNCTION>(<STRING>'.tab_title'</STRING>)<OPERATOR>.</OPERATOR><OO>css</OO>(<STRING>'display'</STRING><OPERATOR>,</OPERATOR> <STRING>'inline'</STRING>)<OPERATOR>.</OPERATOR><OO>css</OO>(<STRING>'border-radius'</STRING><OPERATOR>,</OPERATOR> 
+          <STRING>'0px'</STRING>)<OPERATOR>.</OPERATOR><OO>css</OO>(<STRING>'float'</STRING><OPERATOR>,</OPERATOR><STRING>'none'</STRING>)<OPERATOR>.</OPERATOR><OO>css</OO>(<STRING>'border-bottom-width'</STRING><OPERATOR>,</OPERATOR> 
+          <STRING>'0px'</STRING>)<OPERATOR>.</OPERATOR><OO>css</OO>(<STRING>'margin-right'</STRING><OPERATOR>,</OPERATOR> <STRING>'0.25em'</STRING>)<OPERATOR>;</OPERATOR>
+      <FUNCTION>$</FUNCTION>(<STRING>'.tab_content'</STRING>)<OPERATOR>.</OPERATOR><OO>css</OO>(<STRING>'float'</STRING><OPERATOR>,</OPERATOR> <STRING>'none'</STRING>)<OPERATOR>.</OPERATOR><OO>css</OO>(<STRING>'border-radius'</STRING><OPERATOR>,</OPERATOR> <STRING>'0px'</STRING>)<OPERATOR>.</OPERATOR><OO>css</OO>(<STRING>'margin-left'</STRING><OPERATOR>,</OPERATOR> <STRING>'0px'</STRING>)<OPERATOR>.</OPERATOR><OO>css</OO>(<STRING>'width'</STRING><OPERATOR>,</OPERATOR> <STRING>'auto'</STRING>)<OPERATOR>;</OPERATOR>
+      <FUNCTION>$</FUNCTION>(<STRING>'.tab_bar'</STRING>)<OPERATOR>.</OPERATOR><OO>css</OO>(<STRING>'float'</STRING><OPERATOR>,</OPERATOR> <STRING>'none'</STRING>)<OPERATOR>.</OPERATOR><OO>css</OO>(<STRING>'border-radius'</STRING><OPERATOR>,</OPERATOR> <STRING>'0px'</STRING>)<OPERATOR>.</OPERATOR><OO>css</OO>(<STRING>'width'</STRING><OPERATOR>,</OPERATOR> <STRING>'100%'</STRING>)<OPERATOR>;</OPERATOR>
+      <FUNCTION>clearInterval</FUNCTION>(t)<OPERATOR>;</OPERATOR>
+    }
+  }<OPERATOR>,</OPERATOR> <NUMERIC>500</NUMERIC>)<OPERATOR>;</OPERATOR>
+            
+  
+  
+})<OPERATOR>;</OPERATOR>
+&lt;<HTMLTAG>/script</HTMLTAG>&gt;
+
+<COMMENT>&lt;!--[if IE 6]&gt;</COMMENT>
+<COMMENT>&lt;style type="text/css"&gt;</COMMENT>
+<COMMENT>  .background { position:absolute; z-index:-100; }</COMMENT>
+<COMMENT>  .page_container {position:absolute; z-index:1}</COMMENT>
+<COMMENT>&lt;/style&gt;</COMMENT>
+<COMMENT>&lt;![endif]--&gt;</COMMENT>
+
+&lt;<HTMLTAG>/head</HTMLTAG>&gt;
+&lt;<HTMLTAG>body</HTMLTAG>&gt;
+
+&lt;<HTMLTAG>div</HTMLTAG> <TYPE>class</TYPE>=<VALUE>header</VALUE>&gt;&lt;<HTMLTAG>/div</HTMLTAG>&gt;
+
+&lt;<HTMLTAG>noscript</HTMLTAG>&gt;
+  &lt;<HTMLTAG>p</HTMLTAG> <TYPE>class</TYPE>=<STRING>'content'</STRING> <TYPE>style</TYPE>=<STRING>'margin-top:0em;padding-top:0px'</STRING>&gt;
+  If you really don't want to enable JavaScript, you may prefer the basic page &lt;<HTMLTAG>a</HTMLTAG> <TYPE>href</TYPE>=<VALUE>index_basic.php</VALUE>&gt;here&lt;<HTMLTAG>/a</HTMLTAG>&gt;, which you might find more readable.
+  &lt;<HTMLTAG>/p</HTMLTAG>&gt;
+&lt;<HTMLTAG>/noscript</HTMLTAG>&gt;
+  
+&lt;<HTMLTAG>div</HTMLTAG> <TYPE>class</TYPE>=<STRING>"page_container"</STRING> <TYPE>id</TYPE>=<STRING>'p_container'</STRING>&gt;
+  
+  &lt;<HTMLTAG>div</HTMLTAG> <TYPE>class</TYPE>=<STRING>'tab_container'</STRING> <TYPE>id</TYPE>=<STRING>'tab_container'</STRING> <TYPE>style</TYPE>=<STRING>'width:90%; position:relative;'</STRING>&gt;
+        
+    &lt;<HTMLTAG>div</HTMLTAG> <TYPE>class</TYPE>=<STRING>'tab_bar'</STRING> <TYPE>style</TYPE>=<STRING>'float:left;position:relative;z-index:1'</STRING>&gt;
+
+    <DELIMITER>&lt;?</DELIMITER>
+    <KEYWORD>foreach</KEYWORD>(<VARIABLE>$tabs</VARIABLE> <KEYWORD>as</KEYWORD> <VARIABLE>$t</VARIABLE>)
+    {
+      <VARIABLE>$title</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"&lt;a href='#<VARIABLE>{$t-&gt;element_id}</VARIABLE>' class='tab_clicker'&gt;<VARIABLE>{$t-&gt;tab_title}</VARIABLE>&lt;/a&gt;"</STRING><OPERATOR>;</OPERATOR>
+      <VARIABLE>$img</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>trim</FUNCTION>(<VARIABLE>$t</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>image</OO>)<OPERATOR>;</OPERATOR>
+      <KEYWORD>if</KEYWORD> (<VARIABLE>$img</VARIABLE> <OPERATOR>!==</OPERATOR> <KEYWORD>false</KEYWORD> <OPERATOR>&amp;&amp;</OPERATOR> <FUNCTION>strlen</FUNCTION>(<VARIABLE>$img</VARIABLE>) <OPERATOR>&amp;&amp;</OPERATOR> @<FUNCTION>file_exists</FUNCTION>(<VARIABLE>$_SERVER</VARIABLE>[<STRING>'DOCUMENT_ROOT'</STRING>]<OPERATOR>.</OPERATOR><VARIABLE>$img</VARIABLE>))
+        <VARIABLE>$title</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"&lt;img src='<VARIABLE>$img</VARIABLE>' alt='' title=''&gt; <VARIABLE>$title</VARIABLE>"</STRING><OPERATOR>;</OPERATOR>
+      <FUNCTION>echo</FUNCTION> <STRING>"&lt;div&gt;<VARIABLE>$title</VARIABLE>&lt;/div&gt;"</STRING><OPERATOR>;</OPERATOR>
+    }
+    <DELIMITER>?&gt;</DELIMITER>
+    &lt;<HTMLTAG>/div</HTMLTAG>&gt;
+    &lt;<HTMLTAG>div</HTMLTAG> <TYPE>class</TYPE>=<STRING>'tab_content'</STRING> <TYPE>style</TYPE>=<STRING>'float:left;position:relative;width:75%; min-height:200px; margin-left:-1px;'</STRING>&gt;
+    <DELIMITER>&lt;?</DELIMITER> 
+        <KEYWORD>foreach</KEYWORD>(<VARIABLE>$tabs</VARIABLE> <KEYWORD>as</KEYWORD> <VARIABLE>$t</VARIABLE>)
+        {
+          <FUNCTION>echo</FUNCTION> <STRING>"&lt;div id='<VARIABLE>{$t-&gt;element_id}</VARIABLE>' class='content'&gt;"</STRING><OPERATOR>;</OPERATOR>
+          <FUNCTION>echo</FUNCTION> markup(<VARIABLE>$t</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>content</OO>)<OPERATOR>;</OPERATOR>
+          <FUNCTION>echo</FUNCTION> <STRING>"&lt;/div&gt;"</STRING><OPERATOR>;</OPERATOR>
+        }
+      <DELIMITER>?&gt;</DELIMITER>
+   &lt;<HTMLTAG>/div</HTMLTAG>&gt;
+ &lt;<HTMLTAG>/div</HTMLTAG>&gt;
+
+&lt;<HTMLTAG>/div</HTMLTAG>&gt;
+
+
+
+&lt;<HTMLTAG>/body</HTMLTAG>&gt;
+&lt;<HTMLTAG>/html</HTMLTAG>&gt;
+

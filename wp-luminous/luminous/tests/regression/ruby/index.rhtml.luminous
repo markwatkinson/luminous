@@ -1,0 +1,119 @@
+<DELIMITER>&lt;%</DELIMITER> <COMMENT># SPROUTCORE DEFAULT INDEX TEMPLATE</COMMENT>
+   <COMMENT># This template provide provides a basic wrapper for a SproutCore client.</COMMENT>
+   <COMMENT># Most of the time, it will be sufficient for your own needs.  However, if</COMMENT>
+   <COMMENT># you need to create your own template, you can do so by copying this file</COMMENT>
+   <COMMENT># into your client, naming it 'index.rhtml' and then adding the options</COMMENT>
+   <COMMENT># :layout =&gt; 'lib/index' to your Buildfile.</COMMENT>
+   <COMMENT>#</COMMENT>
+   <COMMENT># See the comments in this file for more information on what you can</COMMENT>
+   <COMMENT># change.</COMMENT>
+<DELIMITER>-%&gt;</DELIMITER>
+&lt;<KEYWORD>!DOCTYPE</KEYWORD> <TYPE>html</TYPE>&gt;
+&lt;<HTMLTAG>html</HTMLTAG><DELIMITER>&lt;%</DELIMITER> <KEYWORD>unless</KEYWORD> <VARIABLE>@content_for_html5_manifest</VARIABLE>.<OO>blank?</OO> <DELIMITER>%&gt;</DELIMITER> <TYPE>manifest</TYPE>=<STRING>"app.manifest"</STRING><DELIMITER>&lt;%</DELIMITER> <KEYWORD>end</KEYWORD> <DELIMITER>%&gt;</DELIMITER>&gt;
+  &lt;<HTMLTAG>head</HTMLTAG>&gt;
+    &lt;<HTMLTAG>meta</HTMLTAG> <TYPE>http-equiv</TYPE>=<STRING>"Content-type"</STRING> <TYPE>content</TYPE>=<STRING>"text/html; charset=utf-8"</STRING> /&gt;
+    &lt;<HTMLTAG>meta</HTMLTAG> <TYPE>http-equiv</TYPE>=<STRING>"X-UA-Compatible"</STRING> <TYPE>content</TYPE>=<STRING>"IE=8"</STRING> /&gt;
+    &lt;<HTMLTAG>meta</HTMLTAG> <TYPE>http-equiv</TYPE>=<STRING>"Content-Script-Type"</STRING> <TYPE>content</TYPE>=<STRING>"text/javascript"</STRING> /&gt;
+    &lt;<HTMLTAG>meta</HTMLTAG> <TYPE>name</TYPE>=<STRING>"apple-mobile-web-app-capable"</STRING> <TYPE>content</TYPE>=<STRING>"yes"</STRING> /&gt;
+    &lt;<HTMLTAG>meta</HTMLTAG> <TYPE>name</TYPE>=<STRING>"apple-mobile-web-app-status-bar-style"</STRING> <TYPE>content</TYPE>=<STRING>"</STRING><DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> <OBJ>config</OBJ>.<OO>status_bar_style</OO> <OPERATOR>||</OPERATOR> <STRING>'default'</STRING> </INTERPOLATION><DELIMITER>%&gt;</DELIMITER><STRING>"</STRING> /&gt;
+    &lt;<HTMLTAG>meta</HTMLTAG> <TYPE>name</TYPE>=<STRING>"viewport"</STRING> <TYPE>content</TYPE>=<STRING>"initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"</STRING> /&gt;
+    &lt;<HTMLTAG>link</HTMLTAG> <TYPE>rel</TYPE>=<STRING>"apple-touch-icon</STRING><DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> <STRING>'-precomposed'</STRING> <KEYWORD>if</KEYWORD> <OBJ>config</OBJ>.<OO>precomposed_icon</OO> </INTERPOLATION><DELIMITER>%&gt;</DELIMITER><STRING>"</STRING> <TYPE>href</TYPE>=<STRING>"</STRING><DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> sc_static(<OBJ>config</OBJ>.<OO>icon</OO> <OPERATOR>||</OPERATOR> <STRING>'sproutcore-logo.png'</STRING>) </INTERPOLATION><DELIMITER>%&gt;</DELIMITER><STRING>"</STRING> /&gt;
+          &lt;<HTMLTAG>link</HTMLTAG> <TYPE>rel</TYPE>=<STRING>"apple-touch-startup-image"</STRING> <TYPE>media</TYPE>=<STRING>"screen and (orientation:portrait)"</STRING> <TYPE>href</TYPE>=<STRING>"</STRING><DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> sc_static(<OBJ>config</OBJ>.<OO>startup_image_portrait</OO> <OPERATOR>||</OPERATOR> <STRING>'sproutcore-startup-portrait.png'</STRING>) </INTERPOLATION><DELIMITER>%&gt;</DELIMITER><STRING>"</STRING> /&gt;
+          &lt;<HTMLTAG>link</HTMLTAG> <TYPE>rel</TYPE>=<STRING>"apple-touch-startup-image"</STRING> <TYPE>media</TYPE>=<STRING>"screen and (orientation:landscape)"</STRING> <TYPE>href</TYPE>=<STRING>"</STRING><DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> sc_static(<OBJ>config</OBJ>.<OO>startup_image_landscape</OO> <OPERATOR>||</OPERATOR> <STRING>'sproutcore-startup-landscape.png'</STRING>) </INTERPOLATION><DELIMITER>%&gt;</DELIMITER><STRING>"</STRING> /&gt;
+          &lt;<HTMLTAG>link</HTMLTAG> <TYPE>rel</TYPE>=<STRING>"shortcut icon"</STRING> <TYPE>href</TYPE>=<STRING>"</STRING><DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> sc_static(<OBJ>config</OBJ>.<OO>favicon</OO> <OPERATOR>||</OPERATOR> <STRING>'favicon.ico'</STRING>) </INTERPOLATION><DELIMITER>%&gt;</DELIMITER><STRING>"</STRING> <TYPE>type</TYPE>=<STRING>"image/x-icon"</STRING> /&gt;
+
+<DELIMITER>&lt;%</DELIMITER> <COMMENT># Set the 'title' in your config to alter this setting </COMMENT><DELIMITER>%&gt;</DELIMITER>
+    &lt;<HTMLTAG>title</HTMLTAG>&gt;<DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> title </INTERPOLATION><DELIMITER>%&gt;</DELIMITER>&lt;<HTMLTAG>/title</HTMLTAG>&gt;
+<DELIMITER>&lt;%</DELIMITER> <COMMENT>#</COMMENT>
+   <COMMENT># You may choose to load one or more bootstrap resources.  These are</COMMENT>
+   <COMMENT># JS targets that you would like to load at the top of the page.  Specify</COMMENT>
+   <COMMENT># these in your Buildfile with the 'bootstrap' config.</COMMENT>
+<DELIMITER>-%&gt;</DELIMITER>
+  <DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> bootstrap </INTERPOLATION><DELIMITER>%&gt;</DELIMITER>
+
+<DELIMITER>&lt;%</DELIMITER> <COMMENT>#</COMMENT>
+   <COMMENT># This line should appear in your head area to include the stylesheets</COMMENT>
+   <COMMENT># generated by your client.  If you need to include your own</COMMENT>
+   <COMMENT># stylesheets, you don't need to change it here.  Instead use the</COMMENT>
+   <COMMENT># required option in your config.</COMMENT>
+<DELIMITER>-%&gt;</DELIMITER>
+   <DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> stylesheets_for_client </INTERPOLATION><DELIMITER>%&gt;</DELIMITER>
+   <DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> <VARIABLE>@content_for_page_styles</VARIABLE> </INTERPOLATION><DELIMITER>%&gt;</DELIMITER>
+
+  &lt;<HTMLTAG>/head</HTMLTAG>&gt;
+
+<DELIMITER>&lt;%</DELIMITER> <COMMENT># The theme CSS class is added automatically based on your chosen theme.</COMMENT>
+   <COMMENT># If you need to specify a custom theme name, use CONFIG.theme_name</COMMENT>
+<DELIMITER>-%&gt;</DELIMITER>
+  &lt;<HTMLTAG>body</HTMLTAG> <TYPE>class</TYPE>=<STRING>"</STRING><DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> [theme_name(<VALUE>:default</VALUE> <OPERATOR>=&gt;</OPERATOR> <STRING>'sc-theme'</STRING>), <STRING>'focus'</STRING>].<OO>compact</OO>.<OO>join</OO>(<STRING>' '</STRING>) </INTERPOLATION><DELIMITER>%&gt;</DELIMITER><STRING>"</STRING>&gt;
+<DELIMITER>&lt;%</DELIMITER> <COMMENT># This section is used to setup additional optional class names on the</COMMENT>
+   <COMMENT># body content based on JS-selected conditions.  Use this to make sure you</COMMENT>
+   <COMMENT># show the proper CSS as soon as the page appears.</COMMENT>
+<DELIMITER>-%&gt;</DELIMITER>
+<DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> inline_javascript(<STRING>'sproutcore/bootstrap:setup_body_class_names'</STRING>) </INTERPOLATION><DELIMITER>%&gt;</DELIMITER>
+
+<DELIMITER>&lt;%</DELIMITER> <COMMENT>#</COMMENT>
+   <COMMENT># This is where you root body element will appear.  To cause your</COMMENT>
+   <COMMENT># content to appear here, just declare content_for('body') in one of</COMMENT>
+   <COMMENT># your partials.</COMMENT>
+<DELIMITER>-%&gt;</DELIMITER>
+<DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> <VARIABLE>@content_for_body</VARIABLE> </INTERPOLATION><DELIMITER>%&gt;</DELIMITER>
+<DELIMITER>&lt;%</DELIMITER> <COMMENT>#</COMMENT>
+   <COMMENT># This is where your loading screen will appear.  To add a loading screen</COMMENT>
+   <COMMENT># just declare content_for('loading') in one of your partials. If you use</COMMENT>
+   <COMMENT># sc-gen to generate your app, it will create a file called loading.rhtml</COMMENT>
+   <COMMENT># under english.lproj. You can insert the desired content there.</COMMENT>
+<DELIMITER>-%&gt;</DELIMITER>
+<DELIMITER>&lt;%</DELIMITER> <KEYWORD>unless</KEYWORD> <VARIABLE>@content_for_loading</VARIABLE>.<OO>blank?</OO> <DELIMITER>%&gt;</DELIMITER>
+&lt;<HTMLTAG>div</HTMLTAG> <TYPE>id</TYPE>=<STRING>"loading"</STRING>&gt;
+<DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> <VARIABLE>@content_for_loading</VARIABLE> </INTERPOLATION><DELIMITER>%&gt;</DELIMITER>
+&lt;<HTMLTAG>/div</HTMLTAG>&gt;
+<DELIMITER>&lt;%</DELIMITER> <KEYWORD>end</KEYWORD> <DELIMITER>-%&gt;</DELIMITER>
+<DELIMITER>&lt;%</DELIMITER> <COMMENT>#</COMMENT>
+   <COMMENT># This is where the resources you declare will appear.  By default anything</COMMENT>
+   <COMMENT># you add to partials will be added to this section unless you specify</COMMENT>
+   <COMMENT># otherwise.  Note that resources are initially hidden so you can pull them</COMMENT>
+   <COMMENT># apart as needed on page load.</COMMENT>
+<DELIMITER>-%&gt;</DELIMITER>
+<DELIMITER>&lt;%</DELIMITER> <KEYWORD>unless</KEYWORD> <VARIABLE>@content_for_resources</VARIABLE>.<OO>blank?</OO> <DELIMITER>%&gt;</DELIMITER>
+    <COMMENT>&lt;!-- Resources to be removed from DOM on page load --&gt;</COMMENT>
+    &lt;<HTMLTAG>div</HTMLTAG> <TYPE>id</TYPE>=<STRING>"resources"</STRING> <TYPE>style</TYPE>=<STRING>"display:none; visibility: hidden;"</STRING>&gt;
+      <DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> <VARIABLE>@content_for_resources</VARIABLE> </INTERPOLATION><DELIMITER>-%&gt;</DELIMITER>
+    &lt;<HTMLTAG>/div</HTMLTAG>&gt;
+<DELIMITER>&lt;%</DELIMITER> <KEYWORD>end</KEYWORD> <DELIMITER>-%&gt;</DELIMITER>
+<DELIMITER>&lt;%</DELIMITER> <COMMENT>#</COMMENT>
+   <COMMENT># This line should appear at the bottom of your page to include your</COMMENT>
+   <COMMENT># generated JavaScript and any libraries you reference.  If you need</COMMENT>
+   <COMMENT># to include other javascripts, add them to the :requires option of</COMMENT>
+   <COMMENT># your client in routes.rb instead of changing it here.</COMMENT>
+<DELIMITER>-%&gt;</DELIMITER>
+<DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> javascripts_for_client </INTERPOLATION><DELIMITER>%&gt;</DELIMITER>
+<DELIMITER>&lt;%</DELIMITER> <KEYWORD>unless</KEYWORD> <VARIABLE>@content_for_page_javascript</VARIABLE>.<OO>blank?</OO> <DELIMITER>%&gt;</DELIMITER>
+<DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> <VARIABLE>@content_for_page_javascript</VARIABLE> </INTERPOLATION><DELIMITER>%&gt;</DELIMITER>
+<DELIMITER>&lt;%</DELIMITER> <KEYWORD>end</KEYWORD> <DELIMITER>-%&gt;</DELIMITER>
+<DELIMITER>&lt;%</DELIMITER> <COMMENT>#</COMMENT>
+   <COMMENT># If you use old-style view helpers in your page, this method must be</COMMENT>
+   <COMMENT># called to actually add the page views to your HTML.  Normally this will</COMMENT>
+   <COMMENT># not generate any content.</COMMENT>
+<DELIMITER>-%&gt;</DELIMITER>
+<DELIMITER>&lt;%</DELIMITER> <COMMENT>#render_page_views -</COMMENT><DELIMITER>%&gt;</DELIMITER>
+<DELIMITER>&lt;%</DELIMITER> <COMMENT># Older SproutCore applications need SC.didLoad to be called after onload.</COMMENT>
+   <COMMENT># This is no longer required by SproutCore so it is off by default.  To</COMMENT>
+   <COMMENT># reenable set use_window_onload = true in yur config.</COMMENT>
+<DELIMITER>-%&gt;</DELIMITER>
+<DELIMITER>&lt;%</DELIMITER> <KEYWORD>if</KEYWORD> <OBJ>config</OBJ>.<OO>use_window_onload</OO> <DELIMITER>%&gt;</DELIMITER>
+<COMMENT>&lt;!-- Start SproutCore on Page Load --&gt;</COMMENT>
+    &lt;<HTMLTAG>script</HTMLTAG> <TYPE>type</TYPE>=<STRING>"text/javascript"</STRING>&gt;<OBJ>window</OBJ><OPERATOR>.</OPERATOR><OO>onload</OO> <OPERATOR>=</OPERATOR> <OBJ>SC</OBJ><OPERATOR>.</OPERATOR><OO>didLoad</OO><OPERATOR>;</OPERATOR>&lt;<HTMLTAG>/script</HTMLTAG>&gt;
+<DELIMITER>&lt;%</DELIMITER> <KEYWORD>end</KEYWORD> <DELIMITER>-%&gt;</DELIMITER>
+<DELIMITER>&lt;%</DELIMITER> <COMMENT>#</COMMENT>
+   <COMMENT># The final content section can be used to add any last minute setup you</COMMENT>
+   <COMMENT># need to do before the page ends.  This is required for loading unit</COMMENT>
+   <COMMENT># tests among other things.</COMMENT>
+<DELIMITER>-%&gt;</DELIMITER>
+<DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> <VARIABLE>@content_for_final</VARIABLE> </INTERPOLATION><DELIMITER>-%&gt;</DELIMITER>
+<DELIMITER>&lt;%</DELIMITER>
+  <COMMENT>#disable main if the application is loaded in design mode</COMMENT>
+<DELIMITER>%&gt;</DELIMITER>
+<DELIMITER>&lt;%=</DELIMITER><INTERPOLATION> <VARIABLE>@content_for_designer</VARIABLE> </INTERPOLATION><DELIMITER>-%&gt;</DELIMITER>
+        &lt;<HTMLTAG>/body</HTMLTAG>&gt;
+&lt;<HTMLTAG>/html</HTMLTAG>&gt;

@@ -1,0 +1,517 @@
+<COMMENT>#!/usr/bin/env ruby</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># Copyright (c) 2001, 2002 Michael Neumann &lt;neumann@s-direktnet.de&gt;</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># All rights reserved.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># Redistribution and use in source and binary forms, with or without</COMMENT>
+<COMMENT># modification, are permitted provided that the following conditions</COMMENT>
+<COMMENT># are met:</COMMENT>
+<COMMENT># 1. Redistributions of source code must retain the above copyright</COMMENT>
+<COMMENT>#    notice, this list of conditions and the following disclaimer.</COMMENT>
+<COMMENT># 2. Redistributions in binary form must reproduce the above copyright</COMMENT>
+<COMMENT>#    notice, this list of conditions and the following disclaimer in the</COMMENT>
+<COMMENT>#    documentation and/or other materials provided with the distribution.</COMMENT>
+<COMMENT># 3. The name of the author may not be used to endorse or promote products</COMMENT>
+<COMMENT>#    derived from this software without specific prior written permission.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,</COMMENT>
+<COMMENT># INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY</COMMENT>
+<COMMENT># AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL</COMMENT>
+<COMMENT># THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,</COMMENT>
+<COMMENT># EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,</COMMENT>
+<COMMENT># PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;</COMMENT>
+<COMMENT># OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,</COMMENT>
+<COMMENT># WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR</COMMENT>
+<COMMENT># OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF</COMMENT>
+<COMMENT># ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># $Id: sqlsh.rb,v 1.2 2006/01/24 04:20:01 francis Exp $</COMMENT>
+<COMMENT>#</COMMENT>
+
+<KEYWORD>begin</KEYWORD>
+    <FUNCTION>require</FUNCTION> <STRING>'rubygems'</STRING>
+    gem <STRING>'dbi'</STRING>
+<KEYWORD>rescue</KEYWORD> <CONSTANT>LoadError</CONSTANT> <OPERATOR>=&gt;</OPERATOR> e
+<KEYWORD>end</KEYWORD>
+
+<FUNCTION>require</FUNCTION> <STRING>"dbi"</STRING>
+
+<KEYWORD>begin</KEYWORD>
+    <FUNCTION>require</FUNCTION> <STRING>"readline"</STRING>
+    <VARIABLE>$use_readline</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD>
+<KEYWORD>rescue</KEYWORD> <CONSTANT>LoadError</CONSTANT>
+    <VARIABLE>$use_readline</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD>
+<KEYWORD>end</KEYWORD>
+
+<FUNCTION>require</FUNCTION> <STRING>"irb"</STRING>
+<FUNCTION>require</FUNCTION> <STRING>"irb/completion"</STRING>
+
+<VARIABLE>$paging</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD>
+<VARIABLE>$irb_completion</VARIABLE> <OPERATOR>=</OPERATOR> <CONSTANT>Readline</CONSTANT>.<OO>completion_proc</OO>
+
+<FUNCTION>require</FUNCTION> <STRING>"getoptlong"</STRING>
+
+<KEYWORD>class</KEYWORD> <CONSTANT>ReadlineControl</CONSTANT>
+
+    attr_accessor <VALUE>:keywords</VALUE>
+
+    <KEYWORD>def</KEYWORD> initialize
+        <VARIABLE>@keywords</VARIABLE> <OPERATOR>=</OPERATOR> []
+        set_prompt
+        initCompletion
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> initCompletion
+        <KEYWORD>if</KEYWORD> <VARIABLE>$use_readline</VARIABLE>
+            <CONSTANT>Readline</CONSTANT>.<OO>completion_proc</OO> <OPERATOR>=</OPERATOR> <FUNCTION>proc</FUNCTION> {<OPERATOR>|</OPERATOR>str<OPERATOR>|</OPERATOR> complete(str) }
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> complete(str)
+        <VARIABLE>@keywords</VARIABLE>.<OO>grep</OO>(<REGEX><DELIMITER>/</DELIMITER><DELIMITER>^</DELIMITER></REGEX><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>Regexp</CONSTANT>.<OO>escape</OO>(str)</INTERPOLATION><DELIMITER>}</DELIMITER><REGEX><DELIMITER>/</DELIMITER></REGEX><KEYWORD>i</KEYWORD>)
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> set_prompt(prompt<OPERATOR>=</OPERATOR><STRING>"&gt; "</STRING>)
+        <VARIABLE>@prompt</VARIABLE> <OPERATOR>=</OPERATOR> prompt
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> readline
+        <KEYWORD>if</KEYWORD> <VARIABLE>$use_readline</VARIABLE>
+            <CONSTANT>Readline</CONSTANT>.<OO>readline</OO>(<VARIABLE>@prompt</VARIABLE>, <KEYWORD>true</KEYWORD>)
+        <KEYWORD>else</KEYWORD>
+            <FUNCTION>print</FUNCTION> <VARIABLE>@prompt</VARIABLE>
+            <VARIABLE>$stdin</VARIABLE>.<OO>readline</OO>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+<KEYWORD>end</KEYWORD>
+
+<KEYWORD>class</KEYWORD> <CONSTANT>Command</CONSTANT>
+
+    <KEYWORD>def</KEYWORD> tokens(sql)
+        <CONSTANT>DBI</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>SQL</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>PreparedStatement</CONSTANT>.<OO>tokens</OO>(sql)
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> readCommand
+        line <OPERATOR>=</OPERATOR> <STRING>""</STRING>
+
+        <VARIABLE>$rd</VARIABLE>.<OO>set_prompt</OO>(<CONSTANT>PROMPT</CONSTANT>)
+        <KEYWORD>begin</KEYWORD>
+            <KEYWORD>if</KEYWORD> <VARIABLE>$input</VARIABLE>.<OO>nil?</OO>
+                <COMMENT># no source file to read from</COMMENT>
+                l <OPERATOR>=</OPERATOR> <VARIABLE>$rd</VARIABLE>.<OO>readline</OO>
+            <KEYWORD>else</KEYWORD>
+                <COMMENT># source file has still data</COMMENT>
+                l <OPERATOR>=</OPERATOR> <VARIABLE>$input</VARIABLE>.<OO>gets</OO>
+                <KEYWORD>if</KEYWORD> <OBJ>l</OBJ>.<OO>nil?</OO>
+                    <VARIABLE>$input</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>nil</KEYWORD>
+                    <KEYWORD>next</KEYWORD>
+                <KEYWORD>end</KEYWORD>
+            <KEYWORD>end</KEYWORD>
+
+            <KEYWORD>next</KEYWORD> <KEYWORD>if</KEYWORD> <OBJ>l</OBJ>.<OO>strip</OO>.<OO>empty?</OO>
+            l <OPERATOR>=</OPERATOR> <OBJ>l</OBJ>.<OO>chomp</OO> <OPERATOR>+</OPERATOR> <STRING>"<ESC>\n</ESC>"</STRING>
+            line <OPERATOR>&lt;&lt;</OPERATOR> l
+
+            <FUNCTION>puts</FUNCTION> <VARIABLE>$file</VARIABLE> <OPERATOR>+</OPERATOR> <CONSTANT>INPUT</CONSTANT> <OPERATOR>+</OPERATOR> l <KEYWORD>unless</KEYWORD> <VARIABLE>$input</VARIABLE>.<OO>nil?</OO>
+            <VARIABLE>$rd</VARIABLE>.<OO>set_prompt</OO>(<CONSTANT>PROMPT_CONT</CONSTANT>)
+        <KEYWORD>end</KEYWORD> <KEYWORD>until</KEYWORD> complete?(line)
+
+        <KEYWORD>return</KEYWORD> <OBJ>line</OBJ>.<OO>strip</OO>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>private</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> complete?(line)
+        line <OPERATOR>=~</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>^<ESC>\s</ESC><REGEX_OPERATOR>*</REGEX_OPERATOR><ESC>\\</ESC><DELIMITER>/</DELIMITER></REGEX> <KEYWORD>or</KEYWORD> (tokens(line).<OO>last</OO> <OPERATOR>||</OPERATOR> <STRING>""</STRING>) <OPERATOR>=~</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>;<ESC>\s</ESC><REGEX_OPERATOR>*</REGEX_OPERATOR>$<DELIMITER>/</DELIMITER></REGEX>
+    <KEYWORD>end</KEYWORD>
+<KEYWORD>end</KEYWORD>
+
+<KEYWORD>class</KEYWORD> <CONSTANT>Actions</CONSTANT>
+    <CONSTANT>ACTIONS</CONSTANT> <OPERATOR>=</OPERATOR> [
+        [ <REGEX><DELIMITER>/</DELIMITER>^<ESC>\\</ESC>q<REGEX_SUBPATTERN_MARKER>(</REGEX_SUBPATTERN_MARKER>uit<REGEX_SUBPATTERN_MARKER>)</REGEX_SUBPATTERN_MARKER><REGEX_OPERATOR>?</REGEX_OPERATOR><ESC>\s</ESC><REGEX_OPERATOR>*</REGEX_OPERATOR>$<DELIMITER>/</DELIMITER></REGEX><KEYWORD>i</KEYWORD>,     <VALUE>:quit</VALUE> ],
+        [ <REGEX><DELIMITER>/</DELIMITER>^<ESC>\\</ESC>h<REGEX_SUBPATTERN_MARKER>(</REGEX_SUBPATTERN_MARKER>elp<REGEX_SUBPATTERN_MARKER>)</REGEX_SUBPATTERN_MARKER><REGEX_OPERATOR>?</REGEX_OPERATOR><ESC>\s</ESC><REGEX_OPERATOR>*</REGEX_OPERATOR>$<DELIMITER>/</DELIMITER></REGEX><KEYWORD>i</KEYWORD>,     <VALUE>:help</VALUE> ],
+        [ <REGEX><DELIMITER>/</DELIMITER>^<ESC>\\</ESC>t<REGEX_SUBPATTERN_MARKER>(</REGEX_SUBPATTERN_MARKER>ables<REGEX_SUBPATTERN_MARKER>)</REGEX_SUBPATTERN_MARKER><REGEX_OPERATOR>?</REGEX_OPERATOR><DELIMITER>/</DELIMITER></REGEX><KEYWORD>i</KEYWORD>,       <VALUE>:tables</VALUE> ],
+        [ <REGEX><DELIMITER>/</DELIMITER>^<ESC>\\</ESC>dt<DELIMITER>/</DELIMITER></REGEX><KEYWORD>i</KEYWORD>,              <VALUE>:describeTable</VALUE> ],
+        [ <REGEX><DELIMITER>/</DELIMITER>^<ESC>\\</ESC>s<REGEX_SUBPATTERN_MARKER>(</REGEX_SUBPATTERN_MARKER>elect<REGEX_SUBPATTERN_MARKER>)</REGEX_SUBPATTERN_MARKER><REGEX_OPERATOR>?</REGEX_OPERATOR><DELIMITER>/</DELIMITER></REGEX><KEYWORD>i</KEYWORD>,       <VALUE>:select</VALUE> ],
+
+        [ <REGEX><DELIMITER>/</DELIMITER>^<ESC>\\</ESC>rb<DELIMITER>/</DELIMITER></REGEX><KEYWORD>i</KEYWORD>,              <VALUE>:ruby</VALUE> ],
+        [ <REGEX><DELIMITER>/</DELIMITER>^<ESC>\\</ESC>irb<DELIMITER>/</DELIMITER></REGEX><KEYWORD>i</KEYWORD>,             <VALUE>:irb</VALUE> ],
+
+        [ <REGEX><DELIMITER>/</DELIMITER>^<ESC>\\</ESC>c<REGEX_SUBPATTERN_MARKER>(</REGEX_SUBPATTERN_MARKER>ommit<REGEX_SUBPATTERN_MARKER>)</REGEX_SUBPATTERN_MARKER><REGEX_OPERATOR>?</REGEX_OPERATOR><ESC>\s</ESC><REGEX_OPERATOR>*</REGEX_OPERATOR>$<DELIMITER>/</DELIMITER></REGEX><KEYWORD>i</KEYWORD>,   <VALUE>:commit</VALUE> ],
+        [ <REGEX><DELIMITER>/</DELIMITER>^<ESC>\\</ESC>r<REGEX_SUBPATTERN_MARKER>(</REGEX_SUBPATTERN_MARKER>ollback<REGEX_SUBPATTERN_MARKER>)</REGEX_SUBPATTERN_MARKER><REGEX_OPERATOR>?</REGEX_OPERATOR><ESC>\s</ESC><REGEX_OPERATOR>*</REGEX_OPERATOR>$<DELIMITER>/</DELIMITER></REGEX><KEYWORD>i</KEYWORD>, <VALUE>:rollback</VALUE> ],
+        [ <REGEX><DELIMITER>/</DELIMITER>^<ESC>\\</ESC>a<REGEX_SUBPATTERN_MARKER>(</REGEX_SUBPATTERN_MARKER>utocommit<REGEX_SUBPATTERN_MARKER>)</REGEX_SUBPATTERN_MARKER><REGEX_OPERATOR>?</REGEX_OPERATOR><REGEX_SUBPATTERN_MARKER>(</REGEX_SUBPATTERN_MARKER><ESC>\s</ESC><REGEX_OPERATOR>+</REGEX_OPERATOR><REGEX_SUBPATTERN_MARKER>(</REGEX_SUBPATTERN_MARKER>on<REGEX_OPERATOR>|</REGEX_OPERATOR>off<REGEX_SUBPATTERN_MARKER>)</REGEX_SUBPATTERN_MARKER><REGEX_OPERATOR>?</REGEX_OPERATOR><REGEX_SUBPATTERN_MARKER>)</REGEX_SUBPATTERN_MARKER><REGEX_OPERATOR>?</REGEX_OPERATOR><ESC>\s</ESC><REGEX_OPERATOR>*</REGEX_OPERATOR>$<DELIMITER>/</DELIMITER></REGEX><KEYWORD>i</KEYWORD>, <VALUE>:autocommit</VALUE> ],
+        [ <REGEX><DELIMITER>/</DELIMITER>^<ESC>\\</ESC>i<REGEX_SUBPATTERN_MARKER>(</REGEX_SUBPATTERN_MARKER>nput<REGEX_SUBPATTERN_MARKER>)</REGEX_SUBPATTERN_MARKER><REGEX_OPERATOR>?</REGEX_OPERATOR><DELIMITER>/</DELIMITER></REGEX><KEYWORD>i</KEYWORD>,        <VALUE>:input</VALUE> ],
+        [ <REGEX><DELIMITER>/</DELIMITER>^<ESC>\\</ESC>o<REGEX_SUBPATTERN_MARKER>(</REGEX_SUBPATTERN_MARKER>utput<REGEX_SUBPATTERN_MARKER>)</REGEX_SUBPATTERN_MARKER><REGEX_OPERATOR>?</REGEX_OPERATOR><DELIMITER>/</DELIMITER></REGEX><KEYWORD>i</KEYWORD>,       <VALUE>:output</VALUE> ],
+        [ <REGEX><DELIMITER>/</DELIMITER>^<ESC>\\</ESC>pl<DELIMITER>/</DELIMITER></REGEX><KEYWORD>i</KEYWORD>,              <VALUE>:pageLength</VALUE> ],
+        [ <REGEX><DELIMITER>/</DELIMITER>^<ESC>\\</ESC>p<DELIMITER>/</DELIMITER></REGEX><KEYWORD>i</KEYWORD>,               <VALUE>:togglePaging</VALUE> ],
+
+        [ <REGEX><DELIMITER>/</DELIMITER><DELIMITER>/</DELIMITER></REGEX>,                    <VALUE>:unknownCommand</VALUE> ]
+    ]
+
+    <KEYWORD>def</KEYWORD> dispatchCommand(line)
+        <CONSTANT>ACTIONS</CONSTANT>.<OO>each</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>regexp, action<OPERATOR>|</OPERATOR>
+            <KEYWORD>if</KEYWORD> line <OPERATOR>=~</OPERATOR> regexp <KEYWORD>then</KEYWORD>
+                send(action, <VARIABLE>$~</VARIABLE>)
+                <KEYWORD>return</KEYWORD>
+            <KEYWORD>end</KEYWORD>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> quit(match)
+        <FUNCTION>puts</FUNCTION>
+        <FUNCTION>puts</FUNCTION> <STRING>"BYE"</STRING>
+        <FUNCTION>puts</FUNCTION>
+
+        <KEYWORD>begin</KEYWORD>
+            <CONSTANT>Conn</CONSTANT>.<OO>disconnect</OO>
+        <KEYWORD>rescue</KEYWORD> <CONSTANT>DBI</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>Error</CONSTANT> <OPERATOR>=&gt;</OPERATOR> err
+            <FUNCTION>puts</FUNCTION>
+            <FUNCTION>puts</FUNCTION> <OBJ>err</OBJ>.<OO>message</OO>
+            <FUNCTION>p</FUNCTION> <OBJ>err</OBJ>.<OO>backtrace</OO> <KEYWORD>if</KEYWORD> <VARIABLE>$DEBUG</VARIABLE>
+            <FUNCTION>puts</FUNCTION>
+        <KEYWORD>end</KEYWORD>
+
+        <FUNCTION>exit</FUNCTION>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> help(match)
+        head <OPERATOR>=</OPERATOR> <DELIMITER>%w(</DELIMITER><STRING>Function</STRING> <STRING>Description</STRING><DELIMITER>)</DELIMITER>
+        rows <OPERATOR>=</OPERATOR> [
+            [<STRING>"<ESC>\\</ESC>h[elp]"</STRING>,     <STRING>"Display this help screen"</STRING>],
+            [<STRING>""</STRING>, <STRING>""</STRING>],
+
+            [<STRING>"<ESC>\\</ESC>t[ables]"</STRING>,   <STRING>"Display all available tables"</STRING>],
+            [<STRING>"<ESC>\\</ESC>dt table"</STRING>,   <STRING>"Describe columns of 'table'"</STRING>],
+            [<STRING>"<ESC>\\</ESC>s[elect] table"</STRING>, <STRING>"short for SELECT * FROM 'table'"</STRING>],
+
+            [<STRING>""</STRING>, <STRING>""</STRING>],
+            [<STRING>"<ESC>\\</ESC>c[ommit]"</STRING>,   <STRING>"Commits the current transaction"</STRING>],
+            [<STRING>"<ESC>\\</ESC>r[ollback]"</STRING>, <STRING>"Rolls back the current transaction"</STRING>],
+            [<STRING>"<ESC>\\</ESC>a[utocommit]"</STRING>, <STRING>"Show current autocommit mode"</STRING>],
+            [<STRING>"<ESC>\\</ESC>a[utocommit] on|off"</STRING>, <STRING>"Switch autocommit mode on/off"</STRING>],
+            [<STRING>""</STRING>, <STRING>""</STRING>],
+
+            [<STRING>"<ESC>\\</ESC>i[nput] filename"</STRING>, <STRING>"Read and execute lines from 'filename'"</STRING>],
+            [<STRING>"<ESC>\\</ESC>o[utput]"</STRING>, <STRING>"Disable output"</STRING>],
+            [<STRING>"<ESC>\\</ESC>o[utput] filename"</STRING>, <STRING>"Store SQL statments the user inputs into 'filename'"</STRING>],
+            [<STRING>""</STRING>, <STRING>""</STRING>],
+
+            [<STRING>"<ESC>\\</ESC>pl n"</STRING>,   <STRING>"Set page length to 'n'"</STRING>],
+            [<STRING>"<ESC>\\</ESC>p"</STRING>,      <STRING>"Toggle paging"</STRING>],
+            [<STRING>""</STRING>, <STRING>""</STRING>],
+            [<STRING>"<ESC>\\</ESC>rb ..."</STRING>, <STRING>"Execute the rest of the line as Ruby sourcecode"</STRING>],
+            [<STRING>"<ESC>\\</ESC>irb"</STRING>,    <STRING>"Execute irb within this context"</STRING>],
+
+            [<STRING>""</STRING>, <STRING>""</STRING>],
+
+            [<STRING>"<ESC>\\</ESC>q[uit]"</STRING>,     <STRING>"Quit this program"</STRING>]
+        ]
+
+        <FUNCTION>puts</FUNCTION>
+        <FUNCTION>puts</FUNCTION> <STRING>"Help: "</STRING>
+        output_table(head, rows)
+        <FUNCTION>puts</FUNCTION>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> tables(match)
+        head <OPERATOR>=</OPERATOR> [<STRING>"Table name"</STRING>]
+        rows <OPERATOR>=</OPERATOR> <CONSTANT>Conn</CONSTANT>.<OO>tables</OO>.<OO>collect</OO> {<OPERATOR>|</OPERATOR>name<OPERATOR>|</OPERATOR> [name]}
+
+        <FUNCTION>puts</FUNCTION>
+        <FUNCTION>puts</FUNCTION> <STRING>"Tables: "</STRING>
+        output_table(head, rows)
+        <FUNCTION>puts</FUNCTION>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> describeTable(match)
+        table <OPERATOR>=</OPERATOR> <OBJ>match</OBJ>.<OO>post_match</OO>.<OO>strip</OO>
+
+        head <OPERATOR>=</OPERATOR> <DELIMITER>%w(</DELIMITER><STRING>name</STRING> <STRING>type_name</STRING> <STRING>precision</STRING> <STRING>scale</STRING> <STRING>default</STRING> <STRING>nullable</STRING> <STRING>indexed</STRING> <STRING>primary</STRING> <STRING>unique</STRING><DELIMITER>)</DELIMITER>
+
+        rows <OPERATOR>=</OPERATOR> <CONSTANT>Conn</CONSTANT>.<OO>columns</OO>(table).<OO>collect</OO> {<OPERATOR>|</OPERATOR>col<OPERATOR>|</OPERATOR> <OBJ>head</OBJ>.<OO>collect</OO>{<OPERATOR>|</OPERATOR>a<OPERATOR>|</OPERATOR> col[a]} }
+
+        <FUNCTION>puts</FUNCTION>
+        <FUNCTION>puts</FUNCTION> <STRING>"Table '</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION>table</INTERPOLATION><DELIMITER>}</DELIMITER><STRING>': "</STRING>
+        output_table(head, rows)
+        <FUNCTION>puts</FUNCTION>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> <FUNCTION>select</FUNCTION>(match)
+        executeSQL(<STRING>"SELECT * FROM </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><OBJ>match</OBJ>.<OO>post_match</OO></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>;"</STRING>)
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> commit(match)
+        <CONSTANT>Conn</CONSTANT>.<OO>commit</OO>
+        <FUNCTION>puts</FUNCTION>
+        <FUNCTION>puts</FUNCTION> <STRING>"COMMIT"</STRING>
+        <FUNCTION>puts</FUNCTION>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> rollback(match)
+        <CONSTANT>Conn</CONSTANT>.<OO>rollback</OO>
+        <FUNCTION>puts</FUNCTION>
+        <FUNCTION>puts</FUNCTION> <STRING>"ROLLBACK"</STRING>
+        <FUNCTION>puts</FUNCTION>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> autocommit(match)
+        mode <OPERATOR>=</OPERATOR> match[<NUMERIC>3</NUMERIC>]
+        <KEYWORD>if</KEYWORD> mode <OPERATOR>=~</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>on<DELIMITER>/</DELIMITER></REGEX><KEYWORD>i</KEYWORD>
+            <CONSTANT>Conn</CONSTANT>[<STRING>'AutoCommit'</STRING>] <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD>
+            <FUNCTION>puts</FUNCTION>
+            <FUNCTION>puts</FUNCTION> <STRING>"AUTOCOMMIT IS NOW ON"</STRING>
+            <FUNCTION>puts</FUNCTION>
+        <KEYWORD>elsif</KEYWORD> mode <OPERATOR>=~</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>off<DELIMITER>/</DELIMITER></REGEX><KEYWORD>i</KEYWORD>
+            <CONSTANT>Conn</CONSTANT>[<STRING>'AutoCommit'</STRING>] <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD>
+            <FUNCTION>puts</FUNCTION>
+            <FUNCTION>puts</FUNCTION> <STRING>"AUTOCOMMIT IS NOW OFF"</STRING>
+            <FUNCTION>puts</FUNCTION>
+        <KEYWORD>else</KEYWORD>
+            <FUNCTION>puts</FUNCTION>
+            <KEYWORD>if</KEYWORD> <CONSTANT>Conn</CONSTANT>[<STRING>'AutoCommit'</STRING>] <OPERATOR>==</OPERATOR> <KEYWORD>true</KEYWORD>
+                <FUNCTION>puts</FUNCTION> <STRING>"AUTOCOMMIT is currently switched ON"</STRING>
+            <KEYWORD>elsif</KEYWORD> <CONSTANT>Conn</CONSTANT>[<STRING>'AutoCommit'</STRING>] <OPERATOR>==</OPERATOR> <KEYWORD>false</KEYWORD>
+                <FUNCTION>puts</FUNCTION> <STRING>"AUTOCOMMIT is currently switched OFF"</STRING>
+            <KEYWORD>else</KEYWORD>
+                <FUNCTION>puts</FUNCTION> <STRING>"AUTOCOMMIT is in unknown state"</STRING>
+            <KEYWORD>end</KEYWORD>
+            <FUNCTION>puts</FUNCTION>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> input(match)
+        <FUNCTION>puts</FUNCTION>
+        <VARIABLE>$file</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>match</OBJ>.<OO>post_match</OO>.<OO>strip</OO>
+
+        <KEYWORD>begin</KEYWORD>
+            <VARIABLE>$input</VARIABLE> <OPERATOR>=</OPERATOR> <CONSTANT>File</CONSTANT>.<OO>open</OO>(<VARIABLE>$file</VARIABLE>)
+            <FUNCTION>puts</FUNCTION> <STRING>"EXECUTE file </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><VARIABLE>$file</VARIABLE></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>
+            <FUNCTION>puts</FUNCTION>
+        <KEYWORD>rescue</KEYWORD>
+            <FUNCTION>puts</FUNCTION> <STRING>"Couldn't read from file </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><VARIABLE>$file</VARIABLE></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>
+            <FUNCTION>puts</FUNCTION>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> output(match)
+        <FUNCTION>puts</FUNCTION>
+        file <OPERATOR>=</OPERATOR> <OBJ>match</OBJ>.<OO>post_match</OO>.<OO>strip</OO>
+
+        <KEYWORD>if</KEYWORD> <OBJ>file</OBJ>.<OO>empty?</OO>
+            <VARIABLE>$output</VARIABLE>.<OO>close</OO> <KEYWORD>if</KEYWORD> <VARIABLE>$output</VARIABLE>
+            <VARIABLE>$output</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>nil</KEYWORD>
+            <FUNCTION>puts</FUNCTION> <STRING>"Disabled OUTPUT"</STRING>
+            <FUNCTION>puts</FUNCTION>
+        <KEYWORD>else</KEYWORD>
+            <KEYWORD>begin</KEYWORD>
+                <VARIABLE>$output</VARIABLE> <OPERATOR>=</OPERATOR> <CONSTANT>File</CONSTANT>.<OO>new</OO>(file, <STRING>"w+"</STRING>)
+                <FUNCTION>puts</FUNCTION> <STRING>"Set OUTPUT to file </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION>file</INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>
+                <FUNCTION>puts</FUNCTION>
+            <KEYWORD>rescue</KEYWORD>
+                <FUNCTION>puts</FUNCTION> <STRING>"Couldn't set OUTPUT to file </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION>file</INTERPOLATION><DELIMITER>}</DELIMITER><STRING>"</STRING>
+                <FUNCTION>puts</FUNCTION>
+            <KEYWORD>end</KEYWORD>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> togglePaging(match)
+        <VARIABLE>$paging</VARIABLE> <OPERATOR>=</OPERATOR> <OPERATOR>!</OPERATOR><VARIABLE>$paging</VARIABLE>
+
+        <FUNCTION>puts</FUNCTION> <STRING>"Paging is now "</STRING> <OPERATOR>+</OPERATOR> (<VARIABLE>$paging</VARIABLE> <OPERATOR>?</OPERATOR> <STRING>"on"</STRING> <OPERATOR>:</OPERATOR> <STRING>"off"</STRING>) <OPERATOR>+</OPERATOR> <STRING>"."</STRING>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> pageLength(match)
+        <FUNCTION>puts</FUNCTION>
+        <VARIABLE>$page_len</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>match</OBJ>.<OO>post_match</OO>.<OO>strip</OO>.<OO>to_i</OO>
+        <VARIABLE>$page_len</VARIABLE> <OPERATOR>=</OPERATOR> <CONSTANT>DEFAULT_PAGE_LENGTH</CONSTANT> <KEYWORD>if</KEYWORD> <VARIABLE>$page_len</VARIABLE> <OPERATOR>&lt;=</OPERATOR> <NUMERIC>0</NUMERIC>
+
+        <FUNCTION>puts</FUNCTION> <STRING>"New page length is </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><VARIABLE>$page_len</VARIABLE></INTERPOLATION><DELIMITER>}</DELIMITER><STRING>."</STRING>
+        <FUNCTION>puts</FUNCTION>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> irb(match)
+        <CONSTANT>Readline</CONSTANT>.<OO>completion_proc</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$irb_completion</VARIABLE>
+        <FUNCTION>puts</FUNCTION>
+        <FUNCTION>puts</FUNCTION> <STRING>"================================== IRB ==============================="</STRING>
+        <KEYWORD>begin</KEYWORD>
+            <CONSTANT>IRB</CONSTANT>.<OO>start</OO>
+        <KEYWORD>rescue</KEYWORD> <CONSTANT>SystemExit</CONSTANT>
+        <KEYWORD>end</KEYWORD>
+        <FUNCTION>puts</FUNCTION> <STRING>"======================================================================"</STRING>
+        <VARIABLE>$rd</VARIABLE>.<OO>initCompletion</OO>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> ruby(match)
+        <FUNCTION>puts</FUNCTION>
+        <FUNCTION>eval</FUNCTION> <OBJ>match</OBJ>.<OO>post_match</OO>
+        <FUNCTION>puts</FUNCTION>
+    <KEYWORD>end</KEYWORD>
+
+    <KEYWORD>def</KEYWORD> unknownCommand(match)
+        <FUNCTION>puts</FUNCTION>
+        <FUNCTION>puts</FUNCTION> <STRING>"Unknown command!"</STRING>
+        <FUNCTION>puts</FUNCTION>
+    <KEYWORD>end</KEYWORD>
+
+<KEYWORD>end</KEYWORD>
+
+<KEYWORD>def</KEYWORD> output_table(header, rows)
+    <CONSTANT>DBI</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>Utils</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>TableFormatter</CONSTANT>.<OO>ascii</OO>(header, rows, <KEYWORD>nil</KEYWORD>, <KEYWORD>nil</KEYWORD>, <KEYWORD>nil</KEYWORD>, <KEYWORD>nil</KEYWORD>, <VARIABLE>$page_len</VARIABLE>) <KEYWORD>do</KEYWORD>
+        <KEYWORD>if</KEYWORD> <VARIABLE>$paging</VARIABLE>
+            <FUNCTION>print</FUNCTION> <STRING>"[enter to continue, a to abort]"</STRING>
+            <KEYWORD>break</KEYWORD> <KEYWORD>if</KEYWORD> <VARIABLE>$stdin</VARIABLE>.<OO>readline</OO>.<OO>chomp</OO>.<OO>downcase</OO> <OPERATOR>==</OPERATOR> <STRING>"a"</STRING>
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>end</KEYWORD>
+<KEYWORD>end</KEYWORD>
+
+<KEYWORD>def</KEYWORD> executeSQL(sql)
+    sql <OPERATOR>=</OPERATOR> <VARIABLE>$`</VARIABLE> <KEYWORD>if</KEYWORD> sql <OPERATOR>=~</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>;<ESC>\s</ESC><REGEX_OPERATOR>*</REGEX_OPERATOR>$<DELIMITER>/</DELIMITER></REGEX>
+
+        start <OPERATOR>=</OPERATOR> <OPERATOR>::</OPERATOR><CONSTANT>Time</CONSTANT>.<OO>now</OO>
+    stmt <OPERATOR>=</OPERATOR> <CONSTANT>Conn</CONSTANT>.<OO>execute</OO>(sql)
+
+    head <OPERATOR>=</OPERATOR> <OBJ>stmt</OBJ>.<OO>column_names</OO>
+
+    <COMMENT># DDL, DCL</COMMENT>
+    <KEYWORD>if</KEYWORD> <OBJ>head</OBJ>.<OO>empty?</OO>
+        <FUNCTION>puts</FUNCTION>
+        nr <OPERATOR>=</OPERATOR> <OBJ>stmt</OBJ>.<OO>rows</OO>
+        <KEYWORD>if</KEYWORD> nr <OPERATOR>==</OPERATOR> <NUMERIC>0</NUMERIC>
+            <FUNCTION>puts</FUNCTION> <STRING>"  No rows affected"</STRING>
+        <KEYWORD>elsif</KEYWORD> nr <OPERATOR>==</OPERATOR> <NUMERIC>1</NUMERIC>
+            <FUNCTION>puts</FUNCTION> <STRING>"  1 row affected"</STRING>
+        <KEYWORD>else</KEYWORD>
+            <FUNCTION>puts</FUNCTION> <STRING>"  </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION>nr</INTERPOLATION><DELIMITER>}</DELIMITER><STRING> rows affected"</STRING>
+        <KEYWORD>end</KEYWORD>
+        <FUNCTION>puts</FUNCTION>
+    <KEYWORD>else</KEYWORD>
+        rows <OPERATOR>=</OPERATOR> <OBJ>stmt</OBJ>.<OO>fetch_all</OO>
+        tm <OPERATOR>=</OPERATOR> <OPERATOR>::</OPERATOR><CONSTANT>Time</CONSTANT>.<OO>now</OO> <OPERATOR>-</OPERATOR> start
+
+        <FUNCTION>puts</FUNCTION>
+        output_table(head, rows <OPERATOR>||</OPERATOR> [])
+        <FUNCTION>print</FUNCTION> <STRING>"  "</STRING>
+        <KEYWORD>if</KEYWORD> <OBJ>rows</OBJ>.<OO>nil?</OO>
+            <FUNCTION>print</FUNCTION> <STRING>"No rows in set"</STRING>
+        <KEYWORD>elsif</KEYWORD> <OBJ>rows</OBJ>.<OO>size</OO> <OPERATOR>==</OPERATOR> <NUMERIC>1</NUMERIC>
+            <FUNCTION>print</FUNCTION> <STRING>"1 row in set"</STRING>
+        <KEYWORD>else</KEYWORD>
+            <FUNCTION>print</FUNCTION> <STRING>"</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><OBJ>rows</OBJ>.<OO>size</OO></INTERPOLATION><DELIMITER>}</DELIMITER><STRING> rows in set"</STRING>
+        <KEYWORD>end</KEYWORD>
+
+        <FUNCTION>puts</FUNCTION> <STRING>" (</STRING><DELIMITER>#{</DELIMITER><INTERPOLATION>(<OBJ>tm</OBJ>.<OO>to_f</OO><OPERATOR>*</OPERATOR><NUMERIC>1000</NUMERIC>).<OO>to_i</OO> <OPERATOR>/</OPERATOR> <NUMERIC>1000.0</NUMERIC></INTERPOLATION><DELIMITER>}</DELIMITER><STRING> sec)"</STRING>
+        <FUNCTION>puts</FUNCTION>
+    <KEYWORD>end</KEYWORD>
+
+    <VARIABLE>$rd</VARIABLE>.<OO>keywords</OO> <OPERATOR>=</OPERATOR> <CONSTANT>SQL_KEYWORDS</CONSTANT> <OPERATOR>+</OPERATOR> <CONSTANT>Conn</CONSTANT>.<OO>tables</OO>
+<KEYWORD>end</KEYWORD>
+
+<CONSTANT>DEFAULT_PAGE_LENGTH</CONSTANT> <OPERATOR>=</OPERATOR> <NUMERIC>37</NUMERIC>
+
+<VARIABLE>$output</VARIABLE>     <OPERATOR>=</OPERATOR> <KEYWORD>nil</KEYWORD>
+<VARIABLE>$input</VARIABLE>      <OPERATOR>=</OPERATOR> <KEYWORD>nil</KEYWORD>
+<VARIABLE>$page_len</VARIABLE>   <OPERATOR>=</OPERATOR> <CONSTANT>DEFAULT_PAGE_LENGTH</CONSTANT>
+<CONSTANT>PROMPT</CONSTANT>      <OPERATOR>=</OPERATOR> <STRING>"dbi =&gt; "</STRING>
+<CONSTANT>PROMPT_CONT</CONSTANT> <OPERATOR>=</OPERATOR> <STRING>"dbi -&gt; "</STRING>
+<CONSTANT>INPUT</CONSTANT>       <OPERATOR>=</OPERATOR> <STRING>" &gt;&gt; "</STRING>
+
+<CONSTANT>SQL_KEYWORDS</CONSTANT> <OPERATOR>=</OPERATOR> <DELIMITER>%w(</DELIMITER><STRING></STRING>
+  <STRING>INSERT</STRING> <STRING>DELETE</STRING> <STRING>UPDATE</STRING> <STRING>SELECT</STRING> <STRING>FROM</STRING> <STRING>WHERE</STRING> <STRING>IN</STRING> <STRING>LIKE</STRING> <STRING>SET</STRING> <STRING>VALUES</STRING> <STRING>INTO</STRING>
+  <STRING>CREATE</STRING> <STRING>TABLE</STRING> <STRING>DROP</STRING>
+  <STRING>COMMIT</STRING> <STRING>ROLLBACK</STRING>
+  <STRING>CHAR</STRING> <STRING>VARCHAR</STRING> <STRING>VARCHAR2</STRING> <STRING>INT</STRING> <STRING>INTEGER</STRING> <STRING>NUMBER</STRING> <STRING>FLOAT</STRING> <STRING>REAL</STRING> <STRING>LONG</STRING> <STRING>CLOB</STRING> <STRING>BLOB</STRING> <STRING>DECIMAL</STRING>
+  <STRING>DBCLOB</STRING> <STRING>DBBLOB</STRING>
+<STRING></STRING><DELIMITER>)</DELIMITER>
+
+<COMMENT># ---------------------------------------------------------------------------</COMMENT>
+
+opts <OPERATOR>=</OPERATOR> <CONSTANT>GetoptLong</CONSTANT>.<OO>new</OO>(
+    [<STRING>"--file"</STRING>, <STRING>"-f"</STRING>, <CONSTANT>GetoptLong</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>REQUIRED_ARGUMENT</CONSTANT> ]
+)
+<OBJ>opts</OBJ>.<OO>each</OO> <KEYWORD>do</KEYWORD> <OPERATOR>|</OPERATOR>opt, arg<OPERATOR>|</OPERATOR>
+    <KEYWORD>case</KEYWORD> opt
+    <KEYWORD>when</KEYWORD> <STRING>"--file"</STRING>
+        <VARIABLE>$input_file_name</VARIABLE> <OPERATOR>=</OPERATOR> arg
+    <KEYWORD>end</KEYWORD>
+<KEYWORD>end</KEYWORD>
+
+<KEYWORD>if</KEYWORD> <CONSTANT>ARGV</CONSTANT>.<OO>size</OO> <OPERATOR>&lt;</OPERATOR> <NUMERIC>1</NUMERIC> <KEYWORD>or</KEYWORD> <CONSTANT>ARGV</CONSTANT>.<OO>size</OO> <OPERATOR>&gt;</OPERATOR> <NUMERIC>3</NUMERIC>
+    <FUNCTION>puts</FUNCTION>
+    <FUNCTION>puts</FUNCTION> <STRING>"USAGE: </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><VARIABLE>$0</VARIABLE></INTERPOLATION><DELIMITER>}</DELIMITER><STRING> [--file file] driver_url [user [password] ]"</STRING>
+    <FUNCTION>puts</FUNCTION>
+
+    <FUNCTION>puts</FUNCTION> <STRING>"Available driver and datasources:"</STRING>
+    <FUNCTION>puts</FUNCTION>
+    <KEYWORD>for</KEYWORD> driver <KEYWORD>in</KEYWORD> <CONSTANT>DBI</CONSTANT>.<OO>available_drivers</OO> <KEYWORD>do</KEYWORD>
+        <FUNCTION>puts</FUNCTION> driver
+        <KEYWORD>begin</KEYWORD>
+            ds <OPERATOR>=</OPERATOR> <CONSTANT>DBI</CONSTANT>.<OO>data_sources</OO>(driver)
+            <KEYWORD>for</KEYWORD> datasource <KEYWORD>in</KEYWORD> ds
+                <FUNCTION>puts</FUNCTION> <STRING>"  "</STRING> <OPERATOR>+</OPERATOR> datasource
+            <KEYWORD>end</KEYWORD>
+        <KEYWORD>rescue</KEYWORD> <OPERATOR>=&gt;</OPERATOR> err
+        <KEYWORD>end</KEYWORD>
+        <FUNCTION>puts</FUNCTION>
+    <KEYWORD>end</KEYWORD>
+    <FUNCTION>puts</FUNCTION>
+
+    <FUNCTION>exit</FUNCTION> <NUMERIC>1</NUMERIC>
+<KEYWORD>else</KEYWORD>
+    <CONSTANT>DRIVER_URL</CONSTANT> <OPERATOR>=</OPERATOR> <CONSTANT>ARGV</CONSTANT>.<OO>shift</OO>
+    <CONSTANT>USER</CONSTANT>       <OPERATOR>=</OPERATOR> <CONSTANT>ARGV</CONSTANT>.<OO>shift</OO>
+    <CONSTANT>PASS</CONSTANT>       <OPERATOR>=</OPERATOR> <CONSTANT>ARGV</CONSTANT>.<OO>shift</OO>
+<KEYWORD>end</KEYWORD>
+
+<FUNCTION>puts</FUNCTION>
+<KEYWORD>begin</KEYWORD>
+    <CONSTANT>Conn</CONSTANT> <OPERATOR>=</OPERATOR> <CONSTANT>DBI</CONSTANT>.<OO>connect</OO>(<CONSTANT>DRIVER_URL</CONSTANT>, <CONSTANT>USER</CONSTANT>, <CONSTANT>PASS</CONSTANT>)
+    <FUNCTION>print</FUNCTION> <STRING>"CONNECT TO </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>DRIVER_URL</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING> "</STRING>
+    <FUNCTION>print</FUNCTION> <STRING>"USER </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>USER</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING> "</STRING> <KEYWORD>unless</KEYWORD> <CONSTANT>USER</CONSTANT>.<OO>nil?</OO>
+    <FUNCTION>print</FUNCTION> <STRING>"PASS </STRING><DELIMITER>#{</DELIMITER><INTERPOLATION><CONSTANT>PASS</CONSTANT></INTERPOLATION><DELIMITER>}</DELIMITER><STRING> "</STRING> <KEYWORD>unless</KEYWORD> <CONSTANT>PASS</CONSTANT>.<OO>nil?</OO>
+    <FUNCTION>print</FUNCTION> <STRING>"<ESC>\n</ESC>"</STRING>
+
+<KEYWORD>rescue</KEYWORD> <CONSTANT>DBI</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>Error</CONSTANT>, <CONSTANT>DBI</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>Warning</CONSTANT> <OPERATOR>=&gt;</OPERATOR> err
+    <FUNCTION>p</FUNCTION> err
+    <FUNCTION>exit</FUNCTION>
+<KEYWORD>end</KEYWORD>
+
+<FUNCTION>puts</FUNCTION>
+
+<VARIABLE>$rd</VARIABLE> <OPERATOR>=</OPERATOR> <CONSTANT>ReadlineControl</CONSTANT>.<OO>new</OO>
+<VARIABLE>$rd</VARIABLE>.<OO>keywords</OO> <OPERATOR>=</OPERATOR> <CONSTANT>SQL_KEYWORDS</CONSTANT> <OPERATOR>+</OPERATOR> <CONSTANT>Conn</CONSTANT>.<OO>tables</OO>
+
+cmd <OPERATOR>=</OPERATOR> <CONSTANT>Command</CONSTANT>.<OO>new</OO>
+act <OPERATOR>=</OPERATOR> <CONSTANT>Actions</CONSTANT>.<OO>new</OO>
+
+<COMMENT># --file option</COMMENT>
+<KEYWORD>if</KEYWORD> <VARIABLE>$input_file_name</VARIABLE>
+    <KEYWORD>def</KEYWORD> <VARIABLE>$input_file_name</VARIABLE>.<OO>post_match</OO>
+        <VARIABLE>$input_file_name</VARIABLE>
+    <KEYWORD>end</KEYWORD>
+    <OBJ>act</OBJ>.<OO>input</OO>(<VARIABLE>$input_file_name</VARIABLE>)
+<KEYWORD>end</KEYWORD>
+
+<COMMENT># Main-Loop -----------------------------------</COMMENT>
+
+<FUNCTION>loop</FUNCTION> <KEYWORD>do</KEYWORD>
+    line <OPERATOR>=</OPERATOR> <OBJ>cmd</OBJ>.<OO>readCommand</OO>
+
+    <VARIABLE>$output</VARIABLE>.<OO>puts</OO> line <KEYWORD>unless</KEYWORD> <VARIABLE>$output</VARIABLE>.<OO>nil?</OO>
+
+    <KEYWORD>begin</KEYWORD>
+        <KEYWORD>if</KEYWORD> line <OPERATOR>=~</OPERATOR> <REGEX><DELIMITER>/</DELIMITER>^<ESC>\\</ESC><DELIMITER>/</DELIMITER></REGEX> <KEYWORD>then</KEYWORD>
+            <COMMENT># Internal Command</COMMENT>
+            <OBJ>act</OBJ>.<OO>dispatchCommand</OO>(line)
+        <KEYWORD>else</KEYWORD>
+            <COMMENT># SQL Command</COMMENT>
+            executeSQL(line)
+        <KEYWORD>end</KEYWORD>
+    <KEYWORD>rescue</KEYWORD> <CONSTANT>DBI</CONSTANT><OPERATOR>::</OPERATOR><CONSTANT>Error</CONSTANT> <OPERATOR>=&gt;</OPERATOR> err
+        <FUNCTION>puts</FUNCTION>
+        <FUNCTION>puts</FUNCTION> <OBJ>err</OBJ>.<OO>message</OO>
+        <FUNCTION>p</FUNCTION> <OBJ>err</OBJ>.<OO>backtrace</OO> <KEYWORD>if</KEYWORD> <VARIABLE>$DEBUG</VARIABLE>
+        <FUNCTION>puts</FUNCTION>
+    <KEYWORD>end</KEYWORD>
+<KEYWORD>end</KEYWORD>

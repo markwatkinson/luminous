@@ -1,0 +1,94 @@
+Index: src/core/albumcoverloader.cpp
+===================================================================
+--- src/core/albumcoverloader.cpp	(revision 2574)
++++ src/core/albumcoverloader.cpp	(working copy)
+@@ -29,6 +29,10 @@
+ #include <taglib/fileref.h>
+ #include <taglib/id3v2tag.h>
+ #include <taglib/mpegfile.h>
++#include <taglib/oggfile.h>
++#include <taglib/oggflacfile.h>
++#include <taglib/speexfile.h>
++#include <taglib/vorbisfile.h>
+ 
+ const char* AlbumCoverLoader::kManuallyUnsetCover = "(unset)";
+ const char* AlbumCoverLoader::kEmbeddedCover = "(embedded)";
+@@ -164,18 +168,57 @@
+   if (ref.isNull())
+     return ret;
+ 
++  // mp3
+   TagLib::MPEG::File* file = dynamic_cast<TagLib::MPEG::File*>(ref.file());
+-  if (!file || !file->ID3v2Tag())
++  if (file && file->ID3v2Tag()) {
+     return ret;
+ 
+-  TagLib::ID3v2::FrameList apic_frames = file->ID3v2Tag()->frameListMap()["APIC"];
+-  if (apic_frames.isEmpty())
+-    return ret;
++    TagLib::ID3v2::FrameList apic_frames = file->ID3v2Tag()->frameListMap()["APIC"];
++    if (apic_frames.isEmpty())
++      return ret;
+ 
+-  TagLib::ID3v2::AttachedPictureFrame* pic =
+-      static_cast<TagLib::ID3v2::AttachedPictureFrame*>(apic_frames.front());
++    TagLib::ID3v2::AttachedPictureFrame* pic =
++        static_cast<TagLib::ID3v2::AttachedPictureFrame*>(apic_frames.front());
+ 
+-  ret.loadFromData((const uchar*) pic->picture().data(), pic->picture().size());
++    ret.loadFromData((const uchar*) pic->picture().data(), pic->picture().size());
++    return ret;
++  }
++  
++  // Ogg vorbis/flac/speex
++  // these should all be equivalent
++  TagLib::Ogg::Vorbis::File* ogg_vorbis_file = 
++    dynamic_cast<TagLib::Ogg::Vorbis::File*>(ref.file());
++  TagLib::Ogg::FLAC::File* ogg_flac_file = 
++    dynamic_cast<TagLib::Ogg::FLAC::File*>(ref.file());
++  TagLib::Ogg::Speex::File* ogg_speex_file = 
++    dynamic_cast<TagLib::Ogg::Speex::File*>(ref.file());
++    
++  if ( (ogg_vorbis_file && ogg_vorbis_file->tag())
++      || (ogg_flac_file && ogg_flac_file->tag())
++      || (ogg_speex_file && ogg_flac_file->tag())
++  ) {
++    TagLib::Ogg::FieldListMap map;
++    if (ogg_vorbis_file)
++      map = ogg_vorbis_file->tag()->fieldListMap();
++    else if (ogg_flac_file)
++      map = ogg_flac_file->tag()->fieldListMap();
++    else if (ogg_speex_file)
++      map = ogg_speex_file->tag()->fieldListMap();
++    
++    
++    // Ogg lacks a definitive standard for embedding cover art, but it seems
++    // b64 encoding a field called COVERART is the general convention
++    if (!map.contains("COVERART"))
++      return ret;
++    
++    QByteArray image_data_b64(map["COVERART"].toString().toCString());
++    QByteArray image_data = QByteArray::fromBase64(image_data_b64);
++    
++    if (!ret.loadFromData(image_data))
++      ret.loadFromData(image_data_b64); //maybe it's not b64 after all
++    return ret;
++  }  
++  
+   return ret;
+ }
+ 
+Index: src/core/song.cpp
+===================================================================
+--- src/core/song.cpp	(revision 2574)
++++ src/core/song.cpp	(working copy)
+@@ -416,6 +416,9 @@
+ 
+   if (!map["COMPILATION"].isEmpty() )
+     *compilation = TStringToQString( map["COMPILATION"].front() ).trimmed();
++  
++  if (!map["COVERART"].isEmpty())
++    d->art_automatic_ = AlbumCoverLoader::kEmbeddedCover;
+ }
+ 
+ void Song::GuessFileType(TagLib::FileRef* fileref) {

@@ -1,0 +1,1231 @@
+<COMMENT>#!/usr/bin/perl</COMMENT>
+<COMMENT># HLstatsX Community Edition - Real-time player and clan rankings and statistics</COMMENT>
+<COMMENT># Copyleft (L) 2008-20XX Nicholas Hastings (nshastings@gmail.com)</COMMENT>
+<COMMENT># http://www.hlxce.com</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># HLstatsX Community Edition is a continuation of </COMMENT>
+<COMMENT># ELstatsNEO - Real-time player and clan rankings and statistics</COMMENT>
+<COMMENT># Copyleft (L) 2008-20XX Malte Bayer (steam@neo-soft.org)</COMMENT>
+<COMMENT># http://ovrsized.neo-soft.org/</COMMENT>
+<COMMENT># </COMMENT>
+<COMMENT># ELstatsNEO is an very improved &amp; enhanced - so called Ultra-Humongus Edition of HLstatsX</COMMENT>
+<COMMENT># HLstatsX - Real-time player and clan rankings and statistics for Half-Life 2</COMMENT>
+<COMMENT># http://www.hlstatsx.com/</COMMENT>
+<COMMENT># Copyright (C) 2005-2007 Tobias Oetzel (Tobi@hlstatsx.com)</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># HLstatsX is an enhanced version of HLstats made by Simon Garner</COMMENT>
+<COMMENT># HLstats - Real-time player and clan rankings and statistics for Half-Life</COMMENT>
+<COMMENT># http://sourceforge.net/projects/hlstats/</COMMENT>
+<COMMENT># Copyright (C) 2001  Simon Garner</COMMENT>
+<COMMENT>#             </COMMENT>
+<COMMENT># This program is free software; you can redistribute it and/or</COMMENT>
+<COMMENT># modify it under the terms of the GNU General Public License</COMMENT>
+<COMMENT># as published by the Free Software Foundation; either version 2</COMMENT>
+<COMMENT># of the License, or (at your option) any later version.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># This program is distributed in the hope that it will be useful,</COMMENT>
+<COMMENT># but WITHOUT ANY WARRANTY; without even the implied warranty of</COMMENT>
+<COMMENT># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</COMMENT>
+<COMMENT># GNU General Public License for more details.</COMMENT>
+<COMMENT>#</COMMENT>
+<COMMENT># You should have received a copy of the GNU General Public License</COMMENT>
+<COMMENT># along with this program; if not, write to the Free Software</COMMENT>
+<COMMENT># Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.</COMMENT>
+<COMMENT># </COMMENT>
+<COMMENT># For support and installation notes visit http://www.hlxce.com</COMMENT>
+
+<KEYWORD>use</KEYWORD> strict<OPERATOR>;</OPERATOR>
+<KEYWORD>use</KEYWORD> warnings<OPERATOR>;</OPERATOR>
+
+<COMMENT>##</COMMENT>
+<COMMENT>## Settings</COMMENT>
+<COMMENT>##</COMMENT>
+
+<COMMENT># $opt_configfile - Absolute path and filename of configuration file.</COMMENT>
+<KEYWORD>my</KEYWORD> <VARIABLE>$opt_configfile</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"./hlstats.conf"</STRING><OPERATOR>;</OPERATOR>
+
+<COMMENT># $opt_libdir - Directory to look in for local required files</COMMENT>
+<COMMENT>#               (our *.plib, *.pm files).</COMMENT>
+<KEYWORD>our</KEYWORD> <VARIABLE>$opt_libdir</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"./"</STRING><OPERATOR>;</OPERATOR>
+
+
+<COMMENT>##</COMMENT>
+<COMMENT>##</COMMENT>
+<COMMENT>################################################################################</COMMENT>
+<COMMENT>## No need to edit below this line</COMMENT>
+<COMMENT>##</COMMENT>
+
+
+<KEYWORD>use</KEYWORD> <OBJ>Getopt</OBJ><OPERATOR>::</OPERATOR><OO>Long</OO><OPERATOR>;</OPERATOR>
+<KEYWORD>use</KEYWORD> DBI<OPERATOR>;</OPERATOR>
+<KEYWORD>use</KEYWORD> Encode<OPERATOR>;</OPERATOR>
+<KEYWORD>use</KEYWORD> Carp<OPERATOR>;</OPERATOR>
+
+<KEYWORD>require</KEYWORD> ConfigReaderSimple<OPERATOR>;</OPERATOR>
+<KEYWORD>require</KEYWORD> HLstats_DB<OPERATOR>;</OPERATOR>
+<KEYWORD>require</KEYWORD> HLstats_Common<OPERATOR>;</OPERATOR>
+<OBJ>HLstats_Common</OBJ><OPERATOR>-&gt;</OPERATOR><OO>import</OO>(<DELIMITER>qw/</DELIMITER><STRING>FormatNumber</STRING> <STRING>FormatDate</STRING> <STRING>ReadConfigFile</STRING> <STRING>PrintEvent</STRING> <STRING>Abbr</STRING> <STRING>IsNumber</STRING> <STRING>PrintNotice</STRING><DELIMITER>/</DELIMITER>)<OPERATOR>;</OPERATOR>
+
+<VARIABLE>$|</VARIABLE><OPERATOR>=</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>;</OPERATOR>
+<OBJ>Getopt</OBJ><OPERATOR>::</OPERATOR><OO>Long</OO><OPERATOR>::</OPERATOR><OO>Configure</OO> (<STRING>"bundling"</STRING>)<OPERATOR>;</OPERATOR>
+
+
+<FUNCTION>binmode</FUNCTION> <CONSTANT>STDIN</CONSTANT><OPERATOR>,</OPERATOR> <STRING>":utf8"</STRING><OPERATOR>;</OPERATOR>
+<FUNCTION>binmode</FUNCTION> <CONSTANT>STDOUT</CONSTANT><OPERATOR>,</OPERATOR> <STRING>":utf8"</STRING><OPERATOR>;</OPERATOR>
+
+<COMMENT>##</COMMENT>
+<COMMENT>## MAIN</COMMENT>
+<COMMENT>##</COMMENT>
+
+<COMMENT># Options</COMMENT>
+
+<KEYWORD>my</KEYWORD> <VARIABLE>$configfile</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>undef</KEYWORD><OPERATOR>;</OPERATOR>
+<KEYWORD>my</KEYWORD> <VARIABLE>$opt_help</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+<KEYWORD>my</KEYWORD> <VARIABLE>$opt_version</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+<KEYWORD>my</KEYWORD> <VARIABLE>$opt_numdays</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>1</NUMERIC><OPERATOR>;</OPERATOR>
+<KEYWORD>my</KEYWORD> <VARIABLE>$opt_player_activity</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+<KEYWORD>my</KEYWORD> <VARIABLE>$opt_awards</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+<KEYWORD>my</KEYWORD> <VARIABLE>$opt_ribbons</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+<KEYWORD>my</KEYWORD> <VARIABLE>$opt_geoip</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+<KEYWORD>my</KEYWORD> <VARIABLE>$opt_clans</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+<KEYWORD>my</KEYWORD> <VARIABLE>$opt_prune</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+<KEYWORD>my</KEYWORD> <VARIABLE>$opt_optimize</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+<KEYWORD>my</KEYWORD> <VARIABLE>$opt_verbose</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+<KEYWORD>our</KEYWORD> <VARIABLE>$opt_cpanelhack</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+
+<KEYWORD>our</KEYWORD> <VARIABLE>$g_db</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>undef</KEYWORD><OPERATOR>;</OPERATOR>
+<KEYWORD>our</KEYWORD> <VARIABLE>$db_host</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"localhost"</STRING><OPERATOR>;</OPERATOR>
+<KEYWORD>our</KEYWORD> <VARIABLE>$db_user</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+<KEYWORD>our</KEYWORD> <VARIABLE>$db_pass</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+<KEYWORD>our</KEYWORD> <VARIABLE>$db_name</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"hlstats"</STRING><OPERATOR>;</OPERATOR>
+
+<KEYWORD>my</KEYWORD> <VARIABLE>$date_ubase</VARIABLE><OPERATOR>=</OPERATOR><STRING>""</STRING><OPERATOR>;</OPERATOR>
+<KEYWORD>my</KEYWORD> <VARIABLE>$date_base</VARIABLE><OPERATOR>=</OPERATOR><STRING>"CURRENT_DATE()"</STRING><OPERATOR>;</OPERATOR>
+
+
+<KEYWORD>my</KEYWORD> <VARIABLE>$usage</VARIABLE> <OPERATOR>=</OPERATOR> <OPERATOR>&lt;&lt;</OPERATOR><DELIMITER>EOT</DELIMITER>
+<HEREDOC>Usage: hlstats-awards.pl [OPTION]...</HEREDOC>
+<HEREDOC>Generate awards from Half-Life server statistics.</HEREDOC>
+<HEREDOC>        </HEREDOC>
+<HEREDOC> Actions (specify none or more, default -iarp):</HEREDOC>
+<HEREDOC>  -i, --inactive                  Calculate player activity</HEREDOC>
+<HEREDOC>                                    and deactivate inactive players</HEREDOC>
+<HEREDOC>  -a, --awards                    Process daily awards (see --date descr for more info)</HEREDOC>
+<HEREDOC>  -r, --ribbons                   Process ribbons</HEREDOC>
+<HEREDOC>  -g, --geoip                     Attempt to lookup and store locations for players with</HEREDOC>
+<HEREDOC>                                    unknown/no location. (run after updating geoip data)</HEREDOC>
+<HEREDOC>  -t, --clans                     Recalculate player's clan affiliations</HEREDOC>
+<HEREDOC>  -p, --prune                     Prune old events and sessions</HEREDOC>
+<HEREDOC>  -o, --optimize                  Optimize all db tables</HEREDOC>
+<HEREDOC></HEREDOC>
+<HEREDOC> Other options:</HEREDOC>
+<HEREDOC>  -h, --help                      display this help and exit</HEREDOC>
+<HEREDOC>  -v, --version                   output version information and exit</HEREDOC>
+<HEREDOC>      --numdays                   number of days in period for awards</HEREDOC>
+<HEREDOC>      --date=YYYY-MM-DD           day after date to calculate awards for (defaults to today) </HEREDOC>
+<HEREDOC>                                    If you specify a date like 2008-01-04 it will do awards</HEREDOC>
+<HEREDOC>                                    based on 2008-01-03 stats</HEREDOC>
+<HEREDOC>      --db-host=HOST              database ip:port</HEREDOC>
+<HEREDOC>      --db-name=DATABASE          database name</HEREDOC>
+<HEREDOC>      --db-password=PASSWORD      database password (WARNING: specifying the</HEREDOC>
+<HEREDOC>                                    password on the command line is insecure.</HEREDOC>
+<HEREDOC>                                    Use the configuration file instead.)</HEREDOC>
+<HEREDOC>      --db-username=USERNAME      database username</HEREDOC>
+<HEREDOC>  -c, --configfile                Specific configfile to use, settings in this file can't</HEREDOC>
+<HEREDOC>                                  be overided with commandline settings.</HEREDOC>
+<HEREDOC></HEREDOC>
+<HEREDOC>Long options can be abbreviated, where such abbreviation is not ambiguous.</HEREDOC>
+<HEREDOC></HEREDOC>
+<HEREDOC>Most options can be specified in the configuration file:</HEREDOC>
+<HEREDOC>  $opt_configfile</HEREDOC>
+<HEREDOC>Note: Options set on the command line take precedence over options set in the</HEREDOC>
+<HEREDOC>configuration file.</HEREDOC>
+<HEREDOC></HEREDOC>
+<HEREDOC>HLstatsX:CE: http://www.hlxce.com</HEREDOC>
+<HEREDOC></HEREDOC><DELIMITER>EOT</DELIMITER>
+<OPERATOR>;</OPERATOR>
+
+<COMMENT># Read Config File</COMMENT>
+
+<KEYWORD>my</KEYWORD> <VARIABLE>%conf_directives</VARIABLE> <OPERATOR>=</OPERATOR> (
+        <STRING>"DBHost"</STRING><OPERATOR>,</OPERATOR>                       <STRING>"db_host"</STRING><OPERATOR>,</OPERATOR>
+        <STRING>"DBUsername"</STRING><OPERATOR>,</OPERATOR>           <STRING>"db_user"</STRING><OPERATOR>,</OPERATOR>
+        <STRING>"DBPassword"</STRING><OPERATOR>,</OPERATOR>           <STRING>"db_pass"</STRING><OPERATOR>,</OPERATOR>
+        <STRING>"DBName"</STRING><OPERATOR>,</OPERATOR>                       <STRING>"db_name"</STRING><OPERATOR>,</OPERATOR>
+        <STRING>"CpanelHack"</STRING><OPERATOR>,</OPERATOR>           <STRING>"opt_cpanelhack"</STRING>
+)<OPERATOR>;</OPERATOR>
+
+ReadConfigFile(<VARIABLE>$opt_configfile</VARIABLE>)<OPERATOR>;</OPERATOR>
+
+<COMMENT># Read Command Line Arguments</COMMENT>
+
+GetOptions(
+        <STRING>"help|h"</STRING>                        <OPERATOR>=&gt;</OPERATOR> <OPERATOR>\</OPERATOR><VARIABLE>$opt_help</VARIABLE><OPERATOR>,</OPERATOR>
+        <STRING>"version|v"</STRING>                     <OPERATOR>=&gt;</OPERATOR> <OPERATOR>\</OPERATOR><VARIABLE>$opt_version</VARIABLE><OPERATOR>,</OPERATOR>
+        <STRING>"numdays=i"</STRING>                     <OPERATOR>=&gt;</OPERATOR> <OPERATOR>\</OPERATOR><VARIABLE>$opt_numdays</VARIABLE><OPERATOR>,</OPERATOR>
+        <STRING>"date=s"</STRING>                        <OPERATOR>=&gt;</OPERATOR> <OPERATOR>\</OPERATOR><VARIABLE>$date_ubase</VARIABLE><OPERATOR>,</OPERATOR>
+        <STRING>"inactive|i"</STRING>            <OPERATOR>=&gt;</OPERATOR> <OPERATOR>\</OPERATOR><VARIABLE>$opt_player_activity</VARIABLE><OPERATOR>,</OPERATOR>
+        <STRING>"awards|a"</STRING>                      <OPERATOR>=&gt;</OPERATOR> <OPERATOR>\</OPERATOR><VARIABLE>$opt_awards</VARIABLE><OPERATOR>,</OPERATOR>
+        <STRING>"ribbons|r"</STRING>                     <OPERATOR>=&gt;</OPERATOR> <OPERATOR>\</OPERATOR><VARIABLE>$opt_ribbons</VARIABLE><OPERATOR>,</OPERATOR>
+        <STRING>"geoip|g"</STRING>                       <OPERATOR>=&gt;</OPERATOR> <OPERATOR>\</OPERATOR><VARIABLE>$opt_geoip</VARIABLE><OPERATOR>,</OPERATOR>
+        <STRING>"clans|t"</STRING>                       <OPERATOR>=&gt;</OPERATOR> <OPERATOR>\</OPERATOR><VARIABLE>$opt_clans</VARIABLE><OPERATOR>,</OPERATOR>
+        <STRING>"prune|p"</STRING>                       <OPERATOR>=&gt;</OPERATOR> <OPERATOR>\</OPERATOR><VARIABLE>$opt_prune</VARIABLE><OPERATOR>,</OPERATOR>
+        <STRING>"optimize|o"</STRING>            <OPERATOR>=&gt;</OPERATOR> <OPERATOR>\</OPERATOR><VARIABLE>$opt_optimize</VARIABLE><OPERATOR>,</OPERATOR>
+        <STRING>"db-host=s"</STRING>                     <OPERATOR>=&gt;</OPERATOR> <OPERATOR>\</OPERATOR><VARIABLE>$db_host</VARIABLE><OPERATOR>,</OPERATOR>
+        <STRING>"db-name=s"</STRING>                     <OPERATOR>=&gt;</OPERATOR> <OPERATOR>\</OPERATOR><VARIABLE>$db_name</VARIABLE><OPERATOR>,</OPERATOR>
+        <STRING>"db-password=s"</STRING>         <OPERATOR>=&gt;</OPERATOR> <OPERATOR>\</OPERATOR><VARIABLE>$db_pass</VARIABLE><OPERATOR>,</OPERATOR>
+        <STRING>"db-username=s"</STRING>         <OPERATOR>=&gt;</OPERATOR> <OPERATOR>\</OPERATOR><VARIABLE>$db_user</VARIABLE><OPERATOR>,</OPERATOR>
+        <STRING>"configfile|c=s"</STRING>        <OPERATOR>=&gt;</OPERATOR> <OPERATOR>\</OPERATOR><VARIABLE>$configfile</VARIABLE><OPERATOR>,</OPERATOR>
+        <STRING>"verbose"</STRING>                       <OPERATOR>=&gt;</OPERATOR> <OPERATOR>\</OPERATOR><VARIABLE>$opt_verbose</VARIABLE>
+) <OPERATOR>or</OPERATOR> <KEYWORD>die</KEYWORD>(<VARIABLE>$usage</VARIABLE>)<OPERATOR>;</OPERATOR>
+
+<KEYWORD>if</KEYWORD> (<VARIABLE>$opt_help</VARIABLE>)
+{
+        <FUNCTION>print</FUNCTION> <VARIABLE>$usage</VARIABLE><OPERATOR>;</OPERATOR>
+        <KEYWORD>exit</KEYWORD>(<NUMERIC>0</NUMERIC>)<OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>if</KEYWORD> (<KEYWORD>defined</KEYWORD>(<VARIABLE>$configfile</VARIABLE>))
+{
+        ReadConfigFile(<VARIABLE>$configfile</VARIABLE>)<OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>if</KEYWORD> (<VARIABLE>$opt_version</VARIABLE>)
+{
+        <VARIABLE>$g_db</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>HLstats_DB</OBJ><OPERATOR>-&gt;</OPERATOR><OO>new</OO>(<VARIABLE>$db_host</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$db_name</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$db_user</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$db_pass</VARIABLE>)<OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$result</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"SELECT value FROM hlstats_Options WHERE keyname='version'"</STRING>)<OPERATOR>;</OPERATOR>
+
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>rows</OO> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>)
+        {
+                <VARIABLE>$HLstats_Common</VARIABLE><OPERATOR>::</OPERATOR><OO>version</OO> <OPERATOR>=</OPERATOR> <VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO><OPERATOR>;</OPERATOR>
+        }
+        <VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>finish</OO><OPERATOR>;</OPERATOR>
+        
+        <KEYWORD>my</KEYWORD> <VARIABLE>$v</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$HLstats_Common</VARIABLE><OPERATOR>::</OPERATOR><OO>version</OO><OPERATOR>;</OPERATOR>
+        
+        <FUNCTION>print</FUNCTION> <OPERATOR>&lt;&lt;</OPERATOR><DELIMITER>"EOF"</DELIMITER>
+<HEREDOC>hlstats-awards.pl (HLX:CE Awards Script) Version $v</HEREDOC>
+<HEREDOC>Real-time player and clan rankings and statistics for Half-Life</HEREDOC>
+<HEREDOC></HEREDOC>
+<HEREDOC>Copyright (C) 2001  Simon Garner</HEREDOC>
+<HEREDOC>Modified &amp; Enhanced in 2005 by Tobias Oetzel (Tobi\@gameme.de)</HEREDOC>
+<HEREDOC></HEREDOC>
+<HEREDOC>This is free software; see the source for copying conditions.  There is NO</HEREDOC>
+<HEREDOC>warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</HEREDOC>
+<HEREDOC></HEREDOC>
+<HEREDOC></HEREDOC><DELIMITER>EOF</DELIMITER>
+        <OPERATOR>;</OPERATOR>
+        <KEYWORD>exit</KEYWORD>(<NUMERIC>0</NUMERIC>)<OPERATOR>;</OPERATOR>
+}
+
+<FUNCTION>print</FUNCTION> <STRING>"-- Connecting to MySQL database '$db_name' on '$db_host' as user '$db_user' ... "</STRING><OPERATOR>;</OPERATOR>
+
+<VARIABLE>$g_db</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>HLstats_DB</OBJ><OPERATOR>-&gt;</OPERATOR><OO>new</OO>(<VARIABLE>$db_host</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$db_name</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$db_user</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$db_pass</VARIABLE>)<OPERATOR>;</OPERATOR>
+
+<FUNCTION>print</FUNCTION> <STRING>"connected OK<ESC>\n</ESC>"</STRING><OPERATOR>;</OPERATOR>
+
+<KEYWORD>if</KEYWORD> (<VARIABLE>$date_ubase</VARIABLE>)
+{
+        <VARIABLE>$date_base</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"'"</STRING> <OPERATOR>.</OPERATOR> <VARIABLE>$date_ubase</VARIABLE> <OPERATOR>.</OPERATOR> <STRING>"'"</STRING><OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>if</KEYWORD> (<NUMERIC>0</NUMERIC> <OPERATOR>==</OPERATOR> (<VARIABLE>$opt_player_activity</VARIABLE> <OPERATOR>+</OPERATOR> <VARIABLE>$opt_awards</VARIABLE> <OPERATOR>+</OPERATOR> <VARIABLE>$opt_ribbons</VARIABLE> <OPERATOR>+</OPERATOR> <VARIABLE>$opt_geoip</VARIABLE> <OPERATOR>+</OPERATOR> <VARIABLE>$opt_clans</VARIABLE> <OPERATOR>+</OPERATOR> <VARIABLE>$opt_prune</VARIABLE> <OPERATOR>+</OPERATOR> <VARIABLE>$opt_optimize</VARIABLE>))
+{
+        <VARIABLE>$opt_player_activity</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>1</NUMERIC><OPERATOR>;</OPERATOR>
+        <VARIABLE>$opt_awards</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>1</NUMERIC><OPERATOR>;</OPERATOR>
+        <VARIABLE>$opt_ribbons</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>1</NUMERIC><OPERATOR>;</OPERATOR>
+        <VARIABLE>$opt_prune</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>1</NUMERIC><OPERATOR>;</OPERATOR>
+}
+
+<COMMENT># Startup</COMMENT>
+
+<FUNCTION>print</FUNCTION> <STRING>"++ HLstatsX:CE Awards &amp; Maintenance script version "</STRING><OPERATOR>.</OPERATOR><VARIABLE>$HLstats_Common</VARIABLE><OPERATOR>::</OPERATOR><OO>version</OO><OPERATOR>.</OPERATOR><STRING>" starting...<ESC>\n</ESC><ESC>\n</ESC>"</STRING><OPERATOR>;</OPERATOR>
+
+DoInactive() <KEYWORD>if</KEYWORD> (<VARIABLE>$opt_player_activity</VARIABLE>)<OPERATOR>;</OPERATOR>
+DoAwards() <KEYWORD>if</KEYWORD> (<VARIABLE>$opt_awards</VARIABLE>)<OPERATOR>;</OPERATOR>
+DoRibbons() <KEYWORD>if</KEYWORD> (<VARIABLE>$opt_ribbons</VARIABLE>)<OPERATOR>;</OPERATOR>
+DoGeoIP() <KEYWORD>if</KEYWORD> (<VARIABLE>$opt_geoip</VARIABLE>)<OPERATOR>;</OPERATOR>
+DoClans() <KEYWORD>if</KEYWORD> (<VARIABLE>$opt_clans</VARIABLE>)<OPERATOR>;</OPERATOR>
+DoPruning() <KEYWORD>if</KEYWORD> (<VARIABLE>$opt_prune</VARIABLE>)<OPERATOR>;</OPERATOR>
+DoOptimize() <KEYWORD>if</KEYWORD> (<VARIABLE>$opt_optimize</VARIABLE>)<OPERATOR>;</OPERATOR>
+
+<FUNCTION>print</FUNCTION> <STRING>"<ESC>\n</ESC>++ HLstatsX:CE Awards &amp; Maintenance script finished.<ESC>\n</ESC><ESC>\n</ESC>"</STRING><OPERATOR>;</OPERATOR>
+
+<KEYWORD>sub</KEYWORD> DoInactive
+{
+        <FUNCTION>print</FUNCTION> <STRING>"++ Updating player activity... "</STRING><OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$minactivity</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>2419200</NUMERIC><OPERATOR>;</OPERATOR>
+        <COMMENT># Inactive Players</COMMENT>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$result</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                SELECT</STRING>
+<STRING>                        value</STRING>
+<STRING>                FROM</STRING>
+<STRING>                        hlstats_Options</STRING>
+<STRING>                WHERE</STRING>
+<STRING>                        keyname = 'MinActivity'</STRING>
+<STRING>        "</STRING>)<OPERATOR>;</OPERATOR>
+
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>rows</OO> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>) {
+                <KEYWORD>my</KEYWORD> (<VARIABLE>$tempminact</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO><OPERATOR>;</OPERATOR>
+                <VARIABLE>$minactivity</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$tempminact</VARIABLE> <OPERATOR>*</OPERATOR> <NUMERIC>86400</NUMERIC><OPERATOR>;</OPERATOR>
+        }
+        
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$minactivity</VARIABLE> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>)
+        {
+                <KEYWORD>my</KEYWORD> <VARIABLE>$timestamp</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+        
+                <VARIABLE>$result</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                        SELECT</STRING>
+<STRING>                                value</STRING>
+<STRING>                        FROM</STRING>
+<STRING>                                hlstats_Options</STRING>
+<STRING>                        WHERE</STRING>
+<STRING>                                keyname = 'UseTimestamp'</STRING>
+<STRING>                "</STRING>)<OPERATOR>;</OPERATOR>
+                
+                
+                <KEYWORD>if</KEYWORD> (<VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>rows</OO> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>) {
+                        (<VARIABLE>$timestamp</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO><OPERATOR>;</OPERATOR>
+                }
+                
+                <KEYWORD>my</KEYWORD> <VARIABLE>%last_events</VARIABLE> <OPERATOR>=</OPERATOR> ()<OPERATOR>;</OPERATOR>
+                
+                <KEYWORD>if</KEYWORD> (<VARIABLE>$timestamp</VARIABLE> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>)
+                {
+                        <VARIABLE>$result</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                                SELECT</STRING>
+<STRING>                                        game,</STRING>
+<STRING>                                        MAX(last_event)</STRING>
+<STRING>                                FROM</STRING>
+<STRING>                                        hlstats_Servers</STRING>
+<STRING>                                GROUP BY</STRING>
+<STRING>                                        game</STRING>
+<STRING>                        "</STRING>)<OPERATOR>;</OPERATOR>
+                        <KEYWORD>my</KEYWORD> <VARIABLE>%last_events</VARIABLE> <OPERATOR>=</OPERATOR> ()<OPERATOR>;</OPERATOR>
+        
+        
+                        <KEYWORD>while</KEYWORD> ( <KEYWORD>my</KEYWORD>(<VARIABLE>$game</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$last</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO>) {
+                                <VARIABLE>$last_events</VARIABLE>{<VARIABLE>$game</VARIABLE>} <OPERATOR>=</OPERATOR> <VARIABLE>$last</VARIABLE>
+                        }
+                        <KEYWORD>while</KEYWORD> ( <KEYWORD>my</KEYWORD>(<VARIABLE>$game</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$last</VARIABLE>) <OPERATOR>=</OPERATOR> <FUNCTION>each</FUNCTION>(<VARIABLE>%last_events</VARIABLE>))
+                        {
+                                <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoFastQuery</OO>(<STRING>"</STRING>
+<STRING>                                        UPDATE</STRING>
+<STRING>                                                hlstats_Players</STRING>
+<STRING>                                        SET</STRING>
+<STRING>                                                hlstats_Players.activity = IF(($minactivity &gt; $last - hlstats_Players.last_event), ((100 / $minactivity) * ($minactivity - ($last - hlstats_Players.last_event))), -1)</STRING>
+<STRING>                                        WHERE</STRING>
+<STRING>                                                hlstats_Players.game = "</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>"</STRING>
+<STRING>                                "</STRING>)<OPERATOR>;</OPERATOR>
+                        }
+                }
+                <KEYWORD>else</KEYWORD>
+                {
+                        <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoFastQuery</OO>(<STRING>"</STRING>
+<STRING>                                UPDATE</STRING>
+<STRING>                                        hlstats_Players</STRING>
+<STRING>                                SET</STRING>
+<STRING>                                        hlstats_Players.activity = IF(($minactivity &gt; UNIX_TIMESTAMP() - hlstats_Players.last_event), ((100 / $minactivity) * ($minactivity - (UNIX_TIMESTAMP() - hlstats_Players.last_event))), -1)</STRING>
+<STRING>                        "</STRING>)<OPERATOR>;</OPERATOR>
+                }
+        
+                <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoFastQuery</OO>(<STRING>"</STRING>
+<STRING>                        UPDATE</STRING>
+<STRING>                                hlstats_Players</STRING>
+<STRING>                        SET</STRING>
+<STRING>                                hideranking = 3</STRING>
+<STRING>                        WHERE</STRING>
+<STRING>                                hideranking = 0</STRING>
+<STRING>                                AND activity &lt; 0</STRING>
+<STRING>                "</STRING>)<OPERATOR>;</OPERATOR>
+        }
+        
+        <FUNCTION>print</FUNCTION> <STRING>"done<ESC>\n</ESC>"</STRING><OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> DoAwards
+{
+        <FUNCTION>print</FUNCTION> <STRING>"++ Processing awards... "</STRING><OPERATOR>;</OPERATOR>
+        
+        <KEYWORD>my</KEYWORD> <VARIABLE>$resultAwards</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                SELECT</STRING>
+<STRING>                        hlstats_Awards.awardId,</STRING>
+<STRING>                        hlstats_Awards.game,</STRING>
+<STRING>                        hlstats_Awards.awardType,</STRING>
+<STRING>                        hlstats_Awards.code</STRING>
+<STRING>                FROM</STRING>
+<STRING>                        hlstats_Awards</STRING>
+<STRING>                LEFT JOIN hlstats_Games ON</STRING>
+<STRING>                        hlstats_Games.code = hlstats_Awards.game</STRING>
+<STRING>                WHERE</STRING>
+<STRING>                        hlstats_Games.hidden='0'</STRING>
+<STRING>                ORDER BY</STRING>
+<STRING>                        hlstats_Awards.game,</STRING>
+<STRING>                        hlstats_Awards.awardType</STRING>
+<STRING>        "</STRING>)<OPERATOR>;</OPERATOR>
+
+        <KEYWORD>my</KEYWORD> <VARIABLE>$result</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                SELECT</STRING>
+<STRING>                        value,</STRING>
+<STRING>                        DATE_SUB($date_base, INTERVAL 1 DAY)</STRING>
+<STRING>                FROM</STRING>
+<STRING>                        hlstats_Options</STRING>
+<STRING>                WHERE</STRING>
+<STRING>                        keyname = 'awards_d_date'</STRING>
+<STRING>        "</STRING>)<OPERATOR>;</OPERATOR>
+
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>rows</OO> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>)
+        {
+                <KEYWORD>my</KEYWORD> (<VARIABLE>$awards_d_date</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$awards_d_date_new</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO><OPERATOR>;</OPERATOR>
+                
+                <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoFastQuery</OO>(<STRING>"</STRING>
+<STRING>                        UPDATE</STRING>
+<STRING>                                hlstats_Options</STRING>
+<STRING>                        SET</STRING>
+<STRING>                                value='$awards_d_date_new'</STRING>
+<STRING>                        WHERE</STRING>
+<STRING>                                keyname='awards_d_date'</STRING>
+<STRING>                "</STRING>)<OPERATOR>;</OPERATOR>
+                
+                <FUNCTION>print</FUNCTION> <STRING>"(generating awards for $awards_d_date_new (previous: $awards_d_date))... "</STRING><OPERATOR>;</OPERATOR>
+        }
+        <KEYWORD>else</KEYWORD>
+        {
+                <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoFastQuery</OO>(<STRING>"</STRING>
+<STRING>                        INSERT INTO</STRING>
+<STRING>                                hlstats_Options</STRING>
+<STRING>                                (</STRING>
+<STRING>                                        keyname,</STRING>
+<STRING>                                        value,</STRING>
+<STRING>                                        opttype</STRING>
+<STRING>                                )</STRING>
+<STRING>                        VALUES</STRING>
+<STRING>                        (</STRING>
+<STRING>                                'awards_d_date',</STRING>
+<STRING>                                DATE_SUB($date_base, INTERVAL 1 DAY),</STRING>
+<STRING>                                2</STRING>
+<STRING>                        )</STRING>
+<STRING>                "</STRING>)<OPERATOR>;</OPERATOR>
+        }
+
+        <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoFastQuery</OO>(<STRING>"</STRING>
+<STRING>                REPLACE INTO</STRING>
+<STRING>                        hlstats_Options</STRING>
+<STRING>                        (</STRING>
+<STRING>                                keyname,</STRING>
+<STRING>                                value,</STRING>
+<STRING>                                opttype</STRING>
+<STRING>                        )</STRING>
+<STRING>                VALUES</STRING>
+<STRING>                (</STRING>
+<STRING>                        'awards_numdays',</STRING>
+<STRING>                        $opt_numdays,</STRING>
+<STRING>                        2</STRING>
+<STRING>                )</STRING>
+<STRING>        "</STRING>)<OPERATOR>;</OPERATOR>
+
+        <KEYWORD>while</KEYWORD>( <KEYWORD>my</KEYWORD> (<VARIABLE>$awardId</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$game</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$awardType</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$code</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$resultAwards</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO> )
+        {
+                <KEYWORD>my</KEYWORD> <VARIABLE>$table</VARIABLE>        <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+                <KEYWORD>my</KEYWORD> <VARIABLE>$join</VARIABLE>         <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+                <KEYWORD>my</KEYWORD> <VARIABLE>$matchfield</VARIABLE>   <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+                <KEYWORD>my</KEYWORD> <VARIABLE>$playerfield</VARIABLE>  <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+                <KEYWORD>my</KEYWORD> <VARIABLE>$resultDaily</VARIABLE>  <OPERATOR>=</OPERATOR> <KEYWORD>undef</KEYWORD><OPERATOR>;</OPERATOR>
+                <KEYWORD>my</KEYWORD> <VARIABLE>$resultGlobal</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>undef</KEYWORD><OPERATOR>;</OPERATOR>
+
+                <KEYWORD>if</KEYWORD> (<VARIABLE>$awardType</VARIABLE> <OPERATOR>eq</OPERATOR> <STRING>"O"</STRING>)
+                {
+                        <VARIABLE>$table</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"hlstats_Events_PlayerActions"</STRING><OPERATOR>;</OPERATOR>
+                        <VARIABLE>$join</VARIABLE>  <OPERATOR>=</OPERATOR> <STRING>"LEFT JOIN hlstats_Actions ON hlstats_Actions.id = $table.actionId"</STRING><OPERATOR>;</OPERATOR>
+                        <VARIABLE>$matchfield</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"hlstats_Actions.code"</STRING><OPERATOR>;</OPERATOR>
+                        <VARIABLE>$playerfield</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"$table.playerId"</STRING><OPERATOR>;</OPERATOR>
+                }
+                <KEYWORD>elsif</KEYWORD> (<VARIABLE>$awardType</VARIABLE> <OPERATOR>eq</OPERATOR> <STRING>"W"</STRING>)
+                {
+                        <VARIABLE>$table</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"hlstats_Events_Frags"</STRING><OPERATOR>;</OPERATOR>
+                        <VARIABLE>$playerfield</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"$table.killerId"</STRING><OPERATOR>;</OPERATOR>
+                        <KEYWORD>if</KEYWORD> (<VARIABLE>$code</VARIABLE> <OPERATOR>eq</OPERATOR> <STRING>"headshot"</STRING>) {
+                                <VARIABLE>$join</VARIABLE>  <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+                                <VARIABLE>$matchfield</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"$table.headshot"</STRING><OPERATOR>;</OPERATOR>
+                                <VARIABLE>$code</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>1</NUMERIC><OPERATOR>;</OPERATOR>
+                        } <KEYWORD>else</KEYWORD> {
+                                <VARIABLE>$join</VARIABLE>  <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+                                <VARIABLE>$matchfield</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"$table.weapon"</STRING><OPERATOR>;</OPERATOR>
+                        }
+                }
+                <KEYWORD>elsif</KEYWORD> (<VARIABLE>$awardType</VARIABLE> <OPERATOR>eq</OPERATOR> <STRING>"P"</STRING>)
+                {
+                        <VARIABLE>$table</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"hlstats_Events_PlayerPlayerActions"</STRING><OPERATOR>;</OPERATOR>
+                        <VARIABLE>$join</VARIABLE>  <OPERATOR>=</OPERATOR> <STRING>"LEFT JOIN hlstats_Actions ON hlstats_Actions.id = $table.actionId"</STRING><OPERATOR>;</OPERATOR>
+                        <VARIABLE>$matchfield</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"hlstats_Actions.code"</STRING><OPERATOR>;</OPERATOR>
+                        <VARIABLE>$playerfield</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"$table.playerId"</STRING><OPERATOR>;</OPERATOR>
+                }
+                <KEYWORD>elsif</KEYWORD> (<VARIABLE>$awardType</VARIABLE> <OPERATOR>eq</OPERATOR> <STRING>"V"</STRING>)
+                {
+                        <VARIABLE>$table</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"hlstats_Events_PlayerPlayerActions"</STRING><OPERATOR>;</OPERATOR>
+                        <VARIABLE>$join</VARIABLE>  <OPERATOR>=</OPERATOR> <STRING>"LEFT JOIN hlstats_Actions ON hlstats_Actions.id = $table.actionId"</STRING><OPERATOR>;</OPERATOR>
+                        <VARIABLE>$matchfield</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"hlstats_Actions.code"</STRING><OPERATOR>;</OPERATOR>
+                        <VARIABLE>$playerfield</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"$table.victimId"</STRING><OPERATOR>;</OPERATOR>
+                }
+                
+                <KEYWORD>if</KEYWORD> (<VARIABLE>$code</VARIABLE> <OPERATOR>eq</OPERATOR> <STRING>"latency"</STRING>) {
+                        <VARIABLE>$resultDaily</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                                SELECT</STRING>
+<STRING>                                        hlstats_Events_Latency.playerId,</STRING>
+<STRING>                                        ROUND(ROUND(SUM(ping) / COUNT(ping), 0) / 2, 0) AS av_latency</STRING>
+<STRING>                                FROM</STRING>
+<STRING>                                        hlstats_Events_Latency</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Servers ON</STRING>
+<STRING>                                        hlstats_Servers.serverId=hlstats_Events_Latency.serverId</STRING>
+<STRING>                                        AND hlstats_Servers.game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>"</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Players ON</STRING>
+<STRING>                                        hlstats_Players.playerId = hlstats_Events_Latency.playerId</STRING>
+<STRING>                                        AND hlstats_Players.hideranking=0</STRING>
+<STRING>                                WHERE   </STRING>
+<STRING>                                        hlstats_Events_Latency.eventTime &lt; $date_base</STRING>
+<STRING>                                        AND hlstats_Events_Latency.eventTime &gt; DATE_SUB($date_base, INTERVAL $opt_numdays DAY)</STRING>
+<STRING>                                GROUP BY</STRING>
+<STRING>                                        hlstats_Events_Latency.playerId</STRING>
+<STRING>                                ORDER BY </STRING>
+<STRING>                                        av_latency</STRING>
+<STRING>                                LIMIT 1         </STRING>
+<STRING>                        "</STRING>)<OPERATOR>;</OPERATOR>     
+                        <VARIABLE>$resultGlobal</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                                SELECT</STRING>
+<STRING>                                        hlstats_Events_Latency.playerId,</STRING>
+<STRING>                                        ROUND(ROUND(SUM(ping) / COUNT(ping), 0) / 2, 0) AS av_latency</STRING>
+<STRING>                                FROM</STRING>
+<STRING>                                        hlstats_Events_Latency</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Servers ON</STRING>
+<STRING>                                        hlstats_Servers.serverId=hlstats_Events_Latency.serverId</STRING>
+<STRING>                                        AND hlstats_Servers.game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>"</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Players ON</STRING>
+<STRING>                                        hlstats_Players.playerId = hlstats_Events_Latency.playerId</STRING>
+<STRING>                                        AND hlstats_Players.hideranking=0</STRING>
+<STRING>                                GROUP BY</STRING>
+<STRING>                                        hlstats_Events_Latency.playerId</STRING>
+<STRING>                                ORDER BY </STRING>
+<STRING>                                        av_latency</STRING>
+<STRING>                                LIMIT 1         </STRING>
+<STRING>                        "</STRING>)<OPERATOR>;</OPERATOR>     
+                } <KEYWORD>elsif</KEYWORD> (<VARIABLE>$code</VARIABLE> <OPERATOR>eq</OPERATOR> <STRING>"mostkills"</STRING>) {
+                        <VARIABLE>$resultDaily</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                                SELECT</STRING>
+<STRING>                                        hlstats_Events_Frags.killerId,</STRING>
+<STRING>                                        count(hlstats_Events_Frags.killerId) AS av_mostkills</STRING>
+<STRING>                                FROM</STRING>
+<STRING>                                        hlstats_Events_Frags</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Servers ON</STRING>
+<STRING>                                        hlstats_Servers.serverId=hlstats_Events_Frags.serverId</STRING>
+<STRING>                                        AND hlstats_Servers.game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>"</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Players ON</STRING>
+<STRING>                                        hlstats_Players.playerId = hlstats_Events_Frags.killerId</STRING>
+<STRING>                                        AND hlstats_Players.hideranking=0</STRING>
+<STRING>                                WHERE</STRING>
+<STRING>                                        hlstats_Events_Frags.eventTime &lt; $date_base</STRING>
+<STRING>                                        AND hlstats_Events_Frags.eventTime &gt; DATE_SUB($date_base, INTERVAL $opt_numdays DAY)</STRING>
+<STRING>                                GROUP BY</STRING>
+<STRING>                                        hlstats_Events_Frags.killerId</STRING>
+<STRING>                                ORDER BY</STRING>
+<STRING>                                        av_mostkills DESC</STRING>
+<STRING>                                LIMIT 1"</STRING>
+                        )<OPERATOR>;</OPERATOR>
+                        <VARIABLE>$resultGlobal</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                                SELECT</STRING>
+<STRING>                                        hlstats_Events_Frags.killerId,</STRING>
+<STRING>                                        count(hlstats_Events_Frags.killerId) AS av_mostkills</STRING>
+<STRING>                                FROM</STRING>
+<STRING>                                        hlstats_Events_Frags</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Servers ON</STRING>
+<STRING>                                        hlstats_Servers.serverId=hlstats_Events_Frags.serverId</STRING>
+<STRING>                                        AND hlstats_Servers.game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>"</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Players ON</STRING>
+<STRING>                                        hlstats_Players.playerId = hlstats_Events_Frags.killerId</STRING>
+<STRING>                                        AND hlstats_Players.hideranking=0</STRING>
+<STRING>                                GROUP BY</STRING>
+<STRING>                                        hlstats_Events_Frags.killerId</STRING>
+<STRING>                                ORDER BY</STRING>
+<STRING>                                        av_mostkills DESC</STRING>
+<STRING>                                LIMIT 1 </STRING>
+<STRING>                        "</STRING>)<OPERATOR>;</OPERATOR>
+                }
+                <KEYWORD>elsif</KEYWORD> (<VARIABLE>$code</VARIABLE> <OPERATOR>eq</OPERATOR> <STRING>"suicide"</STRING>) {
+                        <VARIABLE>$resultDaily</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                                SELECT</STRING>
+<STRING>                                        hlstats_Events_Suicides.playerId,</STRING>
+<STRING>                                        count(hlstats_Events_Suicides.playerId) AS av_suicides</STRING>
+<STRING>                                FROM</STRING>
+<STRING>                                        hlstats_Events_Suicides</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Servers ON</STRING>
+<STRING>                                        hlstats_Servers.serverId=hlstats_Events_Suicides.serverId</STRING>
+<STRING>                                        AND hlstats_Servers.game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>"</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Players ON</STRING>
+<STRING>                                        hlstats_Players.playerId = hlstats_Events_Suicides.playerId</STRING>
+<STRING>                                        AND hlstats_Players.hideranking=0</STRING>
+<STRING>                                WHERE</STRING>
+<STRING>                                        hlstats_Events_Suicides.eventTime &lt; $date_base</STRING>
+<STRING>                                        AND hlstats_Events_Suicides.eventTime &gt; DATE_SUB($date_base, INTERVAL $opt_numdays DAY)</STRING>
+<STRING>                                GROUP BY</STRING>
+<STRING>                                        hlstats_Events_Suicides.playerId</STRING>
+<STRING>                                ORDER BY</STRING>
+<STRING>                                        av_suicides DESC</STRING>
+<STRING>                                LIMIT 1       </STRING>
+<STRING>                        "</STRING>)<OPERATOR>;</OPERATOR>
+                        <VARIABLE>$resultGlobal</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                                SELECT</STRING>
+<STRING>                                        hlstats_Events_Suicides.playerId,</STRING>
+<STRING>                                        count(hlstats_Events_Suicides.playerId) AS av_suicides</STRING>
+<STRING>                                FROM</STRING>
+<STRING>                                        hlstats_Events_Suicides</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Servers ON</STRING>
+<STRING>                                        hlstats_Servers.serverId=hlstats_Events_Suicides.serverId</STRING>
+<STRING>                                        AND hlstats_Servers.game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>"</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Players ON</STRING>
+<STRING>                                        hlstats_Players.playerId = hlstats_Events_Suicides.playerId</STRING>
+<STRING>                                        AND hlstats_Players.hideranking=0</STRING>
+<STRING>                                GROUP BY</STRING>
+<STRING>                                        hlstats_Events_Suicides.playerId</STRING>
+<STRING>                                ORDER BY</STRING>
+<STRING>                                        av_suicides DESC</STRING>
+<STRING>                                LIMIT 1       </STRING>
+<STRING>                        "</STRING>)<OPERATOR>;</OPERATOR>
+                } <KEYWORD>elsif</KEYWORD> (<VARIABLE>$code</VARIABLE> <OPERATOR>eq</OPERATOR> <STRING>"teamkills"</STRING>) {
+                        <VARIABLE>$resultDaily</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                                SELECT</STRING>
+<STRING>                                        hlstats_Events_Teamkills.killerId,</STRING>
+<STRING>                                        count(hlstats_Events_Teamkills.killerId) AS av_teamkills</STRING>
+<STRING>                                FROM</STRING>
+<STRING>                                        hlstats_Events_Teamkills</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Servers ON</STRING>
+<STRING>                                        hlstats_Servers.serverId=hlstats_Events_Teamkills.serverId</STRING>
+<STRING>                                        AND hlstats_Servers.game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>"</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Players ON</STRING>
+<STRING>                                        hlstats_Players.playerId = hlstats_Events_Teamkills.killerId</STRING>
+<STRING>                                        AND hlstats_Players.hideranking=0</STRING>
+<STRING>                                WHERE</STRING>
+<STRING>                                        hlstats_Events_Teamkills.eventTime &lt; $date_base</STRING>
+<STRING>                                        AND hlstats_Events_Teamkills.eventTime &gt; DATE_SUB($date_base, INTERVAL $opt_numdays DAY)</STRING>
+<STRING>                                GROUP BY</STRING>
+<STRING>                                        hlstats_Events_Teamkills.killerId</STRING>
+<STRING>                                ORDER BY</STRING>
+<STRING>                                        av_teamkills DESC</STRING>
+<STRING>                                LIMIT 1       </STRING>
+<STRING>                        "</STRING>)<OPERATOR>;</OPERATOR>
+                        <VARIABLE>$resultGlobal</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                                SELECT</STRING>
+<STRING>                                        hlstats_Events_Teamkills.killerId,</STRING>
+<STRING>                                        count(hlstats_Events_Teamkills.killerId) AS av_teamkills</STRING>
+<STRING>                                FROM</STRING>
+<STRING>                                        hlstats_Events_Teamkills</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Servers ON</STRING>
+<STRING>                                        hlstats_Servers.serverId=hlstats_Events_Teamkills.serverId</STRING>
+<STRING>                                        AND hlstats_Servers.game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>"</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Players ON</STRING>
+<STRING>                                        hlstats_Players.playerId = hlstats_Events_Teamkills.killerId</STRING>
+<STRING>                                        AND hlstats_Players.hideranking=0</STRING>
+<STRING>                                GROUP BY</STRING>
+<STRING>                                        hlstats_Events_Teamkills.killerId</STRING>
+<STRING>                                ORDER BY</STRING>
+<STRING>                                        av_teamkills DESC</STRING>
+<STRING>                                LIMIT 1       </STRING>
+<STRING>                        "</STRING>)<OPERATOR>;</OPERATOR>
+                } <KEYWORD>elsif</KEYWORD> (<VARIABLE>$code</VARIABLE> <OPERATOR>eq</OPERATOR> <STRING>"bonuspoints"</STRING>) {
+                        <VARIABLE>$resultDaily</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                                SELECT</STRING>
+<STRING>                                        actions.playerId,</STRING>
+<STRING>                                        SUM(actions.bonus) AS av_bonuspoints</STRING>
+<STRING>                                FROM</STRING>
+<STRING>                                        (SELECT</STRING>
+<STRING>                                                playerId, bonus, serverId, eventTime </STRING>
+<STRING>                                        FROM</STRING>
+<STRING>                                                hlstats_Events_PlayerActions </STRING>
+<STRING>                                        WHERE</STRING>
+<STRING>                                                eventTime &lt; $date_base AND eventTime &gt; DATE_SUB($date_base, INTERVAL $opt_numdays DAY)</STRING>
+<STRING>                                        UNION ALL</STRING>
+<STRING>                                        SELECT</STRING>
+<STRING>                                                playerId, bonus, serverId, eventTime</STRING>
+<STRING>                                        FROM</STRING>
+<STRING>                                                hlstats_Events_PlayerPlayerActions</STRING>
+<STRING>                                        WHERE</STRING>
+<STRING>                                                eventTime &lt; $date_base AND eventTime &gt; DATE_SUB($date_base, INTERVAL $opt_numdays DAY)</STRING>
+<STRING>                                        ) actions</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Servers ON</STRING>
+<STRING>                                        hlstats_Servers.serverId=actions.serverId</STRING>
+<STRING>                                        AND hlstats_Servers.game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>"</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Players ON</STRING>
+<STRING>                                        hlstats_Players.playerId = actions.playerId</STRING>
+<STRING>                                        AND hlstats_Players.hideranking=0</STRING>
+<STRING>                                GROUP BY</STRING>
+<STRING>                                        playerId</STRING>
+<STRING>                                ORDER BY</STRING>
+<STRING>                                        av_bonuspoints DESC</STRING>
+<STRING>                                LIMIT 1       </STRING>
+<STRING>                        "</STRING>)<OPERATOR>;</OPERATOR>
+                        <VARIABLE>$resultGlobal</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                                SELECT</STRING>
+<STRING>                                        actions.playerId,</STRING>
+<STRING>                                        SUM(actions.bonus) AS av_bonuspoints</STRING>
+<STRING>                                FROM</STRING>
+<STRING>                                        (SELECT</STRING>
+<STRING>                                                playerId, bonus, serverId, eventTime </STRING>
+<STRING>                                        FROM</STRING>
+<STRING>                                                hlstats_Events_PlayerActions </STRING>
+<STRING>                                        UNION ALL</STRING>
+<STRING>                                        SELECT</STRING>
+<STRING>                                                playerId, bonus, serverId, eventTime</STRING>
+<STRING>                                        FROM</STRING>
+<STRING>                                                hlstats_Events_PlayerPlayerActions</STRING>
+<STRING>                                        ) actions</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Servers ON</STRING>
+<STRING>                                        hlstats_Servers.serverId=actions.serverId</STRING>
+<STRING>                                        AND hlstats_Servers.game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>"</STRING>
+<STRING>                                INNER JOIN</STRING>
+<STRING>                                        hlstats_Players ON</STRING>
+<STRING>                                        hlstats_Players.playerId = actions.playerId</STRING>
+<STRING>                                        AND hlstats_Players.hideranking=0</STRING>
+<STRING>                                GROUP BY</STRING>
+<STRING>                                        playerId</STRING>
+<STRING>                                ORDER BY</STRING>
+<STRING>                                        av_bonuspoints DESC</STRING>
+<STRING>                                LIMIT 1       </STRING>
+<STRING>                        "</STRING>)<OPERATOR>;</OPERATOR>
+                } <KEYWORD>elsif</KEYWORD> (<VARIABLE>$code</VARIABLE> <OPERATOR>eq</OPERATOR> <STRING>"allsentrykills"</STRING>) {
+                        <VARIABLE>$resultDaily</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                                SELECT</STRING>
+<STRING>                                        hlstats_Events_Frags.killerId,</STRING>
+<STRING>                                        COUNT(hlstats_Events_Frags.weapon) AS awardcount</STRING>
+<STRING>                                FROM</STRING>
+<STRING>                                        hlstats_Events_Frags</STRING>
+<STRING>                                INNER JOIN hlstats_Players ON</STRING>
+<STRING>                                        hlstats_Players.playerId = hlstats_Events_Frags.killerId</STRING>
+<STRING>                                        AND hlstats_Players.hideranking=0</STRING>
+<STRING>                                WHERE</STRING>
+<STRING>                                        hlstats_Events_Frags.eventTime &lt; $date_base</STRING>
+<STRING>                                        AND hlstats_Events_Frags.eventTime &gt; DATE_SUB($date_base, INTERVAL $opt_numdays DAY)</STRING>
+<STRING>                                        AND hlstats_Players.game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>"</STRING>
+<STRING>                                        AND hlstats_Events_Frags.weapon LIKE 'obj_sentrygun%'</STRING>
+<STRING>                                GROUP BY</STRING>
+<STRING>                                        hlstats_Events_Frags.killerId</STRING>
+<STRING>                                ORDER BY</STRING>
+<STRING>                                        awardcount DESC,</STRING>
+<STRING>                                        hlstats_Players.skill DESC</STRING>
+<STRING>                                LIMIT 1</STRING>
+<STRING>                        "</STRING>)<OPERATOR>;</OPERATOR>
+                        <VARIABLE>$resultGlobal</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                                SELECT</STRING>
+<STRING>                                        hlstats_Events_Frags.killerId,</STRING>
+<STRING>                                        COUNT(hlstats_Events_Frags.weapon) AS awardcount</STRING>
+<STRING>                                FROM</STRING>
+<STRING>                                        hlstats_Events_Frags</STRING>
+<STRING>                                INNER JOIN hlstats_Players ON</STRING>
+<STRING>                                        hlstats_Players.playerId = hlstats_Events_Frags.killerId</STRING>
+<STRING>                                        AND hlstats_Players.hideranking=0</STRING>
+<STRING>                                WHERE</STRING>
+<STRING>                                        hlstats_Players.game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>"</STRING>
+<STRING>                                        AND hlstats_Events_Frags.weapon LIKE 'obj_sentrygun%'</STRING>
+<STRING>                                GROUP BY</STRING>
+<STRING>                                        hlstats_Events_Frags.killerId</STRING>
+<STRING>                                ORDER BY</STRING>
+<STRING>                                        awardcount DESC,</STRING>
+<STRING>                                        hlstats_Players.skill DESC</STRING>
+<STRING>                                LIMIT 1</STRING>
+<STRING>                        "</STRING>)<OPERATOR>;</OPERATOR>
+                } <KEYWORD>else</KEYWORD> {
+                        <VARIABLE>$resultDaily</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                                SELECT</STRING>
+<STRING>                                        $playerfield,</STRING>
+<STRING>                                        COUNT($matchfield) AS awardcount</STRING>
+<STRING>                                FROM</STRING>
+<STRING>                                        $table</STRING>
+<STRING>                                INNER JOIN hlstats_Players ON</STRING>
+<STRING>                                        hlstats_Players.playerId = $playerfield</STRING>
+<STRING>                                        AND hlstats_Players.hideranking=0</STRING>
+<STRING>                                $join</STRING>
+<STRING>                                WHERE</STRING>
+<STRING>                                        $table.eventTime &lt; $date_base</STRING>
+<STRING>                                        AND $table.eventTime &gt; DATE_SUB($date_base, INTERVAL $opt_numdays DAY)</STRING>
+<STRING>                                        AND hlstats_Players.game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>"</STRING>
+<STRING>                                        AND $matchfield='$code'</STRING>
+<STRING>                                GROUP BY</STRING>
+<STRING>                                        $playerfield</STRING>
+<STRING>                                ORDER BY</STRING>
+<STRING>                                        awardcount DESC,</STRING>
+<STRING>                                        hlstats_Players.skill DESC</STRING>
+<STRING>                                LIMIT 1</STRING>
+<STRING>                        "</STRING>)<OPERATOR>;</OPERATOR>
+                        <VARIABLE>$resultGlobal</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                                SELECT</STRING>
+<STRING>                                        $playerfield,</STRING>
+<STRING>                                        COUNT($matchfield) AS awardcount</STRING>
+<STRING>                                FROM</STRING>
+<STRING>                                        $table</STRING>
+<STRING>                                INNER JOIN hlstats_Players ON</STRING>
+<STRING>                                        hlstats_Players.playerId = $playerfield</STRING>
+<STRING>                                        AND hlstats_Players.hideranking=0</STRING>
+<STRING>                                $join</STRING>
+<STRING>                                WHERE</STRING>
+<STRING>                                        hlstats_Players.game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>"</STRING>
+<STRING>                                        AND $matchfield='$code'</STRING>
+<STRING>                                GROUP BY</STRING>
+<STRING>                                        $playerfield</STRING>
+<STRING>                                ORDER BY</STRING>
+<STRING>                                        awardcount DESC,</STRING>
+<STRING>                                        hlstats_Players.skill DESC</STRING>
+<STRING>                                LIMIT 1</STRING>
+<STRING>                        "</STRING>)<OPERATOR>;</OPERATOR>
+                }
+                
+                <KEYWORD>my</KEYWORD> (<VARIABLE>$d_winner_id</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$d_winner_count</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$resultDaily</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO><OPERATOR>;</OPERATOR>
+                <KEYWORD>my</KEYWORD> (<VARIABLE>$g_winner_id</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$g_winner_count</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$resultGlobal</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO><OPERATOR>;</OPERATOR>
+                
+                <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><VARIABLE>$d_winner_id</VARIABLE> <OPERATOR>||</OPERATOR> <VARIABLE>$d_winner_count</VARIABLE> <OPERATOR>&lt;</OPERATOR> <NUMERIC>1</NUMERIC>)
+                {
+                        <VARIABLE>$d_winner_id</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"NULL"</STRING><OPERATOR>;</OPERATOR>
+                        <VARIABLE>$d_winner_count</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"NULL"</STRING><OPERATOR>;</OPERATOR>
+                }
+                <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><VARIABLE>$g_winner_id</VARIABLE> <OPERATOR>||</OPERATOR> <VARIABLE>$g_winner_count</VARIABLE> <OPERATOR>&lt;</OPERATOR> <NUMERIC>1</NUMERIC>)
+                {
+                        <VARIABLE>$g_winner_id</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"NULL"</STRING><OPERATOR>;</OPERATOR>
+                        <VARIABLE>$g_winner_count</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"NULL"</STRING><OPERATOR>;</OPERATOR>
+                }
+                
+                <KEYWORD>if</KEYWORD> (<VARIABLE>$opt_verbose</VARIABLE>)
+                {
+                        <FUNCTION>print</FUNCTION> <STRING>"  - $d_winner_id ($d_winner_count)<ESC>\n</ESC>"</STRING><OPERATOR>;</OPERATOR>
+                        <FUNCTION>print</FUNCTION> <STRING>"  - $g_winner_id ($g_winner_count)<ESC>\n</ESC>"</STRING><OPERATOR>;</OPERATOR>
+                }
+                
+                <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoFastQuery</OO>(<STRING>"</STRING>
+<STRING>                        UPDATE</STRING>
+<STRING>                                hlstats_Awards</STRING>
+<STRING>                        SET</STRING>
+<STRING>                                d_winner_id=$d_winner_id,</STRING>
+<STRING>                                d_winner_count=$d_winner_count,</STRING>
+<STRING>                                g_winner_id=$g_winner_id,</STRING>
+<STRING>                                g_winner_count=$g_winner_count</STRING>
+<STRING>                        WHERE</STRING>
+<STRING>                                awardId=$awardId</STRING>
+<STRING>                "</STRING>)<OPERATOR>;</OPERATOR>
+        }
+
+
+        <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoFastQuery</OO>(<STRING>"</STRING>
+<STRING>                INSERT IGNORE INTO </STRING>
+<STRING>                        hlstats_Players_Awards </STRING>
+<STRING>                SELECT </STRING>
+<STRING>                        value, awardId, d_winner_id, d_winner_count, game </STRING>
+<STRING>                FROM </STRING>
+<STRING>                        hlstats_Options INNER JOIN hlstats_Awards </STRING>
+<STRING>                WHERE </STRING>
+<STRING>                        keyname='awards_d_date' AND NOT ISNULL(d_winner_id);</STRING>
+<STRING>                "</STRING>)<OPERATOR>;</OPERATOR>
+
+        <FUNCTION>print</FUNCTION> <STRING>"done<ESC>\n</ESC>"</STRING><OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> DoRibbons
+{
+        <FUNCTION>print</FUNCTION> <STRING>"++ Processing ribbons... "</STRING><OPERATOR>;</OPERATOR>
+        
+        <KEYWORD>my</KEYWORD> <VARIABLE>$result</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"SELECT `code` FROM `hlstats_Games`;"</STRING>)<OPERATOR>;</OPERATOR>
+        <KEYWORD>while</KEYWORD>( <KEYWORD>my</KEYWORD>(<VARIABLE>$game</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO> ) {
+
+                <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoFastQuery</OO>(<STRING>"DELETE FROM hlstats_Players_Ribbons WHERE game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>";"</STRING>)<OPERATOR>;</OPERATOR>
+                
+                <KEYWORD>my</KEYWORD> <VARIABLE>$result2</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                        SELECT</STRING>
+<STRING>                                `ribbonId`,</STRING>
+<STRING>                                `awardCode`,</STRING>
+<STRING>                                `awardCount`,</STRING>
+<STRING>                                `special`</STRING>
+<STRING>                        FROM</STRING>
+<STRING>                                `hlstats_Ribbons`</STRING>
+<STRING>                        WHERE</STRING>
+<STRING>                                game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>" AND</STRING>
+<STRING>                                (special=0 OR special=2);</STRING>
+<STRING>                        "</STRING>)<OPERATOR>;</OPERATOR>
+                <KEYWORD>while</KEYWORD> ( <KEYWORD>my</KEYWORD>(<VARIABLE>$ribbonid</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$code</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$count</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$special</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$result2</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO> ) {
+                        <COMMENT># scan players for each ribbon ID</COMMENT>
+                        <KEYWORD>my</KEYWORD> <VARIABLE>$result3</VARIABLE><OPERATOR>;</OPERATOR>
+                        <KEYWORD>if</KEYWORD> (<VARIABLE>$special</VARIABLE> <OPERATOR>==</OPERATOR> <NUMERIC>2</NUMERIC>) {
+                                <COMMENT># connection time</COMMENT>
+                                <VARIABLE>$result3</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                                        SELECT</STRING>
+<STRING>                                                playerId,</STRING>
+<STRING>                                                (connection_time/3600) AS CNT</STRING>
+<STRING>                                        FROM</STRING>
+<STRING>                                                hlstats_Players</STRING>
+<STRING>                                        WHERE</STRING>
+<STRING>                                                game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>" </STRING>
+<STRING>                                                AND hlstats_Players.hideranking=0</STRING>
+<STRING>                                                AND (connection_time/3600)&gt;="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$count</VARIABLE><OPERATOR>.</OPERATOR><STRING>"</STRING>
+<STRING>                                        "</STRING>)<OPERATOR>;</OPERATOR>
+                        } <KEYWORD>else</KEYWORD> {
+                                <COMMENT># awards ribbons</COMMENT>
+                                <KEYWORD>my</KEYWORD> <VARIABLE>$having</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"CNT&gt;="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$count</VARIABLE><OPERATOR>;</OPERATOR>
+                                <VARIABLE>$result3</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                                        SELECT</STRING>
+<STRING>                                                hlstats_Players_Awards.playerId,</STRING>
+<STRING>                                                COUNT(hlstats_Players_Awards.playerId) AS CNT</STRING>
+<STRING>                                        FROM</STRING>
+<STRING>                                                hlstats_Players_Awards</STRING>
+<STRING>                                        INNER JOIN</STRING>
+<STRING>                                                hlstats_Awards</STRING>
+<STRING>                                        ON</STRING>
+<STRING>                                                (hlstats_Awards.awardId=hlstats_Players_Awards.awardId AND</STRING>
+<STRING>                                                hlstats_Awards.game=hlstats_Players_Awards.game)</STRING>
+<STRING>                                        INNER JOIN</STRING>
+<STRING>                                                hlstats_Players</STRING>
+<STRING>                                        ON</STRING>
+<STRING>                                                hlstats_Players.playerId = hlstats_Players_Awards.playerId</STRING>
+<STRING>                                                AND hlstats_Players.hideranking=0</STRING>
+<STRING>                                        WHERE</STRING>
+<STRING>                                                hlstats_Players_Awards.game="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>" AND</STRING>
+<STRING>                                                hlstats_Awards.code='"</STRING><OPERATOR>.</OPERATOR><VARIABLE>$code</VARIABLE><OPERATOR>.</OPERATOR><STRING>"' AND</STRING>
+<STRING>                                                hlstats_Awards.awardType&lt;&gt;'V'</STRING>
+<STRING>                                        GROUP BY</STRING>
+<STRING>                                                hlstats_Players_Awards.playerId         </STRING>
+<STRING>                                        HAVING</STRING>
+<STRING>                                                "</STRING><OPERATOR>.</OPERATOR><VARIABLE>$having</VARIABLE><OPERATOR>.</OPERATOR><STRING>"  </STRING>
+<STRING>                                        "</STRING>)<OPERATOR>;</OPERATOR>
+                        }
+
+                        <KEYWORD>while</KEYWORD> (<KEYWORD>my</KEYWORD>(<VARIABLE>$playerid</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$cnt</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$result3</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO>) {
+                                <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoFastQuery</OO>(<STRING>"</STRING>
+<STRING>                                        INSERT INTO hlstats_Players_Ribbons</STRING>
+<STRING>                                                (playerId, ribbonId, game)</STRING>
+<STRING>                                        VALUES</STRING>
+<STRING>                                                ("</STRING><OPERATOR>.</OPERATOR><VARIABLE>$playerid</VARIABLE><OPERATOR>.</OPERATOR><STRING>","</STRING><OPERATOR>.</OPERATOR><VARIABLE>$ribbonid</VARIABLE><OPERATOR>.</OPERATOR><STRING>","</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$game</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>")</STRING>
+<STRING>                                        "</STRING>)<OPERATOR>;</OPERATOR>  
+                        }
+                }  
+
+        }
+        <FUNCTION>print</FUNCTION> <STRING>"done<ESC>\n</ESC>"</STRING><OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> DoGeoIP
+{
+        <FUNCTION>print</FUNCTION> <STRING>"++ Looking up missing player locations... "</STRING><OPERATOR>;</OPERATOR>
+        
+        <KEYWORD>my</KEYWORD> <VARIABLE>$useGeoIPBinary</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$gi</VARIABLE> <OPERATOR>=</OPERATOR> <KEYWORD>undef</KEYWORD><OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$dogeo</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$cnt</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$geoipfile</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+        
+        <COMMENT># Sanity checks to see if we can do geolocation updates</COMMENT>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$result</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                SELECT</STRING>
+<STRING>                        value</STRING>
+<STRING>                FROM</STRING>
+<STRING>                        hlstats_Options</STRING>
+<STRING>                WHERE</STRING>
+<STRING>                        keyname='UseGeoIPBinary'</STRING>
+<STRING>                        AND value &gt; '0'</STRING>
+<STRING>                LIMIT 1</STRING>
+<STRING>        "</STRING>)<OPERATOR>;</OPERATOR>
+        
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>rows</OO> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>)
+        {
+                <VARIABLE>$useGeoIPBinary</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>1</NUMERIC><OPERATOR>;</OPERATOR>
+                <VARIABLE>$geoipfile</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"$opt_libdir/GeoLiteCity/GeoLiteCity.dat"</STRING><OPERATOR>;</OPERATOR>
+        }
+        <KEYWORD>else</KEYWORD>
+        {
+                <VARIABLE>$useGeoIPBinary</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+        }
+        
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$useGeoIPBinary</VARIABLE> <OPERATOR>==</OPERATOR> <NUMERIC>0</NUMERIC>)
+        {
+                <KEYWORD>my</KEYWORD> <VARIABLE>$result</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"SELECT locId FROM geoLiteCity_Blocks LIMIT 1;"</STRING>)<OPERATOR>;</OPERATOR>
+                <KEYWORD>if</KEYWORD> (<VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>rows</OO> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>)
+                {
+                        <VARIABLE>$dogeo</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>1</NUMERIC><OPERATOR>;</OPERATOR>
+                }
+                <KEYWORD>else</KEYWORD>
+                {
+                        PrintEvent(<STRING>"ERROR"</STRING><OPERATOR>,</OPERATOR> <STRING>"GeoIP method set to database but geoLiteCity tables are empty."</STRING><OPERATOR>,</OPERATOR> <NUMERIC>1</NUMERIC>)<OPERATOR>;</OPERATOR>
+                }
+        }
+        <KEYWORD>elsif</KEYWORD> (<VARIABLE>$useGeoIPBinary</VARIABLE> <OPERATOR>==</OPERATOR> <NUMERIC>1</NUMERIC> <OPERATOR>&amp;&amp;</OPERATOR> <OPERATOR>-</OPERATOR>r <VARIABLE>$geoipfile</VARIABLE>)
+        {
+                <KEYWORD>if</KEYWORD> (<VARIABLE>$opt_cpanelhack</VARIABLE>) {
+                        <KEYWORD>my</KEYWORD> <VARIABLE>$home_dir</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$ENV</VARIABLE>{ <CONSTANT>HOME</CONSTANT> }<OPERATOR>;</OPERATOR>
+                        <KEYWORD>my</KEYWORD> <VARIABLE>$base_module_dir</VARIABLE> <OPERATOR>=</OPERATOR> (<OPERATOR>-</OPERATOR>d <STRING>"$home_dir/perl"</STRING> <OPERATOR>?</OPERATOR> <STRING>"$home_dir/perl"</STRING> <OPERATOR>:</OPERATOR> ( <FUNCTION>getpwuid</FUNCTION>($<OPERATOR>&gt;</OPERATOR>) )[<NUMERIC>7</NUMERIC>] <OPERATOR>.</OPERATOR> <STRING>'/perl/'</STRING>)<OPERATOR>;</OPERATOR>
+                        <FUNCTION>unshift</FUNCTION> <VARIABLE>@INC</VARIABLE><OPERATOR>,</OPERATOR> <FUNCTION>map</FUNCTION> { <VARIABLE>$base_module_dir</VARIABLE> <OPERATOR>.</OPERATOR> <VARIABLE>$_</VARIABLE> } <VARIABLE>@INC</VARIABLE><OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>eval</KEYWORD> {
+                  <KEYWORD>require</KEYWORD> <OBJ>Geo</OBJ><OPERATOR>::</OPERATOR><OO>IP</OO><OPERATOR>::</OPERATOR><OO>PurePerl</OO><OPERATOR>;</OPERATOR>
+                }<OPERATOR>;</OPERATOR>
+                <KEYWORD>import</KEYWORD> <OBJ>Geo</OBJ><OPERATOR>::</OPERATOR><OO>IP</OO><OPERATOR>::</OPERATOR><OO>PurePerl</OO><OPERATOR>;</OPERATOR>
+                
+                <VARIABLE>$gi</VARIABLE> <OPERATOR>=</OPERATOR> <OBJ>Geo</OBJ><OPERATOR>::</OPERATOR><OO>IP</OO><OPERATOR>::</OPERATOR><OO>PurePerl</OO><OPERATOR>-&gt;</OPERATOR><OO>open</OO>(<VARIABLE>$geoipfile</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"GEOIP_STANDARD"</STRING>)<OPERATOR>;</OPERATOR>
+                <KEYWORD>if</KEYWORD> (<VARIABLE>$gi</VARIABLE>) 
+                {
+                        <VARIABLE>$dogeo</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>1</NUMERIC><OPERATOR>;</OPERATOR>
+                }
+                <KEYWORD>else</KEYWORD>
+                {
+                        PrintEvent(<STRING>"ERROR"</STRING><OPERATOR>,</OPERATOR> <STRING>"GeoIP method set to binary file lookup but $geoipfile errored while opening."</STRING><OPERATOR>,</OPERATOR> <NUMERIC>1</NUMERIC>)<OPERATOR>;</OPERATOR>
+                        <FUNCTION>close</FUNCTION>(<VARIABLE>$gi</VARIABLE><OPERATOR>-&gt;</OPERATOR>{fh})<OPERATOR>;</OPERATOR>
+                }
+        }
+        <KEYWORD>else</KEYWORD>
+        {
+                <OPERATOR>&amp;</OPERATOR>printEvent(<STRING>"ERROR"</STRING><OPERATOR>,</OPERATOR> <STRING>"GeoIP method set to binary file lookup but $geoipfile NOT FOUND"</STRING><OPERATOR>,</OPERATOR> <NUMERIC>1</NUMERIC>)<OPERATOR>;</OPERATOR>
+        }
+
+                
+        <KEYWORD>if</KEYWORD> (<VARIABLE>$dogeo</VARIABLE>) {
+                <KEYWORD>sub</KEYWORD> ip2number {
+                        <KEYWORD>my</KEYWORD> (<VARIABLE>$ipstr</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>@_</VARIABLE><OPERATOR>;</OPERATOR>
+                        <KEYWORD>my</KEYWORD> <VARIABLE>@ip</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>split</FUNCTION>(<DELIMITER>/</DELIMITER><REGEX>\.</REGEX><DELIMITER>/</DELIMITER><OPERATOR>,</OPERATOR> <VARIABLE>$ipstr</VARIABLE>)<OPERATOR>;</OPERATOR>
+                        <KEYWORD>my</KEYWORD> <VARIABLE>$number</VARIABLE> <OPERATOR>=</OPERATOR> (<VARIABLE>$ip</VARIABLE>[<NUMERIC>0</NUMERIC>]<OPERATOR>*</OPERATOR><NUMERIC>16777216</NUMERIC>) <OPERATOR>+</OPERATOR> (<VARIABLE>$ip</VARIABLE>[<NUMERIC>1</NUMERIC>]<OPERATOR>*</OPERATOR><NUMERIC>65536</NUMERIC>) <OPERATOR>+</OPERATOR> (<VARIABLE>$ip</VARIABLE>[<NUMERIC>2</NUMERIC>]<OPERATOR>*</OPERATOR><NUMERIC>256</NUMERIC>) <OPERATOR>+</OPERATOR> <VARIABLE>$ip</VARIABLE>[<NUMERIC>3</NUMERIC>]<OPERATOR>;</OPERATOR>
+
+                        <KEYWORD>return</KEYWORD> <VARIABLE>$number</VARIABLE><OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>sub</KEYWORD> trim {
+                        <KEYWORD>my</KEYWORD> <VARIABLE>$string</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>shift</FUNCTION><OPERATOR>;</OPERATOR>
+                        <VARIABLE>$string</VARIABLE> <OPERATOR>=~</OPERATOR> <DELIMITER>s/</DELIMITER><REGEX>^\s+|\s+$</REGEX><DELIMITER>/</DELIMITER><STRING></STRING><DELIMITER>/</DELIMITER><KEYWORD>g</KEYWORD><OPERATOR>;</OPERATOR>
+                        <KEYWORD>return</KEYWORD> <VARIABLE>$string</VARIABLE><OPERATOR>;</OPERATOR>
+                }
+                <VARIABLE>$result</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"SELECT playerId, lastAddress, lastName FROM hlstats_Players WHERE flag='' AND lastAddress&lt;&gt;'';"</STRING>)<OPERATOR>;</OPERATOR>
+                                
+                <KEYWORD>while</KEYWORD> (<KEYWORD>my</KEYWORD>(<VARIABLE>$pid</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$address</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$name</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO>) {
+                        <VARIABLE>$address</VARIABLE> <OPERATOR>=</OPERATOR> trim(<VARIABLE>$address</VARIABLE>)<OPERATOR>;</OPERATOR>
+                        <KEYWORD>next</KEYWORD> <KEYWORD>if</KEYWORD> (<VARIABLE>$address</VARIABLE> <OPERATOR>!~</OPERATOR> <DELIMITER>/</DELIMITER><REGEX>^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$</REGEX><DELIMITER>/</DELIMITER>)<OPERATOR>;</OPERATOR>
+                        <KEYWORD>if</KEYWORD> (<VARIABLE>$opt_verbose</VARIABLE>)
+                        {
+                                <FUNCTION>print</FUNCTION> <STRING>"Attempting to find location for: "</STRING><OPERATOR>.</OPERATOR><VARIABLE>$name</VARIABLE><OPERATOR>.</OPERATOR><STRING>" ("</STRING><OPERATOR>.</OPERATOR><VARIABLE>$address</VARIABLE><OPERATOR>.</OPERATOR><STRING>")<ESC>\n</ESC>"</STRING><OPERATOR>;</OPERATOR>
+                        }
+                        <KEYWORD>my</KEYWORD> <VARIABLE>$number</VARIABLE> <OPERATOR>=</OPERATOR> ip2number(<VARIABLE>$address</VARIABLE>)<OPERATOR>;</OPERATOR>
+                        <KEYWORD>my</KEYWORD> <VARIABLE>$update</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+                        <KEYWORD>my</KEYWORD> <VARIABLE>$foundflag</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+                        <KEYWORD>my</KEYWORD> <VARIABLE>$foundcountry</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+                        <KEYWORD>my</KEYWORD> <VARIABLE>$foundcity</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+                        <KEYWORD>my</KEYWORD> <VARIABLE>$foundstate</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+                        <KEYWORD>my</KEYWORD> <VARIABLE>$foundlat</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+                        <KEYWORD>my</KEYWORD> <VARIABLE>$foundlng</VARIABLE> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+                        <KEYWORD>if</KEYWORD> (<VARIABLE>$useGeoIPBinary</VARIABLE> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>) {
+                                <KEYWORD>if</KEYWORD> (<VARIABLE>$opt_verbose</VARIABLE>)
+                                {
+                                        <FUNCTION>print</FUNCTION> <STRING>"2 "</STRING><OPERATOR>.</OPERATOR><VARIABLE>$pid</VARIABLE><OPERATOR>.</OPERATOR><STRING>" "</STRING><OPERATOR>.</OPERATOR><VARIABLE>$address</VARIABLE><OPERATOR>.</OPERATOR><STRING>"<ESC>\n</ESC>"</STRING><OPERATOR>;</OPERATOR>
+                                }
+                                <KEYWORD>my</KEYWORD> (<VARIABLE>$country_code</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$country_code3</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$country_name</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$region</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$city</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$postal_code</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$latitude</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$longitude</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$metro_code</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$area_code</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$gi</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>get_city_record</OO>(<VARIABLE>$address</VARIABLE>)<OPERATOR>;</OPERATOR>
+                                <KEYWORD>if</KEYWORD> (<VARIABLE>$longitude</VARIABLE>) {
+                                        <VARIABLE>$foundflag</VARIABLE> <OPERATOR>=</OPERATOR> encode(<STRING>"utf8"</STRING><OPERATOR>,</OPERATOR><VARIABLE>$country_code</VARIABLE>)<OPERATOR>;</OPERATOR>
+                                        <VARIABLE>$foundcountry</VARIABLE> <OPERATOR>=</OPERATOR> encode(<STRING>"utf8"</STRING><OPERATOR>,</OPERATOR><VARIABLE>$country_name</VARIABLE>)<OPERATOR>;</OPERATOR>
+                                        <VARIABLE>$foundcity</VARIABLE> <OPERATOR>=</OPERATOR> encode(<STRING>"utf8"</STRING><OPERATOR>,</OPERATOR><VARIABLE>$city</VARIABLE>)<OPERATOR>;</OPERATOR>
+                                        <VARIABLE>$foundstate</VARIABLE> <OPERATOR>=</OPERATOR> encode(<STRING>"utf8"</STRING><OPERATOR>,</OPERATOR><VARIABLE>$region</VARIABLE>)<OPERATOR>;</OPERATOR>
+                                        <VARIABLE>$foundlat</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$latitude</VARIABLE><OPERATOR>;</OPERATOR>
+                                        <VARIABLE>$foundlng</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$longitude</VARIABLE><OPERATOR>;</OPERATOR>
+                                        <VARIABLE>$update</VARIABLE><OPERATOR>++;</OPERATOR>
+                                }
+                        }
+                        <KEYWORD>else</KEYWORD>
+                        {
+                                <KEYWORD>my</KEYWORD> <VARIABLE>$result2</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"SELECT locId FROM geoLiteCity_Blocks WHERE startIpNum&lt;="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$number</VARIABLE><OPERATOR>.</OPERATOR><STRING>" AND endIpNum&gt;="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$number</VARIABLE><OPERATOR>.</OPERATOR><STRING>" LIMIT 1;"</STRING>)<OPERATOR>;</OPERATOR>
+                                <KEYWORD>if</KEYWORD> (<VARIABLE>$result2</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>rows</OO> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>) {
+                                        <KEYWORD>my</KEYWORD> (<VARIABLE>$locid</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$result2</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO><OPERATOR>;</OPERATOR>
+                                        <KEYWORD>my</KEYWORD> <VARIABLE>$data</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"SELECT city, region AS state, name AS country, country AS flag, latitude AS lat, longitude AS lng FROM geoLiteCity_Location a  inner join hlstats_Countries b ON a.country=b.flag WHERE locId="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$locid</VARIABLE><OPERATOR>.</OPERATOR><STRING>" LIMIT 1;"</STRING>)<OPERATOR>;</OPERATOR>
+                                        <KEYWORD>if</KEYWORD> (<VARIABLE>$data</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>rows</OO> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>) {
+                                                (<VARIABLE>$foundcity</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$foundstate</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$foundcountry</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$foundflag</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$foundlat</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$foundlng</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$data</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO><OPERATOR>;</OPERATOR>
+                                                <VARIABLE>$update</VARIABLE><OPERATOR>++;</OPERATOR>
+                                        }
+                                }
+                        }
+                        <KEYWORD>if</KEYWORD> (<VARIABLE>$update</VARIABLE> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC>)
+                        {
+                                <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoFastQuery</OO>(<STRING>"</STRING>
+<STRING>                                        UPDATE</STRING>
+<STRING>                                                hlstats_Players</STRING>
+<STRING>                                        SET</STRING>
+<STRING>                                                flag="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$foundflag</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>",</STRING>
+<STRING>                                                country="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$foundcountry</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>",</STRING>
+<STRING>                                                lat='"</STRING><OPERATOR>.</OPERATOR>((<VARIABLE>$foundlat</VARIABLE> <OPERATOR>ne</OPERATOR> <STRING>""</STRING>)<OPERATOR>?</OPERATOR><VARIABLE>$foundlat</VARIABLE><OPERATOR>:</OPERATOR><KEYWORD>undef</KEYWORD>)<OPERATOR>.</OPERATOR><STRING>"',</STRING>
+<STRING>                                                lng='"</STRING><OPERATOR>.</OPERATOR>((<VARIABLE>$foundlng</VARIABLE> <OPERATOR>ne</OPERATOR> <STRING>""</STRING>)<OPERATOR>?</OPERATOR><VARIABLE>$foundlng</VARIABLE><OPERATOR>:</OPERATOR><KEYWORD>undef</KEYWORD>)<OPERATOR>.</OPERATOR><STRING>"',</STRING>
+<STRING>                                                city="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$foundcity</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>",</STRING>
+<STRING>                                                state="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>Quote</OO>(<VARIABLE>$foundstate</VARIABLE>)<OPERATOR>.</OPERATOR><STRING>"</STRING>
+<STRING>                                        WHERE</STRING>
+<STRING>                                                playerId="</STRING><OPERATOR>.</OPERATOR><VARIABLE>$pid</VARIABLE>
+                                )<OPERATOR>;</OPERATOR>
+                                <VARIABLE>$cnt</VARIABLE><OPERATOR>++;</OPERATOR>
+                        }
+                }
+        }
+        <FUNCTION>printf</FUNCTION> (<STRING>"done%s<ESC>\n</ESC>"</STRING><OPERATOR>,</OPERATOR> ((<VARIABLE>$cnt</VARIABLE><OPERATOR>&gt;</OPERATOR><NUMERIC>0</NUMERIC>)<OPERATOR>?</OPERATOR><STRING>" (updated $cnt players)"</STRING><OPERATOR>:</OPERATOR><STRING>""</STRING>))<OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> DoClans
+{
+        <FUNCTION>print</FUNCTION> <STRING>"++ Reparsing player names to recalculate clan affiliations... "</STRING><OPERATOR>;</OPERATOR>
+        
+        <KEYWORD>my</KEYWORD> <VARIABLE>@clanpatterns</VARIABLE> <OPERATOR>=</OPERATOR> ()<OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>$result</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                SELECT</STRING>
+<STRING>                        pattern,</STRING>
+<STRING>                        position,</STRING>
+<STRING>                        LENGTH(pattern) AS pattern_length</STRING>
+<STRING>                FROM</STRING>
+<STRING>                        hlstats_ClanTags</STRING>
+<STRING>                ORDER BY</STRING>
+<STRING>                        pattern_length DESC,</STRING>
+<STRING>                        id</STRING>
+<STRING>        "</STRING>)<OPERATOR>;</OPERATOR>
+        
+        <KEYWORD>while</KEYWORD> ( <KEYWORD>my</KEYWORD>(<VARIABLE>$pattern</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$position</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO>) {
+                <KEYWORD>my</KEYWORD> <VARIABLE>$regpattern</VARIABLE> <OPERATOR>=</OPERATOR> <FUNCTION>quotemeta</FUNCTION>(<VARIABLE>$pattern</VARIABLE>)<OPERATOR>;</OPERATOR>
+                <VARIABLE>$regpattern</VARIABLE> <OPERATOR>=~</OPERATOR> <DELIMITER>s/</DELIMITER><REGEX>([A-Za-z0-9]+[A-Za-z0-9_-]*)</REGEX><DELIMITER>/</DELIMITER><STRING><ESC>\(</ESC>$1<ESC>\)</ESC></STRING><DELIMITER>/</DELIMITER><OPERATOR>;</OPERATOR> <COMMENT># to find clan name from tag</COMMENT>
+                <VARIABLE>$regpattern</VARIABLE> <OPERATOR>=~</OPERATOR> <DELIMITER>s/</DELIMITER><REGEX>A</REGEX><DELIMITER>/</DELIMITER><STRING>.</STRING><DELIMITER>/</DELIMITER><KEYWORD>g</KEYWORD><OPERATOR>;</OPERATOR>
+                <VARIABLE>$regpattern</VARIABLE> <OPERATOR>=~</OPERATOR> <DELIMITER>s/</DELIMITER><REGEX>X</REGEX><DELIMITER>/</DELIMITER><STRING>.?</STRING><DELIMITER>/</DELIMITER><KEYWORD>g</KEYWORD><OPERATOR>;</OPERATOR>
+                <KEYWORD>if</KEYWORD> (<VARIABLE>$position</VARIABLE> <OPERATOR>eq</OPERATOR> <STRING>"START"</STRING>) {
+                        <FUNCTION>push</FUNCTION>(<VARIABLE>@clanpatterns</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"^($regpattern).+"</STRING>)<OPERATOR>;</OPERATOR>
+                } <KEYWORD>elsif</KEYWORD> (<VARIABLE>$position</VARIABLE> <OPERATOR>eq</OPERATOR> <STRING>"END"</STRING>) {
+                        <FUNCTION>push</FUNCTION>(<VARIABLE>@clanpatterns</VARIABLE><OPERATOR>,</OPERATOR> <STRING>".+($regpattern)<ESC>\$</ESC>"</STRING>)<OPERATOR>;</OPERATOR>
+                } <KEYWORD>elsif</KEYWORD> (<VARIABLE>$position</VARIABLE> <OPERATOR>eq</OPERATOR> <STRING>"EITHER"</STRING>) {
+                        <FUNCTION>push</FUNCTION>(<VARIABLE>@clanpatterns</VARIABLE><OPERATOR>,</OPERATOR> <STRING>"^($regpattern).+"</STRING>)<OPERATOR>;</OPERATOR>
+                        <FUNCTION>push</FUNCTION>(<VARIABLE>@clanpatterns</VARIABLE><OPERATOR>,</OPERATOR> <STRING>".+($regpattern)<ESC>\$</ESC>"</STRING>)<OPERATOR>;</OPERATOR>
+                }
+        }
+        
+        <VARIABLE>$result</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"</STRING>
+<STRING>                SELECT</STRING>
+<STRING>                        playerId, lastName, game</STRING>
+<STRING>                FROM</STRING>
+<STRING>                        hlstats_Players</STRING>
+<STRING>        "</STRING>)<OPERATOR>;</OPERATOR>
+        
+        <KEYWORD>while</KEYWORD> ( <KEYWORD>my</KEYWORD>(<VARIABLE>$playerId</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$name</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$game</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO>)
+        {
+                <KEYWORD>my</KEYWORD> <VARIABLE>$clanTag</VARIABLE>  <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+                <KEYWORD>my</KEYWORD> <VARIABLE>$clanName</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+                <KEYWORD>my</KEYWORD> <VARIABLE>$clanId</VARIABLE>   <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+                
+                <KEYWORD>foreach</KEYWORD> (<VARIABLE>@clanpatterns</VARIABLE>)
+                {
+                        <VARIABLE>$clanTag</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+                        <KEYWORD>if</KEYWORD> (<VARIABLE>$name</VARIABLE> <OPERATOR>=~</OPERATOR> <DELIMITER>/</DELIMITER><REGEX>$_</REGEX><DELIMITER>/</DELIMITER><KEYWORD>i</KEYWORD>)
+                        {
+                                <VARIABLE>$clanTag</VARIABLE>  <OPERATOR>=</OPERATOR> <VARIABLE>$1</VARIABLE><OPERATOR>;</OPERATOR>
+                                <VARIABLE>$clanName</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$2</VARIABLE><OPERATOR>;</OPERATOR>
+                                <KEYWORD>last</KEYWORD><OPERATOR>;</OPERATOR>
+                        }                       
+                }
+                <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><VARIABLE>$clanTag</VARIABLE>)
+                {
+                        <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoCached</OO>(<STRING>"playerclan_clear"</STRING><OPERATOR>,</OPERATOR> <STRING>"UPDATE hlstats_Players SET clan=0 WHERE playerId=?"</STRING><OPERATOR>,</OPERATOR> [<VARIABLE>$playerId</VARIABLE>])<OPERATOR>;</OPERATOR>
+                        <KEYWORD>next</KEYWORD><OPERATOR>;</OPERATOR>
+                }
+                
+                <KEYWORD>my</KEYWORD> <VARIABLE>$query</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"</STRING>
+<STRING>                        SELECT</STRING>
+<STRING>                                clanId</STRING>
+<STRING>                        FROM</STRING>
+<STRING>                                hlstats_Clans</STRING>
+<STRING>                        WHERE</STRING>
+<STRING>                                tag=? AND</STRING>
+<STRING>                                game=?</STRING>
+<STRING>                "</STRING><OPERATOR>;</OPERATOR>
+                <KEYWORD>my</KEYWORD> <VARIABLE>$clanresult</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoCached</OO>(<STRING>"clan_select"</STRING><OPERATOR>,</OPERATOR> <VARIABLE>$query</VARIABLE><OPERATOR>,</OPERATOR> [<VARIABLE>$clanTag</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$game</VARIABLE>])<OPERATOR>;</OPERATOR>
+
+                <KEYWORD>if</KEYWORD> (<VARIABLE>$clanresult</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>rows</OO>) {
+                        <KEYWORD>my</KEYWORD> (<VARIABLE>$id</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$clanresult</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO><OPERATOR>;</OPERATOR>
+                        <VARIABLE>$clanresult</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>finish</OO><OPERATOR>;</OPERATOR>
+                        <VARIABLE>$clanId</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$id</VARIABLE><OPERATOR>;</OPERATOR>
+                } <KEYWORD>else</KEYWORD> {
+                        <COMMENT># The clan doesn't exist yet, so we create it.</COMMENT>
+                        <VARIABLE>$query</VARIABLE> <OPERATOR>=</OPERATOR> <STRING>"</STRING>
+<STRING>                                REPLACE INTO</STRING>
+<STRING>                                        hlstats_Clans</STRING>
+<STRING>                                        (</STRING>
+<STRING>                                                tag,</STRING>
+<STRING>                                                name,</STRING>
+<STRING>                                                game</STRING>
+<STRING>                                        )</STRING>
+<STRING>                                VALUES</STRING>
+<STRING>                                (</STRING>
+<STRING>                                        ?,?,?</STRING>
+<STRING>                                )</STRING>
+<STRING>                        "</STRING><OPERATOR>;</OPERATOR>
+                        <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoCached</OO>(<STRING>"clan_insertupdate"</STRING><OPERATOR>,</OPERATOR> <VARIABLE>$query</VARIABLE><OPERATOR>,</OPERATOR> [<VARIABLE>$clanTag</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$clanName</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$game</VARIABLE>])<OPERATOR>;</OPERATOR>
+                        
+                        <VARIABLE>$clanId</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR>{mysql_insertid}<OPERATOR>;</OPERATOR>
+                }
+                <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoCached</OO>(<STRING>"playerclan_update"</STRING><OPERATOR>,</OPERATOR> <STRING>"UPDATE hlstats_Players SET clan=? WHERE playerId=?"</STRING><OPERATOR>,</OPERATOR> [<VARIABLE>$clanId</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$playerId</VARIABLE>])<OPERATOR>;</OPERATOR>
+        }
+        
+        <FUNCTION>print</FUNCTION> <STRING>"done<ESC>\n</ESC>"</STRING><OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> DoPruning
+{
+        <KEYWORD>my</KEYWORD> <VARIABLE>$result</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"SELECT `value` FROM hlstats_Options WHERE keyname='DeleteDays'"</STRING>)<OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> (<VARIABLE>$deletedays</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO><OPERATOR>;</OPERATOR>
+        <FUNCTION>print</FUNCTION> <STRING>"++ Cleaning up database: deleting events older than $deletedays days... "</STRING><OPERATOR>;</OPERATOR>
+        
+        <KEYWORD>while</KEYWORD> (<KEYWORD>my</KEYWORD>(<VARIABLE>$eventTable</VARIABLE>) <OPERATOR>=</OPERATOR> <FUNCTION>each</FUNCTION>(<VARIABLE>%HLstats_Common</VARIABLE><OPERATOR>::</OPERATOR><OO>g_EventTables</OO>))
+        {
+                <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoFastQuery</OO>(<STRING>"</STRING>
+<STRING>                        DELETE FROM</STRING>
+<STRING>                                        hlstats_Events_$eventTable</STRING>
+<STRING>                        WHERE</STRING>
+<STRING>                                        eventTime &lt; DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL $deletedays DAY)</STRING>
+<STRING>                        "</STRING>)<OPERATOR>;</OPERATOR>
+        }
+        
+        <FUNCTION>print</FUNCTION> <STRING>"done<ESC>\n</ESC>++ Cleaning up database: deleting player history older than $deletedays days... "</STRING><OPERATOR>;</OPERATOR>
+        <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoFastQuery</OO>(<STRING>"</STRING>
+<STRING>                DELETE FROM</STRING>
+<STRING>                        hlstats_Players_History</STRING>
+<STRING>                WHERE</STRING>
+<STRING>                        eventTime &lt; DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL $deletedays DAY)</STRING>
+<STRING>        "</STRING>)<OPERATOR>;</OPERATOR>
+        
+        <FUNCTION>print</FUNCTION> <STRING>"done<ESC>\n</ESC>++ Cleaning up database: deleting stale trend samples... "</STRING><OPERATOR>;</OPERATOR>
+        <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoFastQuery</OO>(<STRING>"</STRING>
+<STRING>                DELETE FROM</STRING>
+<STRING>                        hlstats_Trend</STRING>
+<STRING>                WHERE</STRING>
+<STRING>                        timestamp &lt; (UNIX_TIMESTAMP() - 172800)</STRING>
+<STRING>        "</STRING>)<OPERATOR>;</OPERATOR>
+        <FUNCTION>print</FUNCTION> <STRING>"done<ESC>\n</ESC>"</STRING><OPERATOR>;</OPERATOR>
+}
+
+<KEYWORD>sub</KEYWORD> DoOptimize
+{       
+        <FUNCTION>print</FUNCTION> <STRING>"++ Optimizing all tables... "</STRING><OPERATOR>;</OPERATOR>
+
+        <KEYWORD>my</KEYWORD> <VARIABLE>$result</VARIABLE> <OPERATOR>=</OPERATOR> <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoQuery</OO>(<STRING>"SHOW TABLES"</STRING>)<OPERATOR>;</OPERATOR>
+        <KEYWORD>my</KEYWORD> <VARIABLE>@allTables</VARIABLE><OPERATOR>;</OPERATOR>
+        
+        <KEYWORD>while</KEYWORD> ( <KEYWORD>my</KEYWORD> (<VARIABLE>$row</VARIABLE>) <OPERATOR>=</OPERATOR> <VARIABLE>$result</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>fetchrow_array</OO> ) {
+                <FUNCTION>push</FUNCTION>(<VARIABLE>@allTables</VARIABLE><OPERATOR>,</OPERATOR> <VARIABLE>$row</VARIABLE>)<OPERATOR>;</OPERATOR>
+        }
+        
+        <KEYWORD>foreach</KEYWORD> (<VARIABLE>@allTables</VARIABLE>) {
+                <VARIABLE>$g_db</VARIABLE><OPERATOR>-&gt;</OPERATOR><OO>DoFastQuery</OO>(<STRING>"OPTIMIZE TABLE $_"</STRING>)<OPERATOR>;</OPERATOR>
+        }
+        <FUNCTION>print</FUNCTION> <STRING>"done<ESC>\n</ESC>"</STRING><OPERATOR>;</OPERATOR>
+}

@@ -1,0 +1,68 @@
+<KEYWORD>Index: src/library/librarymodel.h</KEYWORD>
+<KEYWORD>===================================================================</KEYWORD>
+<DIFF_HEADER_OLD>--- src/library/librarymodel.h	(revision 2552)</DIFF_HEADER_OLD>
+<DIFF_HEADER_NEW>+++ src/library/librarymodel.h	(working copy)</DIFF_HEADER_NEW>
+<DIFF_RANGE>@@ -243,10 +243,14 @@</DIFF_RANGE>
+<DIFF_UNCHANGED> </DIFF_UNCHANGED>
+<DIFF_UNCHANGED>   QIcon artist_icon_;</DIFF_UNCHANGED>
+<DIFF_UNCHANGED>   QIcon album_icon_;</DIFF_UNCHANGED>
+<DIFF_NEW>+  // used as a generic icon to show when no cover art is found,</DIFF_NEW>
+<DIFF_NEW>+  // fixed to the same size as the artwork (32x32)</DIFF_NEW>
+<DIFF_NEW>+  QImage no_cover_icon_pretty_;</DIFF_NEW>
+<DIFF_UNCHANGED>   QIcon no_cover_icon_;</DIFF_UNCHANGED>
+<DIFF_UNCHANGED>   QIcon playlists_dir_icon_;</DIFF_UNCHANGED>
+<DIFF_UNCHANGED>   QIcon playlist_icon_;</DIFF_UNCHANGED>
+<DIFF_UNCHANGED>   </DIFF_UNCHANGED>
+<DIFF_NEW>+  QSize pretty_cover_size_;</DIFF_NEW>
+<DIFF_UNCHANGED>   bool use_pretty_covers_;</DIFF_UNCHANGED>
+<DIFF_UNCHANGED> };</DIFF_UNCHANGED>
+<DIFF_UNCHANGED> </DIFF_UNCHANGED>
+<DIFF_UNCHANGED></DIFF_UNCHANGED><KEYWORD>Index: src/library/librarymodel.cpp</KEYWORD>
+<KEYWORD>===================================================================</KEYWORD>
+<DIFF_HEADER_OLD>--- src/library/librarymodel.cpp	(revision 2552)</DIFF_HEADER_OLD>
+<DIFF_HEADER_NEW>+++ src/library/librarymodel.cpp	(working copy)</DIFF_HEADER_NEW>
+<DIFF_RANGE>@@ -62,6 +62,7 @@</DIFF_RANGE>
+<DIFF_UNCHANGED>     no_cover_icon_(":nocover.png"),</DIFF_UNCHANGED>
+<DIFF_UNCHANGED>     playlists_dir_icon_(IconLoader::Load("folder-sound")),</DIFF_UNCHANGED>
+<DIFF_UNCHANGED>     playlist_icon_(":/icons/22x22/x-clementine-albums.png"),</DIFF_UNCHANGED>
+<DIFF_NEW>+    pretty_cover_size_(32, 32),</DIFF_NEW>
+<DIFF_UNCHANGED>     use_pretty_covers_(false)</DIFF_UNCHANGED>
+<DIFF_UNCHANGED> {</DIFF_UNCHANGED>
+<DIFF_UNCHANGED>   root_-&gt;lazy_loaded = true;</DIFF_UNCHANGED>
+<DIFF_UNCHANGED></DIFF_UNCHANGED><DIFF_RANGE>@@ -69,6 +70,11 @@</DIFF_RANGE>
+<DIFF_UNCHANGED>   group_by_[0] = GroupBy_Artist;</DIFF_UNCHANGED>
+<DIFF_UNCHANGED>   group_by_[1] = GroupBy_Album;</DIFF_UNCHANGED>
+<DIFF_UNCHANGED>   group_by_[2] = GroupBy_None;</DIFF_UNCHANGED>
+<DIFF_NEW>+  </DIFF_NEW>
+<DIFF_NEW>+  no_cover_icon_pretty_ = QImage(":nocover.png").scaled(pretty_cover_size_,</DIFF_NEW>
+<DIFF_NEW>+                                                    Qt::KeepAspectRatio,</DIFF_NEW>
+<DIFF_NEW>+                                                    Qt::SmoothTransformation);</DIFF_NEW>
+<DIFF_NEW>+</DIFF_NEW>
+<DIFF_UNCHANGED> }</DIFF_UNCHANGED>
+<DIFF_UNCHANGED> </DIFF_UNCHANGED>
+<DIFF_UNCHANGED> LibraryModel::~LibraryModel() {</DIFF_UNCHANGED>
+<DIFF_UNCHANGED></DIFF_UNCHANGED><DIFF_RANGE>@@ -352,7 +358,7 @@</DIFF_RANGE>
+<DIFF_UNCHANGED>   // Cache the art in the item's metadata field</DIFF_UNCHANGED>
+<DIFF_UNCHANGED>   LibraryItem* item = IndexToItem(index);</DIFF_UNCHANGED>
+<DIFF_UNCHANGED>   if (!item)</DIFF_UNCHANGED>
+<DIFF_OLD>-    return album_icon_;</DIFF_OLD>
+<DIFF_NEW>+    return no_cover_icon_pretty_;</DIFF_NEW>
+<DIFF_UNCHANGED>   if (!item-&gt;metadata.image().isNull())</DIFF_UNCHANGED>
+<DIFF_UNCHANGED>     return item-&gt;metadata.image();</DIFF_UNCHANGED>
+<DIFF_UNCHANGED>   </DIFF_UNCHANGED>
+<DIFF_UNCHANGED></DIFF_UNCHANGED><DIFF_RANGE>@@ -364,12 +370,12 @@</DIFF_RANGE>
+<DIFF_UNCHANGED> </DIFF_UNCHANGED>
+<DIFF_UNCHANGED>     if (!pixmap.isNull()) {</DIFF_UNCHANGED>
+<DIFF_UNCHANGED>       QImage image = pixmap.toImage().scaled(</DIFF_UNCHANGED>
+<DIFF_OLD>-            32, 32, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);</DIFF_OLD>
+<DIFF_NEW>+            pretty_cover_size_, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);</DIFF_NEW>
+<DIFF_UNCHANGED>       item-&gt;metadata.set_image(image);</DIFF_UNCHANGED>
+<DIFF_UNCHANGED>       return image;</DIFF_UNCHANGED>
+<DIFF_UNCHANGED>     }</DIFF_UNCHANGED>
+<DIFF_UNCHANGED>   }</DIFF_UNCHANGED>
+<DIFF_OLD>-  return album_icon_;</DIFF_OLD>
+<DIFF_NEW>+  return no_cover_icon_pretty_;</DIFF_NEW>
+<DIFF_UNCHANGED> }</DIFF_UNCHANGED>
+<DIFF_UNCHANGED> </DIFF_UNCHANGED>
+<DIFF_UNCHANGED> QVariant LibraryModel::data(const QModelIndex&amp; index, int role) const {</DIFF_UNCHANGED>
+<DIFF_UNCHANGED></DIFF_UNCHANGED>

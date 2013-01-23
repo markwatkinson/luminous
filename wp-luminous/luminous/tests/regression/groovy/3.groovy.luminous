@@ -1,0 +1,107 @@
+
+
+ <COMMENT>/*</COMMENT>
+<COMMENT>lines1</COMMENT>
+<COMMENT>               A</COMMENT>
+<COMMENT>               /\</COMMENT>
+<COMMENT>            O .--. D</COMMENT>
+<COMMENT>             / \/ \</COMMENT>
+<COMMENT>         N  .--P---. E</COMMENT>
+<COMMENT>           / \/ \ / \</COMMENT>
+<COMMENT>        M .--U---Q---. F</COMMENT>
+<COMMENT>         / \ / \/ \ / \</COMMENT>
+<COMMENT>      L .-- T---S---R--. G</COMMENT>
+<COMMENT>       / \ / \ / \ /\ / \</COMMENT>
+<COMMENT>      .---.---.---.--.---.</COMMENT>
+<COMMENT>    C     K   J   I  H    B</COMMENT>
+<COMMENT></COMMENT>
+<COMMENT></COMMENT>
+<COMMENT></COMMENT>
+<COMMENT></COMMENT>
+<COMMENT>lines2</COMMENT>
+<COMMENT>                 (A)</COMMENT>
+<COMMENT>                 /\</COMMENT>
+<COMMENT>               / /\ \</COMMENT>
+<COMMENT>            /   /  \   \</COMMENT>
+<COMMENT>          /    /    \    \</COMMENT>
+<COMMENT>        /     /      \     \</COMMENT>
+<COMMENT>      /   (C)/        \(D)   \</COMMENT>
+<COMMENT> (B)/_______/__________\_______\(E)</COMMENT>
+<COMMENT>    |  \__ /            \ __/  |</COMMENT>
+<COMMENT>    |  (F)X__          __X(G)  |</COMMENT>
+<COMMENT>    |    /   \___  ___/   \    |</COMMENT>
+<COMMENT>    |   /     ___&gt;&lt;___     \   |</COMMENT>
+<COMMENT>    |  /   __/   (H)  \__   \  |</COMMENT>
+<COMMENT>    | / __/              \__ \ |</COMMENT>
+<COMMENT>    |/_/____________________\_\|</COMMENT>
+<COMMENT> (I)                            (J)</COMMENT>
+<COMMENT></COMMENT>
+<COMMENT> */</COMMENT>
+
+ lines2 <OPERATOR>=</OPERATOR> [<STRING>'ae'</STRING>,
+           <STRING>'adgj'</STRING>,
+           <STRING>'acfi'</STRING>,
+           <STRING>'ab'</STRING>,
+           <STRING>'bcde'</STRING>,
+           <STRING>'bfhj'</STRING>,
+           <STRING>'bi'</STRING>,
+           <STRING>'ij'</STRING>,
+           <STRING>'ihge'</STRING>,
+           <STRING>'je'</STRING>
+           ]
+
+
+ lines1 <OPERATOR>=</OPERATOR> [<STRING>'adefgb'</STRING>,
+         <STRING>'aonmlc'</STRING>,
+         <STRING>'bhijkc'</STRING>,
+         <STRING>'do'</STRING>,
+         <STRING>'dputk'</STRING>,
+         <STRING>'epn'</STRING>,
+         <STRING>'eqsj'</STRING>,
+         <STRING>'fri'</STRING>,
+         <STRING>'fqum'</STRING>,
+         <STRING>'gh'</STRING>,
+         <STRING>'grstl'</STRING>,
+         <STRING>'hrqpo'</STRING>,
+         <STRING>'isun'</STRING>,
+         <STRING>'jtm'</STRING>,
+         <STRING>'kl'</STRING>
+         ]
+
+<COMMENT>//  Echo Lines</COMMENT>
+
+
+<KEYWORD>def</KEYWORD> computeTriangles <OPERATOR>=</OPERATOR>
+{ lines <OPERATOR>-&gt;</OPERATOR>
+
+    <KEYWORD>println</KEYWORD>()
+
+    <COMMENT>// Initialize</COMMENT>
+    count <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC>
+    size <OPERATOR>=</OPERATOR> <OBJ>lines</OBJ>.<OO>size</OO>
+    <KEYWORD>println</KEYWORD> <STRING>"find triangles, $count, $size"</STRING>
+
+
+    <KEYWORD>for</KEYWORD> (pt1 <KEYWORD>in</KEYWORD> <STRING>'a'</STRING>..<STRING>'u'</STRING>)
+    {
+        <KEYWORD>for</KEYWORD> (pt2 <KEYWORD>in</KEYWORD> <STRING>'b'</STRING>..<STRING>'u'</STRING>)
+        {
+            <KEYWORD>for</KEYWORD> (pt3 <KEYWORD>in</KEYWORD> <STRING>'c'</STRING>..<STRING>'u'</STRING>)
+            {
+                line <OPERATOR>=</OPERATOR> <OBJ>lines</OBJ>.<OO>grep</OO>(<OPERATOR>~</OPERATOR><REGEX><DELIMITER>/</DELIMITER><REGEX_SUBPATTERN_MARKER>(</REGEX_SUBPATTERN_MARKER><REGEX_OPERATOR>.</REGEX_OPERATOR><REGEX_OPERATOR>*</REGEX_OPERATOR>$pt1<REGEX_OPERATOR>.</REGEX_OPERATOR><REGEX_OPERATOR>*</REGEX_OPERATOR>$pt2<REGEX_OPERATOR>.</REGEX_OPERATOR><REGEX_OPERATOR>*</REGEX_OPERATOR><REGEX_OPERATOR>|</REGEX_OPERATOR><REGEX_OPERATOR>.</REGEX_OPERATOR><REGEX_OPERATOR>*</REGEX_OPERATOR>$pt2<REGEX_OPERATOR>.</REGEX_OPERATOR><REGEX_OPERATOR>*</REGEX_OPERATOR>$pt3<REGEX_OPERATOR>.</REGEX_OPERATOR><REGEX_OPERATOR>*</REGEX_OPERATOR><REGEX_OPERATOR>|</REGEX_OPERATOR><REGEX_OPERATOR>.</REGEX_OPERATOR><REGEX_OPERATOR>*</REGEX_OPERATOR>$pt1<REGEX_OPERATOR>.</REGEX_OPERATOR><REGEX_OPERATOR>*</REGEX_OPERATOR>$pt3<REGEX_OPERATOR>.</REGEX_OPERATOR><REGEX_OPERATOR>*</REGEX_OPERATOR><REGEX_SUBPATTERN_MARKER>)</REGEX_SUBPATTERN_MARKER><DELIMITER>/</DELIMITER></REGEX>)
+                <KEYWORD>if</KEYWORD> (<OBJ>line</OBJ>.<OO>size</OO> <OPERATOR>==</OPERATOR> <NUMERIC>3</NUMERIC>)
+                {
+                    <KEYWORD>println</KEYWORD> (<OPERATOR>++</OPERATOR>count <OPERATOR>+</OPERATOR> <STRING>": $pt1,$pt2,$pt3 : "</STRING> <OPERATOR>+</OPERATOR> line )
+                }
+            }
+        }
+    }
+}
+
+computeTriangles (lines1)
+computeTriangles (lines2)
+
+
+<COMMENT>//  Termination</COMMENT>
+
+<KEYWORD>println</KEYWORD> (<STRING>"Terminated Normally"</STRING>) 

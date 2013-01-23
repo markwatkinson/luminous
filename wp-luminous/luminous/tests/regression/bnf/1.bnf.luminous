@@ -1,0 +1,12 @@
+ &lt;<VALUE>postal-address</VALUE>&gt; <OPERATOR>::=</OPERATOR> &lt;<VALUE>name-part</VALUE>&gt; &lt;<VALUE>street-address</VALUE>&gt; &lt;<VALUE>zip-part</VALUE>&gt;
+ 
+      &lt;<VALUE>name-part</VALUE>&gt; <OPERATOR>::=</OPERATOR> &lt;<VALUE>personal-part</VALUE>&gt; &lt;<VALUE>last-name</VALUE>&gt; &lt;<VALUE>opt-jr-part</VALUE>&gt; &lt;<VALUE>EOL</VALUE>&gt; 
+                    <OPERATOR>|</OPERATOR> &lt;<VALUE>personal-part</VALUE>&gt; &lt;<VALUE>name-part</VALUE>&gt;
+ 
+  &lt;<VALUE>personal-part</VALUE>&gt; <OPERATOR>::=</OPERATOR> &lt;<VALUE>first-name</VALUE>&gt; <OPERATOR>|</OPERATOR> &lt;<VALUE>initial</VALUE>&gt; <STRING>"."</STRING> 
+ 
+ &lt;<VALUE>street-address</VALUE>&gt; <OPERATOR>::=</OPERATOR> &lt;<VALUE>house-num</VALUE>&gt; &lt;<VALUE>street-name</VALUE>&gt; &lt;<VALUE>opt-apt-num</VALUE>&gt; &lt;<VALUE>EOL</VALUE>&gt;
+ 
+       &lt;<VALUE>zip-part</VALUE>&gt; <OPERATOR>::=</OPERATOR> &lt;<VALUE>town-name</VALUE>&gt; <STRING>","</STRING> &lt;<VALUE>state-code</VALUE>&gt; &lt;<VALUE>ZIP-code</VALUE>&gt; &lt;<VALUE>EOL</VALUE>&gt;
+ 
+    &lt;<VALUE>opt-jr-part</VALUE>&gt; <OPERATOR>::=</OPERATOR> <STRING>"Sr."</STRING> <OPERATOR>|</OPERATOR> <STRING>"Jr."</STRING> <OPERATOR>|</OPERATOR> &lt;<VALUE>roman-numeral</VALUE>&gt; <OPERATOR>|</OPERATOR> <STRING>""</STRING>

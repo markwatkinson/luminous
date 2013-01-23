@@ -1,0 +1,18 @@
+<KEYWORD>import</KEYWORD> <OBJ>groovy</OBJ>.<OO>sql</OO>.<OO>Sql</OO>
+
+<KEYWORD>println</KEYWORD> <STRING>"---- A working test of writing and then reading a blob into an Oracle DB ---"</STRING>
+sql <OPERATOR>=</OPERATOR> <OBJ>Sql</OBJ>.<OO>newInstance</OO>(<STRING>"jdbc:oracle:thin:@pignut:1521:TESTBNDY"</STRING>, <STRING>"userName"</STRING>,
+                     <STRING>"paSSword"</STRING>, <STRING>"oracle.jdbc.OracleDriver"</STRING>)
+
+rowTest <OPERATOR>=</OPERATOR> <OBJ>sql</OBJ>.<OO>firstRow</OO>(<STRING>"select binarydata from media where mediaid = 11122345"</STRING>)
+blobTest <OPERATOR>=</OPERATOR> (<OBJ>oracle</OBJ>.<OO>sql</OO>.<OO>BLOB</OO>)rowTest[<NUMERIC>0</NUMERIC>]
+
+byte_stream_test <OPERATOR>=</OPERATOR> <OBJ>blobTest</OBJ>.<OO>getBinaryStream</OO>()
+<KEYWORD>if</KEYWORD>( byte_stream_test <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD> ) {  <KEYWORD>println</KEYWORD> <STRING>"Test: Received null stream!"</STRING>  }
+
+<TYPE>byte</TYPE>[] byte_array_test <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <TYPE>byte</TYPE>[<NUMERIC>10</NUMERIC>]
+<TYPE>int</TYPE> bytes_read_test <OPERATOR>=</OPERATOR> <OBJ>byte_stream_test</OBJ>.<OO>read</OO>(byte_array_test)
+
+print <STRING>"Read $bytes_read_test bytes from the blob!"</STRING>
+
+<OBJ>sql</OBJ>.<OO>connection</OO>.<OO>close</OO>()

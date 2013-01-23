@@ -1,0 +1,99 @@
+<DOCCOMMENT>/**</DOCCOMMENT>
+<DOCCOMMENT> * Tabify script for jQuery</DOCCOMMENT>
+<DOCCOMMENT> * </DOCCOMMENT>
+<DOCCOMMENT> * CSS classes:</DOCCOMMENT>
+<DOCCOMMENT> * 'tab_title'  - A title element</DOCCOMMENT>
+<DOCCOMMENT> * 'tab_hover' - a hovered (mouseover) title element</DOCCOMMENT>
+<DOCCOMMENT> * 'tab_selected' - the title element corresponding to the currently displayed </DOCCOMMENT>
+<DOCCOMMENT> *                  tab.</DOCCOMMENT>
+<DOCCOMMENT> * </DOCCOMMENT>
+<DOCCOMMENT> * </DOCCOMMENT>
+<DOCCOMMENT> * Usage: Build your content, and wrap your tabs in a an element and your menu</DOCCOMMENT>
+<DOCCOMMENT> * in another element. Your menu may contain either <HTMLTAG>&lt;a&gt;</HTMLTAG> elements, or, if not, </DOCCOMMENT>
+<DOCCOMMENT> * then the child elements of your menu wrapper are used as the 'clickers'.</DOCCOMMENT>
+<DOCCOMMENT> * The elements in the menu (direct children or <HTMLTAG>&lt;a&gt;</HTMLTAG>) should correspond 1-1 </DOCCOMMENT>
+<DOCCOMMENT> * with the first level children in the tab wrapper element. Call tabify on </DOCCOMMENT>
+<DOCCOMMENT> * your tabs wrapper and give the first argument as the menu wrapper. e.g.:</DOCCOMMENT>
+<DOCCOMMENT> * </DOCCOMMENT>
+<DOCCOMMENT> * </DOCCOMMENT>
+<DOCCOMMENT> * &lt;div id='menu'&gt; <HTMLTAG>&lt;span&gt;</HTMLTAG>go to tab 1<HTMLTAG>&lt;/span&gt;</HTMLTAG> <HTMLTAG>&lt;span&gt;</HTMLTAG>go to tab 2<HTMLTAG>&lt;/span&gt;</HTMLTAG> </DOCCOMMENT>
+<DOCCOMMENT> *      <HTMLTAG>&lt;span&gt;</HTMLTAG>go to tab 3<HTMLTAG>&lt;/span&gt;</HTMLTAG> <HTMLTAG>&lt;/div&gt;</HTMLTAG></DOCCOMMENT>
+<DOCCOMMENT> * </DOCCOMMENT>
+<DOCCOMMENT> * &lt;div id='tabs'&gt;</DOCCOMMENT>
+<DOCCOMMENT> *      <HTMLTAG>&lt;div&gt;</HTMLTAG> tab 1 <HTMLTAG>&lt;/div&gt;</HTMLTAG></DOCCOMMENT>
+<DOCCOMMENT> *      <HTMLTAG>&lt;div&gt;</HTMLTAG> tab 2 <HTMLTAG>&lt;/div&gt;</HTMLTAG></DOCCOMMENT>
+<DOCCOMMENT> *      <HTMLTAG>&lt;div&gt;</HTMLTAG> tab 3 <HTMLTAG>&lt;/div&gt;</HTMLTAG></DOCCOMMENT>
+<DOCCOMMENT> * <HTMLTAG>&lt;/div&gt;</HTMLTAG></DOCCOMMENT>
+<DOCCOMMENT> * </DOCCOMMENT>
+<DOCCOMMENT> * </DOCCOMMENT>
+<DOCCOMMENT> * <HTMLTAG>&lt;script&gt;</HTMLTAG></DOCCOMMENT>
+<DOCCOMMENT> * $('#tabs').tabify($('#menu'), true);</DOCCOMMENT>
+<DOCCOMMENT> * <HTMLTAG>&lt;/script&gt;</HTMLTAG></DOCCOMMENT>
+<DOCCOMMENT> * </DOCCOMMENT>
+<DOCCOMMENT> * The last argument controls whether or not to try to emulate back/forward </DOCCOMMENT>
+<DOCCOMMENT> * buttons. This must be false if you have multiple tabified elements per </DOCCOMMENT>
+<DOCCOMMENT> * page.</DOCCOMMENT>
+<DOCCOMMENT> * </DOCCOMMENT>
+<DOCCOMMENT> * </DOCCOMMENT>
+<DOCCOMMENT> * You may apply your own CSS theming to #tabs and #menu to arrange it as you </DOCCOMMENT>
+<DOCCOMMENT> * like</DOCCOMMENT>
+<DOCCOMMENT> */</DOCCOMMENT>
+
+
+(<KEYWORD>function</KEYWORD>(<FUNCTION>$</FUNCTION>){
+  <FUNCTION>$</FUNCTION>.<OBJ>fn</OBJ>.<OO>tabify</OO> <OPERATOR>=</OPERATOR> <KEYWORD>function</KEYWORD>(menu, hashwatch){
+    <KEYWORD>var</KEYWORD> element <OPERATOR>=</OPERATOR> <TYPE>this</TYPE>;
+    <KEYWORD>var</KEYWORD> tabs <OPERATOR>=</OPERATOR> <TYPE>this</TYPE>.<OO>children</OO>();
+    <KEYWORD>var</KEYWORD> clickers <OPERATOR>=</OPERATOR> <FUNCTION>$</FUNCTION>(<STRING>'a'</STRING>, menu);
+    <KEYWORD>var</KEYWORD> titles <OPERATOR>=</OPERATOR> <OBJ>menu</OBJ>.<OO>children</OO>();
+    <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><OBJ>clickers</OBJ>.<OO>length</OO>) clickers <OPERATOR>=</OPERATOR> titles;
+    <OBJ>element</OBJ>.<OO>data</OO>(<STRING>'active'</STRING>, <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC>);
+    
+    <FUNCTION>$</FUNCTION>(tabs).<OO>hide</OO>();
+
+    <OBJ>clickers</OBJ>.<OO>each</OO>(<KEYWORD>function</KEYWORD>(i){
+      <FUNCTION>$</FUNCTION>(<TYPE>this</TYPE>).<OO>click</OO>(<KEYWORD>function</KEYWORD>(e){ 
+        <FUNCTION>$</FUNCTION>(tabs<OPERATOR>[</OPERATOR>i<OPERATOR>]</OPERATOR>).<OO>fadeIn</OO>(<NUMERIC>250</NUMERIC>);
+        <KEYWORD>var</KEYWORD> active <OPERATOR>=</OPERATOR> <OBJ>element</OBJ>.<OO>data</OO>(<STRING>'active'</STRING>);
+        <KEYWORD>if</KEYWORD> (active <OPERATOR>!</OPERATOR><OPERATOR>=</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC> <OPERATOR>&amp;&amp;</OPERATOR> active <OPERATOR>!</OPERATOR><OPERATOR>=</OPERATOR> i <OPERATOR>&amp;&amp;</OPERATOR> active <OPERATOR>&lt;</OPERATOR> <OBJ>tabs</OBJ>.<OO>length</OO>)
+          <FUNCTION>$</FUNCTION>(<OBJ>element</OBJ>.<OO>children</OO>().<OPERATOR>get</OPERATOR>(<OBJ>element</OBJ>.<OO>data</OO>(<STRING>'active'</STRING>))).<OO>hide</OO>();
+
+        <FUNCTION>$</FUNCTION>(<STRING>'.tab_selected'</STRING>, menu).<OO>removeClass</OO>(<STRING>'tab_selected'</STRING>); 
+        <OBJ>element</OBJ>.<OO>data</OO>(<STRING>'active'</STRING>, i);
+        <KEYWORD>if</KEYWORD> (hashwatch <OPERATOR>===</OPERATOR> <TYPE>true</TYPE>)
+          <OBJ>parent</OBJ>.<OBJ>location</OBJ>.<OO>hash</OO> <OPERATOR>=</OPERATOR> i;
+        $el <OPERATOR>=</OPERATOR> ((<FUNCTION>$</FUNCTION>(<TYPE>this</TYPE>).<OO>parent</OO>()<OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR> <OPERATOR>==</OPERATOR> <FUNCTION>$</FUNCTION>(menu)<OPERATOR>[</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>]</OPERATOR>)<OPERATOR>?</OPERATOR> <FUNCTION>$</FUNCTION>(<TYPE>this</TYPE>) <OPERATOR>:</OPERATOR> <FUNCTION>$</FUNCTION>(titles<OPERATOR>[</OPERATOR>i<OPERATOR>]</OPERATOR>));
+        <OBJ>$el</OBJ>.<OO>addClass</OO>(<STRING>'tab_selected'</STRING>);
+        
+        <OBJ>e</OBJ>.<OO>preventDefault</OO>();
+      });
+    });
+    <COMMENT>// toggleClass seems unreliable with hover.</COMMENT>
+    <OBJ>clickers</OBJ>.<OO>hover</OO>(<KEYWORD>function</KEYWORD>(e){<FUNCTION>$</FUNCTION>(<TYPE>this</TYPE>).<OO>addClass</OO>(<STRING>'tab_hover'</STRING>)},
+                  <KEYWORD>function</KEYWORD>(e){<FUNCTION>$</FUNCTION>(<TYPE>this</TYPE>).<OO>removeClass</OO>(<STRING>'tab_hover'</STRING>)}).<OO>addClass</OO>(<STRING>'tab_title'</STRING>);
+    <OBJ>tabs</OBJ>.<OO>addClass</OO>(<STRING>'tab'</STRING>);
+    
+    <KEYWORD>var</KEYWORD> trigger <OPERATOR>=</OPERATOR> <TYPE>true</TYPE>;
+    <KEYWORD>if</KEYWORD> (hashwatch <OPERATOR>===</OPERATOR> <TYPE>true</TYPE>)
+    {
+      <KEYWORD>if</KEYWORD> (<OBJ>parent</OBJ>.<OBJ>location</OBJ>.<OBJ>hash</OBJ>.<OO>replace</OO>(<REGEX><REGEX>/^#<REGEX_OPERATOR>|</REGEX_OPERATOR><ESC>\s</ESC><REGEX_OPERATOR>*</REGEX_OPERATOR>$/<KEYWORD>g</KEYWORD></REGEX></REGEX>, <STRING>''</STRING>).<OO>match</OO>(<REGEX><REGEX>/^<ESC>\d</ESC><REGEX_OPERATOR>+</REGEX_OPERATOR>$/</REGEX></REGEX>))
+        trigger <OPERATOR>=</OPERATOR> <TYPE>false</TYPE>;
+        
+      setInterval(<KEYWORD>function</KEYWORD>(){
+        <KEYWORD>var</KEYWORD> hash <OPERATOR>=</OPERATOR> <OBJ>parent</OBJ>.<OBJ>location</OBJ>.<OBJ>hash</OBJ>.<OO>replace</OO>(<REGEX><REGEX>/^#<REGEX_OPERATOR>|</REGEX_OPERATOR><ESC>\s</ESC><REGEX_OPERATOR>*</REGEX_OPERATOR>$/<KEYWORD>g</KEYWORD></REGEX></REGEX>, <STRING>''</STRING>);
+        <KEYWORD>if</KEYWORD> (<OBJ>hash</OBJ>.<OO>match</OO>(<REGEX><REGEX>/^<ESC>\d</ESC><REGEX_OPERATOR>+</REGEX_OPERATOR>$/</REGEX></REGEX>))
+          hash <OPERATOR>=</OPERATOR> <FUNCTION>parseInt</FUNCTION>(hash);
+        <KEYWORD>else</KEYWORD> 
+          <KEYWORD>return</KEYWORD>;                    
+        <KEYWORD>if</KEYWORD> (hash <OPERATOR>!</OPERATOR><OPERATOR>=</OPERATOR> <OBJ>element</OBJ>.<OO>data</OO>(<STRING>'active'</STRING>) <OPERATOR>&amp;&amp;</OPERATOR> hash <OPERATOR>&lt;</OPERATOR> <OBJ>clickers</OBJ>.<OO>length</OO>)
+          <FUNCTION>$</FUNCTION>(<OBJ>clickers</OBJ>.<OPERATOR>get</OPERATOR>(hash)).<OO>trigger</OO>(<STRING>'click'</STRING>);
+      }, <NUMERIC>200</NUMERIC>);
+    }
+    
+    <KEYWORD>if</KEYWORD> (trigger)
+      <OBJ>clickers</OBJ>.<OO>first</OO>().<OO>trigger</OO>(<STRING>'click'</STRING>);
+
+    
+    <KEYWORD>return</KEYWORD> <TYPE>this</TYPE>;
+  };
+})(<FUNCTION>jQuery</FUNCTION>);

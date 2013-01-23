@@ -1,0 +1,35 @@
+{
+  "numeric": {
+    "zero": 0,
+    "zero_real": 0.0,
+    "small": 0.0001,
+    "one": 1,
+    "twenty": 20,    
+    "decimal": 123456789,
+    "-decimal": -123456789,
+    "real" : 3.14159265,
+    "real1": 1e354,
+    "real2": 1e+354,
+    "real3": 1e-354,
+    "real4": 1.0000e+354,
+    "real5": 1E+354,
+    "real6": 1E-354,
+    "real7": 1.0000E+354,
+  },
+  "string" : {
+    "simple": "hello",
+    "hex" : "\uABCD",
+    "escapes": "I said \n\t\"hello\"\n there",
+    "perl": "{}dsa'@\%#=-53246543p;acsd@/;",
+  },
+  "other": ["here", "is", "an", "array"],
+  "other2": ["here}", "is,", "an]", "array"],
+  "other2": [syntax error }, doesn't pop the stack],
+
+  "true": true,
+  "false": false,
+  "null": null,
+  
+}
+
+This string is meaningless "and not a quote"

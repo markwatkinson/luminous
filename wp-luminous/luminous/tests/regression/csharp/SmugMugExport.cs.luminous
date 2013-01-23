@@ -1,0 +1,785 @@
+<COMMENT>/*</COMMENT>
+<COMMENT> * SmugMugExport.cs</COMMENT>
+<COMMENT> *</COMMENT>
+<COMMENT> * Authors:</COMMENT>
+<COMMENT> *   Thomas Van Machelen &lt;thomas.vanmachelen@gmail.com&gt;</COMMENT>
+<COMMENT> *</COMMENT>
+<COMMENT> * Based on PicasaWebExport code from Stephane Delcroix.</COMMENT>
+<COMMENT> *</COMMENT>
+<COMMENT> * Copyright (C) 2006 Thomas Van Machelen</COMMENT>
+<COMMENT> */</COMMENT>
+
+<KEYWORD>using</KEYWORD> System<OPERATOR>;</OPERATOR>
+<KEYWORD>using</KEYWORD> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Net</OO><OPERATOR>;</OPERATOR>
+<KEYWORD>using</KEYWORD> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>IO</OO><OPERATOR>;</OPERATOR>
+<KEYWORD>using</KEYWORD> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO><OPERATOR>;</OPERATOR>
+<KEYWORD>using</KEYWORD> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Threading</OO><OPERATOR>;</OPERATOR>
+<KEYWORD>using</KEYWORD> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Collections</OO><OPERATOR>;</OPERATOR>
+<KEYWORD>using</KEYWORD> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Collections</OO><OPERATOR>.</OPERATOR><OO>Specialized</OO><OPERATOR>;</OPERATOR>
+<KEYWORD>using</KEYWORD> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Web</OO><OPERATOR>;</OPERATOR>
+<KEYWORD>using</KEYWORD> <OBJ>Mono</OBJ><OPERATOR>.</OPERATOR><OO>Unix</OO><OPERATOR>;</OPERATOR>
+<KEYWORD>using</KEYWORD> Gtk<OPERATOR>;</OPERATOR>
+
+<KEYWORD>using</KEYWORD> <OBJ>FSpot</OBJ><OPERATOR>.</OPERATOR><OO>Filters</OO><OPERATOR>;</OPERATOR>
+<KEYWORD>using</KEYWORD> <OBJ>Gnome</OBJ><OPERATOR>.</OPERATOR><OO>Keyring</OO><OPERATOR>;</OPERATOR>
+<KEYWORD>using</KEYWORD> SmugMugNet<OPERATOR>;</OPERATOR>
+
+<KEYWORD>namespace</KEYWORD> FSpot {
+        <KEYWORD>public</KEYWORD> <KEYWORD>class</KEYWORD> SmugMugAccount {
+                <KEYWORD>private</KEYWORD> <TYPE>string</TYPE> username<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> <TYPE>string</TYPE> password<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> <TYPE>string</TYPE> token<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> <TYPE>bool</TYPE> connected<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> SmugMugApi smugmug_proxy<OPERATOR>;</OPERATOR>
+
+                <KEYWORD>public</KEYWORD> SmugMugAccount (<TYPE>string</TYPE> username<OPERATOR>,</OPERATOR> <TYPE>string</TYPE> password)
+                {
+                        <OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>username</OO> <OPERATOR>=</OPERATOR> username<OPERATOR>;</OPERATOR>
+                        <OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>password</OO> <OPERATOR>=</OPERATOR> password<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>public</KEYWORD> SmugMugApi Connect ()
+                {
+                        <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Console</OO><OPERATOR>.</OPERATOR><OO>WriteLine</OO> (<STRING>"SmugMug.Connect() {0}"</STRING><OPERATOR>,</OPERATOR> username)<OPERATOR>;</OPERATOR>
+                        SmugMugApi proxy <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> SmugMugApi (username<OPERATOR>,</OPERATOR> password)<OPERATOR>;</OPERATOR>
+                        <OBJ>ServicePointManager</OBJ><OPERATOR>.</OPERATOR><OO>CertificatePolicy</OO> <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> NoCheckCertificatePolicy ()<OPERATOR>;</OPERATOR>
+                        <OBJ>proxy</OBJ><OPERATOR>.</OPERATOR><OO>Login</OO> ()<OPERATOR>;</OPERATOR>
+
+                        <OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>smugmug_proxy</OO> <OPERATOR>=</OPERATOR> proxy<OPERATOR>;</OPERATOR>
+                        <KEYWORD>return</KEYWORD> proxy<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> MarkChanged()
+                {
+                        smugmug_proxy <OPERATOR>=</OPERATOR> <KEYWORD>null</KEYWORD><OPERATOR>;</OPERATOR>
+                        connected <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>public</KEYWORD> <TYPE>bool</TYPE> Connected {
+                        get {
+                                <KEYWORD>return</KEYWORD> (smugmug_proxy <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
+                        }
+                }
+
+                <KEYWORD>public</KEYWORD> <TYPE>string</TYPE> Username {
+                        get {
+                                <KEYWORD>return</KEYWORD> username<OPERATOR>;</OPERATOR>
+                        }
+                        set {
+                                <KEYWORD>if</KEYWORD> (username <OPERATOR>!=</OPERATOR> value) {
+                                        username <OPERATOR>=</OPERATOR> value<OPERATOR>;</OPERATOR>
+                                        MarkChanged ()<OPERATOR>;</OPERATOR>
+                                }
+                        }
+                }
+
+                <KEYWORD>public</KEYWORD> <TYPE>string</TYPE> Password {
+                        get {
+                                <KEYWORD>return</KEYWORD> password<OPERATOR>;</OPERATOR>
+                        }
+                        set {
+                                <KEYWORD>if</KEYWORD> (password <OPERATOR>!=</OPERATOR> value) {
+                                        password <OPERATOR>=</OPERATOR> value<OPERATOR>;</OPERATOR>
+                                        MarkChanged ()<OPERATOR>;</OPERATOR>
+                                }
+                        }
+                }
+
+                <KEYWORD>public</KEYWORD> SmugMugApi SmugMug {
+                        get {
+                                <KEYWORD>return</KEYWORD> smugmug_proxy<OPERATOR>;</OPERATOR>
+                        }
+                }
+        }
+
+
+        <KEYWORD>public</KEYWORD> <KEYWORD>class</KEYWORD> SmugMugAccountManager
+        {
+                <KEYWORD>private</KEYWORD> <KEYWORD>static</KEYWORD> SmugMugAccountManager instance<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> <TYPE>const</TYPE> <TYPE>string</TYPE> keyring_item_name <OPERATOR>=</OPERATOR> <STRING>"SmugMug Account"</STRING><OPERATOR>;</OPERATOR>
+                <TYPE>ArrayList</TYPE> accounts<OPERATOR>;</OPERATOR>
+
+                <KEYWORD>public</KEYWORD> <KEYWORD>delegate</KEYWORD> <TYPE>void</TYPE> AccountListChangedHandler (SmugMugAccountManager manager<OPERATOR>,</OPERATOR> SmugMugAccount changed_account)<OPERATOR>;</OPERATOR>
+                <KEYWORD>public</KEYWORD> <KEYWORD>event</KEYWORD> AccountListChangedHandler AccountListChanged<OPERATOR>;</OPERATOR>
+
+                <KEYWORD>public</KEYWORD> <KEYWORD>static</KEYWORD> SmugMugAccountManager GetInstance ()
+                {
+                        <KEYWORD>if</KEYWORD> (instance <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD>) {
+                                instance <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> SmugMugAccountManager ()<OPERATOR>;</OPERATOR>
+                        }
+
+                        <KEYWORD>return</KEYWORD> instance<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>private</KEYWORD> SmugMugAccountManager ()
+                {
+                        accounts <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <TYPE>ArrayList</TYPE> ()<OPERATOR>;</OPERATOR>
+                        ReadAccounts ()<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> MarkChanged ()
+                {
+                        MarkChanged (<KEYWORD>true</KEYWORD><OPERATOR>,</OPERATOR> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> MarkChanged (<TYPE>bool</TYPE> write<OPERATOR>,</OPERATOR> SmugMugAccount changed_account)
+                {
+                        <KEYWORD>if</KEYWORD> (write)
+                                WriteAccounts ()<OPERATOR>;</OPERATOR>
+
+                        <KEYWORD>if</KEYWORD> (AccountListChanged <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>)
+                                AccountListChanged (<KEYWORD>this</KEYWORD><OPERATOR>,</OPERATOR> changed_account)<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>public</KEYWORD> <TYPE>ArrayList</TYPE> GetAccounts ()
+                {
+                        <KEYWORD>return</KEYWORD> accounts<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> AddAccount (SmugMugAccount account)
+                {
+                        AddAccount (account<OPERATOR>,</OPERATOR> <KEYWORD>true</KEYWORD>)<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> AddAccount (SmugMugAccount account<OPERATOR>,</OPERATOR> <TYPE>bool</TYPE> write)
+                {
+                        <OBJ>accounts</OBJ><OPERATOR>.</OPERATOR><OO>Add</OO> (account)<OPERATOR>;</OPERATOR>
+                        MarkChanged (write<OPERATOR>,</OPERATOR> account)<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> RemoveAccount (SmugMugAccount account)
+                {
+                        <TYPE>string</TYPE> keyring <OPERATOR>=</OPERATOR> <OBJ>Ring</OBJ><OPERATOR>.</OPERATOR><OO>GetDefaultKeyring</OO>()<OPERATOR>;</OPERATOR>
+                        <TYPE>Hashtable</TYPE> request_attributes <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <TYPE>Hashtable</TYPE>()<OPERATOR>;</OPERATOR>
+                        request_attributes[<STRING>"name"</STRING>] <OPERATOR>=</OPERATOR> keyring_item_name<OPERATOR>;</OPERATOR>
+                        request_attributes[<STRING>"username"</STRING>] <OPERATOR>=</OPERATOR> <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>Username</OO><OPERATOR>;</OPERATOR>
+                        <KEYWORD>try</KEYWORD> {
+                                <KEYWORD>foreach</KEYWORD>(ItemData result <KEYWORD>in</KEYWORD> <OBJ>Ring</OBJ><OPERATOR>.</OPERATOR><OO>Find</OO>(<OBJ>ItemType</OBJ><OPERATOR>.</OPERATOR><OO>GenericSecret</OO><OPERATOR>,</OPERATOR> request_attributes)) {
+                                        <OBJ>Ring</OBJ><OPERATOR>.</OPERATOR><OO>DeleteItem</OO>(keyring<OPERATOR>,</OPERATOR> <OBJ>result</OBJ><OPERATOR>.</OPERATOR><OO>ItemID</OO>)<OPERATOR>;</OPERATOR>
+                                }
+                        } <KEYWORD>catch</KEYWORD> (<TYPE>Exception</TYPE> e) {
+                                <OBJ>Console</OBJ><OPERATOR>.</OPERATOR><OO>WriteLine</OO>(e)<OPERATOR>;</OPERATOR>
+                        }
+                        <OBJ>accounts</OBJ><OPERATOR>.</OPERATOR><OO>Remove</OO> (account)<OPERATOR>;</OPERATOR>
+                        MarkChanged ()<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> WriteAccounts ()
+                {
+                        <TYPE>string</TYPE> keyring <OPERATOR>=</OPERATOR> <OBJ>Ring</OBJ><OPERATOR>.</OPERATOR><OO>GetDefaultKeyring</OO>()<OPERATOR>;</OPERATOR>
+                        <KEYWORD>foreach</KEYWORD> (SmugMugAccount account <KEYWORD>in</KEYWORD> accounts) {
+                                <TYPE>Hashtable</TYPE> update_request_attributes <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <TYPE>Hashtable</TYPE>()<OPERATOR>;</OPERATOR>
+                                update_request_attributes[<STRING>"name"</STRING>] <OPERATOR>=</OPERATOR> keyring_item_name<OPERATOR>;</OPERATOR>
+                                update_request_attributes[<STRING>"username"</STRING>] <OPERATOR>=</OPERATOR> <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>Username</OO><OPERATOR>;</OPERATOR>
+
+                                <OBJ>Ring</OBJ><OPERATOR>.</OPERATOR><OO>CreateItem</OO>(keyring<OPERATOR>,</OPERATOR> <OBJ>ItemType</OBJ><OPERATOR>.</OPERATOR><OO>GenericSecret</OO><OPERATOR>,</OPERATOR> keyring_item_name<OPERATOR>,</OPERATOR> update_request_attributes<OPERATOR>,</OPERATOR> <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>Password</OO><OPERATOR>,</OPERATOR> <KEYWORD>true</KEYWORD>)<OPERATOR>;</OPERATOR>
+                        }
+                }
+
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> ReadAccounts ()
+                {
+
+                        <TYPE>Hashtable</TYPE> request_attributes <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <TYPE>Hashtable</TYPE>()<OPERATOR>;</OPERATOR>
+                        request_attributes[<STRING>"name"</STRING>] <OPERATOR>=</OPERATOR> keyring_item_name<OPERATOR>;</OPERATOR>
+                        <KEYWORD>try</KEYWORD> {
+                                <KEYWORD>foreach</KEYWORD>(ItemData result <KEYWORD>in</KEYWORD> <OBJ>Ring</OBJ><OPERATOR>.</OPERATOR><OO>Find</OO>(<OBJ>ItemType</OBJ><OPERATOR>.</OPERATOR><OO>GenericSecret</OO><OPERATOR>,</OPERATOR> request_attributes)) {
+                                        <KEYWORD>if</KEYWORD>(<OPERATOR>!</OPERATOR><OBJ>result</OBJ><OPERATOR>.</OPERATOR><OO>Attributes</OO><OPERATOR>.</OPERATOR><OO>ContainsKey</OO>(<STRING>"name"</STRING>) <OPERATOR>||</OPERATOR> <OPERATOR>!</OPERATOR><OBJ>result</OBJ><OPERATOR>.</OPERATOR><OO>Attributes</OO><OPERATOR>.</OPERATOR><OO>ContainsKey</OO>(<STRING>"username"</STRING>) <OPERATOR>||</OPERATOR>
+                                                (<OBJ>result</OBJ><OPERATOR>.</OPERATOR><OO>Attributes</OO>[<STRING>"name"</STRING>] <KEYWORD>as</KEYWORD> <TYPE>string</TYPE>) <OPERATOR>!=</OPERATOR> keyring_item_name)
+                                                <KEYWORD>continue</KEYWORD><OPERATOR>;</OPERATOR>
+
+                                        <TYPE>string</TYPE> username <OPERATOR>=</OPERATOR> (<TYPE>string</TYPE>)<OBJ>result</OBJ><OPERATOR>.</OPERATOR><OO>Attributes</OO>[<STRING>"username"</STRING>]<OPERATOR>;</OPERATOR>
+                                        <TYPE>string</TYPE> password <OPERATOR>=</OPERATOR> <OBJ>result</OBJ><OPERATOR>.</OPERATOR><OO>Secret</OO><OPERATOR>;</OPERATOR>
+
+                                        <KEYWORD>if</KEYWORD> (username <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD> <OPERATOR>||</OPERATOR> username <OPERATOR>==</OPERATOR> <OBJ>String</OBJ><OPERATOR>.</OPERATOR><OO>Empty</OO> <OPERATOR>||</OPERATOR> password <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD> <OPERATOR>||</OPERATOR> password <OPERATOR>==</OPERATOR> <OBJ>String</OBJ><OPERATOR>.</OPERATOR><OO>Empty</OO>)
+                                                <KEYWORD>throw</KEYWORD> <KEYWORD>new</KEYWORD> <TYPE>ApplicationException</TYPE> (<STRING>"Invalid username/password in keyring"</STRING>)<OPERATOR>;</OPERATOR>
+
+                                        SmugMugAccount account <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> SmugMugAccount(username<OPERATOR>,</OPERATOR> password)<OPERATOR>;</OPERATOR>
+                                        <KEYWORD>if</KEYWORD> (account <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>)
+                                                AddAccount (account<OPERATOR>,</OPERATOR> <KEYWORD>false</KEYWORD>)<OPERATOR>;</OPERATOR>
+
+                                }
+                        } <KEYWORD>catch</KEYWORD> (<TYPE>Exception</TYPE> e) {
+                                <OBJ>Console</OBJ><OPERATOR>.</OPERATOR><OO>Error</OO><OPERATOR>.</OPERATOR><OO>WriteLine</OO>(e)<OPERATOR>;</OPERATOR>
+                        }
+
+                        MarkChanged ()<OPERATOR>;</OPERATOR>
+                }
+        }
+
+        <KEYWORD>public</KEYWORD> <KEYWORD>class</KEYWORD> SmugMugAccountDialog <OPERATOR>:</OPERATOR> GladeDialog {
+                <KEYWORD>public</KEYWORD> SmugMugAccountDialog (<OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Window</OO> parent) <OPERATOR>:</OPERATOR> <KEYWORD>this</KEYWORD> (parent<OPERATOR>,</OPERATOR> <KEYWORD>null</KEYWORD>) {
+                        <OBJ>Dialog</OBJ><OPERATOR>.</OPERATOR><OO>Response</OO> <OPERATOR>+=</OPERATOR> HandleAddResponse<OPERATOR>;</OPERATOR>
+                        <OBJ>add_button</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>public</KEYWORD> SmugMugAccountDialog (<OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Window</OO> parent<OPERATOR>,</OPERATOR> SmugMugAccount account) <OPERATOR>:</OPERATOR>  <KEYWORD>base</KEYWORD> (<STRING>"smugmug_add_dialog"</STRING>)
+                {
+                        <OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>Dialog</OO><OPERATOR>.</OPERATOR><OO>Modal</OO> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+                        <OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>Dialog</OO><OPERATOR>.</OPERATOR><OO>TransientFor</OO> <OPERATOR>=</OPERATOR> parent<OPERATOR>;</OPERATOR>
+                        <OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>Dialog</OO><OPERATOR>.</OPERATOR><OO>DefaultResponse</OO> <OPERATOR>=</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseType</OO><OPERATOR>.</OPERATOR><OO>Ok</OO><OPERATOR>;</OPERATOR>
+
+                        <OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>account</OO> <OPERATOR>=</OPERATOR> account<OPERATOR>;</OPERATOR>
+
+                        <OBJ>password_entry</OBJ><OPERATOR>.</OPERATOR><OO>ActivatesDefault</OO> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD><OPERATOR>;</OPERATOR>
+                        <OBJ>username_entry</OBJ><OPERATOR>.</OPERATOR><OO>ActivatesDefault</OO> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD><OPERATOR>;</OPERATOR>
+
+                        <KEYWORD>if</KEYWORD> (account <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>) {
+                                <OBJ>password_entry</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO> <OPERATOR>=</OPERATOR> <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>Password</OO><OPERATOR>;</OPERATOR>
+                                <OBJ>username_entry</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO> <OPERATOR>=</OPERATOR> <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>Username</OO><OPERATOR>;</OPERATOR>
+                                <OBJ>add_button</OBJ><OPERATOR>.</OPERATOR><OO>Label</OO> <OPERATOR>=</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Stock</OO><OPERATOR>.</OPERATOR><OO>Ok</OO><OPERATOR>;</OPERATOR>
+                                <OBJ>Dialog</OBJ><OPERATOR>.</OPERATOR><OO>Response</OO> <OPERATOR>+=</OPERATOR> HandleEditResponse<OPERATOR>;</OPERATOR>
+                        }
+
+                        <KEYWORD>if</KEYWORD> (remove_button <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>)
+                                <OBJ>remove_button</OBJ><OPERATOR>.</OPERATOR><OO>Visible</OO> <OPERATOR>=</OPERATOR> account <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD><OPERATOR>;</OPERATOR>
+
+                        <OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>Dialog</OO><OPERATOR>.</OPERATOR><OO>Show</OO> ()<OPERATOR>;</OPERATOR>
+
+                        <OBJ>password_entry</OBJ><OPERATOR>.</OPERATOR><OO>Changed</OO> <OPERATOR>+=</OPERATOR> HandleChanged<OPERATOR>;</OPERATOR>
+                        <OBJ>username_entry</OBJ><OPERATOR>.</OPERATOR><OO>Changed</OO> <OPERATOR>+=</OPERATOR> HandleChanged<OPERATOR>;</OPERATOR>
+                        HandleChanged (<KEYWORD>null</KEYWORD><OPERATOR>,</OPERATOR> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> HandleChanged (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
+                {
+                        password <OPERATOR>=</OPERATOR> <OBJ>password_entry</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO><OPERATOR>;</OPERATOR>
+                        username <OPERATOR>=</OPERATOR> <OBJ>username_entry</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO><OPERATOR>;</OPERATOR>
+
+                        <OBJ>add_button</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <OPERATOR>!</OPERATOR>(password <OPERATOR>==</OPERATOR> <STRING>""</STRING> <OPERATOR>||</OPERATOR> username <OPERATOR>==</OPERATOR> <STRING>""</STRING>)<OPERATOR>;</OPERATOR>
+                }
+
+                [<OBJ>GLib</OBJ><OPERATOR>.</OPERATOR><OO>ConnectBefore</OO>]
+                <KEYWORD>protected</KEYWORD> <TYPE>void</TYPE> HandleAddResponse (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseArgs</OO> args)
+                {
+                        <KEYWORD>if</KEYWORD> (<OBJ>args</OBJ><OPERATOR>.</OPERATOR><OO>ResponseId</OO> <OPERATOR>==</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseType</OO><OPERATOR>.</OPERATOR><OO>Ok</OO>) {
+                                SmugMugAccount account <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> SmugMugAccount (username<OPERATOR>,</OPERATOR> password)<OPERATOR>;</OPERATOR>
+                                <OBJ>SmugMugAccountManager</OBJ><OPERATOR>.</OPERATOR><OO>GetInstance</OO> ()<OPERATOR>.</OPERATOR><OO>AddAccount</OO> (account)<OPERATOR>;</OPERATOR>
+                        }
+                        <OBJ>Dialog</OBJ><OPERATOR>.</OPERATOR><OO>Destroy</OO> ()<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>protected</KEYWORD> <TYPE>void</TYPE> HandleEditResponse (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseArgs</OO> args)
+                {
+                        <KEYWORD>if</KEYWORD> (<OBJ>args</OBJ><OPERATOR>.</OPERATOR><OO>ResponseId</OO> <OPERATOR>==</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseType</OO><OPERATOR>.</OPERATOR><OO>Ok</OO>) {
+                                <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>Username</OO> <OPERATOR>=</OPERATOR> username<OPERATOR>;</OPERATOR>
+                                <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>Password</OO> <OPERATOR>=</OPERATOR> password<OPERATOR>;</OPERATOR>
+                                <OBJ>SmugMugAccountManager</OBJ><OPERATOR>.</OPERATOR><OO>GetInstance</OO> ()<OPERATOR>.</OPERATOR><OO>MarkChanged</OO> (<KEYWORD>true</KEYWORD><OPERATOR>,</OPERATOR> account)<OPERATOR>;</OPERATOR>
+                        } <KEYWORD>else</KEYWORD> <KEYWORD>if</KEYWORD> (<OBJ>args</OBJ><OPERATOR>.</OPERATOR><OO>ResponseId</OO> <OPERATOR>==</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseType</OO><OPERATOR>.</OPERATOR><OO>Reject</OO>) {
+                                <COMMENT>// <COMMENT_NOTE>NOTE</COMMENT_NOTE> we are using Reject to signal the remove action.</COMMENT>
+                                <OBJ>SmugMugAccountManager</OBJ><OPERATOR>.</OPERATOR><OO>GetInstance</OO> ()<OPERATOR>.</OPERATOR><OO>RemoveAccount</OO> (account)<OPERATOR>;</OPERATOR>
+                        }
+                        <OBJ>Dialog</OBJ><OPERATOR>.</OPERATOR><OO>Destroy</OO> ()<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>private</KEYWORD> SmugMugAccount account<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> <TYPE>string</TYPE> password<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> <TYPE>string</TYPE> username<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> <TYPE>string</TYPE> token<OPERATOR>;</OPERATOR>
+
+
+                <COMMENT>// widgets</COMMENT>
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Entry</OO> password_entry<OPERATOR>;</OPERATOR>
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Entry</OO> username_entry<OPERATOR>;</OPERATOR>
+
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Button</OO> add_button<OPERATOR>;</OPERATOR>
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Button</OO> remove_button<OPERATOR>;</OPERATOR>
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Button</OO> cancel_button<OPERATOR>;</OPERATOR>
+
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>HBox</OO> status_area<OPERATOR>;</OPERATOR>
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>HBox</OO> locked_area<OPERATOR>;</OPERATOR>
+        }
+
+        <KEYWORD>public</KEYWORD> <KEYWORD>class</KEYWORD> SmugMugAddAlbum <OPERATOR>:</OPERATOR> GladeDialog {
+                <COMMENT>//[Glade.Widget] Gtk.OptionMenu album_optionmenu;</COMMENT>
+
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Entry</OO> title_entry<OPERATOR>;</OPERATOR>
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>CheckButton</OO> public_check<OPERATOR>;</OPERATOR>
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ComboBox</OO> category_combo<OPERATOR>;</OPERATOR>
+
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Button</OO> add_button<OPERATOR>;</OPERATOR>
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Button</OO> cancel_button<OPERATOR>;</OPERATOR>
+
+                <KEYWORD>private</KEYWORD> SmugMugExport export<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> SmugMugApi smugmug<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> <TYPE>string</TYPE> description<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> <TYPE>string</TYPE> title<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> <TYPE>bool</TYPE> public_album<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> ListStore category_store<OPERATOR>;</OPERATOR>
+
+                <KEYWORD>public</KEYWORD> SmugMugAddAlbum (SmugMugExport export<OPERATOR>,</OPERATOR> SmugMugApi smugmug) <OPERATOR>:</OPERATOR> <KEYWORD>base</KEYWORD> (<STRING>"smugmug_add_album_dialog"</STRING>)
+                {
+                        <OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>export</OO> <OPERATOR>=</OPERATOR> export<OPERATOR>;</OPERATOR>
+                        <OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>smugmug</OO> <OPERATOR>=</OPERATOR> smugmug<OPERATOR>;</OPERATOR>
+
+                        <OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>category_store</OO> <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> ListStore (<KEYWORD>typeof</KEYWORD>(<TYPE>int</TYPE>)<OPERATOR>,</OPERATOR> <KEYWORD>typeof</KEYWORD>(<TYPE>string</TYPE>))<OPERATOR>;</OPERATOR>
+                        CellRendererText display_cell <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> CellRendererText()<OPERATOR>;</OPERATOR>
+                        <OBJ>category_combo</OBJ><OPERATOR>.</OPERATOR><OO>PackStart</OO> (display_cell<OPERATOR>,</OPERATOR> <KEYWORD>true</KEYWORD>)<OPERATOR>;</OPERATOR>
+                        <OBJ>category_combo</OBJ><OPERATOR>.</OPERATOR><OO>SetCellDataFunc</OO> (display_cell<OPERATOR>,</OPERATOR> <KEYWORD>new</KEYWORD> CellLayoutDataFunc (CategoryDataFunc))<OPERATOR>;</OPERATOR>
+                        <OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>category_combo</OO><OPERATOR>.</OPERATOR><OO>Model</OO> <OPERATOR>=</OPERATOR> category_store<OPERATOR>;</OPERATOR>
+                        PopulateCategoryCombo ()<OPERATOR>;</OPERATOR>
+
+                        <OBJ>Dialog</OBJ><OPERATOR>.</OPERATOR><OO>Response</OO> <OPERATOR>+=</OPERATOR> HandleAddResponse<OPERATOR>;</OPERATOR>
+
+                        <OBJ>title_entry</OBJ><OPERATOR>.</OPERATOR><OO>Changed</OO> <OPERATOR>+=</OPERATOR> HandleChanged<OPERATOR>;</OPERATOR>
+                        HandleChanged (<KEYWORD>null</KEYWORD><OPERATOR>,</OPERATOR> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> HandleChanged (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> args)
+                {
+                        title <OPERATOR>=</OPERATOR> <OBJ>title_entry</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO><OPERATOR>;</OPERATOR>
+                        public_album <OPERATOR>=</OPERATOR> <OBJ>public_check</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO><OPERATOR>;</OPERATOR>
+
+                        <KEYWORD>if</KEYWORD> (title <OPERATOR>==</OPERATOR> <STRING>""</STRING>)
+                                <OBJ>add_button</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+                        <KEYWORD>else</KEYWORD>
+                                <OBJ>add_button</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD><OPERATOR>;</OPERATOR>
+                }
+
+                [<OBJ>GLib</OBJ><OPERATOR>.</OPERATOR><OO>ConnectBefore</OO>]
+                <KEYWORD>protected</KEYWORD> <TYPE>void</TYPE> HandleAddResponse (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseArgs</OO> args)
+                {
+                        <KEYWORD>if</KEYWORD> (<OBJ>args</OBJ><OPERATOR>.</OPERATOR><OO>ResponseId</OO> <OPERATOR>==</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseType</OO><OPERATOR>.</OPERATOR><OO>Ok</OO>) {
+                                <OBJ>smugmug</OBJ><OPERATOR>.</OPERATOR><OO>CreateAlbum</OO> (title<OPERATOR>,</OPERATOR> CurrentCategoryId<OPERATOR>,</OPERATOR> <OBJ>public_check</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO>)<OPERATOR>;</OPERATOR>
+                                <OBJ>export</OBJ><OPERATOR>.</OPERATOR><OO>HandleAlbumAdded</OO> (title)<OPERATOR>;</OPERATOR>
+                        }
+                        <OBJ>Dialog</OBJ><OPERATOR>.</OPERATOR><OO>Destroy</OO> ()<OPERATOR>;</OPERATOR>
+                }
+
+                <TYPE>void</TYPE> CategoryDataFunc (CellLayout layout<OPERATOR>,</OPERATOR> CellRenderer renderer<OPERATOR>,</OPERATOR> TreeModel model<OPERATOR>,</OPERATOR> TreeIter iter)
+                {
+                        <TYPE>string</TYPE> name <OPERATOR>=</OPERATOR> (<TYPE>string</TYPE>)<OBJ>model</OBJ><OPERATOR>.</OPERATOR><OO>GetValue</OO> (iter<OPERATOR>,</OPERATOR> <NUMERIC>1</NUMERIC>)<OPERATOR>;</OPERATOR>
+                        (renderer <KEYWORD>as</KEYWORD> CellRendererText)<OPERATOR>.</OPERATOR><OO>Text</OO> <OPERATOR>=</OPERATOR> name<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>protected</KEYWORD> <TYPE>void</TYPE> PopulateCategoryCombo ()
+                {
+                        <OBJ>SmugMugNet</OBJ><OPERATOR>.</OPERATOR><OO>Category</OO>[] categories <OPERATOR>=</OPERATOR> <OBJ>smugmug</OBJ><OPERATOR>.</OPERATOR><OO>GetCategories</OO> ()<OPERATOR>;</OPERATOR>
+
+                        <KEYWORD>foreach</KEYWORD> (<OBJ>SmugMugNet</OBJ><OPERATOR>.</OPERATOR><OO>Category</OO> category <KEYWORD>in</KEYWORD> categories) {
+                                <OBJ>category_store</OBJ><OPERATOR>.</OPERATOR><OO>AppendValues</OO> (<OBJ>category</OBJ><OPERATOR>.</OPERATOR><OO>CategoryID</OO><OPERATOR>,</OPERATOR> <OBJ>category</OBJ><OPERATOR>.</OPERATOR><OO>Title</OO>)<OPERATOR>;</OPERATOR>
+                        }
+
+                        <OBJ>category_combo</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO> <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+
+                        <OBJ>category_combo</OBJ><OPERATOR>.</OPERATOR><OO>ShowAll</OO> ()<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>protected</KEYWORD> <TYPE>int</TYPE> CurrentCategoryId
+                {
+                        get {
+                                TreeIter current<OPERATOR>;</OPERATOR>
+                                <OBJ>category_combo</OBJ><OPERATOR>.</OPERATOR><OO>GetActiveIter</OO> (<KEYWORD>out</KEYWORD> current)<OPERATOR>;</OPERATOR>
+                                <KEYWORD>return</KEYWORD> (<TYPE>int</TYPE>)<OBJ>category_combo</OBJ><OPERATOR>.</OPERATOR><OO>Model</OO><OPERATOR>.</OPERATOR><OO>GetValue</OO> (current<OPERATOR>,</OPERATOR> <NUMERIC>0</NUMERIC>)<OPERATOR>;</OPERATOR>
+                        }
+                }
+        }
+
+
+        <KEYWORD>public</KEYWORD> <KEYWORD>class</KEYWORD> SmugMugExport <OPERATOR>:</OPERATOR> GladeDialog {
+                <KEYWORD>public</KEYWORD> SmugMugExport (IBrowsableCollection selection) <OPERATOR>:</OPERATOR> <KEYWORD>base</KEYWORD> (<STRING>"smugmug_export_dialog"</STRING>)
+                {
+                        <OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>items</OO> <OPERATOR>=</OPERATOR> <OBJ>selection</OBJ><OPERATOR>.</OPERATOR><OO>Items</OO><OPERATOR>;</OPERATOR>
+                        <OBJ>album_button</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+                        IconView view <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> IconView (selection)<OPERATOR>;</OPERATOR>
+                        <OBJ>view</OBJ><OPERATOR>.</OPERATOR><OO>DisplayDates</OO> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+                        <OBJ>view</OBJ><OPERATOR>.</OPERATOR><OO>DisplayTags</OO> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+
+                        <OBJ>Dialog</OBJ><OPERATOR>.</OPERATOR><OO>Modal</OO> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+                        <OBJ>Dialog</OBJ><OPERATOR>.</OPERATOR><OO>TransientFor</OO> <OPERATOR>=</OPERATOR> <KEYWORD>null</KEYWORD><OPERATOR>;</OPERATOR>
+                        <OBJ>Dialog</OBJ><OPERATOR>.</OPERATOR><OO>Close</OO> <OPERATOR>+=</OPERATOR> HandleCloseEvent<OPERATOR>;</OPERATOR>
+
+                        <OBJ>thumb_scrolledwindow</OBJ><OPERATOR>.</OPERATOR><OO>Add</OO> (view)<OPERATOR>;</OPERATOR>
+                        <OBJ>view</OBJ><OPERATOR>.</OPERATOR><OO>Show</OO> ()<OPERATOR>;</OPERATOR>
+                        <OBJ>Dialog</OBJ><OPERATOR>.</OPERATOR><OO>Show</OO> ()<OPERATOR>;</OPERATOR>
+
+                        SmugMugAccountManager manager <OPERATOR>=</OPERATOR> <OBJ>SmugMugAccountManager</OBJ><OPERATOR>.</OPERATOR><OO>GetInstance</OO> ()<OPERATOR>;</OPERATOR>
+                        <OBJ>manager</OBJ><OPERATOR>.</OPERATOR><OO>AccountListChanged</OO> <OPERATOR>+=</OPERATOR> PopulateSmugMugOptionMenu<OPERATOR>;</OPERATOR>
+                        PopulateSmugMugOptionMenu (manager<OPERATOR>,</OPERATOR> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
+
+                        <KEYWORD>if</KEYWORD> (edit_button <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>)
+                                <OBJ>edit_button</OBJ><OPERATOR>.</OPERATOR><OO>Clicked</OO> <OPERATOR>+=</OPERATOR> HandleEditGallery<OPERATOR>;</OPERATOR>
+
+                        rh <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseHandler</OO> (HandleResponse)<OPERATOR>;</OPERATOR>
+                        <OBJ>Dialog</OBJ><OPERATOR>.</OPERATOR><OO>Response</OO> <OPERATOR>+=</OPERATOR> HandleResponse<OPERATOR>;</OPERATOR>
+                        connect <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD><OPERATOR>;</OPERATOR>
+                        HandleSizeActive (<KEYWORD>null</KEYWORD><OPERATOR>,</OPERATOR> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
+                        Connect ()<OPERATOR>;</OPERATOR>
+
+                        <OBJ>scale_check</OBJ><OPERATOR>.</OPERATOR><OO>Toggled</OO> <OPERATOR>+=</OPERATOR> HandleScaleCheckToggled<OPERATOR>;</OPERATOR>
+
+                        LoadPreference (<OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>EXPORT_SMUGMUG_SCALE</OO>)<OPERATOR>;</OPERATOR>
+                        LoadPreference (<OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>EXPORT_SMUGMUG_SIZE</OO>)<OPERATOR>;</OPERATOR>
+                        LoadPreference (<OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>EXPORT_SMUGMUG_ROTATE</OO>)<OPERATOR>;</OPERATOR>
+                        LoadPreference (<OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>EXPORT_SMUGMUG_BROWSER</OO>)<OPERATOR>;</OPERATOR>
+                }
+
+                <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseHandler</OO> rh<OPERATOR>;</OPERATOR>
+
+                <KEYWORD>private</KEYWORD> <TYPE>bool</TYPE> scale<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> <TYPE>int</TYPE> size<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> <TYPE>bool</TYPE> browser<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> <TYPE>bool</TYPE> rotate<OPERATOR>;</OPERATOR>
+<COMMENT>//              private bool meta;</COMMENT>
+                <KEYWORD>private</KEYWORD> <TYPE>bool</TYPE> connect <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+
+                <KEYWORD>private</KEYWORD> <TYPE>long</TYPE> approx_size <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> <TYPE>long</TYPE> sent_bytes <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+
+                IBrowsableItem [] items<OPERATOR>;</OPERATOR>
+                <TYPE>int</TYPE> photo_index<OPERATOR>;</OPERATOR>
+                <OBJ>FSpot</OBJ><OPERATOR>.</OPERATOR><OO>ThreadProgressDialog</OO> progress_dialog<OPERATOR>;</OPERATOR>
+
+                <TYPE>ArrayList</TYPE> accounts<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> SmugMugAccount account<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> Album album<OPERATOR>;</OPERATOR>
+
+                <KEYWORD>private</KEYWORD> <TYPE>string</TYPE> xml_path<OPERATOR>;</OPERATOR>
+
+                <COMMENT>// Dialogs</COMMENT>
+                <KEYWORD>private</KEYWORD> SmugMugAccountDialog gallery_add<OPERATOR>;</OPERATOR>
+                <KEYWORD>private</KEYWORD> SmugMugAddAlbum album_add<OPERATOR>;</OPERATOR>
+
+                <COMMENT>// Widgets</COMMENT>
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>OptionMenu</OO> gallery_optionmenu<OPERATOR>;</OPERATOR>
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>OptionMenu</OO> album_optionmenu<OPERATOR>;</OPERATOR>
+
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Entry</OO> width_entry<OPERATOR>;</OPERATOR>
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Entry</OO> height_entry<OPERATOR>;</OPERATOR>
+
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Label</OO> status_label<OPERATOR>;</OPERATOR>
+
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>CheckButton</OO> browser_check<OPERATOR>;</OPERATOR>
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>CheckButton</OO> scale_check<OPERATOR>;</OPERATOR>
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>CheckButton</OO> rotate_check<OPERATOR>;</OPERATOR>
+
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>SpinButton</OO> size_spin<OPERATOR>;</OPERATOR>
+
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Button</OO> album_button<OPERATOR>;</OPERATOR>
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Button</OO> add_button<OPERATOR>;</OPERATOR>
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Button</OO> edit_button<OPERATOR>;</OPERATOR>
+
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Button</OO> ok_button<OPERATOR>;</OPERATOR>
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Button</OO> cancel_button<OPERATOR>;</OPERATOR>
+
+                [<OBJ>Glade</OBJ><OPERATOR>.</OPERATOR><OO>Widget</OO>] <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ScrolledWindow</OO> thumb_scrolledwindow<OPERATOR>;</OPERATOR>
+
+                <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Threading</OO><OPERATOR>.</OPERATOR><OO>Thread</OO> command_thread<OPERATOR>;</OPERATOR>
+
+
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> HandleResponse (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseArgs</OO> args)
+                {
+                        <KEYWORD>if</KEYWORD> (<OBJ>args</OBJ><OPERATOR>.</OPERATOR><OO>ResponseId</OO> <OPERATOR>!=</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>ResponseType</OO><OPERATOR>.</OPERATOR><OO>Ok</OO>) {
+                                <OBJ>Dialog</OBJ><OPERATOR>.</OPERATOR><OO>Destroy</OO> ()<OPERATOR>;</OPERATOR>
+                                <KEYWORD>return</KEYWORD><OPERATOR>;</OPERATOR>
+                        }
+
+                        <KEYWORD>if</KEYWORD> (scale_check <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>) {
+                                scale <OPERATOR>=</OPERATOR> <OBJ>scale_check</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO><OPERATOR>;</OPERATOR>
+                                size <OPERATOR>=</OPERATOR> <OBJ>size_spin</OBJ><OPERATOR>.</OPERATOR><OO>ValueAsInt</OO><OPERATOR>;</OPERATOR>
+                        } <KEYWORD>else</KEYWORD>
+                                scale <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+
+                        browser <OPERATOR>=</OPERATOR> <OBJ>browser_check</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO><OPERATOR>;</OPERATOR>
+                        rotate <OPERATOR>=</OPERATOR> <OBJ>rotate_check</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO><OPERATOR>;</OPERATOR>
+<COMMENT>//                      meta = meta_check.Active;</COMMENT>
+
+                        <KEYWORD>if</KEYWORD> (account <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>) {
+                                <COMMENT>//System.Console.WriteLine ("history = {0}", album_optionmenu.History);</COMMENT>
+                                album <OPERATOR>=</OPERATOR> (Album) <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>SmugMug</OO><OPERATOR>.</OPERATOR><OO>GetAlbums</OO>() [<OBJ>Math</OBJ><OPERATOR>.</OPERATOR><OO>Max</OO> (<NUMERIC>0</NUMERIC><OPERATOR>,</OPERATOR> <OBJ>album_optionmenu</OBJ><OPERATOR>.</OPERATOR><OO>History</OO>)]<OPERATOR>;</OPERATOR>
+                                photo_index <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+
+                                <OBJ>Dialog</OBJ><OPERATOR>.</OPERATOR><OO>Destroy</OO> ()<OPERATOR>;</OPERATOR>
+
+                                command_thread <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Threading</OO><OPERATOR>.</OPERATOR><OO>Thread</OO> (<KEYWORD>new</KEYWORD> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Threading</OO><OPERATOR>.</OPERATOR><OO>ThreadStart</OO> (<OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>Upload</OO>))<OPERATOR>;</OPERATOR>
+                                <OBJ>command_thread</OBJ><OPERATOR>.</OPERATOR><OO>Name</OO> <OPERATOR>=</OPERATOR> <OBJ>Mono</OBJ><OPERATOR>.</OPERATOR><OO>Unix</OO><OPERATOR>.</OPERATOR><OO>Catalog</OO><OPERATOR>.</OPERATOR><OO>GetString</OO> (<STRING>"Uploading Pictures"</STRING>)<OPERATOR>;</OPERATOR>
+
+                                progress_dialog <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <OBJ>FSpot</OBJ><OPERATOR>.</OPERATOR><OO>ThreadProgressDialog</OO> (command_thread<OPERATOR>,</OPERATOR> <OBJ>items</OBJ><OPERATOR>.</OPERATOR><OO>Length</OO>)<OPERATOR>;</OPERATOR>
+                                <OBJ>progress_dialog</OBJ><OPERATOR>.</OPERATOR><OO>Start</OO> ()<OPERATOR>;</OPERATOR>
+
+                                <COMMENT>// Save these settings for next time</COMMENT>
+                                <OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>Set</OO> (<OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>EXPORT_SMUGMUG_SCALE</OO><OPERATOR>,</OPERATOR> scale)<OPERATOR>;</OPERATOR>
+                                <OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>Set</OO> (<OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>EXPORT_SMUGMUG_SIZE</OO><OPERATOR>,</OPERATOR> size)<OPERATOR>;</OPERATOR>
+                                <OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>Set</OO> (<OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>EXPORT_SMUGMUG_ROTATE</OO><OPERATOR>,</OPERATOR> rotate)<OPERATOR>;</OPERATOR>
+                                <OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>Set</OO> (<OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>EXPORT_SMUGMUG_BROWSER</OO><OPERATOR>,</OPERATOR> browser)<OPERATOR>;</OPERATOR>
+                        }
+                }
+
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> HandleSizeActive (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> args)
+                {
+                        <OBJ>size_spin</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <OBJ>scale_check</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO><OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> Upload ()
+                {
+                        sent_bytes <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+                        approx_size <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+
+                        <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Uri</OO> album_uri <OPERATOR>=</OPERATOR> <KEYWORD>null</KEYWORD><OPERATOR>;</OPERATOR>
+
+                        <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Console</OO><OPERATOR>.</OPERATOR><OO>WriteLine</OO> (<STRING>"Starting Upload to Smugmug, album {0} - {1}"</STRING><OPERATOR>,</OPERATOR> <OBJ>album</OBJ><OPERATOR>.</OPERATOR><OO>Title</OO><OPERATOR>,</OPERATOR> <OBJ>album</OBJ><OPERATOR>.</OPERATOR><OO>AlbumID</OO>)<OPERATOR>;</OPERATOR>
+
+                        FilterSet filters <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> FilterSet ()<OPERATOR>;</OPERATOR>
+                        <OBJ>filters</OBJ><OPERATOR>.</OPERATOR><OO>Add</OO> (<KEYWORD>new</KEYWORD> JpegFilter ())<OPERATOR>;</OPERATOR>
+
+                        <KEYWORD>if</KEYWORD> (scale)
+                                <OBJ>filters</OBJ><OPERATOR>.</OPERATOR><OO>Add</OO> (<KEYWORD>new</KEYWORD> ResizeFilter ((<TYPE>uint</TYPE>)size))<OPERATOR>;</OPERATOR>
+
+                        <KEYWORD>if</KEYWORD> (rotate)
+                                <OBJ>filters</OBJ><OPERATOR>.</OPERATOR><OO>Add</OO> (<KEYWORD>new</KEYWORD> OrientationFilter ())<OPERATOR>;</OPERATOR>
+
+                        <KEYWORD>while</KEYWORD> (photo_index <OPERATOR>&lt;</OPERATOR> <OBJ>items</OBJ><OPERATOR>.</OPERATOR><OO>Length</OO>) {
+                                <KEYWORD>try</KEYWORD> {
+                                        IBrowsableItem item <OPERATOR>=</OPERATOR> items[photo_index]<OPERATOR>;</OPERATOR>
+
+                                        <TYPE>FileInfo</TYPE> file_info<OPERATOR>;</OPERATOR>
+                                        <OBJ>Console</OBJ><OPERATOR>.</OPERATOR><OO>WriteLine</OO> (<STRING>"uploading {0}"</STRING><OPERATOR>,</OPERATOR> photo_index)<OPERATOR>;</OPERATOR>
+
+                                        <OBJ>progress_dialog</OBJ><OPERATOR>.</OPERATOR><OO>Message</OO> <OPERATOR>=</OPERATOR> <OBJ>String</OBJ><OPERATOR>.</OPERATOR><OO>Format</OO> (<OBJ>Catalog</OBJ><OPERATOR>.</OPERATOR><OO>GetString</OO> (<STRING>"Uploading picture <ESC>\"</ESC>{0}<ESC>\"</ESC> ({1} of {2})"</STRING>)<OPERATOR>,</OPERATOR>
+                                                                                 <OBJ>item</OBJ><OPERATOR>.</OPERATOR><OO>Name</OO><OPERATOR>,</OPERATOR> photo_index<OPERATOR>+</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>,</OPERATOR> <OBJ>items</OBJ><OPERATOR>.</OPERATOR><OO>Length</OO>)<OPERATOR>;</OPERATOR>
+                                        <OBJ>progress_dialog</OBJ><OPERATOR>.</OPERATOR><OO>ProgressText</OO> <OPERATOR>=</OPERATOR> <OBJ>string</OBJ><OPERATOR>.</OPERATOR><OO>Empty</OO><OPERATOR>;</OPERATOR>
+                                        <OBJ>progress_dialog</OBJ><OPERATOR>.</OPERATOR><OO>Fraction</OO> <OPERATOR>=</OPERATOR> ((photo_index) <OPERATOR>/</OPERATOR> (<TYPE>double</TYPE>) <OBJ>items</OBJ><OPERATOR>.</OPERATOR><OO>Length</OO>)<OPERATOR>;</OPERATOR>
+                                        photo_index<OPERATOR>++;</OPERATOR>
+
+                                        FilterRequest request <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> FilterRequest (<OBJ>item</OBJ><OPERATOR>.</OPERATOR><OO>DefaultVersionUri</OO>)<OPERATOR>;</OPERATOR>
+
+                                        <OBJ>filters</OBJ><OPERATOR>.</OPERATOR><OO>Convert</OO> (request)<OPERATOR>;</OPERATOR>
+
+                                        file_info <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <TYPE>FileInfo</TYPE> (<OBJ>request</OBJ><OPERATOR>.</OPERATOR><OO>Current</OO><OPERATOR>.</OPERATOR><OO>LocalPath</OO>)<OPERATOR>;</OPERATOR>
+
+                                        <KEYWORD>if</KEYWORD> (approx_size <OPERATOR>==</OPERATOR> <NUMERIC>0</NUMERIC>) <COMMENT>//first image</COMMENT>
+                                                approx_size <OPERATOR>=</OPERATOR> <OBJ>file_info</OBJ><OPERATOR>.</OPERATOR><OO>Length</OO> <OPERATOR>*</OPERATOR> <OBJ>items</OBJ><OPERATOR>.</OPERATOR><OO>Length</OO><OPERATOR>;</OPERATOR>
+                                        <KEYWORD>else</KEYWORD>
+                                                approx_size <OPERATOR>=</OPERATOR> sent_bytes <OPERATOR>*</OPERATOR> <OBJ>items</OBJ><OPERATOR>.</OPERATOR><OO>Length</OO> <OPERATOR>/</OPERATOR> (photo_index <OPERATOR>-</OPERATOR> <NUMERIC>1</NUMERIC>)<OPERATOR>;</OPERATOR>
+
+                                        <TYPE>int</TYPE> image_id <OPERATOR>=</OPERATOR> <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>SmugMug</OO><OPERATOR>.</OPERATOR><OO>Upload</OO> (<OBJ>request</OBJ><OPERATOR>.</OPERATOR><OO>Current</OO><OPERATOR>.</OPERATOR><OO>LocalPath</OO><OPERATOR>,</OPERATOR> <OBJ>album</OBJ><OPERATOR>.</OPERATOR><OO>AlbumID</OO>)<OPERATOR>;</OPERATOR>
+                                        <KEYWORD>if</KEYWORD> (<OBJ>Core</OBJ><OPERATOR>.</OPERATOR><OO>Database</OO> <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>)
+                                                <OBJ>Core</OBJ><OPERATOR>.</OPERATOR><OO>Database</OO><OPERATOR>.</OPERATOR><OO>Exports</OO><OPERATOR>.</OPERATOR><OO>Create</OO> ((item <KEYWORD>as</KEYWORD> Photo)<OPERATOR>.</OPERATOR><OO>Id</OO><OPERATOR>,</OPERATOR>
+                                                                              (item <KEYWORD>as</KEYWORD> Photo)<OPERATOR>.</OPERATOR><OO>DefaultVersionId</OO><OPERATOR>,</OPERATOR>
+                                                                              <OBJ>ExportStore</OBJ><OPERATOR>.</OPERATOR><OO>SmugMugExportType</OO><OPERATOR>,</OPERATOR>
+                                                                              <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>SmugMug</OO><OPERATOR>.</OPERATOR><OO>GetAlbumUrl</OO> (image_id)<OPERATOR>.</OPERATOR><OO>ToString</OO> ())<OPERATOR>;</OPERATOR>
+
+                                        sent_bytes <OPERATOR>+=</OPERATOR> <OBJ>file_info</OBJ><OPERATOR>.</OPERATOR><OO>Length</OO><OPERATOR>;</OPERATOR>
+
+                                        <KEYWORD>if</KEYWORD> (album_uri <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD>)
+                                                album_uri <OPERATOR>=</OPERATOR> <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>SmugMug</OO><OPERATOR>.</OPERATOR><OO>GetAlbumUrl</OO> (image_id)<OPERATOR>;</OPERATOR>
+                                } <KEYWORD>catch</KEYWORD> (<OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Exception</OO> e) {
+                                        <OBJ>progress_dialog</OBJ><OPERATOR>.</OPERATOR><OO>Message</OO> <OPERATOR>=</OPERATOR> <OBJ>String</OBJ><OPERATOR>.</OPERATOR><OO>Format</OO> (<OBJ>Mono</OBJ><OPERATOR>.</OPERATOR><OO>Unix</OO><OPERATOR>.</OPERATOR><OO>Catalog</OO><OPERATOR>.</OPERATOR><OO>GetString</OO> (<STRING>"Error Uploading To Gallery: {0}"</STRING>)<OPERATOR>,</OPERATOR>
+                                                                                 e<OPERATOR>.</OPERATOR><OO>Message</OO>)<OPERATOR>;</OPERATOR>
+                                        <OBJ>progress_dialog</OBJ><OPERATOR>.</OPERATOR><OO>ProgressText</OO> <OPERATOR>=</OPERATOR> <OBJ>Mono</OBJ><OPERATOR>.</OPERATOR><OO>Unix</OO><OPERATOR>.</OPERATOR><OO>Catalog</OO><OPERATOR>.</OPERATOR><OO>GetString</OO> (<STRING>"Error"</STRING>)<OPERATOR>;</OPERATOR>
+                                        <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Console</OO><OPERATOR>.</OPERATOR><OO>WriteLine</OO> (e)<OPERATOR>;</OPERATOR>
+
+                                        <KEYWORD>if</KEYWORD> (<OBJ>progress_dialog</OBJ><OPERATOR>.</OPERATOR><OO>PerformRetrySkip</OO> ())
+                                                photo_index<OPERATOR>--;</OPERATOR>
+                                }
+                        }
+
+                        <OBJ>progress_dialog</OBJ><OPERATOR>.</OPERATOR><OO>Message</OO> <OPERATOR>=</OPERATOR> <OBJ>Catalog</OBJ><OPERATOR>.</OPERATOR><OO>GetString</OO> (<STRING>"Done Sending Photos"</STRING>)<OPERATOR>;</OPERATOR>
+                        <OBJ>progress_dialog</OBJ><OPERATOR>.</OPERATOR><OO>Fraction</OO> <OPERATOR>=</OPERATOR> <NUMERIC>1.0</NUMERIC><OPERATOR>;</OPERATOR>
+                        <OBJ>progress_dialog</OBJ><OPERATOR>.</OPERATOR><OO>ProgressText</OO> <OPERATOR>=</OPERATOR> <OBJ>Mono</OBJ><OPERATOR>.</OPERATOR><OO>Unix</OO><OPERATOR>.</OPERATOR><OO>Catalog</OO><OPERATOR>.</OPERATOR><OO>GetString</OO> (<STRING>"Upload Complete"</STRING>)<OPERATOR>;</OPERATOR>
+                        <OBJ>progress_dialog</OBJ><OPERATOR>.</OPERATOR><OO>ButtonLabel</OO> <OPERATOR>=</OPERATOR> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Stock</OO><OPERATOR>.</OPERATOR><OO>Ok</OO><OPERATOR>;</OPERATOR>
+
+                        <KEYWORD>if</KEYWORD> (browser <OPERATOR>&amp;&amp;</OPERATOR> album_uri <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>) {
+                                <OBJ>GnomeUtil</OBJ><OPERATOR>.</OPERATOR><OO>UrlShow</OO> (<KEYWORD>null</KEYWORD><OPERATOR>,</OPERATOR> <OBJ>album_uri</OBJ><OPERATOR>.</OPERATOR><OO>ToString</OO> ())<OPERATOR>;</OPERATOR>
+                        }
+                }
+
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> HandleScaleCheckToggled (<TYPE>object</TYPE> o<OPERATOR>,</OPERATOR> <TYPE>EventArgs</TYPE> e)
+                {
+                        <OBJ>rotate_check</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <OPERATOR>!</OPERATOR><OBJ>scale_check</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO><OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> PopulateSmugMugOptionMenu (SmugMugAccountManager manager<OPERATOR>,</OPERATOR> SmugMugAccount changed_account)
+                {
+                        <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Menu</OO> menu <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Menu</OO> ()<OPERATOR>;</OPERATOR>
+                        <OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>account</OO> <OPERATOR>=</OPERATOR> changed_account<OPERATOR>;</OPERATOR>
+                        <TYPE>int</TYPE> pos <OPERATOR>=</OPERATOR> <OPERATOR>-</OPERATOR><NUMERIC>1</NUMERIC><OPERATOR>;</OPERATOR>
+
+                        accounts <OPERATOR>=</OPERATOR> <OBJ>manager</OBJ><OPERATOR>.</OPERATOR><OO>GetAccounts</OO> ()<OPERATOR>;</OPERATOR>
+                        <KEYWORD>if</KEYWORD> (accounts <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD> <OPERATOR>||</OPERATOR> <OBJ>accounts</OBJ><OPERATOR>.</OPERATOR><OO>Count</OO> <OPERATOR>==</OPERATOR> <NUMERIC>0</NUMERIC>) {
+                                <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>MenuItem</OO> item <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>MenuItem</OO> (<OBJ>Mono</OBJ><OPERATOR>.</OPERATOR><OO>Unix</OO><OPERATOR>.</OPERATOR><OO>Catalog</OO><OPERATOR>.</OPERATOR><OO>GetString</OO> (<STRING>"(No Gallery)"</STRING>))<OPERATOR>;</OPERATOR>
+                                <OBJ>menu</OBJ><OPERATOR>.</OPERATOR><OO>Append</OO> (item)<OPERATOR>;</OPERATOR>
+                                <OBJ>gallery_optionmenu</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+                                <OBJ>edit_button</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+                        } <KEYWORD>else</KEYWORD> {
+                                <TYPE>int</TYPE> i <OPERATOR>=</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+                                <KEYWORD>foreach</KEYWORD> (SmugMugAccount account <KEYWORD>in</KEYWORD> accounts) {
+                                        <KEYWORD>if</KEYWORD> (account <OPERATOR>==</OPERATOR> changed_account)
+                                                pos <OPERATOR>=</OPERATOR> i<OPERATOR>;</OPERATOR>
+
+                                        <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>MenuItem</OO> item <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>MenuItem</OO> (<OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>Username</OO>)<OPERATOR>;</OPERATOR>
+                                        <OBJ>menu</OBJ><OPERATOR>.</OPERATOR><OO>Append</OO> (item)<OPERATOR>;</OPERATOR>
+                                        i<OPERATOR>++;</OPERATOR>
+                                }
+                                <OBJ>gallery_optionmenu</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD><OPERATOR>;</OPERATOR>
+                                <OBJ>edit_button</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD><OPERATOR>;</OPERATOR>
+                        }
+
+                        <OBJ>menu</OBJ><OPERATOR>.</OPERATOR><OO>ShowAll</OO> ()<OPERATOR>;</OPERATOR>
+                        <OBJ>gallery_optionmenu</OBJ><OPERATOR>.</OPERATOR><OO>Menu</OO> <OPERATOR>=</OPERATOR> menu<OPERATOR>;</OPERATOR>
+                        <OBJ>gallery_optionmenu</OBJ><OPERATOR>.</OPERATOR><OO>SetHistory</OO> ((<TYPE>uint</TYPE>)pos)<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> Connect ()
+                {
+                        Connect (<KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> Connect (SmugMugAccount selected)
+                {
+                        Connect (selected<OPERATOR>,</OPERATOR> <KEYWORD>null</KEYWORD>)<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> Connect (SmugMugAccount selected<OPERATOR>,</OPERATOR> <TYPE>string</TYPE> text)
+                {
+                        <KEYWORD>try</KEYWORD> {
+                                <KEYWORD>if</KEYWORD> (<OBJ>accounts</OBJ><OPERATOR>.</OPERATOR><OO>Count</OO> <OPERATOR>!=</OPERATOR> <NUMERIC>0</NUMERIC> <OPERATOR>&amp;&amp;</OPERATOR> connect) {
+                                        <KEYWORD>if</KEYWORD> (selected <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD>)
+                                                account <OPERATOR>=</OPERATOR> (SmugMugAccount) accounts [<OBJ>gallery_optionmenu</OBJ><OPERATOR>.</OPERATOR><OO>History</OO>]<OPERATOR>;</OPERATOR>
+                                        <KEYWORD>else</KEYWORD>
+                                                account <OPERATOR>=</OPERATOR> selected<OPERATOR>;</OPERATOR>
+
+                                        <KEYWORD>if</KEYWORD> (<OPERATOR>!</OPERATOR><OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>Connected</OO>)
+                                                <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>Connect</OO> ()<OPERATOR>;</OPERATOR>
+
+                                        PopulateAlbumOptionMenu (<OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>SmugMug</OO>)<OPERATOR>;</OPERATOR>
+                                        <OBJ>album_button</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD><OPERATOR>;</OPERATOR>
+                                }
+                        } <KEYWORD>catch</KEYWORD> (<OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Exception</OO>) {
+                                <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Console</OO><OPERATOR>.</OPERATOR><OO>WriteLine</OO> (<STRING>"Can not connect to SmugMug. Bad username ? password ? network connection ?"</STRING>)<OPERATOR>;</OPERATOR>
+                                <COMMENT>//System.Console.WriteLine ("{0}",ex);</COMMENT>
+                                <KEYWORD>if</KEYWORD> (selected <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>)
+                                        account <OPERATOR>=</OPERATOR> selected<OPERATOR>;</OPERATOR>
+
+                                PopulateAlbumOptionMenu (<OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>SmugMug</OO>)<OPERATOR>;</OPERATOR>
+
+                                <OBJ>status_label</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO> <OPERATOR>=</OPERATOR> <STRING>""</STRING><OPERATOR>;</OPERATOR>
+                                <OBJ>album_button</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+
+                                <KEYWORD>new</KEYWORD> SmugMugAccountDialog (<OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>Dialog</OO><OPERATOR>,</OPERATOR> account)<OPERATOR>;</OPERATOR>
+                        }
+                }
+
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> HandleAccountSelected (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
+                {
+                        Connect ()<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> HandleAlbumAdded (<TYPE>string</TYPE> title) {
+                        SmugMugAccount account <OPERATOR>=</OPERATOR> (SmugMugAccount) accounts [<OBJ>gallery_optionmenu</OBJ><OPERATOR>.</OPERATOR><OO>History</OO>]<OPERATOR>;</OPERATOR>
+                        PopulateAlbumOptionMenu (<OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>SmugMug</OO>)<OPERATOR>;</OPERATOR>
+
+                        <COMMENT>// make the newly created album selected</COMMENT>
+                        Album[] albums <OPERATOR>=</OPERATOR> <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>SmugMug</OO><OPERATOR>.</OPERATOR><OO>GetAlbums</OO>()<OPERATOR>;</OPERATOR>
+                        <KEYWORD>for</KEYWORD> (<TYPE>int</TYPE> i<OPERATOR>=</OPERATOR><NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR> i <OPERATOR>&lt;</OPERATOR> <OBJ>albums</OBJ><OPERATOR>.</OPERATOR><OO>Length</OO><OPERATOR>;</OPERATOR> i<OPERATOR>++</OPERATOR>) {
+                                <KEYWORD>if</KEYWORD> (((Album)albums[i])<OPERATOR>.</OPERATOR><OO>Title</OO> <OPERATOR>==</OPERATOR> title) {
+                                        <OBJ>album_optionmenu</OBJ><OPERATOR>.</OPERATOR><OO>SetHistory</OO>((<TYPE>uint</TYPE>)i)<OPERATOR>;</OPERATOR>
+                                }
+                        }
+                }
+
+                <KEYWORD>private</KEYWORD> <TYPE>void</TYPE> PopulateAlbumOptionMenu (SmugMugApi smugmug)
+                {
+                        Album[] albums <OPERATOR>=</OPERATOR> <KEYWORD>null</KEYWORD><OPERATOR>;</OPERATOR>
+                        <KEYWORD>if</KEYWORD> (smugmug <OPERATOR>!=</OPERATOR> <KEYWORD>null</KEYWORD>) {
+                                <KEYWORD>try</KEYWORD> {
+                                        albums <OPERATOR>=</OPERATOR> <OBJ>smugmug</OBJ><OPERATOR>.</OPERATOR><OO>GetAlbums</OO>()<OPERATOR>;</OPERATOR>
+                                } <KEYWORD>catch</KEYWORD> (<TYPE>Exception</TYPE>) {
+                                        <OBJ>Console</OBJ><OPERATOR>.</OPERATOR><OO>WriteLine</OO>(<STRING>"Can't get the albums"</STRING>)<OPERATOR>;</OPERATOR>
+                                        smugmug <OPERATOR>=</OPERATOR> <KEYWORD>null</KEYWORD><OPERATOR>;</OPERATOR>
+                                }
+                        }
+
+                        <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Menu</OO> menu <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Menu</OO> ()<OPERATOR>;</OPERATOR>
+
+                        <TYPE>bool</TYPE> disconnected <OPERATOR>=</OPERATOR> smugmug <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD> <OPERATOR>||</OPERATOR> <OPERATOR>!</OPERATOR><OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>Connected</OO> <OPERATOR>||</OPERATOR> albums <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD><OPERATOR>;</OPERATOR>
+
+                        <KEYWORD>if</KEYWORD> (disconnected <OPERATOR>||</OPERATOR> <OBJ>albums</OBJ><OPERATOR>.</OPERATOR><OO>Length</OO> <OPERATOR>==</OPERATOR> <NUMERIC>0</NUMERIC>) {
+                                <TYPE>string</TYPE> msg <OPERATOR>=</OPERATOR> disconnected <OPERATOR>?</OPERATOR> <OBJ>Mono</OBJ><OPERATOR>.</OPERATOR><OO>Unix</OO><OPERATOR>.</OPERATOR><OO>Catalog</OO><OPERATOR>.</OPERATOR><OO>GetString</OO> (<STRING>"(Not Connected)"</STRING>)
+                                        <OPERATOR>:</OPERATOR> <OBJ>Mono</OBJ><OPERATOR>.</OPERATOR><OO>Unix</OO><OPERATOR>.</OPERATOR><OO>Catalog</OO><OPERATOR>.</OPERATOR><OO>GetString</OO> (<STRING>"(No Albums)"</STRING>)<OPERATOR>;</OPERATOR>
+
+                                <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>MenuItem</OO> item <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>MenuItem</OO> (msg)<OPERATOR>;</OPERATOR>
+                                <OBJ>menu</OBJ><OPERATOR>.</OPERATOR><OO>Append</OO> (item)<OPERATOR>;</OPERATOR>
+
+                                <OBJ>ok_button</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+                                <OBJ>album_optionmenu</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+                                <OBJ>album_button</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+
+                                <KEYWORD>if</KEYWORD> (disconnected)
+                                        <OBJ>album_button</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+                        } <KEYWORD>else</KEYWORD> {
+                                <KEYWORD>foreach</KEYWORD> (Album album <KEYWORD>in</KEYWORD> albums) {
+                                        <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO><OPERATOR>.</OPERATOR><OO>StringBuilder</OO> label_builder <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>Text</OO><OPERATOR>.</OPERATOR><OO>StringBuilder</OO> ()<OPERATOR>;</OPERATOR>
+
+                                        <OBJ>label_builder</OBJ><OPERATOR>.</OPERATOR><OO>Append</OO> (<OBJ>album</OBJ><OPERATOR>.</OPERATOR><OO>Title</OO>)<OPERATOR>;</OPERATOR>
+
+                                        <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>MenuItem</OO> item <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> <OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>MenuItem</OO> (<OBJ>label_builder</OBJ><OPERATOR>.</OPERATOR><OO>ToString</OO> ())<OPERATOR>;</OPERATOR>
+                                        ((<OBJ>Gtk</OBJ><OPERATOR>.</OPERATOR><OO>Label</OO>)<OBJ>item</OBJ><OPERATOR>.</OPERATOR><OO>Child</OO>)<OPERATOR>.</OPERATOR><OO>UseUnderline</OO> <OPERATOR>=</OPERATOR> <KEYWORD>false</KEYWORD><OPERATOR>;</OPERATOR>
+                                        <OBJ>menu</OBJ><OPERATOR>.</OPERATOR><OO>Append</OO> (item)<OPERATOR>;</OPERATOR>
+                                }
+
+                                <OBJ>ok_button</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <OBJ>items</OBJ><OPERATOR>.</OPERATOR><OO>Length</OO> <OPERATOR>&gt;</OPERATOR> <NUMERIC>0</NUMERIC><OPERATOR>;</OPERATOR>
+                                <OBJ>album_optionmenu</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD><OPERATOR>;</OPERATOR>
+                                <OBJ>album_button</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <KEYWORD>true</KEYWORD><OPERATOR>;</OPERATOR>
+                        }
+
+                        <OBJ>menu</OBJ><OPERATOR>.</OPERATOR><OO>ShowAll</OO> ()<OPERATOR>;</OPERATOR>
+                        <OBJ>album_optionmenu</OBJ><OPERATOR>.</OPERATOR><OO>Menu</OO> <OPERATOR>=</OPERATOR> menu<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> HandleAddGallery (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
+                {
+                        gallery_add <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> SmugMugAccountDialog (<OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>Dialog</OO>)<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> HandleEditGallery (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
+                {
+                        gallery_add <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> SmugMugAccountDialog (<OBJ>this</OBJ><OPERATOR>.</OPERATOR><OO>Dialog</OO><OPERATOR>,</OPERATOR> account)<OPERATOR>;</OPERATOR>
+                }
+
+                <KEYWORD>public</KEYWORD> <TYPE>void</TYPE> HandleAddAlbum (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
+                {
+                        <KEYWORD>if</KEYWORD> (account <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD>)
+                                <KEYWORD>throw</KEYWORD> <KEYWORD>new</KEYWORD> <TYPE>Exception</TYPE> (<OBJ>Catalog</OBJ><OPERATOR>.</OPERATOR><OO>GetString</OO> (<STRING>"No account selected"</STRING>))<OPERATOR>;</OPERATOR>
+
+                        album_add <OPERATOR>=</OPERATOR> <KEYWORD>new</KEYWORD> SmugMugAddAlbum (<KEYWORD>this</KEYWORD><OPERATOR>,</OPERATOR> <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>SmugMug</OO>)<OPERATOR>;</OPERATOR>
+                }
+
+                <TYPE>void</TYPE> LoadPreference (<TYPE>string</TYPE> key)
+                {
+                        <TYPE>object</TYPE> val <OPERATOR>=</OPERATOR> <OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>Get</OO> (key)<OPERATOR>;</OPERATOR>
+
+                        <KEYWORD>if</KEYWORD> (val <OPERATOR>==</OPERATOR> <KEYWORD>null</KEYWORD>)
+                                <KEYWORD>return</KEYWORD><OPERATOR>;</OPERATOR>
+
+                        <COMMENT>//System.Console.WriteLine ("Setting {0} to {1}", key, val);</COMMENT>
+
+                        <KEYWORD>switch</KEYWORD> (key) {
+                        <KEYWORD>case</KEYWORD> <OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>EXPORT_SMUGMUG_SCALE</OO><OPERATOR>:</OPERATOR>
+                                <KEYWORD>if</KEYWORD> (<OBJ>scale_check</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO> <OPERATOR>!=</OPERATOR> (<TYPE>bool</TYPE>) val) {
+                                        <OBJ>scale_check</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO> <OPERATOR>=</OPERATOR> (<TYPE>bool</TYPE>) val<OPERATOR>;</OPERATOR>
+                                        <OBJ>rotate_check</OBJ><OPERATOR>.</OPERATOR><OO>Sensitive</OO> <OPERATOR>=</OPERATOR> <OPERATOR>!</OPERATOR>(<TYPE>bool</TYPE>) val<OPERATOR>;</OPERATOR>
+                                }
+                                <KEYWORD>break</KEYWORD><OPERATOR>;</OPERATOR>
+
+                        <KEYWORD>case</KEYWORD> <OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>EXPORT_SMUGMUG_SIZE</OO><OPERATOR>:</OPERATOR>
+                                <OBJ>size_spin</OBJ><OPERATOR>.</OPERATOR><OO>Value</OO> <OPERATOR>=</OPERATOR> (<TYPE>double</TYPE>) (<TYPE>int</TYPE>) val<OPERATOR>;</OPERATOR>
+                                <KEYWORD>break</KEYWORD><OPERATOR>;</OPERATOR>
+
+                        <KEYWORD>case</KEYWORD> <OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>EXPORT_SMUGMUG_BROWSER</OO><OPERATOR>:</OPERATOR>
+                                <KEYWORD>if</KEYWORD> (<OBJ>browser_check</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO> <OPERATOR>!=</OPERATOR> (<TYPE>bool</TYPE>) val)
+                                        <OBJ>browser_check</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO> <OPERATOR>=</OPERATOR> (<TYPE>bool</TYPE>) val<OPERATOR>;</OPERATOR>
+                                <KEYWORD>break</KEYWORD><OPERATOR>;</OPERATOR>
+
+                        <KEYWORD>case</KEYWORD> <OBJ>Preferences</OBJ><OPERATOR>.</OPERATOR><OO>EXPORT_SMUGMUG_ROTATE</OO><OPERATOR>:</OPERATOR>
+                                <KEYWORD>if</KEYWORD> (<OBJ>rotate_check</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO> <OPERATOR>!=</OPERATOR> (<TYPE>bool</TYPE>) val)
+                                        <OBJ>rotate_check</OBJ><OPERATOR>.</OPERATOR><OO>Active</OO> <OPERATOR>=</OPERATOR> (<TYPE>bool</TYPE>) val<OPERATOR>;</OPERATOR>
+                                <KEYWORD>break</KEYWORD><OPERATOR>;</OPERATOR>
+                        }
+                }
+
+                <KEYWORD>protected</KEYWORD> <TYPE>void</TYPE> HandleCloseEvent (<TYPE>object</TYPE> sender<OPERATOR>,</OPERATOR> <OBJ>System</OBJ><OPERATOR>.</OPERATOR><OO>EventArgs</OO> args)
+                {
+                        <OBJ>account</OBJ><OPERATOR>.</OPERATOR><OO>SmugMug</OO><OPERATOR>.</OPERATOR><OO>Logout</OO> ()<OPERATOR>;</OPERATOR>
+                }
+        }
+}

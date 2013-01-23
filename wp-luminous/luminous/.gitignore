@@ -1,0 +1,12 @@
+*~
+*.swp
+*.kate-swp
+/cache/
+tests/formatters/filedump/
+.directory
+
+dist/
+docs/html/
+tests/log
+
+style/.sass-cache
