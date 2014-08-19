@@ -37,9 +37,9 @@ define('LUMINOUS_VERSION', 'master');
  *
  * In fact, it is used by (at least) the diff scanner, which uses its
  * scanner table.
- * 
+ *
  * @internal
- * 
+ *
  */
 class _Luminous {
 
@@ -50,11 +50,11 @@ class _Luminous {
   public $scanners; ///< the scanner table
 
   public $cache = null;
-  
+
   /**
    * The language is passed to the formatter which may choose to do something
    * interesting with it. If you use the scanners table this can be figured out
-   * automatically, but if you pass in your own scanner, you will need to 
+   * automatically, but if you pass in your own scanner, you will need to
    * give a language name if you want the formatter to consider it.
    */
   public $language = null;
@@ -93,11 +93,14 @@ class _Luminous {
     } elseif($fmt === 'latex') {
       require_once($fmt_path . 'latexformatter.class.php');
       $formatter = new LuminousFormatterLatex();
+    } elseif($fmt === 'ansi') {
+      require_once($fmt_path . 'ansiformatter.class.php');
+      $formatter = new LuminousFormatterAnsi();
     } elseif($fmt ===  null || $fmt === 'none') {
       require_once($fmt_path . 'identityformatter.class.php');
       $formatter = new LuminousIdentityFormatter();
     }
-    
+
     if ($formatter === null) {
       throw new Exception('Unknown formatter: ' . $this->settings->format);
       return null;
@@ -149,7 +152,7 @@ class _Luminous {
   }
 
 
-  
+
   /**
    * The real highlighting function
    * @throw InvalidArgumentException if $scanner is not either a string or a
@@ -170,7 +173,7 @@ class _Luminous {
     $this->cache = null;
     if (!is_string($source)) throw new InvalidArgumentException('Non-string '
         . 'supplied for $source');
-    
+
     if (!($scanner instanceof LuminousScanner)) {
       if (!is_string($scanner)) throw new InvalidArgumentException('Non-string
         or LuminousScanner instance supplied for $scanner');
@@ -231,7 +234,7 @@ abstract class luminous {
 
   /**
    * @brief Highlights a string according to the current settings
-   * 
+   *
    * @param $scanner The scanner to use, this can either be a langauge code,
    *    or it can be an instance of LuminousScanner.
    * @param $source The source string
@@ -280,13 +283,13 @@ abstract class luminous {
 
   /**
    * @brief Highlights a file according to the current setings.
-   * 
+   *
    * @param $scanner The scanner to use, this can either be a langauge code,
    *    or it can be an instance of LuminousScanner.
    * @param $file the source string
    * @param $cache Whether or not to use the cache
    * @return the highlighted source code.
-   * 
+   *
    * To specify different output formats or other options, see set().
    */
   static function highlight_file($scanner, $file, $cache_or_settings=null) {
@@ -308,11 +311,11 @@ abstract class luminous {
 
   /**
    * @brief Registers a scanner
-   * 
+   *
    * Registers a scanner with Luminous's scanner table. Utilising this
    * function means that Luminous will handle instantiation and inclusion of
    * the scanner's source file in a lazy-manner.
-   * 
+   *
    * @param $language_code A string or array of strings designating the
    *    aliases by which this scanner may be accessed
    * @param $classname The class name of the scanner, as string. If you
@@ -331,7 +334,7 @@ abstract class luminous {
       $luminous_->scanners->AddScanner($language_code, $classname,
         $readable_language, $path, $dependencies);
   }
-  
+
   /**
    * @brief Get the full filesystem path to Luminous
    * @return what Luminous thinks its location is on the filesystem
@@ -343,7 +346,7 @@ abstract class luminous {
 
   /**
    * @brief Gets a list of installed themes
-   * 
+   *
    * @return the list of theme files present in style/.
    * Each theme will simply be a filename, and will end in .css, and will not
    * have any directory prefix.
@@ -374,13 +377,13 @@ abstract class luminous {
   static function theme_exists($theme) {
     return in_array($theme, self::themes());
   }
-  
+
   /**
    * @brief Reads a CSS theme file
    * Gets the CSS-string content of a theme file.
    * Use this function for reading themes as it involves security
    * checks against reading arbitrary files
-   * 
+   *
    * @param $theme The name of the theme to retrieve, which may or may not
    *    include the .css suffix.
    * @return the content of a theme; this is the actual CSS text.
@@ -388,14 +391,14 @@ abstract class luminous {
    */
   static function theme($theme) {
     if (!preg_match('/\.css$/i', $theme)) $theme .= '.css';
-    if (self::theme_exists($theme)) 
+    if (self::theme_exists($theme))
       return file_get_contents(self::root() . "/style/" . $theme);
     else
       throw new Exception('No such theme file: ' . $theme);
   }
 
 
-  
+
   /**
    * @brief Gets a setting's value
    * @param $option The name of the setting (corresponds to an attribute name
@@ -428,26 +431,26 @@ abstract class luminous {
    *
    * Options are stored in LuminousOptions, which provides documentation of
    * each option.
-   * 
+   *
    * @note as of 0.7 this is a thin wrapper around LuminousOptions::set()
-   * 
+   *
    * @see LuminousOptions::set
    */
   static function set($option, $value=null) {
     global $luminous_;
     $luminous_->settings->set($option, $value);
-  }  
+  }
 
   /**
    * @brief Gets a list of registered scanners
-   * 
+   *
    * @return a list of scanners currently registered. The list is in the
    * format:
-   * 
+   *
    *    language_name => codes,
-   * 
-   * where language_name is a string, and codes is an array of strings. 
-   * 
+   *
+   * where language_name is a string, and codes is an array of strings.
+   *
    * The array is sorted alphabetically by key.
    */
   static function scanners() {
@@ -459,7 +462,7 @@ abstract class luminous {
 
   /**
    * @brief Gets a formatter instance
-   * 
+   *
    * @return an instance of a LuminousFormatter according to the current
    * format setting
    *
@@ -489,13 +492,13 @@ abstract class luminous {
    * @brief Attempts to guess the language of a piece of source code
    * @param $src The source code whose language is to be guessed
    * @param $confidence The desired confidence level: if this is 0.05 but the
-   *  best guess has a confidence of 0.04, then $default is returned. Note 
+   *  best guess has a confidence of 0.04, then $default is returned. Note
    *  that the confidence level returned by scanners is quite arbitrary, so
-   *  don't set this to '1' thinking that'll give you better results. 
+   *  don't set this to '1' thinking that'll give you better results.
    *  A realistic confidence is likely to be quite low, because a scanner will
    *  only return 1 if it's able to pick out a shebang (#!) line or something
-   *  else definitive. If there exists no such identifier, a 'strong' 
-   *  confidence which is right most of the time might be as low as 0.1. 
+   *  else definitive. If there exists no such identifier, a 'strong'
+   *  confidence which is right most of the time might be as low as 0.1.
    *  Therefore it is recommended to keep this between 0.01 and 0.10.
    * @param $default The default name to return in the event that no scanner
    * thinks this source belongs to them (at the desired confidence).
@@ -506,9 +509,9 @@ abstract class luminous {
    */
   static function guess_language($src, $confidence=0.05, $default = 'plain') {
     $guess = self::guess_language_full($src);
-    if ($guess[0]['p'] >= $confidence) 
+    if ($guess[0]['p'] >= $confidence)
       return $guess[0]['codes'][0];
-    else 
+    else
       return $default;
   }
 
@@ -517,12 +520,12 @@ abstract class luminous {
    * @param $src The source code whose language is to be guessed
    * @return An array - the array is ordered by probability, with the most
    *    probable language coming first in the array.
-   *    Each array element is an array which represents a language (scanner), 
+   *    Each array element is an array which represents a language (scanner),
    *    and has the keys:
    *    \li \c 'language' => Human-readable language description,
    *    \li \c 'codes' => valid codes for the language (array),
    *    \li \c 'p' => the probability (between 0.0 and 1.0 inclusive),
-   * 
+   *
    * note that \c 'language' and \c 'codes' are the key => value pair from
    * luminous::scanners()
    *
@@ -536,13 +539,13 @@ abstract class luminous {
    * $guesses = luminous::guess_language($src);
    * $output = luminous::highlight($guesses[0]['codes'][0], $src);
    * @endcode
-   * 
-   * @see luminous::guess_language 
+   *
+   * @see luminous::guess_language
    */
   static function guess_language_full($src) {
     global $luminous_;
     // first we're going to make an 'info' array for the source, which
-    // precomputes some frequently useful things, like how many lines it 
+    // precomputes some frequently useful things, like how many lines it
     // has, etc. It prevents scanners from redundantly figuring these things
     // out themselves
     $lines = preg_split("/\r\n|[\r\n]/", $src);
@@ -588,13 +591,13 @@ abstract class luminous {
   static function head_html() {
     global $luminous_;
     $theme = self::setting('theme');
-    $relative_root = self::setting('relative-root'); 
+    $relative_root = self::setting('relative-root');
     $js = self::setting('include-javascript');
     $jquery = self::setting('include-jquery');
-    
+
     if (!preg_match('/\.css$/i', $theme)) $theme .= '.css';
     if (!self::theme_exists($theme)) $theme = 'luminous_light.css';
-    
+
     if ($relative_root === null) {
       $relative_root = str_replace($_SERVER['DOCUMENT_ROOT'], '/',
         dirname(__FILE__));
@@ -622,5 +625,5 @@ abstract class luminous {
   }
 }
 
-/// @endcond 
+/// @endcond
 // ends user

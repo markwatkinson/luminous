@@ -19,15 +19,15 @@
  * replaced with dashed in the call.
  */
 class LuminousOptions {
-    
+
   /**
    * @brief Whether to use the built-in cache
    */
   private $cache = true;
-  
+
   /**
    * @brief Maximum age of cache files in seconds
-   * 
+   *
    * Cache files which have not been read for this length of time will be
    * removed from the file system. The file's 'mtime' is used to calculate
    * when it was last used, and a cache hit triggers a 'touch'
@@ -59,8 +59,8 @@ class LuminousOptions {
    * of the first line
    */
   private $start_line = 1;
-  
-  
+
+
   /**
     * @brief Highlighting of lines
     *
@@ -182,13 +182,13 @@ class LuminousOptions {
 
   private $verbose = true;
 
-  
+
   public function LuminousOptions($opts=null) {
     if (is_array($opts)) {
       $this->set($opts);
     }
   }
-  
+
   public function set($nameOrArray, $value=null) {
     $array = $nameOrArray;
     if (!is_array($array)) {
@@ -200,7 +200,7 @@ class LuminousOptions {
       $this->__set($option, $value);
     }
   }
-  
+
 
   private static function check_type($value, $type, $nullable=false) {
     if ($nullable && $value === null) return true;
@@ -249,17 +249,17 @@ class LuminousOptions {
      elseif($name === 'html_strict') {
       if (self::check_type($value, 'bool')) $this->$name = $value;
     }
-    elseif($name === 'include_javascript' || $name === 'include_jquery') 
+    elseif($name === 'include_javascript' || $name === 'include_jquery')
       $this->set_bool($name, $value);
-    elseif($name === 'line_numbers') 
+    elseif($name === 'line_numbers')
       $this->set_bool($name, $value);
-    elseif($name === 'start_line') 
+    elseif($name === 'start_line')
       $this->set_start_line($value);
     elseif($name === 'highlight_lines') {
       if (self::check_type($value, 'array'))
         $this->highlight_lines = $value;
     }
-    elseif($name === 'max_height') 
+    elseif($name === 'max_height')
       $this->set_height($value);
     elseif($name === 'relative_root') {
       if (self::check_type($value, 'string', true)) $this->$name = $value;
@@ -290,7 +290,7 @@ class LuminousOptions {
       $this->$key = $value;
     }
   }
-  
+
   private function set_start_line($value) {
       if (is_numeric($value) && $value > 0) {
           $this->start_line = $value;
@@ -305,7 +305,7 @@ class LuminousOptions {
     if($is_obj || self::check_type($value, 'string', true)) {
       // validate the string is a known type
       if (!$is_obj && !in_array($value, array('html', 'html-full',
-        'html-inline', 'latex', 'none', null), true)) {
+        'html-inline', 'latex', 'ansi', 'none', null), true)) {
         throw new Exception('Invalid formatter: ' . $value);
       }
       else {
@@ -328,7 +328,7 @@ class LuminousOptions {
   private function set_height($value) {
     // height should be either a number or a numeric string with some units at
     // the end
-    if (is_numeric($value) 
+    if (is_numeric($value)
       || (is_string($value) && preg_match('/^\d+/', $value))
     ) {
       $this->max_height = $value;
