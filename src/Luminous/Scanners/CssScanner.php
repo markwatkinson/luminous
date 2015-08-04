@@ -6,10 +6,10 @@ use Luminous\Core\TokenPresets;
 use Luminous\Core\Scanners\EmbeddedWebScriptScanner;
 
 /**
-  * CSS scanner.
-  * TODO: it would be nice if we could extend this somehow to handle
-  * CSS dialects which allow rule nesting.
-  */
+ * CSS scanner.
+ * TODO: it would be nice if we could extend this somehow to handle
+ * CSS dialects which allow rule nesting.
+ */
 class CssScanner extends EmbeddedWebScriptScanner
 {
     private $expecting;

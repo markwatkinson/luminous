@@ -1,12 +1,10 @@
 <?php
 
-/**
- * @cond CORE
- */
+/** @cond CORE */
 
 namespace Luminous\Core;
 
-/*
+/**
  * @brief A collection of useful common filters.
  *
  * Filters are either stream filters or individual filters.
@@ -14,7 +12,6 @@ namespace Luminous\Core;
  * token stream. Individual filters operate on individual tokens (bound by type),
  * and return the new token. Any publicly available member here is one of those,
  * therefore the return and param documents are omitted.
- *
  */
 class Filters
 {
@@ -338,5 +335,4 @@ class Filters
     }
 }
 
-/// @endcond
-// end CORE
+/** @endcond */

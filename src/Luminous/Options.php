@@ -94,14 +94,14 @@ class Options
      * @brief Output format
      *
      * Chooses which output format to use. Current valid settings are:
-     * \li 'html' - standard HTML element, contained in a \<div\> with class 'luminous',
+     * @li 'html' - standard HTML element, contained in a \<div\> with class 'luminous',
      *    CSS is not included and must be included on the page separately
      *    (probably with luminous::head_html())
-     * \li 'html-full' - A complete HTML document. CSS is included.
-     * \li 'html-inline' - Very similar to 'html' but geared towards inline display.
+     * @li 'html-full' - A complete HTML document. CSS is included.
+     * @li 'html-inline' - Very similar to 'html' but geared towards inline display.
      *    Probably not very useful.
-     * \li 'latex' - A full LaTeX document
-     * \li 'none' or \c NULL - No formatter. Internal XML format is returned.
+     * @li 'latex' - A full LaTeX document
+     * @li 'none' or \c NULL - No formatter. Internal XML format is returned.
      *    You probably don't want this.
      */
     private $format = 'html';
@@ -362,4 +362,4 @@ class Options
         }
     }
 }
-/// @endcond
+/** @endcond */

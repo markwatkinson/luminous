@@ -1,8 +1,6 @@
 <?php
 
-/**
- * @cond CORE
- */
+/** @cond CORE */
 
 namespace Luminous\Core;
 
@@ -131,4 +129,4 @@ class Utils
     }
 }
 
-/// @endcond
+/** @endcond */

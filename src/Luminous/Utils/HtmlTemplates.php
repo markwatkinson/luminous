@@ -1,18 +1,20 @@
 <?php
 
-/// @cond ALL
+/** @cond ALL */
 
 namespace Luminous\Utils;
 
 /**
-  * Collection of templates and templating utilities
-  */
+ * Collection of templates and templating utilities
+ */
 class HtmlTemplates
 {
     // NOTE Don't worry about whitespace in the templates - it gets stripped from the innerHTML,
     // so the <pre>s aren't affected. Make it readable :)
 
-    /// Normal container
+    /**
+     * Normal container
+     */
     const CONTAINER_TEMPLATE = '
         <div
             class="luminous"
@@ -22,7 +24,9 @@ class HtmlTemplates
             {subelement}
         </div>';
 
-    /// Inline code container
+    /**
+     * Inline code container
+     */
     const INLINE_TEMPLATE = '
         <div
             class="luminous inline"
@@ -31,7 +35,9 @@ class HtmlTemplates
             {subelement}
         </div>';
 
-    /// line number-less
+    /**
+     * line number-less
+     */
     const NUMBERLESS_TEMPLATE = '
         <pre
             class="code"
@@ -39,7 +45,9 @@ class HtmlTemplates
             {code}
         </pre>';
 
-    /// line numbered
+    /**
+     * line numbered
+     */
     // NOTE: there's a good reason we use tables here and that's because
     // nothing else works reliably.
     const NUMBERED_TEMPLATE = '
@@ -75,16 +83,16 @@ class HtmlTemplates
     }
 
     /**
-      * Formats a string with a given set of values
-      * The format syntax uses {xyz} as a placeholder, which will be
-      * substituted from the 'xyz' key from $variables
-      *
-      * @param $template The template string
-      * @param $variables An associative (keyed) array of values to be substituted
-      * @param $strip_whitespace_from_template If @c TRUE, the template's whitespace is removed.
-      *   This allows templates to be written to be easeier to read, without having to worry about
-      *   the pre element inherting any unintended whitespace
-      */
+     * Formats a string with a given set of values
+     * The format syntax uses {xyz} as a placeholder, which will be
+     * substituted from the 'xyz' key from $variables
+     *
+     * @param $template The template string
+     * @param $variables An associative (keyed) array of values to be substituted
+     * @param $strip_whitespace_from_template If @c TRUE, the template's whitespace is removed.
+     *   This allows templates to be written to be easeier to read, without having to worry about
+     *   the pre element inherting any unintended whitespace
+     */
     public static function format($template, $variables, $stripWhitespaceFromTemplate = true)
     {
         if ($stripWhitespaceFromTemplate) {
@@ -98,4 +106,4 @@ class HtmlTemplates
     }
 }
 
-/// @endcond
+/** @endcond */

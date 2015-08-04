@@ -1,5 +1,5 @@
 <?php
-/// @cond ALL
+/** @cond ALL */
 
 namespace Luminous\Formatters;
 
@@ -8,7 +8,7 @@ use Luminous\Utils\CssParser;
 /**
  * LaTeX output formatter for Luminous.
  *
- * \since  0.5.4
+ * @since  0.5.4
  */
 class LatexFormatter extends Formatter
 {
@@ -20,8 +20,10 @@ class LatexFormatter extends Formatter
         $this->css->convert($theme);
     }
 
-    /// Converts a hexadecimal string in the form #ABCDEF to an RGB array
-    /// where each element is normalised to the range 0-1
+    /**
+     * Converts a hexadecimal string in the form #ABCDEF to an RGB array
+     * where each element is normalised to the range 0-1
+     */
     public static function hex2rgb($hex)
     {
         $x = hexdec(substr($hex, 1));
@@ -46,7 +48,9 @@ class LatexFormatter extends Formatter
         return $src;
     }
 
-    /// Defines all the styling commands, these are obtained from the css parser
+    /**
+     * Defines all the styling commands, these are obtained from the css parser
+     */
     public function defineStyleCommands()
     {
         if ($this->css === null) {
@@ -214,4 +218,4 @@ EOF;
     }
 }
 
-/// @endcond
+/** @endcond */

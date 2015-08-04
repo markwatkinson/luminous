@@ -1,5 +1,5 @@
 <?php
-///@cond ALL
+/** @cond ALL */
 
 namespace Luminous;
 
@@ -127,7 +127,6 @@ see --help for help
         }
     }
 
-
     public function highlight()
     {
         $this->parseArgs();
@@ -218,4 +217,4 @@ see --help for help
     }
 }
 
-///@endcond
+/** @endcond */

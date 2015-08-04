@@ -11,12 +11,18 @@ use Luminous\Core\Scanners\Scanner;
  */
 class PhpScanner extends Scanner
 {
-    /// the 'non-php' scanner
+    /**
+     * the 'non-php' scanner
+     */
     protected $subscanner;
-    /// the real php scanner
+    /**
+     * the real php scanner
+     */
     protected $phpScanner;
 
-    /// If it's a snippet, we assume we're starting in PHP mode.
+    /**
+     * If it's a snippet, we assume we're starting in PHP mode.
+     */
     public $snippet = false;
 
     public function __construct($src = null)

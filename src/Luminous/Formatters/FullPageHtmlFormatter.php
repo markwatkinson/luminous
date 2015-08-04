@@ -1,6 +1,6 @@
 <?php
 
-/// @cond ALL
+/** @cond ALL */
 
 namespace Luminous\Formatters;
 
@@ -55,4 +55,4 @@ EOF;
     }
 }
 
-/// @endcond
+/** @endcond */

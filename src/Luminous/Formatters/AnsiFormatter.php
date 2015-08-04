@@ -1,5 +1,5 @@
 <?php
-/// @cond ALL
+/** @cond ALL */
 
 namespace Luminous\Formatters;
 
@@ -18,7 +18,9 @@ class AnsiFormatter extends Formatter
         $this->css->convert($theme);
     }
 
-    /// Converts a hexadecimal string in the form #ABCDEF to an RGB array
+    /**
+     * Converts a hexadecimal string in the form #ABCDEF to an RGB array
+     */
     public static function hex2rgb($hex)
     {
         $x = hexdec(substr($hex, 1));
@@ -108,4 +110,4 @@ class AnsiFormatter extends Formatter
         return $out;
     }
 }
-/// @endcond
+/** @endcond */

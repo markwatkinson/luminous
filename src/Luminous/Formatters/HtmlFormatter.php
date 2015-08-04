@@ -1,5 +1,5 @@
 <?php
-/// @cond ALL
+/** @cond ALL */
 
 namespace Luminous\Formatters;
 
@@ -13,7 +13,7 @@ class HtmlFormatter extends Formatter
 
     /**
      * strict HTML standards: the target attribute won't be used in links
-     * \since  0.5.7
+     * @since  0.5.7
      */
     public $strictStandards = false;
 
@@ -195,4 +195,4 @@ class HtmlFormatter extends Formatter
     }
 }
 
-/// @endcond
+/** @endcond */

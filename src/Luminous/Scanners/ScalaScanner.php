@@ -16,7 +16,6 @@ use Luminous\Core\Scanners\SimpleScanner;
  *
  * Some comments reference section numbers of the scala spec:
  * http://www.scala-lang.org/sites/default/files/linuxsoft_archives/docu/files/ScalaReference.pdf
- *
  */
 
 class ScalaScanner extends SimpleScanner

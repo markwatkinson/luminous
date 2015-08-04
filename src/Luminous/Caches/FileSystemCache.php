@@ -1,5 +1,5 @@
 <?php
-/// @cond ALL
+/** @cond ALL */
 
 namespace Luminous\Caches;
 
@@ -22,22 +22,29 @@ use Luminous as LuminousUi;
  *
  * This driver implements necessary functions for reading/writing the cache
  * and performing maintenance.
- *
  */
 class FileSystemCache extends Cache
 {
-    /// root cache directory
+    /**
+     * root cache directory
+     */
     private $dir = null;
 
-    /// full path to the cached file (for convenience)
+    /**
+     * full path to the cached file (for convenience)
+     */
     private $path = null;
 
-    /// subdir within the cache - we factor out the first two
-    /// characters of the filename, this reduces the number of files in
-    /// any one folder.
+    /**
+     * subdir within the cache - we factor out the first two
+     * characters of the filename, this reduces the number of files in
+     * any one folder.
+     */
     private $subdir = null;
 
-    /// the base filename of the cached file
+    /**
+     * the base filename of the cached file
+     */
     private $filename = null;
 
     public function __construct($id)
@@ -171,4 +178,4 @@ class FileSystemCache extends Cache
     }
 }
 
-/// @endcond
+/** @endcond */

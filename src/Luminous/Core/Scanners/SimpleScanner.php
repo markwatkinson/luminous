@@ -1,6 +1,6 @@
 <?php
 
-/// @cond CORE
+/** @cond CORE */
 
 namespace Luminous\Core\Scanners;
 
@@ -63,4 +63,4 @@ class SimpleScanner extends Scanner
     }
 }
 
-/// @endcond CORE
+/** @endcond CORE */

@@ -1,6 +1,6 @@
 <?php
 
-/// @cond CORE
+/** @cond CORE */
 
 namespace Luminous\Core\Scanners;
 
@@ -21,9 +21,9 @@ namespace Luminous\Core\Scanners;
  * state, which might be necessary if they are interrupted by server-side tags.
  * For this reason, the main() method might be called multiple times, therefore
  * each web sub-scanner should
- *     \li Not rely on keeping state related data in main()'s function scope,
+ *     @li Not rely on keeping state related data in main()'s function scope,
  *              make it a class variable
- *      \li flush its token stream every time main() is called
+ *      @li flush its token stream every time main() is called
  *
  * The init method of the class should be used to set relevant rules based
  * on whether or not the embedded flags are set; and therefore the embedded
@@ -51,10 +51,14 @@ abstract class EmbeddedWebScriptScanner extends Scanner
      */
     public $serverTags = '/<\?/';
 
-    /// @brief closing HTML tag for our code, e.g \</script\>
+    /**
+     * @brief closing HTML tag for our code, e.g \</script\>
+     */
     public $scriptTags;
 
-    /** @brief I think this is ignored and obsolete */
+    /**
+     * @brief I think this is ignored and obsolete
+     */
     public $interrupt = false;
 
     /**
@@ -105,7 +109,9 @@ abstract class EmbeddedWebScriptScanner extends Scanner
         $this->childScanners[$name] = $scanner;
     }
 
-    // override string to hit the child scanners as well
+    /**
+     * override string to hit the child scanners as well
+     */
     public function string($str = null)
     {
         if ($str !== null) {
@@ -265,4 +271,4 @@ abstract class EmbeddedWebScriptScanner extends Scanner
     }
 }
 
-/// @endcond
+/** @endcond */

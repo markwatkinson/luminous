@@ -1,5 +1,5 @@
 <?php
-/// @cond ALL
+/** @cond ALL */
 
 namespace Luminous\Caches;
 
@@ -116,4 +116,4 @@ abstract class Cache
     }
 }
 
-/// @endcond
+/** @endcond */

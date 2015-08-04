@@ -1,6 +1,6 @@
 <?php
 
-/// @cond CORE
+/** @cond CORE */
 
 /**
  * @file
@@ -50,10 +50,11 @@ use Luminous\Core\Utils;
  *              index stores whether or nto it has been escaped.
  *
  */
-
 class Scanner extends StringScanner
 {
-    /// scanner version.
+    /**
+     * scanner version.
+     */
     public $version = 'master';
 
     /**
@@ -131,7 +132,9 @@ class Scanner extends StringScanner
      */
     protected $caseSensitive = true;
 
-    /// constructor
+    /**
+     * constructor
+     */
     public function __construct($src = null)
     {
         parent::__construct($src);
@@ -241,7 +244,6 @@ class Scanner extends StringScanner
      * The main method is fully responsible for tokenizing the string stored
      * in string() at the time of its call. By the time main returns, it should
      * have consumed the whole of the string and populated the token array.
-     *
      */
     public function main()
     {
@@ -309,7 +311,6 @@ class Scanner extends StringScanner
      * A stream filter receives the entire token stream and should return it.
      *
      * The parameters are: ([name], filter). Name is an optional argument.
-     *
      */
     public function addStreamFilter($arg1, $arg2 = null)
     {
@@ -357,7 +358,7 @@ class Scanner extends StringScanner
 
     /**
      * @brief Flushes the token stream
-    */
+     */
     public function start()
     {
         $this->tokens = array();
@@ -533,7 +534,6 @@ class Scanner extends StringScanner
      *
      * @throws Exception if called at a non-matching point (i.e.
      * <code>$this->scan($open)</code> does not match)
-     *
      */
     public function nestableToken($tokenName, $open, $close)
     {
@@ -562,4 +562,4 @@ class Scanner extends StringScanner
     }
 }
 
-/// @endcond
+/** @endcond */

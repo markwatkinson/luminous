@@ -1,6 +1,6 @@
 <?php
 
-/// @cond ALL
+/** @cond ALL */
 
 namespace Luminous\Formaters;
 
@@ -15,4 +15,4 @@ class InlineHtmlFormatter extends HtmlFormatter
     }
 }
 
-/// @endcond
+/** @endcond */

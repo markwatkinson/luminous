@@ -1,25 +1,23 @@
 <?php
 
-/// @cond ALL
+/** @cond ALL */
 
 /**
- * \file scanners.class.php
- * \brief Scanner lookup table definition.
+ * @file scanners.class.php
+ * @brief Scanner lookup table definition.
  */
 
  namespace Luminous;
 
 /**
- * \class LuminousScanners
- * \author Mark Watkinson
- * \brief A glorified lookup table for languages to scanners.
+ * @class LuminousScanners
+ * @author Mark Watkinson
+ * @brief A glorified lookup table for languages to scanners.
  * One of these is instantiated in the global scope at the bottom of this source.
  * The parser assumes it to exist and uses it to look up scanners.
  * Users seeking to override scanners or add new scanners should add their
  * scanner into '$luminous_scanners'.
- *
  */
-
 class Scanners
 {
     /**
@@ -41,13 +39,12 @@ class Scanners
     /**
      * Adds a scanner into the table, or overwrites an existing scanner.
      *
-     * \param language_name may be either a string or an array of strings, if
+     * @param language_name may be either a string or an array of strings, if
      *    multiple languages are to use the same scanner
-     * \param $scanner the name of the LuminousScanner object as string, (not an
+     * @param $scanner the name of the LuminousScanner object as string, (not an
      * actual instance!). If the file is actually a dummy file (say for includes),
-     * leave $scanner as \c null.
-     * \param lang_description a human-readable description of the language.
-     *
+     * leave $scanner as @c null.
+     * @param lang_description a human-readable description of the language.
      */
     public function addScanner($languageName, $scanner, $langDescription)
     {
@@ -92,7 +89,7 @@ class Scanners
     /**
      * Removes a scanner from the table
      *
-     * \param language_name may be either a string or an array of strings, each of
+     * @param language_name may be either a string or an array of strings, each of
      *    which will be removed from the lookup table.
      */
     public function removeScanner($languageName)
@@ -110,7 +107,7 @@ class Scanners
 
     /**
      * Sets the default scanner. This is used when none matches a lookup
-     * \param scanner the LuminousScanner object
+     * @param scanner the LuminousScanner object
      */
     public function setDefaultScanner($scanner)
     {
@@ -121,12 +118,12 @@ class Scanners
     /**
      * Method which retrives the desired scanner array, and
      * recursively settles the include dependencies while doing so.
-     * \param language_name the name under which the gramar was originally indexed
-     * \param default if true: if the scanner doesn't exist, return the default
+     * @param language_name the name under which the gramar was originally indexed
+     * @param default if true: if the scanner doesn't exist, return the default
      *    scanner. If false, return false
-     * \return the scanner-array stored for the given language name
-     * \internal
-     * \see LuminousScanners::GetScanner
+     * @return the scanner-array stored for the given language name
+     * @internal
+     * @see LuminousScanners::GetScanner
      */
     private function getScannerArray($languageName, $default = true)
     {
@@ -146,10 +143,10 @@ class Scanners
 
     /**
      * Returns a scanner for a language
-     * \param language_name the name under which the gramar was originally indexed
-     * \param default if true: if the scanner doesn't exist, return the default
+     * @param language_name the name under which the gramar was originally indexed
+     * @param default if true: if the scanner doesn't exist, return the default
      *    scanner. If false, return false
-     * \return The scanner, the default scanner, or null.
+     * @return The scanner, the default scanner, or null.
      */
     public function getScanner($languageName, $default = true, $instance = true)
     {
@@ -172,7 +169,7 @@ class Scanners
 
     /**
      * Returns a list of known aliases for scanners.
-     * \return a list, the list is such that each item is itself a list whose
+     * @return a list, the list is such that each item is itself a list whose
      *    elements are aliases of the same scanner. eg:
      * [
      *    ['c', 'cpp'],
@@ -180,7 +177,6 @@ class Scanners
      *    ['py', 'python']
      * ]
      * etc.
-     *
      */
     public function listScanners()
     {
@@ -189,4 +185,4 @@ class Scanners
     }
 }
 
-/// \endcond
+/** @endcond */

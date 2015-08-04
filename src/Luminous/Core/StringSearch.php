@@ -1,8 +1,6 @@
 <?php
 
-/**
- * @cond CORE
- */
+/** @cond CORE */
 
 namespace Luminous\Core;
 
@@ -23,7 +21,9 @@ namespace Luminous\Core;
  */
 class StringSearch
 {
-    /// A copy of the string to operate on.
+    /**
+     * A copy of the string to operate on.
+     */
     private $string;
 
     /**
@@ -91,4 +91,4 @@ class StringSearch
     }
 }
 
-/// @endcond
+/** @endcond */

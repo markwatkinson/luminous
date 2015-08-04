@@ -1,6 +1,6 @@
 <?php
 
-/// @cond CORE
+/** @cond CORE */
 
 namespace Luminous\Core\Scanners;
 
@@ -27,13 +27,19 @@ use Luminous\Core\StringSearch;
  */
 class StringScanner
 {
-    /// @brief Our local copy of the input string to be scanned.
+    /**
+     * @brief Our local copy of the input string to be scanned.
+     */
     private $src;
 
-    /// @brief Length of input string (cached for performance)
+    /**
+     * @brief Length of input string (cached for performance)
+     */
     private $srcLen;
 
-    /// @brief The current scan pointer (AKA the offset or index)
+    /**
+     * @brief The current scan pointer (AKA the offset or index)
+     */
     private $index;
 
     /**
@@ -50,13 +56,19 @@ class StringScanner
      */
     private $matchHistory = array(null, null);
 
-    /// @brief LuminousStringSearch instance (caches preg_* results)
+    /**
+     * @brief LuminousStringSearch instance (caches preg_* results)
+     */
     private $ss;
 
-    /// @brief Caller defined patterns used by next_match()
+    /**
+     * @brief Caller defined patterns used by next_match()
+     */
     private $patterns = array();
 
-    /// constructor
+    /**
+     * constructor
+     */
     public function __construct($src = null)
     {
         $this->string($src);
@@ -241,7 +253,6 @@ class StringScanner
      * whether or not the most recent scanning function matched anything.
      *
      * @throw Exception if no matches have been recorded.
-     *
      */
     public function match()
     {
@@ -271,7 +282,6 @@ class StringScanner
     }
 
     /**
-     *
      * @brief Get a group from the most recent match operation
      *
      * @param $g the group's numerical index or name, in the case of named
@@ -439,17 +449,17 @@ class StringScanner
     }
 
     /**
-    * @brief Scans until the start of a pattern
-    *
-    * Looks for the given pattern anywhere beyond the current index and
-    * advances the scan pointer to the start of the pattern. The match is logged.
-    *
-    * The match itself is not consumed.
-    *
-    * @param $pattern the pattern to search for
-    * @return The substring between here and the given pattern, or @c null if it
-    * is not found.
-    */
+     * @brief Scans until the start of a pattern
+     *
+     * Looks for the given pattern anywhere beyond the current index and
+     * advances the scan pointer to the start of the pattern. The match is logged.
+     *
+     * The match itself is not consumed.
+     *
+     * @param $pattern the pattern to search for
+     * @return The substring between here and the given pattern, or @c null if it
+     * is not found.
+     */
     public function scanUntil($pattern)
     {
         return $this->checkInternal($pattern, false, true, false, true);
@@ -488,7 +498,6 @@ class StringScanner
      * name will be null, index will be -1 and matches will be null.
      *
      * @note consider using this method to build a transition table
-     *
      */
     public function getNextNamed($patterns)
     {
@@ -610,7 +619,6 @@ class StringScanner
      * When no more matches are found, return value is @c NULL and nothing is
      * logged.
      *
-     *
      * @param $consume_and_log If this is @c FALSE, the pattern is not consumed
      * or logged.
      *
@@ -663,4 +671,4 @@ class StringScanner
     }
 }
 
-/// @endcond
+/** @endcond */

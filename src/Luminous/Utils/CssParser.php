@@ -1,6 +1,7 @@
 <?php
 
-/// @cond ALL
+/** @cond ALL */
+
 /*
  * This is a simple CSS parser, which we use to make CSS themes portable.
  * The basic idea is we're going to use the CSS scanner to tokenize the
@@ -395,4 +396,4 @@ class CssParser
         return $css;
     }
 }
-/// \endcond
+/** @endcond */

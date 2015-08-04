@@ -81,8 +81,10 @@ class RubyScanner extends Scanner
             (?:_+\d+)*
         /x';
 
-    /// queue of heredoc declarations which will need to be handled as soon as EOL is reached
-    /// each element is a tuple: (delimiter(str), identable?, interpolatable?)
+    /**
+     * queue of heredoc declarations which will need to be handled as soon as EOL is reached
+     * each element is a tuple: (delimiter(str), identable?, interpolatable?)
+     */
     private $heredocs = array();
 
     public function init()

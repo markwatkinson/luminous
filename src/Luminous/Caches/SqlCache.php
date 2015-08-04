@@ -1,5 +1,5 @@
 <?php
-/// @cond ALL
+/** @cond ALL */
 
 namespace Luminous\Caches;
 
@@ -155,4 +155,4 @@ class SqlCache extends Cache
     }
 }
 
-/// @endcond
+/** @endcond */

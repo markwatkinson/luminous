@@ -1,6 +1,6 @@
 <?php
 
-/// @cond ALL
+/** @cond ALL */
 
 namespace Luminous\Formatters;
 
@@ -15,4 +15,4 @@ class IdentityFormatter extends Formatter
     }
 }
 
-/// @endcond
+/** @endcond */

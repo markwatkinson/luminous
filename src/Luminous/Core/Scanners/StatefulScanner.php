@@ -1,6 +1,6 @@
 <?php
 
-/// @cond CORE
+/** @cond CORE */
 
 namespace Luminous\Core\Scanners;
 
@@ -34,15 +34,15 @@ use Luminous\Core\Utils;
  * stores the current state data. State data is currently a pattern, as the
  * above tuple.
  *
- *
  * @warning Currently 'stream filters' are not applied, because we at no point
  * end up with a flat stream of tokens. Although the rule name remapper is
  * applied.
- *
  */
 class StatefulScanner extends SimpleScanner
 {
-    /// @brief Transition table
+    /**
+     * @brief Transition table
+     */
     protected $transitions = array();
 
     /**
@@ -73,15 +73,21 @@ class StatefulScanner extends SimpleScanner
      */
     protected $tokenTreeStack = array();
 
-    /// Records whether or not the FSM has been set up for the first time.
-    /// @see setup()
+    /**
+     * Records whether or not the FSM has been set up for the first time.
+     * @see setup()
+     */
     private $setup = false;
-    /// remembers the state on the last iteration so we know whether or not
-    /// to load in a new transition-set
+    /**
+     * remembers the state on the last iteration so we know whether or not
+     * to load in a new transition-set
+     */
     private $lastState = null;
 
-    /// Cache of transition rules
-    /// @see next_start_data()
+    /**
+     * Cache of transition rules
+     * @see next_start_data()
+     */
     private $transitionRuleCache = array();
 
     /**
@@ -288,7 +294,6 @@ class StatefulScanner extends SimpleScanner
      * @warning the second and third parameters are not applicable to this
      * method, they are only present to suppress PHP warnings. If you set them,
      * an exception is thrown.
-     *
      */
     public function record($str, $dummy1 = null, $dummy2 = null)
     {
@@ -453,4 +458,4 @@ class StatefulScanner extends SimpleScanner
     }
 }
 
-/// @endcond CORE
+/** @endcond CORE */

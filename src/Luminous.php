@@ -9,7 +9,7 @@
  * the abstract class methods.
  */
 
-/// @cond USER
+/** @cond USER */
 
 // here's our 'real' UI class, which uses the above singleton. This is all
 // static because these are actually procudural functions, we're using the
@@ -318,11 +318,11 @@ abstract class Luminous
      *    probable language coming first in the array.
      *    Each array element is an array which represents a language (scanner),
      *    and has the keys:
-     *    \li \c 'language' => Human-readable language description,
-     *    \li \c 'codes' => valid codes for the language (array),
-     *    \li \c 'p' => the probability (between 0.0 and 1.0 inclusive),
+     *    @li @c 'language' => Human-readable language description,
+     *    @li @c 'codes' => valid codes for the language (array),
+     *    @li @c 'p' => the probability (between 0.0 and 1.0 inclusive),
      *
-     * note that \c 'language' and \c 'codes' are the key => value pair from
+     * note that @c 'language' and @c 'codes' are the key => value pair from
      * luminous::scanners()
      *
      * @warning Language guessing is inherently unreliable but should be right
@@ -435,5 +435,4 @@ abstract class Luminous
     }
 }
 
-/// @endcond
-// ends user
+/** @endcond */

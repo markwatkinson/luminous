@@ -1,15 +1,15 @@
 <?php
-/// @cond ALL
+/** @cond ALL */
 
 /**
- * \file luminous_formatter.class.php
- * \brief Formatting logic -- converts Luminous output into displayable formats
+ * @file luminous_formatter.class.php
+ * @brief Formatting logic -- converts Luminous output into displayable formats
  */
 
 namespace Luminous\Formatters;
 
 /**
- * \brief Abstract class to convert Luminous output into a universal format.
+ * @brief Abstract class to convert Luminous output into a universal format.
  *
  * Abstract base class to implement an output formatter. A formatter
  * will convert Luminous's tags into some kind of output (e.g. HTML), by
@@ -17,10 +17,14 @@ namespace Luminous\Formatters;
  */
 abstract class Formatter
 {
-    /// Number of chars to wrap at
+    /**
+     * Number of chars to wrap at
+     */
     public $wrapLength = 120;
 
-    /// Don't use this yet.
+    /**
+     * Don't use this yet.
+     */
     public $languageSpecificTags = false;
 
     /**
@@ -30,17 +34,25 @@ abstract class Formatter
      */
     public $tabWidth = 2;
 
-    /// Whether or not to add line numbering
+    /**
+     * Whether or not to add line numbering
+     */
     public $lineNumbers = true;
 
-    /// Number of first line
+    /**
+     * Number of first line
+     */
     public $startLine = 1;
 
-    /// An array of lines to be highlighted initially, if the formatter supports
-    /// it
+    /**
+     * An array of lines to be highlighted initially, if the formatter supports
+     * it
+     */
     public $highlightLines = array();
 
-    /// sets whether or not to link URIs.
+    /**
+     * sets whether or not to link URIs.
+     */
     public $link = true;
 
     /**
@@ -174,4 +186,4 @@ abstract class Formatter
     }
 }
 
-/// @endcond
+/** @endcond */

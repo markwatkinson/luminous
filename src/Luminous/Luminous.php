@@ -25,15 +25,19 @@ use Luminous\Formatters\IdentityFormatter;
  * scanner table.
  *
  * @internal
- *
  */
 class Luminous
 {
-    /// Settings array
-    /// @see LuminousOptions
+    /**
+     * Settings array
+     * @see LuminousOptions
+     */
     public $settings;
 
-    public $scanners; ///< the scanner table
+    /**
+     * the scanner table
+     */
+    public $scanners;
 
     public $cache = null;
 
@@ -51,7 +55,9 @@ class Luminous
         $this->registerDefaultScanners();
     }
 
-    /// registers builtin scanners
+    /**
+     * registers builtin scanners
+     */
     private function registerDefaultScanners()
     {
         $this->settings = new Options();
@@ -203,5 +209,4 @@ class Luminous
     }
 }
 
-/// @endcond
-// ends ALL
+/** @endcond */

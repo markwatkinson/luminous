@@ -6,7 +6,6 @@ use Luminous\Core\Scanners\SimpleScanner;
 
 /*
  * TODO: user defined types and stuff
- *
  */
 
 class AdaScanner extends SimpleScanner
