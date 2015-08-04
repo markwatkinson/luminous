@@ -52,25 +52,29 @@ class FileSystemCache extends Cache
         parent::__construct($id);
     }
 
-    protected function logError($file, $msg)
+    protected function logError($msg, $file = null)
     {
-        parent::logError(
-            str_replace('%s', "\"$file\"", $msg) . "\n"
-            . "File exists: " . var_export(file_exists($file), true) . "\n"
-            . "Readable?: " . var_export(is_readable($file), true) . "\n"
-            . "Writable?: "  . var_export(is_writable($file), true) . "\n"
-            . (!file_exists($this->dir) ?
-                "Your cache dir (\"{$this->dir}\") does not exist! \n" : '' )
-            . (file_exists($this->dir) && !is_writable($this->dir) ?
-                "Your cache dir (\"{$this->dir}\") is not writable! \n" : '' )
-        );
+        if ($file) {
+            parent::logError(
+                str_replace('%s', "\"$file\"", $msg) . "\n"
+                . "File exists: " . var_export(file_exists($file), true) . "\n"
+                . "Readable?: " . var_export(is_readable($file), true) . "\n"
+                . "Writable?: "  . var_export(is_writable($file), true) . "\n"
+                . (!file_exists($this->dir) ?
+                    "Your cache dir (\"{$this->dir}\") does not exist! \n" : '' )
+                . (file_exists($this->dir) && !is_writable($this->dir) ?
+                    "Your cache dir (\"{$this->dir}\") is not writable! \n" : '' )
+            );
+        } else {
+            parent::logError($msg);
+        }
     }
 
     protected function createInternal()
     {
         $target = $this->dir . '/' . $this->subdir;
         if (!@mkdir($target, 0777, true) && !is_dir($target)) {
-            $this->logError($target, "%s does not exist, and cannot create.");
+            $this->logError("%s does not exist, and cannot create.", $target);
             return false;
         }
         return true;
@@ -79,7 +83,7 @@ class FileSystemCache extends Cache
     protected function update()
     {
         if (!(@touch($this->path))) {
-            $this->logError($this->path, "Failed to update (touch) %s");
+            $this->logError("Failed to update (touch) %s", $this->path);
         }
     }
 
@@ -89,7 +93,7 @@ class FileSystemCache extends Cache
         if (file_exists($this->path)) {
             $contents = @file_get_contents($this->path);
             if ($contents === false) {
-                $this->logError($this->path, 'Failed to read %s"');
+                $this->logError('Failed to read %s"', $this->path);
             }
         }
         return $contents;
@@ -98,7 +102,7 @@ class FileSystemCache extends Cache
     protected function writeInternal($data)
     {
         if (@file_put_contents($this->path, $data, LOCK_EX) === false) {
-            $this->logError($this->path, "Error writing to %s");
+            $this->logError("Error writing to %s", $this->path);
         }
     }
 
@@ -144,7 +148,7 @@ class FileSystemCache extends Cache
         $last = 0;
         $fh = @fopen($purgeFile, 'r+');
         if (!$fh) {
-            $this->logError($purgeFile, "Error encountered opening %s for writing");
+            $this->logError("Error encountered opening %s for writing", $purgeFile);
             return;
         }
         $time = time();
