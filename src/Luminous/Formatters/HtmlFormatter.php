@@ -175,7 +175,7 @@ class HtmlFormatter extends Formatter
 
         $lineNumbers =
             '<span>'
-            . implode('</span><span>', range($this->start_line, $this->start_line + $num_lines - 1, 1))
+            . implode('</span><span>', range($this->startLine, $this->startLine + $numLines - 1, 1))
             . '</span>';
 
         $formatData = array(

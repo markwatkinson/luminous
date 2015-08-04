@@ -1,20 +1,21 @@
 <?php
-if (php_sapi_name() !== 'cli') die('This must be run from the command line');
+
+use Luminous\Caches\FileSystemCache;
+
+if (php_sapi_name() !== 'cli') {
+    die('This must be run from the command line');
+}
 include 'helper.inc';
-
-require_once(luminous::root() . '/src/cache/cache.class.php');
-require_once(luminous::root() . '/src/cache/fscache.class.php');
-
 
 // generate something random
 $data = '';
-for($i=0; $i<1024; $i++) {
-  $data .= chr(mt_rand(32, 126));
+for ($i=0; $i<1024; $i++) {
+    $data .= chr(mt_rand(32, 126));
 }
 $id = md5($data);
-$fs = new LuminousFileSystemCache($id);
+$fs = new FileSystemCache($id);
 $fs->write($data);
-$fs1 = new LuminousFileSystemCache($id);
+$fs1 = new FileSystemCache($id);
 $data1 = $fs->read();
 
 echo $data . "\n\n\n";

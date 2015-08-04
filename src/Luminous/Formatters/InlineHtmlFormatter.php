@@ -2,7 +2,7 @@
 
 /** @cond ALL */
 
-namespace Luminous\Formaters;
+namespace Luminous\Formatters;
 
 class InlineHtmlFormatter extends HtmlFormatter
 {

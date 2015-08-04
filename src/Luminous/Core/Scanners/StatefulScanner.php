@@ -4,6 +4,7 @@
 
 namespace Luminous\Core\Scanners;
 
+use Exception;
 use Luminous\Core\Utils;
 
 /**

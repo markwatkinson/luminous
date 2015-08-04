@@ -1,23 +1,27 @@
 <?php
-if (php_sapi_name() !== 'cli') die('This must be run from the command line');
+
+use Luminous\Options;
+
+if (php_sapi_name() !== 'cli') {
+    die('This must be run from the command line');
+}
 /*
- * Options test 
- * 
- * We already have pretty good coverage of the options class via the 
- * API unit test, but this is a little more direct for stuff that doesn't 
+ * Options test
+ *
+ * We already have pretty good coverage of the options class via the
+ * API unit test, but this is a little more direct for stuff that doesn't
  * currently address
  */
 
 include __DIR__ . '/helper.inc';
 
-    
 $data = array(
-    'auto_link' => true, 
+    'auto_link' => true,
     'cache_age' => 123456,
     'format' => 'latex',
     'html_strict' => true
 );
-$o = new LuminousOptions($data);
+$o = new Options($data);
 
 foreach($data as $opt => $val) {
     if ($o->$opt !== $val) {

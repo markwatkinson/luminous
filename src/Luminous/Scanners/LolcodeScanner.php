@@ -22,7 +22,7 @@ class LolcodeScanner extends SimpleScanner
         $this->SKIPWHITESPACE();
         if ($this->SCAN('/[a-z_]\w*/i')) {
             $this->RECORD($this->MATCH(), 'USER_FUNCTION');
-            $this->user_defs[$this->MATCH()] = 'FUNCTION';
+            $this->userDefs[$this->MATCH()] = 'FUNCTION';
         }
     }
 
@@ -70,7 +70,7 @@ class LolcodeScanner extends SimpleScanner
             /x'
         );
         $this->ADDPATTERN('FUNC_DEF', '/how\s+duz\s+i\\b/i');
-        $this->overrides['FUNC_DEF'] = array($this, 'FUNCDEF_OVERRIDE');
+        $this->overrides['FUNC_DEF'] = array($this, 'FUNCDEFOVERRIDE');
         $this->ADDPATTERN('NUMERIC', TokenPresets::$NUM_REAL);
         $this->ADDPATTERN('IDENT', '/[a-zA-Z_]\w*\\??/');
 

@@ -3,6 +3,7 @@
 namespace Luminous;
 
 use Exception;
+use InvalidArgumentException;
 use Luminous as LuminousUi;
 use Luminous\Formatters\Formatter;
 
@@ -239,6 +240,9 @@ class Options
 
     public function __get($name)
     {
+        // for bc we need to convert snake_case to camelCaps here.
+        $name = ucwords(str_replace('_', ' ', $name));
+        $name = lcfirst(str_replace(' ', '', $name));
         if (property_exists($this, $name)) {
             return $this->$name;
         } else {

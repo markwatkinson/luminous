@@ -113,7 +113,7 @@ class GroovyScanner extends SimpleScanner
             if ($this->braceStack <= 0) {
                 return true;
             }
-            $this->braceStack;
+            $this->braceStack--;
         } else {
             assert(0);
         }

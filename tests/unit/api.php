@@ -1,163 +1,169 @@
 <?php
-if (php_sapi_name() !== 'cli') die('This must be run from the command line');
+if (php_sapi_name() !== 'cli') {
+    die('This must be run from the command line');
+}
 /*
  * API test - tests the various configuration options
  */
 
 include __DIR__ . '/helper.inc';
 
-function assert_set($setting, $value) {
-  luminous::set($setting, $value);
-  $real = luminous::setting($setting);
-  if ($real !== $value) {
-    echo "Set $setting to $value, but it is $real\n";
-    assert(0);
-  }
-}
-
-function assert_set_exception($setting, $value) {
-  $val = luminous::setting($setting);
-  $exception = false;
-  try {
-    luminous::set($setting, $value);
-  } catch(Exception $e) {
-    $exception = true;
-  }
-  if (!$exception) {
-    echo "set($setting, " . var_export($value, true) . ") failed to throw exception\n";
-    assert(0);
-  }  
-  assert($val === luminous::setting($setting));
-}
-    
-
-function test_set() {
-  // first we'll check legal settings
-  $legal_vals = array(
-    'auto_link' => array(true, false),
-    'cache_age' => array(-1, 0, 1, 200, 100000000),
-    'failure_tag' => array(null, '', 'pre', 'table', 'div'),
-    'format' => array('html', 'html-full', 'html-inline', 'latex', null, 'none'),
-    'html_strict' => array(true, false),
-    'include_javascript' => array(true, false),
-    'include_jquery' => array(true, false),
-    'line_numbers' => array(true, false),
-    'start_line' => array(1, 2, 3, 100, 10000, 9999999),
-    'max_height' => array(-1, 0, 1, 2, 3, 100, '100', '200px', '250%'),
-    'relative_root' => array(null, '', 'xyz', '/path/to/somewhere/'),
-    'theme' => luminous::themes(),
-    'wrap_width' => array(-1, 0, 2, 3, 100, 10000000, 999999999),
-    'highlight_lines' => array(  array(0, 1, 2) )
-  );
-
-  foreach($legal_vals as $k=>$vs) {
-    foreach($vs as $v)
-      assert_set($k, $v);
-  }
-
-  // now the illegal ones should throw exceptions
-
-   $illegal_vals = array(
-    'auto_link' => array(1, 0, 'yes', 'no', null),
-    'cache_age' => array(true, false, 1.1, 'all year', null),
-    'failure_tag' => array(true, false, array()),
-    'format' => array('someformatter', '', true, false, 1, 2, 3),
-    'html_strict' => array(1, 0, 'yes', 'no', null, array()),
-    'include_javascript' => array(1, 0, 'yes', 'no', null, array()),
-    'include_jquery' => array(1, 0, 'yes', 'no', null, array()),
-    'line_numbers' => array(1, 0, 'yes', 'no', null, array()),
-    'start_line' => array(0, -1, true, false, null, array()),
-    'max_height' => array(null, true, false, array()),
-    'relative_root' => array(1, 0, true, false, array()),
-    'theme' => array('mytheme', null, true, false, 1, array()),
-    'wrap_width' => array('wide', 1.5, true, false, null, array()),
-    'highlight_lines' => array(1, 2, 3)
-    
-  );
-
-  foreach($illegal_vals as $k=>$vs) {
-    foreach($vs as $v)
-      assert_set_exception($k, $v);
-  }
-
-  // finally, we're going to use the old fashioned array indices and check that
-  // they still correspond to the new keys. The old fashioned way used dashes
-  // to separate words in the array. For impl. reasons we had to switch these
-  // to underscores, but they should be aliases of each other as far as the
-  // API is concerned.
-  
-  foreach($legal_vals as $k=>$vs) {
-    foreach($vs as $v) {
-      $k_old = str_replace('_', '-', $k);
-      luminous::set($k, $v);
-      assert(luminous::setting($k_old) === $v);
-      luminous::set($k_old, $v);
-      assert(luminous::setting($k) === $v);
+function assertSet($setting, $value)
+{
+    Luminous::set($setting, $value);
+    $real = Luminous::setting($setting);
+    if ($real !== $value) {
+        echo "Set $setting to $value, but it is $real\n";
+        assert(0);
     }
-  }
 }
 
-
-function assert_formatter_option($setting, $value) {
-  // convert API setting name to the property name in the formatter
-  $setting_property_map = array(
-    'wrap_width' => 'wrap_length',
-    'max_height' => 'height',
-    'html_strict' => 'strict_standards',
-    'auto_link' => 'link',
-    'line_numbers' => 'line_numbers',
-  );
-  luminous::set($setting, $value);
-  $formatter = luminous::formatter();
-  $mapped = $setting_property_map[$setting];
-  $val = $formatter->$mapped;
-  if ($val !== $value) {
-    echo "formatter->$mapped == {$val}, should be $value\n";
-    assert(0);
-  }
+function assertSetException($setting, $value)
+{
+    $val = Luminous::setting($setting);
+    $exception = false;
+    try {
+        Luminous::set($setting, $value);
+    } catch (Exception $e) {
+        $exception = true;
+    }
+    if (!$exception) {
+        echo "set($setting, " . var_export($value, true) . ") failed to throw exception\n";
+        assert(0);
+    }
+    assert($val === Luminous::setting($setting));
 }
 
-function test_formatter_options() {
-  // check that each of the formatter options is applied correctly to the
-  // formatter.
-  $formatters = array('html', 'html-full', 'html-inline', 'latex', 'none', null);
-  foreach($formatters as $f) {
-    luminous::set('format', $f);
-    assert_formatter_option('wrap_width', 1337);
-    assert_formatter_option('wrap_width', -1);
-    assert_formatter_option('max_height', 100);
-    assert_formatter_option('max_height', '100');
-    assert_formatter_option('max_height', '100px');
-    assert_formatter_option('max_height', 0);
-    assert_formatter_option('max_height', -1);
-    assert_formatter_option('line_numbers', false);
-    assert_formatter_option('line_numbers', true);
-    assert_formatter_option('auto_link', false);
-    assert_formatter_option('auto_link', true);
-    assert_formatter_option('html_strict', true);
-    assert_formatter_option('html_strict', false);
-  }
+function testSet()
+{
+    // first we'll check legal settings
+    $legalVals = array(
+        'autoLink' => array(true, false),
+        'cacheAge' => array(-1, 0, 1, 200, 100000000),
+        'failureTag' => array(null, '', 'pre', 'table', 'div'),
+        'format' => array('html', 'html-full', 'html-inline', 'latex', null, 'none'),
+        'htmlStrict' => array(true, false),
+        'includeJavascript' => array(true, false),
+        'includeJquery' => array(true, false),
+        'lineNumbers' => array(true, false),
+        'startLine' => array(1, 2, 3, 100, 10000, 9999999),
+        'maxHeight' => array(-1, 0, 1, 2, 3, 100, '100', '200px', '250%'),
+        'relativeRoot' => array(null, '', 'xyz', '/path/to/somewhere/'),
+        'theme' => Luminous::themes(),
+        'wrapWidth' => array(-1, 0, 2, 3, 100, 10000000, 999999999),
+        'highlightLines' => array(  array(0, 1, 2) )
+    );
+
+    foreach ($legalVals as $k => $vs) {
+        foreach ($vs as $v) {
+            assertSet($k, $v);
+        }
+    }
+
+    // now the illegal ones should throw exceptions
+    $illegalVals = array(
+        'autoLink' => array(1, 0, 'yes', 'no', null),
+        'cacheAge' => array(true, false, 1.1, 'all year', null),
+        'failureTag' => array(true, false, array()),
+        'format' => array('someformatter', '', true, false, 1, 2, 3),
+        'htmlStrict' => array(1, 0, 'yes', 'no', null, array()),
+        'includeJavascript' => array(1, 0, 'yes', 'no', null, array()),
+        'includeJquery' => array(1, 0, 'yes', 'no', null, array()),
+        'lineNumbers' => array(1, 0, 'yes', 'no', null, array()),
+        'startLine' => array(0, -1, true, false, null, array()),
+        'maxHeight' => array(null, true, false, array()),
+        'relativeRoot' => array(1, 0, true, false, array()),
+        'theme' => array('mytheme', null, true, false, 1, array()),
+        'wrapWidth' => array('wide', 1.5, true, false, null, array()),
+        'highlightLines' => array(1, 2, 3)
+    );
+
+    foreach ($illegalVals as $k => $vs) {
+        foreach ($vs as $v) {
+            assertSetException($k, $v);
+        }
+    }
+
+    // finally, we're going to use the old fashioned array indices and check that
+    // they still correspond to the new keys. The old fashioned way used dashes
+    // to separate words in the array. For impl. reasons we had to switch these
+    // to underscores, but they should be aliases of each other as far as the
+    // API is concerned.
+
+    // FIXME: The conversion needs to be adjusted for new camelCaps option names
+    foreach ($legalVals as $k => $vs) {
+        foreach ($vs as $v) {
+            $kOld = str_replace('_', '-', $k);
+            Luminous::set($k, $v);
+            assert(Luminous::setting($kOld) === $v);
+            Luminous::set($kOld, $v);
+            assert(Luminous::setting($k) === $v);
+        }
+    }
 }
 
+function assertFormatterOption($setting, $value)
+{
+    // convert API setting name to the property name in the formatter
+    $settingPropertyMap = array(
+        'wrapWidth' => 'wrapLength',
+        'maxHeight' => 'height',
+        'htmlStrict' => 'strictStandards',
+        'autoLink' => 'link',
+        'lineNumbers' => 'lineNumbers',
+    );
+    Luminous::set($setting, $value);
+    $formatter = Luminous::formatter();
+    $mapped = $settingPropertyMap[$setting];
+    $val = $formatter->$mapped;
+    if ($val !== $value) {
+        echo "formatter->$mapped == {$val}, should be $value\n";
+        assert(0);
+    }
+}
 
-$sql_executed = false;
-function sql($query) {
-  global $sql_executed;
-  $sql_executed = true;
-  return false;
+function testFormatterOptions()
+{
+    // check that each of the formatter options is applied correctly to the
+    // formatter.
+    $formatters = array('html', 'html-full', 'html-inline', 'latex', 'none', null);
+    foreach ($formatters as $f) {
+        Luminous::set('format', $f);
+        assertFormatterOption('wrapWidth', 1337);
+        assertFormatterOption('wrapWidth', -1);
+        assertFormatterOption('maxHeight', 100);
+        assertFormatterOption('maxHeight', '100');
+        assertFormatterOption('maxHeight', '100px');
+        assertFormatterOption('maxHeight', 0);
+        assertFormatterOption('maxHeight', -1);
+        assertFormatterOption('lineNumbers', false);
+        assertFormatterOption('lineNumbers', true);
+        assertFormatterOption('autoLink', false);
+        assertFormatterOption('autoLink', true);
+        assertFormatterOption('htmlStrict', true);
+        assertFormatterOption('htmlStrict', false);
+    }
+}
+
+$sqlExecuted = false;
+function sql($query)
+{
+    global $sqlExecuted;
+    $sqlExecuted = true;
+    return false;
 }
 // tests that setting the SQL function results in the SQL backend being used
-function test_cache() {
-  global $sql_executed;
-  $sql_executed = false;
-  luminous::set('sql_function', 'sql');
-  // this will throw a cache not creatable warning which we don't really care
-  // about
-  @luminous::highlight('plain', '123', true);
-  assert($sql_executed);
+function testCache()
+{
+    global $sqlExecuted;
+    $sqlExecuted = false;
+    Luminous::set('sql_function', 'sql');
+    // this will throw a cache not creatable warning which we don't really care
+    // about
+    @Luminous::highlight('plain', '123', true);
+    assert($sqlExecuted);
 }
 
-
-test_set();
-test_formatter_options();
-test_cache();
+testSet();
+testFormatterOptions();
+testCache();

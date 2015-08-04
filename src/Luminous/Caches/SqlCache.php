@@ -3,6 +3,7 @@
 
 namespace Luminous\Caches;
 
+use Exception;
 use Luminous\Exceptions\SqlSafetyException;
 
 /*

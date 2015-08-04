@@ -1,19 +1,24 @@
 <?php
-if (php_sapi_name() !== 'cli') die('This must be run from the command line');
-$lroot = __DIR__ . '/../../';
+if (php_sapi_name() !== 'cli') {
+    die('This must be run from the command line');
+}
+$luminousRoot = dirname(dirname(__DIR__));
+if (file_exists($luminousRoot . '/vendor/autoload.php')) {
+    // standalone install
+    require_once($luminousRoot . '/vendor/autoload.php');
+} elseif (file_exists($luminousRoot . '/../../autoload.php')) {
+    // dep install
+    require_once($luminousRoot . '/../../autoload.php');
+} else {
+    die('Please install the Composer autoloader by running `composer install` from within ' . $luminousRoot . PHP_EOL);
+}
 $path = __DIR__;
 
-$lpath = realpath($lroot . '/src/luminous.php');
-require ($lpath);
-
-luminous::set('format', null);
+Luminous::set('format', null);
 $output_ext = '.luminous';
-
 
 $missing_output = array();
 $diff_output = array();
-
-
 
 $default_target = scandir($path);
 foreach($default_target as $k=>$v)
@@ -34,9 +39,8 @@ function highlight_luminous($path)
     return;
 
   $src = file_get_contents($path);
-  return luminous::highlight($lang, $src, false);
+  return Luminous::highlight($lang, $src, false);
 }
-
 
 function generate($path)
 {
@@ -44,7 +48,7 @@ function generate($path)
   $out = highlight_luminous($path);
   if ($output_ext === '._html.luminous')
   {
-    $out = luminous::head_html() . $out;
+    $out = Luminous::headHtml() . $out;
     $out = '<meta http-equiv="Content-Type" content="text/html;
             charset=utf-8">' . $out;
   }

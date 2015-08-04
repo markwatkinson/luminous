@@ -158,8 +158,10 @@ class Filters
         // This matches, say, /** comment  but does not match /********/
         //  same with /// comment but not ///////////////
         $s = $token[1];
-        $spaceInBeginning = ctype_space($s[0]) || ctype_space($s[1]);
-        if (isset($s[3]) && ($s[2] === $s[1] || $s[2] === '!') && !$spaceInBeginning && $s[3] !== $s[2]) {
+        if (!isset($s[3])) {
+            return $token;
+        }
+        if (($s[2] === $s[1] || $s[2] === '!') && !ctype_space($s[0]) && !ctype_space($s[1]) && $s[3] !== $s[2]) {
             $token[0] = 'DOCCOMMENT';
             $token = self::doxygenize($token);
         }
