@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 
 /*
@@ -5,7 +6,7 @@
  *
  */
 
-namespace Luminous;
+use Luminous\Cli;
 
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     // standalone install

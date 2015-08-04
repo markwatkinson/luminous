@@ -29,9 +29,11 @@ class Cli
 
     public static function printHelp()
     {
+        global $argv;
+
         echo <<<EOF
 Usage:
-  php luminous.php [OPTIONS] [SOURCE_CODE]
+  {$argv[0]} [OPTIONS] [SOURCE_CODE]
 
 SOURCE_CODE may be omitted if you specify -i. Use '-' to read code from stdin.
 
@@ -74,8 +76,8 @@ see --help for help
     public function setLookahead($option, $i)
     {
         global $argv;
-        if (isset($argv[$i+1])) {
-            $this->options[$this->cmdOptionMap[$option]] = $argv[$i+1];
+        if (isset($argv[$i + 1])) {
+            $this->options[$this->cmdOptionMap[$option]] = $argv[$i + 1];
         } else {
             self::error('Missing option for ' . $option);
         }
@@ -99,7 +101,7 @@ see --help for help
     public function parseArgs()
     {
         global $argv, $argc;
-        for ($i=1; $i<$argc; $i++) {
+        for ($i = 1; $i < $argc; $i++) {
             $a = $argv[$i];
 
             if (isset($this->cmdOptionMap[$a])) {
