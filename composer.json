@@ -29,5 +29,8 @@
             "src/version.php",
             "src/singleton.php"
         ]
+    },
+    "require": {
+        "php": "^5.3||^7.0"
     }
 }
