@@ -40,7 +40,7 @@
  * @link http://github.com/chrisboulton/php-diff
  */
 
-require_once dirname(__FILE__).'/Array.php';
+require_once __DIR__.'/Array.php';
 
 class Diff_Renderer_Html_Inline extends Diff_Renderer_Html_Array
 {

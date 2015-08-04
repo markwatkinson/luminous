@@ -1,17 +1,21 @@
 <?php
 
 /*
- * If we're running in a web environment, this is simply an include
- * file which includes everything necessary to use Luminous.
- *
- * If we're running in CLI-mode then this handles the CLI interface.
+ * This handles the CLI interface.
  *
  */
 
-require_once(dirname(__FILE__) . '/src/luminous.php');
+namespace Luminous;
 
-if (PHP_SAPI === 'cli') {
-  // cli mode
-  if (isset($argv[0]) && $argv[0] === basename(__FILE__)) 
-    require(dirname(__FILE__) . '/src/cli.php');
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    // standalone install
+    require_once(__DIR__ . '/vendor/autoload.php');
+} elseif (file_exists(__DIR__ . '/../../autoload.php')) {
+    // dep install
+    require_once(__DIR__ . '/../../autoload.php');
+} else {
+    die('Please install the Composer autoloader by running `composer install` from within ' . __DIR__ . PHP_EOL);
 }
+
+$cli = new Cli();
+$cli->highlight();

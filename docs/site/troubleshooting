@@ -33,7 +33,7 @@ htdocs/
 
 and index.php should include the line:
 {{{lang=php_snippet
-include(dirname(__FILE__) . '/luminous/luminous.php');
+include(__DIR__ . '/luminous/luminous.php');
 }}}
 
 

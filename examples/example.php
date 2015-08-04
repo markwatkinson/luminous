@@ -43,7 +43,7 @@ $use_cache = !isset($_GET['nocache'])
   echo "Caching is <strong>disabled</strong>, click <a href='example.php'>here</a> to enable it";
   else
     echo "Caching is <strong>enabled</strong>. If you are seeing errors, you will need to make the directory: "
-. realpath(dirname(__FILE__)  . "/../") . "/cache/, and make it writable to your server if you intend to use the caching system. Click <a href='example.php?nocache'>here</a> to view this page with caching disabled";
+. realpath(__DIR__  . "/../") . "/cache/, and make it writable to your server if you intend to use the caching system. Click <a href='example.php?nocache'>here</a> to view this page with caching disabled";
 ?>
 </p>
 

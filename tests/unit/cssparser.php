@@ -9,7 +9,7 @@ $css = <<<EOF
 .class1 {
   background-color: #bbb;
   /* this will be dropped */
-  background-color: rgba(0, 1, 2, 3);  
+  background-color: rgba(0, 1, 2, 3);
 }
 
 .class1 {

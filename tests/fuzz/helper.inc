@@ -1,8 +1,8 @@
 <?php
 if (php_sapi_name() !== 'cli') die('This must be run from the command line');
-require_once(dirname(__FILE__) . '/../../src/luminous.php');
-require_once(dirname(__FILE__) . '/../extern/php-diff/lib/Diff.php');
-require_once(dirname(__FILE__) . '/../extern/php-diff/lib/Diff/Renderer/Text/Unified.php');
+require_once(__DIR__ . '/../../src/luminous.php');
+require_once(__DIR__ . '/../extern/php-diff/lib/Diff.php');
+require_once(__DIR__ . '/../extern/php-diff/lib/Diff/Renderer/Text/Unified.php');
 
 
 set_time_limit(60*15);
@@ -68,7 +68,7 @@ function randomise_source($source) {
  */
 function randomish_source($languages) {
   // path to regressions
-  $path = realpath(dirname(__FILE__) . '/../regression/');
+  $path = realpath(__DIR__ . '/../regression/');
   $language = false;
   foreach($languages as $l) {
     if (is_dir($path . '/' . $l)) $language = $l;

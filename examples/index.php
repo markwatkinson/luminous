@@ -1,5 +1,5 @@
 <?php
-require dirname(__FILE__) . '/helper.inc';
+require __DIR__ . '/helper.inc';
 
 $files = array(
   'Standard example' => 'example.php',
@@ -13,7 +13,7 @@ $files = array(
 if(isset($_GET['file']) && in_array($_GET['file'], $files)) {
     luminous::set('include-jquery', true);
     $source = luminous::highlight('php', 
-    file_get_contents(dirname(__FILE__) . '/' . $_GET['file']));
+    file_get_contents(__DIR__ . '/' . $_GET['file']));
     luminous::set('theme', 'github');
     $head = luminous::head_html();
     echo <<<EOF

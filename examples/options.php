@@ -1,5 +1,5 @@
 <?php
-include dirname(__FILE__) . '/helper.inc';
+include __DIR__ . '/helper.inc';
 $code = <<<EOF
 // here's some jquery - http://www.jquery.com
 $('a').click(function() {

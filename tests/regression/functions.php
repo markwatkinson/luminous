@@ -1,7 +1,7 @@
 <?php
 if (php_sapi_name() !== 'cli') die('This must be run from the command line');
-$lroot = dirname(__FILE__) . '/../../';
-$path = dirname(__FILE__);
+$lroot = __DIR__ . '/../../';
+$path = __DIR__;
 
 $lpath = realpath($lroot . '/src/luminous.php');
 require ($lpath);
@@ -32,7 +32,7 @@ function highlight_luminous($path)
   $lang = trim(substr(ext($path), 1));
   if ($lang === '')
     return;
-  
+
   $src = file_get_contents($path);
   return luminous::highlight($lang, $src, false);
 }
@@ -40,12 +40,12 @@ function highlight_luminous($path)
 
 function generate($path)
 {
-  global $output_ext;  
+  global $output_ext;
   $out = highlight_luminous($path);
   if ($output_ext === '._html.luminous')
   {
     $out = luminous::head_html() . $out;
-    $out = '<meta http-equiv="Content-Type" content="text/html; 
+    $out = '<meta http-equiv="Content-Type" content="text/html;
             charset=utf-8">' . $out;
   }
   file_put_contents($path . $output_ext, $out);
@@ -62,29 +62,29 @@ function compare($path)
     $missing_output[] = $path;
     return;
   }
-  
+
   $expected = file_get_contents($path . $output_ext);
   $actual = highlight_luminous($path);
-  
+
   $expected = str_replace("\r\n", "\n", $expected);
   $expected = str_replace("\r", "\n", $expected);
-  
+
   $actual = str_replace("\r\n", "\n", $actual);
   $actual = str_replace("\r", "\n", $actual);
-  
+
   if ($expected == $actual)
     return;
-  
-  // we have to do it like this as opposed to clever piping or it seems to 
+
+  // we have to do it like this as opposed to clever piping or it seems to
   // break on long strings
   $outpath = "$path._diff$output_ext";
   $temppath = "$path.actual$output_ext";
   file_put_contents($temppath, $actual);
   exec("diff -u $path$output_ext $temppath > $outpath", $x, $ret);
-  if ($ret) exit(1);  
+  if ($ret) exit(1);
   unlink($temppath);
   $diff_output[$path] = $outpath;
-  
+
 }
 
 function clean($path)
@@ -106,7 +106,7 @@ function recurse($path, $action)
     echo "Unknown action: $action\n";
     exit(1);
   }
-  
+
   $files = array();
   if (is_dir($path))
     $files = scandir($path);
@@ -115,17 +115,17 @@ function recurse($path, $action)
     $files[]= basename($path);
     $path = dirname($path);
   }
-  
-  
+
+
   foreach($files as $f)
   {
     if (empty($f) || $f[0] == '.' || preg_match('/~$/', $f))
       continue;
-    
+
     $f = preg_replace('%//+%', '/', $path . '/' . $f);
-    
+
     if (is_dir($f))
-      recurse($f, $action);    
+      recurse($f, $action);
     else
     {
       if ($action === 'clean')
@@ -133,7 +133,7 @@ function recurse($path, $action)
         clean($f);
         continue;
       }
-      
+
       $ext = ext($f);
       if (!empty($ext) && $ext !== '.luminous')
       {
@@ -146,4 +146,3 @@ function recurse($path, $action)
     }
   }
 }
-

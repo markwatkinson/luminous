@@ -1,5 +1,5 @@
 <?php
-$luminous_root = realpath(dirname(__FILE__)  . '/../..');
+$luminous_root = realpath(__DIR__  . '/../..');
 require_once ($luminous_root . '/src/luminous.php');
 
 

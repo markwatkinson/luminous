@@ -8,7 +8,7 @@ if (php_sapi_name() !== 'cli') die('This must be run from the command line');
  * currently address
  */
 
-include dirname(__FILE__) . '/helper.inc';
+include __DIR__ . '/helper.inc';
 
     
 $data = array(

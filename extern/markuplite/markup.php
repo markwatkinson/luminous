@@ -1,12 +1,12 @@
 <?php
-require_once(dirname(__FILE__) . '/markuplite.class.php');
-require_once(dirname(__FILE__) . '/../../src/luminous.php');
+require_once(__DIR__ . '/markuplite.class.php');
+require_once(__DIR__ . '/../../src/luminous.php');
 
 class Markup {
 
   public $linker = null;
   private $obj = null;
-  
+
   function linker($url) {
     return false;
   }
@@ -14,11 +14,11 @@ class Markup {
   public function __construct() {
     $this->linker = array($this, 'linker');
   }
-  
+
   function format($str) {
     $m = new MarkupLite();
     $m->linkifier_cb = $this->linker;
-    $m->highlight_cb = create_function('$code,$lang', 
+    $m->highlight_cb = create_function('$code,$lang',
       'return luminous::highlight($lang, $code);');
     return $m->Format($str);
   }

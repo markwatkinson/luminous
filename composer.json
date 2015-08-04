@@ -21,12 +21,13 @@
         "source": "https://github.com/markwatkinson/luminous/"
     },
     "autoload": {
-        "psr-0": { "luminous": "" }
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/markwatkinson/luminous"
-        }
-    ]
+        "psr-4": {
+            "": "src/"
+        },
+        "files": [
+            "src/debug.php",
+            "src/version.php",
+            "src/singleton.php"
+        ]
+    }
 }

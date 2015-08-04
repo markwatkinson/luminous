@@ -15,7 +15,7 @@ require_once(dirname(__FILE__) . '/../../src/luminous.php');
  * That's the test.
  */
 
-$filenames = glob(realpath(dirname(__FILE__) . '/../regression') . '/*/*');
+$filenames = glob(realpath(__DIR__ . '/../regression') . '/*/*');
 sort($filenames);
 
 foreach($filenames as $filename) {
@@ -32,7 +32,7 @@ foreach($filenames as $filename) {
       $best['score'] = $score;
       $best['lang'] = $name;
       $best['codes'] = $codes;
-    } 
+    }
     if (in_array($real_language, $codes)) {
       $real['score'] = $score;
       $real['lang'] = $name;
@@ -42,7 +42,7 @@ foreach($filenames as $filename) {
   if (!(in_array($real_language, $best['codes']))) {
     echo 'failed for ' . basename($filename) . "\n";
     if (!empty($best['lang'])) {
-      echo  'Best choice was ' . $best['lang'] . ' with ' 
+      echo  'Best choice was ' . $best['lang'] . ' with '
         . $best['score'];
     }
     else {

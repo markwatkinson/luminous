@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-""" Fetches the master version (or tag) from the GitHub 
+""" Fetches the master version (or tag) from the GitHub
   repo and packages it suitable for end-users
 """
 
@@ -29,9 +29,9 @@ to_remove = [
 ]
 
 
-def print_help(): 
+def print_help():
   print('''Usage: python {0} [version]
-  Version should correspond to a tag in the Git repository. If it is omitted, 
+  Version should correspond to a tag in the Git repository. If it is omitted,
   'master' is used.'''.format(sys.argv[0]))
 
 def read_file(fn):
@@ -47,7 +47,7 @@ class Packagers(object):
 
   def __do_production(self):
     """ unset the debug flag in the PHP source """
-    subprocess.call(['sed', '-i', 
+    subprocess.call(['sed', '-i',
       "s/define('LUMINOUS_DEBUG', true);/define('LUMINOUS_DEBUG', false);/",
       "src/debug.php"])
 
@@ -56,7 +56,7 @@ class Packagers(object):
     for d in to_remove:
       if os.path.isdir(d): shutil.rmtree(d)
       elif os.path.isfile(d): os.remove(d)
-    
+
   def __do_doxygen(self):
     """ Generate Doxygen docs (if Doxygen is present) """
     try:
@@ -65,7 +65,7 @@ class Packagers(object):
     except OSError as e:
       print('Warning: failed to execute doxygen: ' + str(e))
 
-  def __do_version(self): 
+  def __do_version(self):
     """ Append version number to the Readme """
     f = open('README.markdown')
     s = f.read().splitlines()
@@ -74,11 +74,11 @@ class Packagers(object):
     f = open('README.markdown', 'w')
     f.write('\n'.join(s))
     f.close()
-    
-    # Sets the version attribute in luminous.php
+
+    # Sets the version attribute in version.php
     subprocess.call(['sed', '-i',
       "s/define('LUMINOUS_VERSION',.*;/define('LUMINOUS_VERSION', '{0}');/".format(self.version),
-      'src/luminous.php'])
+      'src/version.php'])
     subprocess.call(['sed', '-i',
       r's/^##\s*master/## {0}/'.format(self.version),
       'CHANGES.markdown'])
@@ -89,7 +89,7 @@ class Packagers(object):
     lang = match.group(1)
     code = match.group(2)
     code = code.rstrip('\r\n')
-    
+
     p = subprocess.Popen(
         ['php', 'luminous.php', '-f', 'html', '-l', lang, code],
         stdout=subprocess.PIPE)
@@ -103,9 +103,9 @@ class Packagers(object):
 
   def __do_readme(self):
     """ translate README.markdown to index.html, requires perl """
-    markdown = read_file('README.markdown')    
+    markdown = read_file('README.markdown')
     # The readme is for github and s therefore stored in GitHub markdown.
-      
+
     # we're going to alter it slightly, GitHub markdown allows syntax
     # highlighting, but the original Markdown script does not.
     # We're going to extract code blocks, run it through Luminous,
@@ -205,15 +205,15 @@ def fetch(version):
   # move the distributions's root dir to something more sensibly named
   dirname_ = os.listdir('.')[0]
   dirname = 'luminous-{0}'.format(version)
-  os.rename(dirname_, dirname)  
-  
+  os.rename(dirname_, dirname)
+
 
 def package(version):
   # move into the dist dir
   os.chdir(sys.path[0])
   if not os.path.exists('dist'): os.mkdir('dist')
   os.chdir('dist')
-  
+
   # Empty the tmp dir and move into it
   if os.path.exists('tmp'): shutil.rmtree('tmp')
   os.mkdir('tmp')
@@ -223,27 +223,26 @@ def package(version):
   if subprocess.call(['which', 'git']):
     fetch(version)
   else: clone(version)
-  
+
   # move into the root dir and execute the functions
   dirname = 'luminous-' + version
   os.chdir(dirname)
 
   p = Packagers()
   p.package(version)
-  
+
   # now move back out of it and tar/zip it up
-  os.chdir('..')  
+  os.chdir('..')
   tarname = dirname + '.tar.bz2'
   zipname = dirname + '.zip'
   subprocess.call(['tar', '-cjf', tarname, dirname])
   subprocess.call(['zip', '-rq', zipname, dirname])
   # and move the resulting archives up a level (into the dist dir)
   for f in (tarname, zipname): os.rename(f, '../' + f)
-  # done. Let's print something.  
-  os.chdir('..')  
+  # done. Let's print something.
+  os.chdir('..')
   print('Wrote {0}/{1} and {0}/{2}'.format(os.getcwd(), tarname, zipname))
-  
+
 if __name__ == '__main__':
   if '--help' in sys.argv: print_help()
   else: package('master' if len(sys.argv) < 2 else sys.argv[1])
-  

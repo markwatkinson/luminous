@@ -208,7 +208,7 @@
   
   function luminous_root()
   {
-    return realpath(dirname(__FILE__) . '/../');
+    return realpath(__DIR__ . '/../');
   }
   
   
@@ -546,7 +546,7 @@
 
     if ($relative_root === null)
     {
-      $relative_root = str_replace($_SERVER['DOCUMENT_ROOT'], '/', dirname(__FILE__));
+      $relative_root = str_replace($_SERVER['DOCUMENT_ROOT'], '/', __DIR__);
       $relative_root = str_replace('\\', '/', $relative_root); // bah windows
       $relative_root = rtrim($relative_root, '/');
       // go up one level.

@@ -27,9 +27,9 @@ luminous::set('include-jquery', true);
 luminous::set('include-javascript', true);
 
 if (isset($_POST['theme'])) luminous::set('theme', $_POST['theme']);
-if (isset($_POST['format'])) luminous::set('format', $_POST['format']); 
+if (isset($_POST['format'])) luminous::set('format', $_POST['format']);
 $line_numbers = true;
-if (!empty($_POST) && !isset($_POST['line-numbers'])) 
+if (!empty($_POST) && !isset($_POST['line-numbers']))
   $line_numbers = false;
 $line_numbers_start = false;
 if (!empty($_POST) && isset($_POST['line-numbers-start'])) {
@@ -65,7 +65,7 @@ if (count($_POST)) {
     print_r($printable_guesses);
     echo '</pre>';
   }
-  // else 
+  // else
   {
     $t = microtime(true);
     $out = luminous::highlight($lang, $_POST['src'], false);
@@ -95,16 +95,16 @@ if (count($_POST)) {
     <br/>
     <select name='theme'>
     <?php foreach(luminous::themes() as $t) {
-      $def = (isset($_POST['theme']) && $_POST['theme'] === $t)? ' selected': 
+      $def = (isset($_POST['theme']) && $_POST['theme'] === $t)? ' selected':
           '';
       echo sprintf("<option value='%s'%s>%s</option>\n", $t, $def,
         preg_replace('/\.css$/i', '', $t));
     }
 ?>  </select>
     <br/>
-    <select name='format'>    
+    <select name='format'>
     <?php foreach(array('html', 'html-full', 'latex') as $f) {
-      $def = (isset($_POST['format']) && $_POST['format'] === $f)? ' selected': 
+      $def = (isset($_POST['format']) && $_POST['format'] === $f)? ' selected':
           '';
       echo sprintf("<option value='%s'%s>%s</option>\n", $f, $def, $f);
 

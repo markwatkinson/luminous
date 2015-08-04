@@ -4,7 +4,7 @@ if (php_sapi_name() !== 'cli') die('This must be run from the command line');
  * API test - tests the various configuration options
  */
 
-include dirname(__FILE__) . '/helper.inc';
+include __DIR__ . '/helper.inc';
 
 function assert_set($setting, $value) {
   luminous::set($setting, $value);
