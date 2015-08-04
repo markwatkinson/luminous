@@ -19,7 +19,7 @@ class ActionScriptScanner extends EcmaScriptScanner
         $this->addPattern('PREPROCESSOR', '/\^\s*#.*/m');
 
         // clear the identifier map for JS and insert our own.
-        // $this->ident_map = array();
+        // $this->identMap = array();
         $this->addIdentifierMapping('', array());
 
         $this->addIdentifierMapping('FUNCTION', array(

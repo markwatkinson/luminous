@@ -4,6 +4,8 @@
 
 namespace Luminous\Formatters;
 
+use Luminous as LuminousUi;
+
 class FullPageHtmlFormatter extends HtmlFormatter
 {
     protected $themeCss = null;
@@ -17,7 +19,7 @@ class FullPageHtmlFormatter extends HtmlFormatter
     protected function getLayout()
     {
         // this path info shouldn't really be here
-        $path = luminous::root() . '/style/luminous.css';
+        $path = LuminousUi::root() . '/style/luminous.css';
         $this->css = file_get_contents($path);
     }
 
@@ -40,7 +42,7 @@ class FullPageHtmlFormatter extends HtmlFormatter
     {$this->css}
     /* End luminous.css */
     /* Theme CSS */
-    {$this->theme_css}
+    {$this->themeCss}
     /* End theme CSS */
     </style>
   </head>

@@ -651,9 +651,9 @@ class RubyScanner extends Scanner
             $p += 0.1;
         }
 
-        $num_lines = $info['num_lines'];
+        $numLines = $info['num_lines'];
         // let's say if 5% of lines are hash commented that's a good thing
-        if (substr_count($src, '#') > $num_lines/20) {
+        if (substr_count($src, '#') > $numLines / 20) {
             $p += 0.05;
         }
         // =~ /regex/
