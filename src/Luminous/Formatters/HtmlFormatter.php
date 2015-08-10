@@ -93,7 +93,7 @@ class HtmlFormatter extends Formatter
         // convert <ABC> to <span class=ABC>
         $cb = function ($matches) {
             $m1 = strtolower($matches[1]);
-            return "<span class=\'" . $m1 . "\'>";
+            return "<span class=" . $m1 . ">";
         };
         $codeBlock = preg_replace_callback('/<([A-Z_0-9]+)>/', $cb, $codeBlock);
 
