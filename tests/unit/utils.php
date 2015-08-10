@@ -64,7 +64,7 @@ function testEscapeToken()
     foreach($tokens as $t) {
         $escaped = Utils::escapeToken($t);
         // name should be unchanged
-        assert($token[0] === $escaped[0]);
+        assert($t[0] === $escaped[0]);
         if ($t[2]) {
             $expected = $t[1]; // already escaped, should be unchanged
         } else {
