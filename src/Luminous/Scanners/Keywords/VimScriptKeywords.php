@@ -4,7 +4,7 @@ namespace Luminous\Scanners\Keywords;
 
 class VimScriptKeywords
 {
-    const FUNCTIONS= array(
+    const FUNCTIONS = array(
         'abs',
         'add',
         'append',
@@ -235,7 +235,7 @@ class VimScriptKeywords
         'winwidth',
         'writefile'
     );
-    const KEYWORDS= array(
+    const KEYWORDS = array(
         'Next',
         'Print',
         'XMLent',

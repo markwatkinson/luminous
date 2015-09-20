@@ -4,7 +4,7 @@ namespace Luminous\Scanners\Keywords;
 
 class JavaKeywords
 {
-    const KEYWORDS= array(
+    const KEYWORDS = array(
         'abstract',
         'assert',
         'break',
@@ -47,7 +47,7 @@ class JavaKeywords
         'try',
         'catch'
     );
-    const TYPES= array(
+    const TYPES = array(
         'bool',
         'boolean',
         'byte',

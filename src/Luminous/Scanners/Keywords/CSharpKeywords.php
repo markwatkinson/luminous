@@ -4,7 +4,7 @@ namespace Luminous\Scanners\Keywords;
 
 class CSharpKeywords
 {
-    const TYPES= array(
+    const TYPES = array(
         // system
         'ArgIterator',
         'ArraySegment',

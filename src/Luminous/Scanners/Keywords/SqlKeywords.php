@@ -6,7 +6,7 @@ class SqlKeywords
 {
     // TODO: These are MySQL specific
 
-    const KEYWORDS= array(
+    const KEYWORDS = array(
         'ABORT',
         'ACTION',
         'ADD',
@@ -135,7 +135,7 @@ class SqlKeywords
         'MAXVALUE',
         'START'
     );
-    const TYPES= array(
+    const TYPES = array(
         'BINARY',
         'BIT',
         'BIGINT',
@@ -171,9 +171,9 @@ class SqlKeywords
         'YEAR',
         'ZONE' // for time zone
     );
-    const VALUES= array('NULL');
+    const VALUES = array('NULL');
     // http://dev.mysql.com/doc/refman/5.0/en/func-op-summary-ref.html
-    const OPERATORS= array(
+    const OPERATORS = array(
         'AND',
         'BETWEEN',
         'BINARY',
@@ -185,7 +185,7 @@ class SqlKeywords
         'SOUNDS',
         'XOR'
     );
-    const FUNCTIONS= array(
+    const FUNCTIONS = array(
         'ABS',
         'ACOS',
         'ADDDATE',
