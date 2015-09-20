@@ -4,6 +4,8 @@
 
 namespace Luminous\Core;
 
+use Exception;
+
 /**
  * @brief A basic preg_match wrapper which caches its results
  *
