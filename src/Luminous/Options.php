@@ -92,6 +92,14 @@ class Options
     private $maxHeight = -1;
 
     /**
+     * @brief Color Distance Algorithm
+     *
+     * If the formatter supports only a limited number of colors, this setting
+     * controls which algorithm should be used to calculate color distance.
+     */
+    public $colorDistanceAlgorithm = 'cie94';
+
+    /**
      * @brief Output format
      *
      * Chooses which output format to use. Current valid settings are:
@@ -282,6 +290,8 @@ class Options
             }
         } elseif ($name === 'maxHeight') {
             $this->setHeight($value);
+        } elseif ($name === 'colorDistanceAlgorithm') {
+            $this->setColorDistanceAlgorithm($value);
         } elseif ($name === 'relativeRoot') {
             if (self::checkType($value, 'string', true)) {
                 $this->$name = $value;
@@ -363,6 +373,16 @@ class Options
             $this->maxHeight = $value;
         } else {
             throw new InvalidArgumentException('Unrecognised format for height');
+        }
+    }
+
+    private function setColorDistanceAlgorithm($value)
+    {
+        $algorithms = array('none', 'cie76', 'cie94', 'ciede2000');
+        if (self::checkType($value, 'string') && in_array($value, $algorithms)) {
+            $this->colorDistanceAlgorithm = $value;
+        } else {
+            throw new InvalidArgumentException('Unrecognised color distance algorithm');
         }
     }
 }
