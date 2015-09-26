@@ -3,6 +3,7 @@
 
 namespace Luminous\Formatters;
 
+use Luminous\Utils\ColorUtils;
 use Luminous\Utils\CssParser;
 
 /**
@@ -20,29 +21,6 @@ class LatexFormatter extends Formatter
         $this->css->convert($theme);
     }
 
-    /**
-     * Converts a hexadecimal string in the form #ABCDEF to an RGB array
-     * where each element is normalised to the range 0-1
-     */
-    public static function hex2rgb($hex)
-    {
-        $x = hexdec(substr($hex, 1));
-        $b = $x % 256;
-        $g = ($x >> 8) % 256;
-        $r = ($x >> 16) % 256;
-
-        $b /= 255.0;
-        $g /= 255.0;
-        $r /= 255.0;
-
-        $b = round($b, 2);
-        $g = round($g, 2);
-        $r = round($r, 2);
-
-        $rgb = array($r, $g, $b);
-        return $rgb;
-    }
-
     protected function linkify($src)
     {
         return $src;
@@ -57,6 +35,9 @@ class LatexFormatter extends Formatter
             throw new Exception('LaTeX formatter has not been set a theme');
         }
         $cmds = array();
+        $round = function ($n) {
+            return round($n, 2);
+        };
         foreach ($this->css->rules() as $name => $properties) {
             if (!preg_match('/^\w+$/', $name)) {
                 continue;
@@ -70,7 +51,8 @@ class LatexFormatter extends Formatter
             }
             if (($col = $this->css->value($name, 'color', null)) !== null) {
                 if (preg_match('/^#[a-f0-9]{6}$/i', $col)) {
-                    $rgb = self::hex2rgb($col);
+                    $rgb = ColorUtils::normalizeRgb(ColorUtils::hex2rgb($col), true);
+                    $rgb = array_map($round, $rgb);
                     $colStr = "{$rgb[0]}, {$rgb[1]}, $rgb[2]";
                     $cmd = "{\\textcolor[rgb]{{$colStr}}$cmd}";
                 }
@@ -82,7 +64,8 @@ class LatexFormatter extends Formatter
 
         if ($this->lineNumbers && ($col = $this->css->value('code', 'color', null)) !== null) {
             if (preg_match('/^#[a-f0-9]{6}$/i', $col)) {
-                $rgb = self::hex2rgb($col);
+                $rgb = ColorUtils::normalizeRgb(ColorUtils::hex2rgb($col), true);
+                $rgb = array_map($round, $rgb);
                 $colStr = "{$rgb[0]}, {$rgb[1]}, $rgb[2]";
                 $cmd = "\\renewcommand{\\theFancyVerbLine}{\\textcolor[rgb]{{$colStr}}{\arabic{FancyVerbLine}}}";
                 $cmds[] = $cmd;
@@ -95,8 +78,11 @@ class LatexFormatter extends Formatter
     {
         if (($col = $this->css->value('code', 'bgcolor', null)) !== null) {
             if (preg_match('/^#[a-f0-9]{6}$/i', $col)) {
-                $rgb = self::hex2rgb($col);
+                $rgb = ColorUtils::normalizeRgb(ColorUtils::hex2rgb($col), true);
             }
+            array_map(function ($n) {
+                return round($n, 2);
+            }, $rgb);
             $colStr = "{$rgb[0]}, {$rgb[1]}, $rgb[2]";
             return "\\pagecolor[rgb]{{$colStr}}";
         }
