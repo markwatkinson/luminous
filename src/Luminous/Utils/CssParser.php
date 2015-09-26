@@ -224,6 +224,7 @@ class CssParser
             case 'font-style':
                 $prop = 'italic';
                 $value = in_array($value, array('italic', 'oblique'));
+                break;
             case 'text-decoration':
                 if ($value === 'line-through') {
                     $prop = 'strikethrough';
