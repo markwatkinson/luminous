@@ -4,8 +4,8 @@ namespace Luminous\Scanners\Keywords;
 
 class VisualBasicKeywords
 {
-    const VALUES = array('False', 'Nothing', 'True');
-    const OPERATORS = array(
+    public static $VALUES = array('False', 'Nothing', 'True');
+    public static $OPERATORS = array(
         'AddressOf',
         'And',
         'AndAlso',
@@ -22,7 +22,7 @@ class VisualBasicKeywords
         'TypeOf',
         'Xor'
     );
-    const TYPES = array(
+    public static $TYPES = array(
         'Boolean',
         'Byte',
         'CBool',
@@ -48,7 +48,7 @@ class VisualBasicKeywords
         'Short',
         'String'
     );
-    const KEYWORDS = array(
+    public static $KEYWORDS = array(
         'AddHandler',
         'Alias',
         'Ansi',

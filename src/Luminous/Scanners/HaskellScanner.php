@@ -28,10 +28,10 @@ class HaskellScanner extends SimpleScanner
 
     public function init()
     {
-        $this->addIdentifierMapping('KEYWORD', HaskellKeywords::KEYWORDS);
-        $this->addIdentifierMapping('TYPE', HaskellKeywords::TYPES);
-        $this->addIdentifierMapping('FUNCTION', HaskellKeywords::FUNCTIONS);
-        $this->addIdentifierMapping('VALUE', HaskellKeywords::VALUES);
+        $this->addIdentifierMapping('KEYWORD', HaskellKeywords::$KEYWORDS);
+        $this->addIdentifierMapping('TYPE', HaskellKeywords::$TYPES);
+        $this->addIdentifierMapping('FUNCTION', HaskellKeywords::$FUNCTIONS);
+        $this->addIdentifierMapping('VALUE', HaskellKeywords::$VALUES);
 
         // shebang
         $this->addPattern('COMMENT', '/^#!.*/');

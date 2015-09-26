@@ -14,11 +14,11 @@ class SqlScanner extends SimpleScanner
         // $this->removeStreamFilter('oo-syntax');
         $this->removeFilter('comment-to-doc');
         $this->removeFilter('constant');
-        $this->addIdentifierMapping('KEYWORD', SqlKeywords::KEYWORDS);
-        $this->addIdentifierMapping('TYPE', SqlKeywords::TYPES);
-        $this->addIdentifierMapping('VALUE', SqlKeywords::VALUES);
-        $this->addIdentifierMapping('OPERATOR', SqlKeywords::OPERATORS);
-        $this->addIdentifierMapping('FUNCTION', SqlKeywords::FUNCTIONS);
+        $this->addIdentifierMapping('KEYWORD', SqlKeywords::$KEYWORDS);
+        $this->addIdentifierMapping('TYPE', SqlKeywords::$TYPES);
+        $this->addIdentifierMapping('VALUE', SqlKeywords::$VALUES);
+        $this->addIdentifierMapping('OPERATOR', SqlKeywords::$OPERATORS);
+        $this->addIdentifierMapping('FUNCTION', SqlKeywords::$FUNCTIONS);
 
         $this->addPattern('IDENT', '/[a-zA-Z_]+\w*/');
         $this->addPattern('COMMENT', TokenPresets::$C_COMMENT_ML);

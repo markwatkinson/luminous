@@ -4,7 +4,7 @@ namespace Luminous\Scanners\Keywords;
 
 class CKeywords
 {
-    const KEYWORDS = array(
+    public static $KEYWORDS = array(
         'asm',
         'auto',
         'break',
@@ -61,7 +61,7 @@ class CKeywords
         'true',
         'false'
     );
-    const TYPES = array(
+    public static $TYPES = array(
         'bool',
         'char',
         'clock_t',
@@ -120,7 +120,7 @@ class CKeywords
         'valarray',
         'iterator'
     );
-    const FUNCTIONS = array(
+    public static $FUNCTIONS = array(
         'assert',
         'cabs',
         'cacos',

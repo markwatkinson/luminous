@@ -16,9 +16,9 @@ class CppScanner extends SimpleScanner
         parent::__construct($src);
         $this->addFilter('preprocessor', 'PREPROCESSOR', array($this, 'preprocessorFilter'));
 
-        $this->addIdentifierMapping('FUNCTION', CKeywords::FUNCTIONS);
-        $this->addIdentifierMapping('KEYWORD', CKeywords::KEYWORDS);
-        $this->addIdentifierMapping('TYPE', CKeywords::TYPES);
+        $this->addIdentifierMapping('FUNCTION', CKeywords::$FUNCTIONS);
+        $this->addIdentifierMapping('KEYWORD', CKeywords::$KEYWORDS);
+        $this->addIdentifierMapping('TYPE', CKeywords::$TYPES);
     }
 
     public function init()

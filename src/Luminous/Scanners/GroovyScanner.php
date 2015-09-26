@@ -124,8 +124,8 @@ class GroovyScanner extends SimpleScanner
 
     public function init()
     {
-        $this->addIdentifierMapping('KEYWORD', JavaKeywords::KEYWORDS);
-        $this->addIdentifierMapping('TYPE', JavaKeywords::TYPES);
+        $this->addIdentifierMapping('KEYWORD', JavaKeywords::$KEYWORDS);
+        $this->addIdentifierMapping('TYPE', JavaKeywords::$TYPES);
         $this->addIdentifierMapping('KEYWORD', array('any', 'as', 'def', 'in', 'with', 'do', 'strictfp', 'println'));
 
         // C+P from python

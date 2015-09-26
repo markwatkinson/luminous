@@ -4,7 +4,7 @@ namespace Luminous\Scanners\Keywords;
 
 class HaskellKeywords
 {
-    const KEYWORDS = array(
+    public static $KEYWORDS = array(
         'as',
         'case',
         'of',
@@ -36,7 +36,7 @@ class HaskellKeywords
         'type',
         'where'
     );
-    const TYPES = array(
+    public static $TYPES = array(
         'Bool',
         'Char',
         'Double',
@@ -69,7 +69,7 @@ class HaskellKeywords
         'RealFrac',
         'Show'
     );
-    const VALUES = array(
+    public static $VALUES = array(
         'EQ',
         'False',
         'GT',
@@ -80,7 +80,7 @@ class HaskellKeywords
         'Right',
         'True',
     );
-    const FUNCTIONS = array(
+    public static $FUNCTIONS = array(
         'abs',
         'acos',
         'acosh',

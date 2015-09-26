@@ -247,7 +247,7 @@ class ScalaScanner extends SimpleScanner
             'volatile'
         ));
 
-        $this->addIdentifierMapping('TYPE', JavaKeywords::TYPES);
+        $this->addIdentifierMapping('TYPE', JavaKeywords::$TYPES);
     }
 
     public static function guessLanguage($src, $info)

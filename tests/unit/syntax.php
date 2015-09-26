@@ -15,5 +15,5 @@ require 'helper.inc';
 error_reporting(E_ALL | E_STRICT);
 
 foreach (Luminous::scanners() as $codes) {
-    Luminous::highlight($codes[0], '');
+    Luminous::highlight($codes[0], ' ');
 }

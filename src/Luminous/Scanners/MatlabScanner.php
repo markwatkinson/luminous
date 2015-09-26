@@ -34,10 +34,10 @@ class MatlabScanner extends SimpleScanner
 
         $this->overrides = array('COMMENT_ML' => array($this, 'commentOverride'));
 
-        $this->addIdentifierMapping('KEYWORD', MatlabKeywords::KEYWORDS);
-        $this->addIdentifierMapping('VALUE', MatlabKeywords::VALUES);
+        $this->addIdentifierMapping('KEYWORD', MatlabKeywords::$KEYWORDS);
+        $this->addIdentifierMapping('VALUE', MatlabKeywords::$VALUES);
         // http://www.mathworks.com/support/functions/alpha_list.html?sec=8
-        $this->addIdentifierMapping('FUNCTION', MatlabKeywords::FUNCTIONS);
+        $this->addIdentifierMapping('FUNCTION', MatlabKeywords::$FUNCTIONS);
     }
 
     public static function guessLanguage($src, $info)

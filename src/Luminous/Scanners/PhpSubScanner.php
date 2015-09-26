@@ -35,8 +35,8 @@ class PhpSubScanner extends Scanner
         $this->addPattern('STRING', TokenPresets::$DOUBLE_STR);
         $this->addPattern('STRING', TokenPresets::$SINGLE_STR);
         $this->addPattern('FUNCTION', '/`(?>[^`\\\\]+|\\\\.)*(`|$)/s');
-        $this->addIdentifierMapping('FUNCTION', PhpKeywords::FUNCTIONS);
-        $this->addIdentifierMapping('KEYWORD', PhpKeywords::KEYWORDS);
+        $this->addIdentifierMapping('FUNCTION', PhpKeywords::$FUNCTIONS);
+        $this->addIdentifierMapping('KEYWORD', PhpKeywords::$KEYWORDS);
 
         $this->addFilter('STRING', array($this, 'strFilter'));
         $this->addFilter('HEREDOC', array($this, 'strFilter'));

@@ -4,7 +4,7 @@ namespace Luminous\Scanners\Keywords;
 
 class PhpKeywords
 {
-    const KEYWORDS = array(
+    public static $KEYWORDS = array(
         'abstract',
         'and',
         'as',
@@ -66,7 +66,7 @@ class PhpKeywords
         'null',
         'return'
     );
-    const FUNCTIONS = array(
+    public static $FUNCTIONS = array(
         'Phar',
         'PharData',
         'PharException',

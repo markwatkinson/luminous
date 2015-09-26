@@ -4,7 +4,7 @@ namespace Luminous\Scanners\Keywords;
 
 class MatlabKeywords
 {
-    const KEYWORDS = array(
+    public static $KEYWORDS = array(
         'break',
         'case',
         'catch',
@@ -26,7 +26,7 @@ class MatlabKeywords
         'try',
         'while'
     );
-    const VALUES = array(
+    public static $VALUES = array(
         'eps',
         'i',
         'Inf',
@@ -38,7 +38,7 @@ class MatlabKeywords
         'realmax',
         'realmin'
     );
-    const FUNCTIONS = array(
+    public static $FUNCTIONS = array(
         'aa2int',
         'aa2nt',
         'aacount',

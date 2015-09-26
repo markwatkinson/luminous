@@ -60,8 +60,8 @@ class VimScriptScanner extends SimpleScanner
         $this->addPattern('IDENT', '/[a-z_]\w*/i');
         $this->addPattern('OPERATOR', '@[~¬!%^&*\-=+;:,<.>/?\|]+@');
 
-        $this->addIdentifierMapping('FUNCTION', VimScriptKeywords::FUNCTIONS);
-        $this->addIdentifierMapping('KEYWORD', VimScriptKeywords::KEYWORDS);
+        $this->addIdentifierMapping('FUNCTION', VimScriptKeywords::$FUNCTIONS);
+        $this->addIdentifierMapping('KEYWORD', VimScriptKeywords::$KEYWORDS);
 
         $this->removeStreamFilter('oo-syntax');
         $this->removeFilter('comment-to-doc');

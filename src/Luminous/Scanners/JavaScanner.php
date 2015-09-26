@@ -10,8 +10,8 @@ class JavaScanner extends SimpleScanner
 {
     public function init()
     {
-        $this->addIdentifierMapping('KEYWORD', JavaKeywords::KEYWORDS);
-        $this->addIdentifierMapping('TYPE', JavaKeywords::TYPES);
+        $this->addIdentifierMapping('KEYWORD', JavaKeywords::$KEYWORDS);
+        $this->addIdentifierMapping('TYPE', JavaKeywords::$TYPES);
 
         $this->addPattern('COMMENT', TokenPresets::$C_COMMENT_ML);
         $this->addPattern('COMMENT', TokenPresets::$C_COMMENT_SL);

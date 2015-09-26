@@ -70,11 +70,11 @@ class VisualBasicScanner extends SimpleScanner
         $this->addPattern('IDENT', '/[a-z_]\w*[%&@!#$]?/i');
 
         // we'll borrow C#'s list of types (ie modules, classes, etc)
-        $this->addIdentifierMapping('VALUE', VisualBasicKeywords::VALUES);
-        $this->addIdentifierMapping('OPERATOR', VisualBasicKeywords::OPERATORS);
-        $this->addIdentifierMapping('TYPE', VisualBasicKeywords::TYPES);
-        $this->addIdentifierMapping('KEYWORD', VisualBasicKeywords::KEYWORDS);
-        $this->addIdentifierMapping('TYPE', CSharpKeywords::TYPES);
+        $this->addIdentifierMapping('VALUE', VisualBasicKeywords::$VALUES);
+        $this->addIdentifierMapping('OPERATOR', VisualBasicKeywords::$OPERATORS);
+        $this->addIdentifierMapping('TYPE', VisualBasicKeywords::$TYPES);
+        $this->addIdentifierMapping('KEYWORD', VisualBasicKeywords::$KEYWORDS);
+        $this->addIdentifierMapping('TYPE', CSharpKeywords::$TYPES);
     }
 
     public static function guessLanguage($src, $info)

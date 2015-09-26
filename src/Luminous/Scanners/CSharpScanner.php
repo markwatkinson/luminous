@@ -104,7 +104,7 @@ class CSharpScanner extends SimpleScanner
             'ulong',
             'ushort',
             'void'
-        ), \Luminous\Scanners\Keywords\CSharpKeywords::TYPES));
+        ), \Luminous\Scanners\Keywords\CSharpKeywords::$TYPES));
     }
 
     public static function guessLanguage($src, $info)
