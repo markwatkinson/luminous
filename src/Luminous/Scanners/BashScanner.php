@@ -371,7 +371,8 @@ class BashScanner extends Scanner
                     $this->record($m[1], null);
                 }
                 $this->record($m[2], 'VARIABLE');
-            } elseif (($this->interpolated && count($stack) === 1 && $this->scan('/(?<=\s|^)\#.*?(?=[)]|$)/m')) || $this->scan('/(?<=\s|^)\#.*/')) {
+            } elseif (($this->interpolated && count($stack) === 1 && $this->scan('/(?<=\s|^)\#.*?(?=[)]|$)/m'))
+                    || $this->scan('/(?<=\s|^)\#.*/')) {
                 $this->record($this->match(), 'COMMENT');
             } elseif (($m = $this->scan("/\\$?'(?> [^'\\\\]+ | \\\\.)* '/sx"))) {
                 $tok = ($m[0] === '$')? 'VARIABLE' : 'STRING';
