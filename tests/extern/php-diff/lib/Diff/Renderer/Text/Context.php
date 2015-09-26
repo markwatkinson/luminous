@@ -40,7 +40,7 @@
  * @link http://github.com/chrisboulton/php-diff
  */
 
-require_once dirname(__FILE__).'/../Abstract.php';
+require_once __DIR__.'/../Abstract.php';
 
 class Diff_Renderer_Text_Context extends Diff_Renderer_Abstract
 {

@@ -9,12 +9,11 @@ if (php_sapi_name() !== 'cli') die('This must be run from the command line');
  * then compiling it to pdf.
  * Requires pdflatex and the ability to call programs
  */
- 
 
 require_once dirname(__FILE__) . '/../../luminous.php';
 
 
-$testfiles = glob(dirname(__FILE__) . '/samples/output/*');
+$testfiles = glob(__DIR__ . '/samples/output/*');
 
 $EXIT_STATUS = 0;
 
@@ -25,14 +24,14 @@ foreach($testfiles as $t)
   $theme = $ts[array_rand(luminous::themes())];
   $formatter = luminous::formatter();
   $formatter->set_theme(file_get_contents('../../style/' . $theme));
-  
+
   $src = file_get_contents($t);
-  
+
   $t = preg_replace('%.*/%', '', $t);
   $fmt = $formatter->format($src);
-  file_put_contents(dirname(__FILE__)  . "/filedump/$t.tex", $fmt);
+  file_put_contents(__DIR__  . "/filedump/$t.tex", $fmt);
   chdir('filedump');
-  
+
   system("pdflatex $t.tex >> /dev/null", $i);
   if ($i) {
     echo "latex formatter test failed on file $t, pdflatex exit status: $i\n";

@@ -1,0 +1,22 @@
+#!/usr/bin/env php
+<?php
+
+/*
+ * This handles the CLI interface.
+ *
+ */
+
+use Luminous\Cli;
+
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    // standalone install
+    require_once(__DIR__ . '/vendor/autoload.php');
+} elseif (file_exists(__DIR__ . '/../../autoload.php')) {
+    // dep install
+    require_once(__DIR__ . '/../../autoload.php');
+} else {
+    die('Please install the Composer autoloader by running `composer install` from within ' . __DIR__ . PHP_EOL);
+}
+
+$cli = new Cli();
+$cli->highlight();

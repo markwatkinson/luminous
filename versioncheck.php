@@ -5,7 +5,7 @@
  * fetching the most recent release data from the site API and comparing it
  * to the version we're running here
  */
-include (dirname(__FILE__) . '/luminous.php');
+include (__DIR__ . '/luminous.php');
 
 $URL = 'http://luminous.asgaard.co.uk/index.php/ajax/luminous/version';
 $DOWNLOAD_URL = 'http://luminous.asgaard.co.uk/index.php/download';

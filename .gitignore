@@ -6,8 +6,10 @@
 tests/formatters/filedump/
 .directory
 
+vendor/
 dist/
 docs/html/
 tests/log
 
+composer.lock
 style/.sass-cache
