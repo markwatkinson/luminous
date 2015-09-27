@@ -70,6 +70,12 @@ abstract class Formatter
     public $language = null;
 
     /**
+     * The algorithm to use for calculating color distance, if the formatter
+     * supports only a limited number of colors
+     */
+    public $colorDistanceAlgorithm = 'cie94';
+
+    /**
      * The main method for interacting with formatter objects.
      * @param src the input string, which is of the form output by an instance of
      * Luminous.

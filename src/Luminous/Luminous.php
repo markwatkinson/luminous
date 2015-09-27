@@ -159,6 +159,7 @@ class Luminous
         $formatter->setTheme(LuminousUi::theme($this->settings->theme));
         $formatter->highlightLines = $this->settings->highlightLines;
         $formatter->language = $this->language;
+        $formatter->colorDistanceAlgorithm = $this->settings->colorDistanceAlgorithm;
     }
 
     /**
@@ -181,6 +182,7 @@ class Luminous
             $this->settings->format,
             $this->settings->theme,
             $this->settings->htmlStrict,
+            $this->settings->colorDistanceAlgorithm,
             LUMINOUS_VERSION,
         );
 
