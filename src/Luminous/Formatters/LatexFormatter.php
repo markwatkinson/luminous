@@ -210,9 +210,14 @@ EOF;
         $s = implode('', $pieces);
 
         $out .= $s;
+        // MW: I'm not really sure why but here we need to escape the
+        // backslashes or we end up with strange characters in the output. They
+        // work OK in the preable section.
         $out .= <<<EOF
-\end{Verbatim}
-\end{document}
+
+\\end{Verbatim}
+\\end{document}
+
 EOF;
         return $out;
     }
