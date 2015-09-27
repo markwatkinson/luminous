@@ -12,7 +12,7 @@ use Luminous\Utils\CssParser;
 class AnsiFormatter extends Formatter
 {
     // xterm256color color codes. Retrieved from https://git.io/xterm256color on 2015-09-26 and converted to Lab
-    const XTERM256COLOR = array(
+    public static $XTERM256COLOR = array(
         "000" => array(  0.000000,   0.000000,   0.000000),
         "001" => array( 25.535531,  48.045128,  38.057296),
         "002" => array( 46.227431, -51.698496,  49.896846),
@@ -291,7 +291,7 @@ class AnsiFormatter extends Formatter
         if ($this->colorDistanceAlgorithm !== 'none') {
             $lab = ColorUtils::xyz2lab(ColorUtils::rgb2xyz(ColorUtils::normalizeRgb($rgb)));
             $nearestColor = ColorUtils::nearestColor(
-                static::XTERM256COLOR,
+                self::$XTERM256COLOR,
                 $lab,
                 $this->colorDistanceAlgorithm,
                 true,
